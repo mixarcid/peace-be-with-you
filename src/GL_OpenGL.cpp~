@@ -1,7 +1,0 @@
-#include "GL.h"
-
-NAMESPACE {
-  namespace gl {
-
-  }
-}
