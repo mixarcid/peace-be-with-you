@@ -1,0 +1,158 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec2930842897/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2930842897.dir/build.make CMakeFiles/cmTryCompileExec2930842897.dir/build
+make[1]: Entering directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2930842897.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec2930842897.dir/CheckSymbolExists.c.o   -c /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec2930842897
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2930842897.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec2930842897.dir/CheckSymbolExists.c.o  -o cmTryCompileExec2930842897 -rdynamic 
+CMakeFiles/cmTryCompileExec2930842897.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec2930842897] Error 1
+make[1]: Leaving directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec2930842897/fast] Error 2
+
+File /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec3447733568/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec3447733568.dir/build.make CMakeFiles/cmTryCompileExec3447733568.dir/build
+make[1]: Entering directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3447733568.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec3447733568.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec3447733568
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3447733568.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec3447733568.dir/CheckFunctionExists.c.o  -o cmTryCompileExec3447733568 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec3447733568] Error 1
+make[1]: Leaving directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec3447733568/fast] Error 2
+
+
+Determining if the function glXGetProcAddressEXT exists failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec314385552/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec314385552.dir/build.make CMakeFiles/cmTryCompileExec314385552.dir/build
+make[1]: Entering directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec314385552.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=glXGetProcAddressEXT   -o CMakeFiles/cmTryCompileExec314385552.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec314385552
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec314385552.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=glXGetProcAddressEXT    CMakeFiles/cmTryCompileExec314385552.dir/CheckFunctionExists.c.o  -o cmTryCompileExec314385552 -rdynamic -lGL 
+CMakeFiles/cmTryCompileExec314385552.dir/CheckFunctionExists.c.o: In function `main':
+CheckFunctionExists.c:(.text+0x15): undefined reference to `glXGetProcAddressEXT'
+make[1]: Leaving directory `/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec314385552] Error 1
+make: *** [cmTryCompileExec314385552/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTryCompileExec1881546327/fast"
+make[1]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1881546327.dir/build.make CMakeFiles/cmTryCompileExec1881546327.dir/build
+make[2]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1881546327.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec1881546327.dir/CheckSymbolExists.c.o   -c /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec1881546327
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1881546327.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec1881546327.dir/CheckSymbolExists.c.o  -o cmTryCompileExec1881546327 -rdynamic 
+CMakeFiles/cmTryCompileExec1881546327.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTryCompileExec1881546327.dir/build.make:88: recipe for target 'cmTryCompileExec1881546327' failed
+make[2]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make[2]: *** [cmTryCompileExec1881546327] Error 1
+Makefile:117: recipe for target 'cmTryCompileExec1881546327/fast' failed
+make[1]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec1881546327/fast] Error 2
+
+File /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTryCompileExec2059447553/fast"
+make[1]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2059447553.dir/build.make CMakeFiles/cmTryCompileExec2059447553.dir/build
+make[2]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2059447553.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec2059447553.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.2/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec2059447553
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2059447553.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec2059447553.dir/CheckFunctionExists.c.o  -o cmTryCompileExec2059447553 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTryCompileExec2059447553.dir/build.make:88: recipe for target 'cmTryCompileExec2059447553' failed
+make[2]: *** [cmTryCompileExec2059447553] Error 1
+make[2]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+Makefile:117: recipe for target 'cmTryCompileExec2059447553/fast' failed
+make[1]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec2059447553/fast] Error 2
+
+
+Determining if the function glXGetProcAddressEXT exists failed with the following output:
+Change Dir: /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTryCompileExec2307040587/fast"
+make[1]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2307040587.dir/build.make CMakeFiles/cmTryCompileExec2307040587.dir/build
+make[2]: Entering directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2307040587.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=glXGetProcAddressEXT   -o CMakeFiles/cmTryCompileExec2307040587.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.2/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec2307040587
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2307040587.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=glXGetProcAddressEXT    CMakeFiles/cmTryCompileExec2307040587.dir/CheckFunctionExists.c.o  -o cmTryCompileExec2307040587 -rdynamic -lGL 
+CMakeFiles/cmTryCompileExec2307040587.dir/CheckFunctionExists.c.o: In function `main':
+CheckFunctionExists.c:(.text+0x15): undefined reference to `glXGetProcAddressEXT'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTryCompileExec2307040587.dir/build.make:89: recipe for target 'cmTryCompileExec2307040587' failed
+make[2]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+make[2]: *** [cmTryCompileExec2307040587] Error 1
+Makefile:117: recipe for target 'cmTryCompileExec2307040587/fast' failed
+make[1]: *** [cmTryCompileExec2307040587/fast] Error 2
+make[1]: Leaving directory '/home/boris/MEGA/Peace/ThirdParty/glfw/build/CMakeFiles/CMakeTmp'
+
+

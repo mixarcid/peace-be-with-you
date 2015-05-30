@@ -1,0 +1,14 @@
+#pragma once
+
+#include <GLFW/glfw3.h>
+#include <GL/glc.h>
+#include <GL/glu.h>
+#include "Standard.h"
+#include "VectorMath.h"
+
+
+NAMESPACE {  
+  namespace gl {
+
+  }
+}
