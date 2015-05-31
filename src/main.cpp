@@ -4,8 +4,6 @@
 // Headers
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <GL/glc.h>
-#include <GL/glu.h>
 #include <iostream>
 #include "VectorMath.h"
 #include "VertexObjects.h"

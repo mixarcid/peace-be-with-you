@@ -18,7 +18,7 @@ NAMESPACE {
     }
 
     void use(unsigned int index) {
-      assert(index < length, "VAO index out of bounds");
+      debugAssert(index < length, "VAO index out of bounds");
       glBindVertexArray(ids[index]);
     }
 
