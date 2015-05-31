@@ -7,6 +7,7 @@
 #include <iostream>
 #include "VectorMath.h"
 #include "VertexObjects.h"
+#include "Containers.h"
 
 using namespace peace;
 
@@ -53,6 +54,18 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
 }
 
 int main() {
+
+  log::init(NULL);
+  log::message("Hi!");
+  log::error(":(");
+  try {
+    log::fatalError("Alas!");
+  } catch (Exception* e) {
+    printf("Agh!: %s\n", e->what());
+  }
+  fatalAssert(false, "fatal");
+  exitAssert(false, "fatal");
+  
   GLFWwindow* window;
 
   /* Initialize the library */

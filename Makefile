@@ -4,13 +4,11 @@ CXXFLAGS = -Wall -std=c++11 -fno-exceptions
 INCLUDE = -Isrc/Standard -I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
-LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi
+LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi -lGL
 LIB_DIR = -L/usr/lib64
 endif
 ifeq ($(UNAME), Darwin)
 LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
-else
-LIBS += -lGL
 endif
 
 LIBS += -lGLEW -lglfw3
