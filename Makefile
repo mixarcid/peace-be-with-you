@@ -1,6 +1,6 @@
 UNAME = $(shell uname)
 CXX = clang++
-CXXFLAGS = -Wall -std=c++11 -fno-exceptions
+CXXFLAGS = -Wall -std=c++11
 INCLUDE = -Isrc/Standard -I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
