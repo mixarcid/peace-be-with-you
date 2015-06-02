@@ -16,6 +16,7 @@ NAMESPACE {
     const unsigned int MAX_FATAL_MESSAGE_LENGTH = 200;
   
     void init(const char* filename, bool print_log=false);
+    void terminate();
     
     void vMessage(const char* message, va_list argptr);
     void vError(const char* message, va_list argptr);

@@ -1,2 +1,2 @@
 #!/bin/bash
-valgrind --leak-check=full bin/peace
+valgrind --leak-check=full bin/peace $@

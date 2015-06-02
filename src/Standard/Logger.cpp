@@ -26,6 +26,10 @@ NAMESPACE {
       }
     }
 
+    void terminate() {
+      fclose(logfile);
+    }
+
     void vMessage(const char* message, va_list argptr) {
 
       fprintf(logfile, "%s", LOG_MSG);

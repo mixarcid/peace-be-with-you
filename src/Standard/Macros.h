@@ -7,25 +7,33 @@
 
 #ifndef NDEBUG
 
-#define debugAssert(cond, message) do {					\
+#define debugAssert(cond, ...) do {				\
     if (!(cond)) {							\
-      printf("Assertion Error in %s:%d: %s\n", __FILE__, __LINE__, message); \
+      printf("Assertion Error in %s:%d: ", __FILE__, __LINE__);		\
+      printf(__VA_ARGS__);					\
       exit(EXIT_FAILURE);						\
     }									\
-  } while (0)
+} while (0)
+    
+#define exitAssert(cond, ...) \
+    debugAssert(cond, __VA_ARGS__);
 
-#define exitAssert(cond, message) do {		\
-    if (!(cond)) {				\
-      log::exitError(message);			\
-    }						\
-  } while (0)
-
-#define fatalAssert(cond, message) do {		\
-    if (!(cond)) {				\
-      log::fatalError(message);			\
-    }						\
-  } while (0)
+#define fatalAssert(cond, ...) \
+    debugAssert(cond, __VA_ARGS__);
 
 #else
-#define debugAssert(cond, message) ;
+    
+#define debugAssert(cond, ...)
+
+#define exitAssert(cond, ...) do {	\
+    if (!(cond)) {				\
+      log::exitError(__VA_ARGS__);			\
+    }						\
+  } while (0)
+
+#define fatalAssert(cond, ...) do {	\
+    if (!(cond)) {				\
+      log::fatalError(__VA_ARGS__);		\
+    }						\
+  } while (0)
 #endif
