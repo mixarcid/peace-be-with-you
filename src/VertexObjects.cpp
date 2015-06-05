@@ -2,16 +2,28 @@
 #include "Shader.h"
 
 NAMESPACE {
+
+  VAO* VAO::current_vao = NULL;
+  VAO VAO::all_vaos(NUM_VAOS, false);
   
-  VAO::VAO(unsigned int num_vaos) {
+  VAO::VAO(unsigned int num_vaos, bool initialize) {
     length = num_vaos;
     ids = new GLuint[length];
+    if (initialize) {
+      init();
+    }
+  }
+
+  void VAO::init() {
     glGenVertexArrays(length, ids);
   }
 
   void VAO::use(unsigned int index) {
     debugAssert(index < length, "VAO index out of bounds");
-    glBindVertexArray(ids[index]);
+    if (VAO::current_vao != this) {
+      glBindVertexArray(ids[index]);
+      VAO::current_vao = this;
+    }
   }
 
   void VAO::registerVars(Array<ShaderVar> vars,
@@ -23,7 +35,7 @@ NAMESPACE {
       offsets.push_back(total_size);
       total_size += var.info->size;
     }
-    for (int n=0; n<vars.size(); ++n) {
+    for (unsigned int n=0; n<vars.size(); ++n) {
       glEnableVertexAttribArray(vars[n].id);
       glVertexAttribPointer(vars[n].id, vars[n].info->elem_num,
 			    vars[n].info->elem_type, GL_FALSE,
@@ -34,6 +46,11 @@ NAMESPACE {
   VAO::~VAO() {
     glDeleteVertexArrays(length, ids);
     delete ids;
+  }
+
+  unsigned int VAO::getNextVAOIndex() {
+    static unsigned int last_index = 0;
+    return last_index++;
   }
 
 

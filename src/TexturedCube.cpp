@@ -1,0 +1,7 @@
+#include "TexturedCube.h"
+
+NAMESPACE {
+
+
+
+}

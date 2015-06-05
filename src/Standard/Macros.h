@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define NAMESPACE namespace peace
 
@@ -10,7 +10,8 @@
 #define debugAssert(cond, ...) do {				\
     if (!(cond)) {							\
       printf("Assertion Error in %s:%d: ", __FILE__, __LINE__);		\
-      printf(__VA_ARGS__);					\
+      printf(__VA_ARGS__);						\
+      printf("\n");						\
       exit(EXIT_FAILURE);						\
     }									\
 } while (0)
