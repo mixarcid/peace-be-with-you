@@ -47,15 +47,17 @@ class PMFFile:
             
             self.writeString(mesh.name)
             self.writeStruct("B", PMFFile.TYPE_STATIC_NO_TEXTURE)
+
+            
+            self.writeStruct("L", len(bm.verts))
+            for vert in bm.verts:
+                self.writeVec3f(vert.co)
+                self.writeVec3f(vert.normal)
+
             self.writeStruct("L", len(bm.faces))
-
             for face in bm.faces:
-
-                self.writeVec3f(face.normal)
-
                 for vert in face.verts:
-
-                    self.writeVec3f(vert.co)
+                    self.writeStruct("L", vert.index)
 
     def flush(self):
         self.file.flush()
