@@ -8,6 +8,7 @@
 #include "Graphics.h"
 #include "Shader.h"
 #include "TexturedRect.h"
+#include "MeshLoader.h"
 #include "Time.h"
 
 using namespace peace;
@@ -72,7 +73,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   }
 }
 
-int main() {
+/*int main() {
 
   log::init(NULL);
   graphics::init();
@@ -143,5 +144,11 @@ int main() {
   graphics::terminate();
   log::terminate();
 
+  return EXIT_SUCCESS;
+}*/
+
+int main() {
+  log::init(NULL);
+  MeshLoader loader("Cube.pmf");
   return EXIT_SUCCESS;
 }

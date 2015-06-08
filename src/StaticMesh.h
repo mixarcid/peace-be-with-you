@@ -4,6 +4,8 @@
 #include "Renderable.h"
 #include "VectorMath.h"
 #include "String.h"
+#include "Containers.h"
+#include "VertexObjects.h"
 
 NAMESPACE {
 

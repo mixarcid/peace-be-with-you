@@ -9,6 +9,7 @@ NAMESPACE {
   VAO::VAO(unsigned int num_vaos, bool initialize) {
     length = num_vaos;
     ids = new GLuint[length];
+    initialize = is_initialized;
     if (initialize) {
       init();
     }
@@ -44,8 +45,10 @@ NAMESPACE {
   }
 
   VAO::~VAO() {
-    glDeleteVertexArrays(length, ids);
-    delete ids;
+    if (ids != NULL && is_initialized) {
+      glDeleteVertexArrays(length, ids);
+      delete ids;
+    }
   }
 
   unsigned int VAO::getNextVAOIndex() {
@@ -62,9 +65,12 @@ NAMESPACE {
   }
 
   VBO::~VBO() {
-    glDeleteBuffers(length, ids);
+
+    if (ids != NULL) {
+      glDeleteBuffers(length, ids);
+      delete ids;
+    }
     delete lengths;
-    delete ids;
   }
 
   void VBO::draw(GLenum mode, unsigned int index) {
@@ -98,9 +104,11 @@ NAMESPACE {
   }
 
   EBO::~EBO() {
-    glDeleteBuffers(length, ids);
+    if (ids != NULL) {
+      glDeleteBuffers(length, ids);
+      delete ids;
+    }
     delete lengths;
-    delete ids;
   }
 
 }

@@ -14,8 +14,9 @@ NAMESPACE {
 
     unsigned int length;
     GLuint* ids;
+    bool is_initialized;
 
-    VAO(unsigned int num_vaos = 1, bool initialize = true);
+    VAO(unsigned int num_vaos, bool initialize = true);
     void init();
     void use(unsigned int index  = 0);
     /*the types of the shader vars must entirely be composed of 
