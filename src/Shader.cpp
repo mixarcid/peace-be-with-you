@@ -1,5 +1,4 @@
 #include "Shader.h"
-#include "VectorMath.h"
 #include "Color.h"
 #include "FileSystem.h"
 
@@ -13,6 +12,13 @@ NAMESPACE {
   
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
   const ShaderVar Shader::COLOR(1, TYPE_COLOR4F);
+  const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
+  const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
+
+  const ShaderUniform Shader::UNI_TEXTURE(0);
+  const ShaderUniform Shader::UNI_MODEL(1);
+  const ShaderUniform Shader::UNI_VIEW(2);
+  const ShaderUniform Shader::UNI_PROJ(3);
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
@@ -61,6 +67,18 @@ NAMESPACE {
     info = &SHADER_TYPES[var_type];
   }
 
+  ShaderUniform::ShaderUniform(GLint uniform_id) {
+    id = uniform_id;
+  }
+
+  void ShaderUniform::registerInt(GLint i) const {
+    glUniform1i(id, i);
+  }
+
+  void ShaderUniform::registerMat4f(Mat4f mat) const {
+    glUniformMatrix4fv(id, 1, GL_FALSE, mat.data);
+  }
+
   Shader::Shader(const String filename) {
 
     if (first_shader_load) {
@@ -75,6 +93,7 @@ NAMESPACE {
       + getFileContents((DIR_SHADERS + filename + ".fs").c_str());
     const char* vert_source = vert_str.c_str();
     const char* frag_source = frag_str.c_str();
+    //log::message("%s", vert_source);
 
     GLuint vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &vert_source, NULL);
@@ -99,9 +118,15 @@ NAMESPACE {
     id = glCreateProgram();
     glAttachShader(id, vert_id);
     glAttachShader(id, frag_id);
+    
     glBindFragDataLocation(id, 0, "outColor");
     glBindAttribLocation(id, POSITION.id, "inPosition");
     glBindAttribLocation(id, COLOR.id, "inColor");
+    glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
+    glBindAttribLocation(id, NORMAL.id, "inNormal");
+
+    //UNI_TEXTURE = glGetUniformLocation(id, "uniTexture");
+    
     glLinkProgram(id);
 
     glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
@@ -120,10 +145,14 @@ NAMESPACE {
     glUseProgram(id);
   }
 
-  ShaderVar Shader::getAttrib(const char* name,
-			      ShaderTypeName type) {
+  ShaderVar Shader::getVar(const char* name,
+			   ShaderTypeName type) {
     GLint var_id = glGetAttribLocation(id, name);
     return ShaderVar(var_id, type);
+  }
+
+  ShaderUniform Shader::getUniform(const char* name) {
+    return ShaderUniform(glGetUniformLocation(id, name));
   }
 
   Shader::~Shader() {

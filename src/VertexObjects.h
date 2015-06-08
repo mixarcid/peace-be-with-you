@@ -7,13 +7,16 @@
 NAMESPACE {
 
   struct ShaderVar;
+
+  const unsigned int NUM_VAOS = 200;
   
   struct VAO {
 
     unsigned int length;
     GLuint* ids;
 
-    VAO(unsigned int num_vaos = 1);
+    VAO(unsigned int num_vaos = 1, bool initialize = true);
+    void init();
     void use(unsigned int index  = 0);
     /*the types of the shader vars must entirely be composed of 
       either doubles or floats; for example Vector3f and Color4d 
@@ -21,7 +24,11 @@ NAMESPACE {
     void registerVars(Array<ShaderVar> vars,
 		      unsigned int index = 0);
     ~VAO();
-    
+
+    static VAO* current_vao;
+    static VAO all_vaos;
+
+    static unsigned int getNextVAOIndex();
   };
 
   struct VBO {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Standard.h"
+#include "Graphics.h"
 
 NAMESPACE {
 
@@ -22,6 +23,5 @@ NAMESPACE {
   };
 
   typedef Color4<float> Color4f;
-  typedef Color4<double> Color4d;
   
 }

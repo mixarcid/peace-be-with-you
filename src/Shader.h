@@ -3,6 +3,7 @@
 #include "Standard.h"
 #include "String.h"
 #include "Graphics.h"
+#include "VectorMath.h"
 
 NAMESPACE {
   
@@ -30,6 +31,15 @@ NAMESPACE {
 
     ShaderVar(GLint var_id, ShaderTypeName var_type);
   };
+
+  struct ShaderUniform {
+
+    GLint id;
+
+    ShaderUniform(GLint uniform_id);
+    void registerInt(GLint i) const;
+    void registerMat4f(Mat4f mat) const;
+  };
   
   struct Shader {
     
@@ -37,11 +47,19 @@ NAMESPACE {
 
     Shader(const String filename);
     void use();
-    ShaderVar getAttrib(const char* name, ShaderTypeName type);
+    ShaderVar getVar(const char* name, ShaderTypeName type);
+    ShaderUniform getUniform(const char* name);
     ~Shader();
 
     const static ShaderVar POSITION;
     const static ShaderVar COLOR;
+    const static ShaderVar TEX_COORD;
+    const static ShaderVar NORMAL;
+
+    const static ShaderUniform UNI_TEXTURE;
+    const static ShaderUniform UNI_MODEL;
+    const static ShaderUniform UNI_VIEW;
+    const static ShaderUniform UNI_PROJ;
   };
   
 }
