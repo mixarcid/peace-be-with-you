@@ -15,26 +15,39 @@ NAMESPACE {
     return Vec3f(x,y,z);
   }
 
-  void loadStaticMesh(FILE* file) {
+  void loadStaticMesh(FILE* file, StaticMesh* mesh) {
 
-    uint32_t num_faces = fio::readLittleEndian<uint32_t>(file);
-    debugAssert(num_faces > 0,
+    Array<StaticMeshData> data;
+    Array<GLuint> elems;
+
+    uint32_t num_verts = fio::readLittleEndian<uint32_t>(file);
+    debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
 
-    for (uint32_t face_index = 0;
-	 face_index < num_faces; ++face_index) {
-      
-      Vec3f normal = readVec3f(file);
-      Vec3f vert1 = readVec3f(file);
-      Vec3f vert2 = readVec3f(file);
-      Vec3f vert3 = readVec3f(file);
-      log::message("Face: %u", face_index);
-      log::message("Normal: " + normal.toString());
-      log::message("Vert 1: " + vert1.toString());
-      log::message("Vert 2: " + vert1.toString());
-      log::message("Vert 3: " + vert1.toString());
+    for (uint32_t index = 0; index < num_verts; ++index) {
+
+      Vec3f pos = readVec3f(file);
+      Vec3f norm = readVec3f(file);
+      log::message("Position: " + pos.toString());
+      log::message("Normal: " + norm.toString());
+      data.push_back(StaticMeshData(pos, norm));
+      /*data.push_back(StaticMeshData(readVec3f(file),
+	readVec3f(file)));*/
       
     }
+    
+    uint32_t num_elems = fio::readLittleEndian<uint32_t>(file);
+    debugAssert(num_elems > 0,
+		"Why are you loading a mesh with no faces?");
+    log::message("#Elements: %u", num_elems);
+
+    for (uint32_t index = 0; index < num_elems; ++index) {
+      uint32_t elem = fio::readLittleEndian<uint32_t>(file);
+      log::message("Element: %u", elem);
+      elems.push_back(elem);
+    }
+
+    mesh->init(data, elems);
     
   }
 
@@ -64,20 +77,23 @@ NAMESPACE {
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);
-      log::message("Mesh: " + mesh_name);
       
       unsigned char mesh_type;
       fread(&mesh_type, sizeof(char), 1, file);
       
       if (mesh_type == PMF_TYPE_STATIC) {
-      loadStaticMesh(file);
+	loadStaticMesh(file, &static_meshes[mesh_name]);
       } else {
 	log::fatalError("Unable to determine type of"
 			"mesh %s in model %s",
 			mesh_name.c_str(), full_name);
       }
       
-      }
+    }
+  }
+
+  StaticMesh* MeshLoader::getStaticMesh(String name) {
+    return &static_meshes[name];
   }
 
 }

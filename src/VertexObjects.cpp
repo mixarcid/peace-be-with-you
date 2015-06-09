@@ -77,8 +77,8 @@ NAMESPACE {
     glDrawArrays(mode, 0, lengths[index]);
   }
 
-  EBO::EBO(unsigned int num_vaos) {
-    length = num_vaos;
+  EBO::EBO(unsigned int num_ebos) {
+    length = num_ebos;
     ids = new GLuint[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
@@ -87,6 +87,7 @@ NAMESPACE {
   void EBO::bindArray(Array<GLuint> arr, bool dynamic,
 		      unsigned int index) {
     lengths[index] = arr.size()*sizeof(GLuint);
+    //log::message("%u", arr.size()*sizeof(GLuint));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[index]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, lengths[index], &arr[0],
 		 dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
@@ -100,6 +101,7 @@ NAMESPACE {
   }
 
   void EBO::draw(GLenum mode, unsigned int index) {
+    //log::message("%u", lengths[index]);
     glDrawElements(mode, lengths[index], GL_UNSIGNED_INT, NULL);
   }
 

@@ -3,17 +3,11 @@
 
 NAMESPACE {
 
-  Rotate::Rotate() {
-    axis = Vec3f(0,0,1);
-    angle = 0;
-  }
+  Rotate::Rotate() : axis(0,0,1), angle(0) {}
   
-  Transform::Transform() {
-    scal = Vec3f(1,1,1);
-  }
+  Transform::Transform() : scal(1,1,1) {}
 
-  Transform::Transform(Mat4f matrix) {
-    scal = Vec3f(1,1,1);
+  Transform::Transform(Mat4f matrix) : scal(1,1,1)  {
     mat = matrix;
   }
 

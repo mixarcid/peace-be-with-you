@@ -73,7 +73,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   }
 }
 
-/*int main() {
+int main() {
 
   log::init(NULL);
   graphics::init();
@@ -100,12 +100,15 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   Shader shade("Default");
   shade.use();
 
-  TexturedRect rect("cat.png");
-  TexturedRect rect2("onion-man.png");
+  //TexturedRect rect("cat.png");
+  //TexturedRect rect2("onion-man.png");
+  MeshLoader loader("Cube.pmf");
+  StaticMesh* cube = loader.getStaticMesh("Cube");
   Vec3f axis(0,0,1);
   
   Transform trans1;
-  trans1.setRotateAbs(Vec3f(0,1,0), degreesToRadians(30.0f));
+  trans1.setTranslateAbs(Vec3f(5,0,0));
+  //trans1.setRotateAbs(Vec3f(0,1,0), degreesToRadians(30.0f));
   trans1.flush();
     
   Transform trans2;
@@ -120,19 +123,19 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
 
   windowSize(window, win_width, win_height);
   
-  while (!glfwWindowShouldClose(window)) {
+  while(!glfwWindowShouldClose(window)) {
 
     end.makeCurrent();
     dt = end.getMilliseconds() - start.getMilliseconds();
 
     // Clear the screen to black
-    glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Transform::combine(trans1, model).use();
-    rect2.render();
-    Transform::combine(trans2, model).use();
-    rect.render();
+    //rect2.render();
+    //Transform::combine(trans2, model).use();
+    cube->render();
       
     // Swap buffers
     glfwSwapBuffers(window);
@@ -145,10 +148,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   log::terminate();
 
   return EXIT_SUCCESS;
-}*/
+}
 
-int main() {
+/*int main() {
   log::init(NULL);
   MeshLoader loader("Cube.pmf");
   return EXIT_SUCCESS;
-}
+}*/

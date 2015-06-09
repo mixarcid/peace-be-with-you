@@ -65,7 +65,7 @@ NAMESPACE {
     GLuint* ids;
     unsigned int* lengths;
 
-    EBO(unsigned int num_vaos = 1);
+    EBO(unsigned int num_ebos = 1);
     void bindArray(Array<GLuint> arr, bool dynamic,
 		   unsigned int index = 0);
     //the new array must be the same size as before

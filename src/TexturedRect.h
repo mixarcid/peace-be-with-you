@@ -15,7 +15,24 @@ NAMESPACE {
     Vec2f tex_coord;
   };
 
-  struct TexturedRect : Renderable {
+  struct TexturedRect : public RenderableEBO<RectData> {
+
+    Texture tex;
+
+    TexturedRect(const char* filename);
+    virtual void render();
+    
+  };
+}
+
+/*NAMESPACE {
+
+  struct RectData {
+    Vec3f pos;
+    Vec2f tex_coord;
+  };
+
+  struct TexturedRect {
 
     Array<RectData> data;
     Array<GLuint> elems;
@@ -28,4 +45,4 @@ NAMESPACE {
 
     static unsigned int vao;
   };
-}
+  }*/
