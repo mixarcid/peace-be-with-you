@@ -102,18 +102,19 @@ int main() {
 
   //TexturedRect rect("cat.png");
   //TexturedRect rect2("onion-man.png");
-  MeshLoader loader("Cube.pmf");
-  StaticMesh* cube = loader.getStaticMesh("Cube");
+  MeshLoader loader("Monkey.pmf");
+  StaticMesh* cube = loader.getStaticMesh("Suzanne");
   Vec3f axis(0,0,1);
   
   Transform trans1;
-  trans1.setTranslateAbs(Vec3f(5,0,0));
+  trans1.setTranslateAbs(Vec3f(0,0,-5));
   //trans1.setRotateAbs(Vec3f(0,1,0), degreesToRadians(30.0f));
   trans1.flush();
     
   Transform trans2;
-  trans2.setScaleAbs(Vec3f(1,1.5,1));
-  trans2.setTranslateAbs(Vec3f(1,1,-2));
+  trans2.setTranslateAbs(Vec3f(0,0,-7));
+  //trans2.setScaleAbs(Vec3f(1,1.5,1));
+  //trans2.setTranslateAbs(Vec3f(1,1,-2));
   trans2.flush();
 
   Time start, end;
@@ -134,7 +135,8 @@ int main() {
 
     Transform::combine(trans1, model).use();
     //rect2.render();
-    //Transform::combine(trans2, model).use();
+    Transform::combine(trans2, model).use();
+    //log::message("?");
     cube->render();
       
     // Swap buffers

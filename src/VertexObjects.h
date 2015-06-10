@@ -26,7 +26,7 @@ NAMESPACE {
 		      unsigned int index = 0);
     ~VAO();
 
-    static VAO* current_vao;
+    static GLuint* current_vao;
     static VAO all_vaos;
 
     static unsigned int getNextVAOIndex();
@@ -69,8 +69,8 @@ NAMESPACE {
     void bindArray(Array<GLuint> arr, bool dynamic,
 		   unsigned int index = 0);
     //the new array must be the same size as before
-    void rebindArray(Array<GLuint> arr, bool dynamic,
-		     unsigned int index = 0);
+    /*void rebindArray(Array<GLuint> arr, bool dynamic,
+      unsigned int index = 0);*/
     void draw(GLenum mode, unsigned int index = 0);
     ~EBO();
     

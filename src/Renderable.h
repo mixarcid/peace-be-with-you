@@ -30,7 +30,7 @@ NAMESPACE {
       VAO::all_vaos.use(Renderable<T>::vao);
       vbo.draw(GL_TRIANGLES);
     }
-    //virtual ~Renderable() = 0;
+    virtual ~Renderable() {}
 
     static unsigned int vao;
     static bool firstVAO;

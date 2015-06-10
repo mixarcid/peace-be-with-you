@@ -7,14 +7,11 @@
 
 #ifndef NDEBUG
 
-#define debugAssert(cond, ...) do {				\
-    if (!(cond)) {							\
-      printf("Assertion Error in %s:%d: ", __FILE__, __LINE__);		\
-      printf(__VA_ARGS__);						\
-      printf("\n");						\
-      exit(EXIT_FAILURE);						\
-    }									\
-} while (0)
+#define debugAssert(cond, ...) do {	\
+    if (!(cond)) {				\
+      log::exitError(__VA_ARGS__);			\
+    }						\
+  } while (0)
     
 #define exitAssert(cond, ...) \
     debugAssert(cond, __VA_ARGS__);

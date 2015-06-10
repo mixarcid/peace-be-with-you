@@ -15,7 +15,7 @@ NAMESPACE {
     return Vec3f(x,y,z);
   }
 
-  void loadStaticMesh(FILE* file, StaticMesh* mesh) {
+  StaticMesh* loadStaticMesh(FILE* file) {
 
     Array<StaticMeshData> data;
     Array<GLuint> elems;
@@ -24,49 +24,53 @@ NAMESPACE {
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
 
+    //log::message("#Verts: %u", num_verts);
     for (uint32_t index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
-      log::message("Position: " + pos.toString());
-      log::message("Normal: " + norm.toString());
+      //log::message("Position: " + pos.toString());
+      //log::message("Normal: " + norm.toString());
       data.push_back(StaticMeshData(pos, norm));
       /*data.push_back(StaticMeshData(readVec3f(file),
 	readVec3f(file)));*/
       
     }
     
-    uint32_t num_elems = fio::readLittleEndian<uint32_t>(file);
+    uint32_t num_elems = 3*fio::readLittleEndian<uint32_t>(file);
     debugAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
-    log::message("#Elements: %u", num_elems);
+    //log::message("#Elements: %u", num_elems);
 
     for (uint32_t index = 0; index < num_elems; ++index) {
       uint32_t elem = fio::readLittleEndian<uint32_t>(file);
-      log::message("Element: %u", elem);
+      //log::message("Element: %u", elem);
       elems.push_back(elem);
     }
 
-    mesh->init(data, elems);
+    return new StaticMesh(data, elems);
     
   }
 
   MeshLoader::MeshLoader(String filename) {
 
-    const char* full_name = (DIR_MODELS + filename).c_str();
-    FILE* file = fopen(full_name, "rb");
+    String full_name = (DIR_MODELS + filename);
+    
+    FILE* file = fopen(full_name.c_str(), "rb");
     fatalAssert(file != NULL,
-		"Unable to open model %s", full_name);
+		"Unable to open model %s", full_name.c_str());
     
     char sig[3];
     fread(sig, sizeof(char), 3, file);
     fatalAssert(sig[0] == 'P' && sig[1] == 'M' && sig[2] == 'F',
-		"Incorrect signature for model %s", full_name);
+		"Incorrect signature for model %s",
+		full_name.c_str());
     
     char ver;
     fread(&ver, sizeof(char), 1, file);
     fatalAssert(ver == PMF_VERSION,
-		"Incorrect PMF version for model %s", full_name);
+		"Incorrect PMF version for model %s",
+		full_name.c_str());
 
     uint32_t num_meshes = fio::readLittleEndian<uint32_t>(file);
     //log::message("%u", num_meshes);
@@ -77,23 +81,36 @@ NAMESPACE {
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);
+      //log::message("Mesh name: " + mesh_name);
       
       unsigned char mesh_type;
       fread(&mesh_type, sizeof(char), 1, file);
       
       if (mesh_type == PMF_TYPE_STATIC) {
-	loadStaticMesh(file, &static_meshes[mesh_name]);
+	static_meshes[mesh_name] = loadStaticMesh(file);
       } else {
 	log::fatalError("Unable to determine type of"
 			"mesh %s in model %s",
-			mesh_name.c_str(), full_name);
+			mesh_name.c_str(), full_name.c_str());
       }
-      
     }
+
+    fclose(file);
+    log::message("Loaded model %s", filename.c_str());
+    
   }
 
   StaticMesh* MeshLoader::getStaticMesh(String name) {
-    return &static_meshes[name];
+    StaticMesh* ret = static_meshes[name];
+    fatalAssert(ret != NULL,
+		"The mesh " + name +
+		" does not exist in this model");
+    return ret;
   }
 
+  MeshLoader::~MeshLoader() {
+    for (const auto pair : static_meshes) {
+      delete pair.second; //the mesh
+    }
+  }
 }

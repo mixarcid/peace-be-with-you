@@ -9,11 +9,11 @@ NAMESPACE {
 
   struct MeshLoader {
 
-    HashMap<String, StaticMesh> static_meshes;
+    HashMap<String, StaticMesh*> static_meshes;
     
     MeshLoader(String filename);
     StaticMesh* getStaticMesh(String mesh_name);
-    
+    ~MeshLoader();
   };
 
 }
