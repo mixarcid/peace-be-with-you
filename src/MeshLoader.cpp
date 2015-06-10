@@ -1,7 +1,7 @@
-#include "MeshLoader.h"
-#include "String.h"
-#include "FileIO.h"
-#include "FileSystem.h"
+#include "MeshLoader.hpp"
+#include "String.hpp"
+#include "FileIO.hpp"
+#include "FileSystem.hpp"
 
 NAMESPACE {
 

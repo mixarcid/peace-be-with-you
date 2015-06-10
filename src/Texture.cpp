@@ -1,6 +1,6 @@
 #include <SOIL/SOIL.h>
-#include "Texture.h"
-#include "FileSystem.h"
+#include "Texture.hpp"
+#include "FileSystem.hpp"
 
 NAMESPACE {
 

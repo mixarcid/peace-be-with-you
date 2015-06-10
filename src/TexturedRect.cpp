@@ -1,5 +1,5 @@
-#include "TexturedRect.h"
-#include "Shader.h"
+#include "TexturedRect.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
 

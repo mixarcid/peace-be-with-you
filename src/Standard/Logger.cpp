@@ -1,6 +1,6 @@
 #include <stdarg.h> 
-#include "Logger.h"
-#include "Exceptions.h"
+#include "Logger.hpp"
+#include "Exceptions.hpp"
 
 NAMESPACE {
   namespace log {

@@ -1,5 +1,5 @@
-#include "VertexObjects.h"
-#include "Shader.h"
+#include "VertexObjects.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
 

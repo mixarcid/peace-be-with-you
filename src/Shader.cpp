@@ -1,6 +1,6 @@
-#include "Shader.h"
-#include "Color.h"
-#include "FileSystem.h"
+#include "Shader.hpp"
+#include "Color.hpp"
+#include "FileSystem.hpp"
 
 NAMESPACE {
 

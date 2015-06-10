@@ -1,15 +1,15 @@
 // Link statically with GLEW
 #define GLEW_STATIC
 
-#include "VectorMath.h"
-#include "Transform.h"
-#include "VertexObjects.h"
-#include "Containers.h"
-#include "Graphics.h"
-#include "Shader.h"
-#include "TexturedRect.h"
-#include "MeshLoader.h"
-#include "Time.h"
+#include "VectorMath.hpp"
+#include "Transform.hpp"
+#include "VertexObjects.hpp"
+#include "Containers.hpp"
+#include "Graphics.hpp"
+#include "Shader.hpp"
+#include "TexturedRect.hpp"
+#include "MeshLoader.hpp"
+#include "Time.hpp"
 
 using namespace peace;
 

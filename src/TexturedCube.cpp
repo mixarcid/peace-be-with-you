@@ -1,4 +1,4 @@
-#include "TexturedCube.h"
+#include "TexturedCube.hpp"
 
 NAMESPACE {
 

@@ -1,5 +1,5 @@
-#include "Transform.h"
-#include "Shader.h"
+#include "Transform.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
 

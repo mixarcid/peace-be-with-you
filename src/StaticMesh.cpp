@@ -1,4 +1,4 @@
-#include "StaticMesh.h"
+#include "StaticMesh.hpp"
 
 NAMESPACE {
 
