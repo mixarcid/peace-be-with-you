@@ -3,33 +3,20 @@
 
 NAMESPACE {
 
-  GLuint* VAO::current_vao = NULL;
-  VAO VAO::all_vaos(NUM_VAOS, false);
-  
-  VAO::VAO(unsigned int num_vaos, bool initialize) {
-    length = num_vaos;
-    ids = new GLuint[length];
-    initialize = is_initialized;
-    if (initialize) {
-      init();
+  unsigned int VAO::length = 0;
+  GLuint* VAO::ids = NULL;
+  bool VAO::is_initialized  = 0;
+  unsigned int VAO::current = 0;
+
+  void VAO::use() {
+    debugAssert(index < VAO::length, "VAO index out of bounds");
+    if (VAO::current != index) {
+      glBindVertexArray(VAO::ids[index]);
+      VAO::current = index;
     }
   }
 
-  void VAO::init() {
-    glGenVertexArrays(length, ids);
-  }
-
-  void VAO::use(unsigned int index) {
-    debugAssert(index < length, "VAO index out of bounds");
-    if (VAO::current_vao != &ids[index]) {
-      //log::message("?");
-      glBindVertexArray(ids[index]);
-      VAO::current_vao = &ids[index];
-    }
-  }
-
-  void VAO::registerVars(Array<ShaderVar> vars,
-			 unsigned int index) {
+  void VAO::registerVars(Array<ShaderVar> vars) {
     Array<size_t> offsets;
     size_t total_size = 0;
 
@@ -44,17 +31,29 @@ NAMESPACE {
 			    total_size, (void*) offsets[n]);
     }
   }
-
-  VAO::~VAO() {
-    if (ids != NULL && is_initialized) {
-      glDeleteVertexArrays(length, ids);
-      delete ids;
-    }
+  
+  void VAO::init(unsigned int num_vaos) {
+    glGenVertexArrays(length, ids);
+    VAO::length = num_vaos;
+    VAO::ids = new GLuint[length];
+    VAO::is_initialized = true;
   }
 
-  unsigned int VAO::getNextVAOIndex() {
+  VAO VAO::getVAO() {
     static unsigned int last_index = 0;
-    return last_index++;
+    VAO ret;
+    ret.index = last_index++;
+    return ret;
+  }
+  
+  void VAO::terminate() {
+    if (VAO::ids != NULL && VAO::is_initialized) {
+      glDeleteVertexArrays(length, ids);
+      delete ids;
+    } else {
+      log::error("Why are you calling VAO::terminate() without"
+		 " calling VAO::init()?");
+    }
   }
 
 

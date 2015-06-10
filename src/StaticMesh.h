@@ -34,8 +34,7 @@ NAMESPACE {
     };*/
     
     StaticMesh(Array<StaticMeshData> mesh_data,
-	       Array<GLuint> mesh_elems) :
-      RenderableEBO<StaticMeshData>() {
+	       Array<GLuint> mesh_elems) {
 
       Renderable<StaticMeshData>::data = mesh_data;
       RenderableEBO<StaticMeshData>::elements = mesh_elems;

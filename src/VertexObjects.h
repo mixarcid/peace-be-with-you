@@ -8,28 +8,26 @@ NAMESPACE {
 
   struct ShaderVar;
 
-  const unsigned int NUM_VAOS = 200;
+  const unsigned int DEFAULT_NUM_VAOS = 200;
   
   struct VAO {
 
-    unsigned int length;
-    GLuint* ids;
-    bool is_initialized;
+    unsigned int index;
 
-    VAO(unsigned int num_vaos, bool initialize = true);
-    void init();
-    void use(unsigned int index  = 0);
+    void use();
     /*the types of the shader vars must entirely be composed of 
       either doubles or floats; for example Vector3f and Color4d 
       must not be mixed */
-    void registerVars(Array<ShaderVar> vars,
-		      unsigned int index = 0);
-    ~VAO();
+    void registerVars(Array<ShaderVar> vars);
 
-    static GLuint* current_vao;
-    static VAO all_vaos;
+    static unsigned int length;
+    static GLuint* ids;
+    static bool is_initialized;
+    static unsigned int current;
 
-    static unsigned int getNextVAOIndex();
+    static void init(unsigned int num_vaos = DEFAULT_NUM_VAOS);
+    static VAO getVAO();
+    static void terminate();
   };
 
   struct VBO {

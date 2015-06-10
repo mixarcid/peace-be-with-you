@@ -3,8 +3,7 @@
 
 NAMESPACE {
 
-  TexturedRect::TexturedRect(const char* filename) :
-    RenderableEBO<RectData>() {
+  TexturedRect::TexturedRect(const char* filename) {
     
     Renderable<RectData>::data = {
       {Vec3f(-0.5, 0.5, 0), Vec2f(0,0)},

@@ -95,7 +95,7 @@ int main() {
   glewExperimental = GL_TRUE;
   glewInit();
 
-  VAO::all_vaos.init();
+  VAO::init();
 
   Shader shade("Default");
   shade.use();
@@ -148,6 +148,7 @@ int main() {
   
   graphics::terminate();
   log::terminate();
+  VAO::terminate();
 
   return EXIT_SUCCESS;
 }

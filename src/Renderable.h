@@ -15,30 +15,28 @@ NAMESPACE {
     Array<T> data;
     VBO vbo;
 
-    Renderable() {
-      if (Renderable<T>::firstVAO) {
-	Renderable<T>::vao = VAO::getNextVAOIndex();
-	firstVAO = false;
-      }
-      VAO::all_vaos.use(Renderable<T>::vao);
-    }
     void init(Array<ShaderVar> vars, bool isDynamic) {
+      if (Renderable<T>::firstVAO) {
+	Renderable<T>::vao = VAO::getVAO();
+	Renderable<T>::firstVAO = false;
+      }
+      Renderable<T>::vao.use();
       vbo.bindArray(data, isDynamic);
-      VAO::all_vaos.registerVars(vars, Renderable<T>::vao);
+      Renderable<T>::vao.registerVars(vars);
     }
     virtual void render() {
-      VAO::all_vaos.use(Renderable<T>::vao);
+      Renderable<T>::vao.use();
       vbo.draw(GL_TRIANGLES);
     }
     virtual ~Renderable() {}
 
-    static unsigned int vao;
+    static VAO vao;
     static bool firstVAO;
     
   };
 
   template <typename T>
-    unsigned int Renderable<T>::vao;
+    VAO Renderable<T>::vao;
   template <typename T>
     bool Renderable<T>::firstVAO = true;
 
@@ -48,14 +46,18 @@ NAMESPACE {
     EBO ebo;
     Array<GLuint> elements;
 
-    using Renderable<T>::Renderable;
     void init(Array<ShaderVar> vars, bool isDynamic) {
+      if (Renderable<T>::firstVAO) {
+	Renderable<T>::vao = VAO::getVAO();
+	Renderable<T>::firstVAO = false;
+      }
+      Renderable<T>::vao.use();
       Renderable<T>::vbo.bindArray(Renderable<T>::data, isDynamic);
       ebo.bindArray(elements, isDynamic);
-      VAO::all_vaos.registerVars(vars, Renderable<T>::vao);
+      Renderable<T>::vao.registerVars(vars);
     }
     virtual void render() {
-      VAO::all_vaos.use(Renderable<T>::vao);
+      Renderable<T>::vao.use();
       ebo.draw(GL_TRIANGLES);
     }
     
