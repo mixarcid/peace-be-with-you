@@ -7,7 +7,7 @@ bl_info = {
     "name":         "PMF Exporter",
     "author":       "Michael Arcidiacono",
     "blender":      (2,6,2),
-    "version":      (0,0,1),
+    "version":      (0,0,2),
     "location":     "File > Import-Export",
     "description":  "Export Peace Model Format (PMF) files",
     "category":     "Import-Export"
@@ -21,7 +21,7 @@ class PMFFile:
     def __init__(self, filename):
         self.file = open(filename, 'bw')
         self.file.write(b'PMF') #signature
-        self.file.write(b'\x01') #version
+        self.file.write(b'\x02') #version
 
     def writeStruct(self, fmt, *arg):
         self.file.write(struct.pack("<"+fmt, *arg))
@@ -31,6 +31,9 @@ class PMFFile:
 
     def writeVec3f(self, vec):
         self.writeStruct("fff", vec.x, vec.y, vec.z)
+
+    def writeVec2f(self, vec):
+        self.writeStruct("ff", vec.x, vec.y)
         
     def loadMeshes(self, meshes):
 
@@ -44,15 +47,26 @@ class PMFFile:
 
             bm.from_mesh(mesh)
             bmesh.ops.triangulate(bm, faces = bm.faces)
+
+            uv_layer = bm.loops.layers.uv.active
+            if uv_layer is None:
+                raise Exception("No UV Layer!")
             
             self.writeString(mesh.name)
-            self.writeStruct("B", PMFFile.TYPE_STATIC_NO_TEXTURE)
+            self.writeStruct("B", PMFFile.TYPE_STATIC_TEXTURE)
+            self.writeString(mesh.uv_textures.active.data[0].image.name)
 
+            vert_uvs = [None]*(len(bm.verts))
+            for face in bm.faces:
+                for loop, vert in zip(face.loops, face.verts):
+                    vert_uvs[vert.index] = loop[uv_layer].uv
             
             self.writeStruct("L", len(bm.verts))
+            print(len(bm.verts))
             for vert in bm.verts:
                 self.writeVec3f(vert.co)
                 self.writeVec3f(vert.normal)
+                self.writeVec2f(vert_uvs[vert.index])
 
             self.writeStruct("L", len(bm.faces))
             for face in bm.faces:
