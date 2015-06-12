@@ -1,7 +1,7 @@
 UNAME = $(shell uname)
 CXX = clang++
 CXXFLAGS = -Wall -std=c++11
-INCLUDE = -Isrc/Standard -I/usr/include -I/usr/local/include
+INCLUDE = -Isrc/Standard -IThirdParty/include #-I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
 INCLUDE += -I/usr/local/include/SOIL
@@ -13,7 +13,8 @@ LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo 
 endif
 
 LIBS += -lGLEW -lglfw3 -lSOIL
-LIB_DIR += -L/usr/local/lib
+#LIB_DIR += —L/usr/local/lib L/usr/local/lib
+LIB_DIR += -LThirdParty/lib
 
 OUTPUT = peace
 OUT_DIR = bin
