@@ -1,18 +1,20 @@
 UNAME = $(shell uname)
 CXX = clang++
 CXXFLAGS = -Wall -std=c++11
-INCLUDE = -Isrc/Standard -I/usr/include -I/usr/local/include
+INCLUDE = -Isrc/Standard -IThirdParty/include #-I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
+INCLUDE += -I/usr/local/include/SOIL
 LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi -lGL
 LIB_DIR = -L/usr/lib64
 endif
 ifeq ($(UNAME), Darwin)
-LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation
 endif
 
-LIBS += -lGLEW -lglfw3
-LIB_DIR = -L/usr/lib -L/usr/local/lib 
+LIBS += -lGLEW -lglfw3 -lSOIL
+#LIB_DIR += —L/usr/local/lib L/usr/local/lib
+LIB_DIR += -LThirdParty/lib
 
 OUTPUT = peace
 OUT_DIR = bin
