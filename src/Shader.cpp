@@ -140,7 +140,7 @@ NAMESPACE {
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
-    log::message("Initialized shader %s", filename.c_str());
+    log::message("Loaded shader %s", filename.c_str());
   }
 
   void Shader::use() {
