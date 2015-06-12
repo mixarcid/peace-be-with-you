@@ -2,11 +2,14 @@
 #include "String.hpp"
 #include "FileIO.hpp"
 #include "FileSystem.hpp"
+#include "Texture.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
 
-  const char PMF_VERSION = 0x01;
-  const char PMF_TYPE_STATIC = 0;
+  const char PMF_VERSION = 0x03;
+  const char PMF_TYPE_STATIC_NO_TEXTURE = 0;
+  const char PMF_TYPE_STATIC_TEXTURE = 1;
 
   Vec3f readVec3f(FILE* file) {
     float x = fio::readLittleEndian<float>(file);
@@ -15,10 +18,19 @@ NAMESPACE {
     return Vec3f(x,y,z);
   }
 
-  StaticMesh* loadStaticMesh(FILE* file) {
+  Vec2f readVec2f(FILE* file) {
+    float x = fio::readLittleEndian<float>(file);
+    float y = fio::readLittleEndian<float>(file);
+    return Vec2f(x,y);
+  }
+    
+  StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
     Array<StaticMeshData> data;
     Array<GLuint> elems;
+
+    //String tex_name = fio::readString(file);
+    //log::message("Texture name: " + tex_name);
 
     uint32_t num_verts = fio::readLittleEndian<uint32_t>(file);
     debugAssert(num_verts > 0,
@@ -29,9 +41,11 @@ NAMESPACE {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
+      Vec2f tex_coord = readVec2f(file);
+      tex_coord.y = 1 - tex_coord.y;
       //log::message("Position: " + pos.toString());
       //log::message("Normal: " + norm.toString());
-      data.push_back(StaticMeshData(pos, norm));
+      data.push_back(StaticMeshData(pos, norm, tex_coord));
       /*data.push_back(StaticMeshData(readVec3f(file),
 	readVec3f(file)));*/
       
@@ -48,13 +62,14 @@ NAMESPACE {
       elems.push_back(elem);
     }
 
-    return new StaticMesh(data, elems);
+    return new StaticMesh(data, elems, tex);
     
   }
 
   MeshLoader::MeshLoader(String filename) {
 
-    String full_name = (DIR_MODELS + filename);
+    String full_name = (DIR_MODELS + filename
+			+ DIR_MODEL_EXTENSION);
     
     FILE* file = fopen(full_name.c_str(), "rb");
     fatalAssert(file != NULL,
@@ -77,6 +92,10 @@ NAMESPACE {
     debugAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
 
+    Texture model_texture = Texture::getTexture();
+    model_texture.use();
+    model_texture.load(filename, Shader::UNI_TEXTURE);
+
     for (uint32_t mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
@@ -85,13 +104,21 @@ NAMESPACE {
       
       unsigned char mesh_type;
       fread(&mesh_type, sizeof(char), 1, file);
-      
-      if (mesh_type == PMF_TYPE_STATIC) {
-	static_meshes[mesh_name] = loadStaticMesh(file);
-      } else {
-	log::fatalError("Unable to determine type of"
-			"mesh %s in model %s",
-			mesh_name.c_str(), full_name.c_str());
+
+      switch(mesh_type) {
+      case PMF_TYPE_STATIC_NO_TEXTURE:
+	log::fatalError("PMF type STATIC_NO_TEXTURE is"
+			" no longer supported");
+	break;
+      case PMF_TYPE_STATIC_TEXTURE:
+	static_meshes[mesh_name] = loadStaticMesh(file,
+						  &model_texture);
+	break;
+      default:
+	  log::fatalError("Unable to determine type of"
+			  "mesh %s in model %s",
+			  mesh_name.c_str(), full_name.c_str());
+	break;
       }
     }
 
@@ -103,7 +130,7 @@ NAMESPACE {
   StaticMesh* MeshLoader::getStaticMesh(String name) {
     StaticMesh* ret = static_meshes[name];
     fatalAssert(ret != NULL,
-		"The mesh " + name +
+		"The static mesh " + name +
 		" does not exist in this model");
     return ret;
   }

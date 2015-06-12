@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "Macros.hpp"
+#include "Logger.hpp"
 #include "String.hpp"
 
 NAMESPACE {
@@ -26,7 +27,9 @@ NAMESPACE {
     T readLittleEndian(FILE* file) {
 
       T data;
-      fread(&data, sizeof(T), 1, file);
+      fatalAssert(fread(&data, sizeof(T), 1, file) != 0,
+		  "Unexpected EOF while reading. Or possibly"
+		  " another file I/O error");
       
       if (!ENDIAN.isLittle) {
 	//Thanks, Michael Manner from Stack Overflow

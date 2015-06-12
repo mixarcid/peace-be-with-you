@@ -17,7 +17,8 @@ NAMESPACE {
     };
     RenderableEBO<RectData>::init({Shader::POSITION,
 	  Shader::TEX_COORD}, false);
-    
+
+    tex = Texture::getTexture();
     tex.use();
     tex.load(filename, Shader::UNI_TEXTURE);
   }

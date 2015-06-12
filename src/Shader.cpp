@@ -22,7 +22,7 @@ NAMESPACE {
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
-  const static int MAX_CHARS_IN_FILE = 500;
+  const static int MAX_CHARS_IN_FILE = 5000;
   const static int MAX_LOG_SIZE = 1000;
 
   static String vert_header;
@@ -88,9 +88,11 @@ NAMESPACE {
     }
 
     String vert_str = vert_header + "\n"
-      + getFileContents((DIR_SHADERS + filename + ".vs").c_str());
+      + getFileContents((DIR_SHADERS + filename
+			 + DIR_VERT_EXTENSION).c_str());
     String frag_str = frag_header + "\n"
-      + getFileContents((DIR_SHADERS + filename + ".fs").c_str());
+      + getFileContents((DIR_SHADERS + filename +
+			 DIR_FRAG_EXTENSION).c_str());
     const char* vert_source = vert_str.c_str();
     const char* frag_source = frag_str.c_str();
     //log::message("%s", vert_source);

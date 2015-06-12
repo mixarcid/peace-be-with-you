@@ -70,6 +70,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   case GLFW_KEY_D:
     model.translate(Vec3f(-trans_speed*dt,0,0));
     break;
+  case GLFW_KEY_Q:
+    model.translate(Vec3f(0,-trans_speed*dt,0));
+    break;
+  case GLFW_KEY_Z:
+    model.translate(Vec3f(0,trans_speed*dt,0));
+    break;
   }
 }
 
@@ -95,15 +101,24 @@ int main() {
   glewExperimental = GL_TRUE;
   glewInit();
 
+  const unsigned char* version = glGetString(GL_VERSION);
+  fatalAssert(version != NULL,
+	      "Cannot determine OpenGL version");
+  log::message("Your OpenGL version is %s", version);
+  //delete version;
+  
   VAO::init();
+  Texture::init();
 
-  Shader shade("Default");
+  Shader shade("Toon");
   shade.use();
 
   //TexturedRect rect("cat.png");
   //TexturedRect rect2("onion-man.png");
-  MeshLoader loader("Monkey.pmf");
-  StaticMesh* cube = loader.getStaticMesh("Suzanne");
+  MeshLoader loader("Soldier");
+  MeshLoader loader2("WoodenBox");
+  StaticMesh* cube = loader2.getStaticMesh("Cube");
+  StaticMesh* frank = loader.getStaticMesh("Frank");
   Vec3f axis(0,0,1);
   
   Transform trans1;
@@ -114,7 +129,7 @@ int main() {
   Transform trans2;
   trans2.setTranslateAbs(Vec3f(0,0,-7));
   //trans2.setScaleAbs(Vec3f(1,1.5,1));
-  //trans2.setTranslateAbs(Vec3f(1,1,-2));
+  //trans2.setRotateAbs(Vec3f(0,1,0), degreesToRadians(90.0f));
   trans2.flush();
 
   Time start, end;
@@ -134,10 +149,9 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Transform::combine(trans1, model).use();
-    //rect2.render();
-    Transform::combine(trans2, model).use();
-    //log::message("?");
     cube->render();
+    Transform::combine(trans2, model).use();
+    frank->render();
       
     // Swap buffers
     glfwSwapBuffers(window);
@@ -149,6 +163,7 @@ int main() {
   graphics::terminate();
   log::terminate();
   VAO::terminate();
+  Texture::terminate();
 
   return EXIT_SUCCESS;
 }

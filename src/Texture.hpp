@@ -7,16 +7,24 @@
 
 NAMESPACE {
 
+  const unsigned int DEFAULT_NUM_TEXTURES = 500;
+
   struct Texture {
 
-    unsigned int length;
-    GLuint* ids;
+    unsigned int index;
 
-    Texture(unsigned int num_textures = 1);
-    void load(String filename, ShaderUniform tex_uniform,
-	      unsigned int index = 0);
-    void use(unsigned int index = 0);
-    ~Texture();
+    //Texture(Texture* tex);
+    void use();
+    void load(String filename, ShaderUniform tex_uniform);
+
+    static unsigned int length;
+    static GLuint* ids;
+    static bool is_initialized;
+    static unsigned int current;
+
+    static void init(unsigned int num_vaos = DEFAULT_NUM_TEXTURES);
+    static Texture getTexture();
+    static void terminate();
   };
 
 }

@@ -4,6 +4,8 @@
 #include "Renderable.hpp"
 #include "VectorMath.hpp"
 #include "Containers.hpp"
+#include "String.hpp"
+#include "Texture.hpp"
 
 NAMESPACE {
 
@@ -11,37 +13,24 @@ NAMESPACE {
 
     Vec3f pos;
     Vec3f norm;
+    Vec2f tex_coord;
 
-    StaticMeshData(Vec3f position, Vec3f normal) {
+    StaticMeshData(Vec3f position, Vec3f normal,
+		   Vec2f texture_coord) {
       pos = position;
       norm = normal;
+      tex_coord = texture_coord;
     }
 
   };
 
   struct StaticMesh : RenderableEBO<StaticMeshData> {
 
-    /*StaticMesh() : RenderableEBO<StaticMeshData>() {}
-
-    void init() {
-      Renderable<StaticMeshData>::data = mesh_data;
-      RenderableEBO<StaticMeshData>::elements = mesh_elems;
-      //log::message("Element size: %u", mesh_elems.size());
-      RenderableEBO<StaticMeshData>::init({Shader::POSITION,
-	    Shader::NORMAL}, false);
-    }
-    
-    };*/
+    Texture tex;
     
     StaticMesh(Array<StaticMeshData> mesh_data,
-	       Array<GLuint> mesh_elems) {
-
-      Renderable<StaticMeshData>::data = mesh_data;
-      RenderableEBO<StaticMeshData>::elements = mesh_elems;
-      RenderableEBO<StaticMeshData>::init({Shader::POSITION,
-	    Shader::NORMAL}, false);
-      
-    }
+	       Array<GLuint> mesh_elems, Texture* texture);
+    virtual void render();
     
   };
   

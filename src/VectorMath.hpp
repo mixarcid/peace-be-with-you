@@ -28,6 +28,15 @@ NAMESPACE {
       y = yval;
     }
 
+    Vec2() {
+      x = 0;
+      y = 0;
+    }
+
+    void operator=(const Vec2 b) {
+      memcpy(this, &b, sizeof(Vec2<T>));
+    }
+
     Vec2 operator+(const Vec2 b) {
       return Vec2(x + b.x,
 		  y + b.y);
@@ -36,6 +45,11 @@ NAMESPACE {
     Vec2 operator-(const Vec2 b) {
       return Vec2(x - b.x,
 		  y - b.y);
+    }
+
+    String toString() {
+      return "<" + to_string(x) + ", "
+	+ to_string(y) + ">";
     }
   };
 
@@ -62,7 +76,7 @@ NAMESPACE {
     }
 
     void operator=(const Vec3 b) {
-      memcpy(this, &b, 3*sizeof(T));
+      memcpy(this, &b, sizeof(Vec3<T>));
     }
 
     Vec3 operator*(const T b) {
@@ -150,7 +164,7 @@ NAMESPACE {
 		 0,1,0,0,
 		 0,0,1,0,
 		 0,0,0,1};
-      memcpy(this, d, 16*sizeof(T));
+      memcpy(this, d, sizeof(Mat4<T>));
     }
 
     Mat4(const T* initial_data) {
