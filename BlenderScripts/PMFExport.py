@@ -13,6 +13,12 @@ bl_info = {
     "category":     "Import-Export"
 }
 
+VEC_OFFSET = 0.0001
+def vec2Cmp(v1, v2):
+    x = (v1.x < v2.x + VEC_OFFSET and v2.x < v1.x + VEC_OFFSET)
+    y = (v1.y < v2.y + VEC_OFFSET and v2.y < v1.y + VEC_OFFSET)
+    return x and y
+
 class PMFFile:
 
     TYPE_STATIC_NO_TEXTURE = 0
@@ -21,7 +27,7 @@ class PMFFile:
     def __init__(self, filename):
         self.file = open(filename, 'bw')
         self.file.write(b'PMF') #signature
-        self.file.write(b'\x02') #version
+        self.file.write(b'\x03') #version
 
     def writeStruct(self, fmt, *arg):
         self.file.write(struct.pack("<"+fmt, *arg))
@@ -54,24 +60,44 @@ class PMFFile:
             
             self.writeString(mesh.name)
             self.writeStruct("B", PMFFile.TYPE_STATIC_TEXTURE)
-            self.writeString(mesh.uv_textures.active.data[0].image.name)
+            #self.writeString(mesh.uv_textures.active.data[0].image.name)
 
-            vert_uvs = [None]*(len(bm.verts))
+            vert_uvs = [[] for x in range(len(bm.verts))]
+            vert_indexes = [0 for x in range(len(bm.verts))]
+            vert_length = 0
             for face in bm.faces:
                 for loop, vert in zip(face.loops, face.verts):
-                    vert_uvs[vert.index] = loop[uv_layer].uv
+                    should_append = True
+                    for uv in vert_uvs[vert.index]:
+                        if vec2Cmp(uv, loop[uv_layer].uv):
+                            should_append = False
+                            #print("YEAH!")
+                    if should_append:
+                        vert_uvs[vert.index].append(loop[uv_layer].uv)
+                        vert_length = vert_length + 1
+                        vert_indexes = vert_indexes[0:vert.index+1] \
+                                       + [i + 1 for i in vert_indexes[vert.index+1:]]
             
-            self.writeStruct("L", len(bm.verts))
-            print(len(bm.verts))
+            self.writeStruct("L", vert_length)
+            #print(len(bm.verts))
             for vert in bm.verts:
-                self.writeVec3f(vert.co)
-                self.writeVec3f(vert.normal)
-                self.writeVec2f(vert_uvs[vert.index])
+                #self.writeStruct"B", len(vert_uvs[vert.index])
+                print("UVs: " + str(vert_uvs[vert.index]))
+                for uv in vert_uvs[vert.index]:
+                    self.writeVec3f(vert.co)
+                    self.writeVec3f(vert.normal)
+                    self.writeVec2f(uv)
 
             self.writeStruct("L", len(bm.faces))
             for face in bm.faces:
-                for vert in face.verts:
-                    self.writeStruct("L", vert.index)
+                for vert, loop in zip(face.verts, face.loops):
+                    n = 0
+                    for uv in vert_uvs[vert.index]:
+                        if vec2Cmp(uv, loop[uv_layer].uv):
+                            break
+                        n = n + 1
+                    print("My index: " + str(vert_indexes[vert.index]) + " | real index: " + str(vert.index))
+                    self.writeStruct("L", vert_indexes[vert.index] + n)
 
     def flush(self):
         self.file.flush()
@@ -79,7 +105,7 @@ class PMFFile:
 class PMFExport(bpy.types.Operator, ExportHelper):
     
     bl_idname = "export_pmf.pmf"
-    bl_label = "PMF Exporter"
+    bl_label = "Export .pmf"
     bl_options = {'PRESET'}
     
     filename_ext = ".pmf"
