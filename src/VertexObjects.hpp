@@ -36,14 +36,15 @@ NAMESPACE {
     GLuint* ids;
     unsigned int* lengths;
 
-    VBO(unsigned int num_vaos = 1);
+    void init(unsigned int num_vbos = 1);
     template <typename T>
     void bindArray(Array<T> arr, bool dynamic,
 		   unsigned int index = 0) {
       lengths[index] = arr.size()*sizeof(T);
+      //g::message("l: %u a: %u", lengths[index], &arr[0]);
       glBindBuffer(GL_ARRAY_BUFFER, ids[index]);
       glBufferData(GL_ARRAY_BUFFER, lengths[index], &arr[0],
-		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+      		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
     //the new array must be the same size as before
     template <typename T>
@@ -54,7 +55,8 @@ NAMESPACE {
     }
     void draw(GLenum mode, unsigned int index = 0);
     ~VBO();
-    
+
+    //static VBO getVBO(unsigned int num_vbos = 1);
   };
 
   struct EBO {
@@ -63,7 +65,7 @@ NAMESPACE {
     GLuint* ids;
     unsigned int* lengths;
 
-    EBO(unsigned int num_ebos = 1);
+    void init(unsigned int num_ebos = 1);
     void bindArray(Array<GLuint> arr, bool dynamic,
 		   unsigned int index = 0);
     //the new array must be the same size as before
@@ -71,7 +73,8 @@ NAMESPACE {
       unsigned int index = 0);*/
     void draw(GLenum mode, unsigned int index = 0);
     ~EBO();
-    
+
+    //static EBO getEBO(unsigned int num_ebos = 1);
   };
   
 }

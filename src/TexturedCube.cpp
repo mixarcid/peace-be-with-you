@@ -1,7 +1,0 @@
-#include "TexturedCube.hpp"
-
-NAMESPACE {
-
-
-
-}

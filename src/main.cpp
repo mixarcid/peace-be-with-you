@@ -7,7 +7,6 @@
 #include "Containers.hpp"
 #include "Graphics.hpp"
 #include "Shader.hpp"
-#include "TexturedRect.hpp"
 #include "MeshLoader.hpp"
 #include "Time.hpp"
 
@@ -27,7 +26,6 @@ void windowSize(GLFWwindow* window, int width, int height) {
   win_height = height;
   float ratio = width / (float) height;
   glViewport(0, 0, width, height);
-
   Mat4f proj = Mat4f::perspective(degreesToRadians(45.0f),
 			    ratio, 1, 10);
 
@@ -100,7 +98,7 @@ int main() {
   // Initialize GLEW
   glewExperimental = GL_TRUE;
   glewInit();
-
+  
   const unsigned char* version = glGetString(GL_VERSION);
   fatalAssert(version != NULL,
 	      "Cannot determine OpenGL version");
@@ -113,12 +111,10 @@ int main() {
   Shader shade("Toon");
   shade.use();
 
-  //TexturedRect rect("cat.png");
-  //TexturedRect rect2("onion-man.png");
-  MeshLoader loader("Soldier");
+  MeshLoader loader("Monkey");
   MeshLoader loader2("WoodenBox");
   StaticMesh* cube = loader2.getStaticMesh("Cube");
-  StaticMesh* frank = loader.getStaticMesh("Frank");
+  StaticMesh* frank = loader.getStaticMesh("Suzanne");
   Vec3f axis(0,0,1);
   
   Transform trans1;
@@ -127,7 +123,7 @@ int main() {
   trans1.flush();
     
   Transform trans2;
-  trans2.setTranslateAbs(Vec3f(0,0,-7));
+  trans2.setTranslateAbs(Vec3f(5,0,-5));
   //trans2.setScaleAbs(Vec3f(1,1.5,1));
   //trans2.setRotateAbs(Vec3f(0,1,0), degreesToRadians(90.0f));
   trans2.flush();
@@ -138,13 +134,11 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   windowSize(window, win_width, win_height);
-  
   while(!glfwWindowShouldClose(window)) {
 
     end.makeCurrent();
     dt = end.getMilliseconds() - start.getMilliseconds();
 
-    // Clear the screen to black
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -156,7 +150,8 @@ int main() {
     // Swap buffers
     glfwSwapBuffers(window);
     glfwPollEvents();
-
+    graphics::checkError();
+    
     start = end;
   }
   
@@ -167,9 +162,3 @@ int main() {
 
   return EXIT_SUCCESS;
 }
-
-/*int main() {
-  log::init(NULL);
-  MeshLoader loader("Cube.pmf");
-  return EXIT_SUCCESS;
-}*/

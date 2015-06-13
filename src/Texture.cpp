@@ -14,7 +14,7 @@ NAMESPACE {
   unsigned int Texture::current = 0;
 
   
-  void Texture::load(String filename, ShaderUniform tex_uniform) {
+  void Texture::load(String filename, const ShaderUniform* tex_uniform) {
     int width, height;
     const char* full_name = (DIR_TEXTURES + filename
 			     + DIR_TEXTURE_EXTENSION).c_str();
@@ -26,27 +26,29 @@ NAMESPACE {
     exitAssert(image != NULL,
 	       "Unable to load image %s", full_name);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
 		 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     
     SOIL_free_image_data(image);
-    
-    tex_uniform.registerInt(index);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+    uniform = tex_uniform;
+    uniform->registerInt(index);
+
+    /*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
 		    GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-		    GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		    GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-		    GL_LINEAR);
+    GL_CLAMP_TO_EDGE);*/
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
     log::message("Loaded texture %s", filename.c_str());
   }
 
   void Texture::use() {
+    //uniform->registerInt(index);
     GLenum tex_index = GL_TEXTURE0 + index;
     exitAssert(tex_index < GL_MAX_TEXTURE_UNITS,
 	       "The requested texture index is too large.");
@@ -55,9 +57,9 @@ NAMESPACE {
   }
   
 
-  void Texture::init(unsigned int num_vaos) {
+  void Texture::init(unsigned int num_textures) {
     glGenTextures(length, ids);
-    Texture::length = num_vaos;
+    Texture::length = num_textures;
     Texture::ids = new GLuint[length];
     Texture::is_initialized = true;
   }

@@ -7,10 +7,13 @@ NAMESPACE {
 			 Texture* texture) {
 
     tex = *texture;
+    RenderableEBO<StaticMeshData>::shader_vars
+      = {Shader::POSITION, Shader::NORMAL, Shader::TEX_COORD};
+    RenderableEBO<StaticMeshData>::is_dynamic = false;
     Renderable<StaticMeshData>::data = mesh_data;
     RenderableEBO<StaticMeshData>::elements = mesh_elems;
-    RenderableEBO<StaticMeshData>::init({Shader::POSITION,
-	  Shader::NORMAL, Shader::TEX_COORD}, false);
+    RenderableEBO<StaticMeshData>::init(/*{Shader::POSITION,
+					  Shader::NORMAL, Shader::TEX_COORD}, false*/);
       
   }
 

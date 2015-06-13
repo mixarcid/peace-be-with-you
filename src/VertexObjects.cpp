@@ -57,12 +57,21 @@ NAMESPACE {
   }
 
 
-  VBO::VBO(unsigned int num_vaos) {
-    length = num_vaos;
+  void VBO::init(unsigned int num_vbos) {
+    length = num_vbos;
     ids = new GLuint[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
   }
+    
+  /*VBO VBO::getVBO(unsigned int num_vbos) {
+    VBO ret;
+    ret.length = num_vbos;
+    ret.ids = new GLuint[ret.length];
+    ret.lengths = new unsigned int[ret.length];
+    glGenBuffers(ret.length, ret.ids);
+    return ret;
+  }*/
 
   VBO::~VBO() {
 
@@ -77,12 +86,22 @@ NAMESPACE {
     glDrawArrays(mode, 0, lengths[index]);
   }
 
-  EBO::EBO(unsigned int num_ebos) {
-    length = num_ebos;
+
+  void EBO::init(unsigned int num_vbos) {
+    length = num_vbos;
     ids = new GLuint[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
   }
+
+  /*EBO EBO::getEBO(unsigned int num_ebos) {
+    EBO ret;
+    ret.length = num_ebos;
+    ret.ids = new GLuint[ret.length];
+    ret.lengths = new unsigned int[ret.length];
+    glGenBuffers(ret.length, ret.ids);
+    return ret;
+    }*/
 
   void EBO::bindArray(Array<GLuint> arr, bool dynamic,
 		      unsigned int index) {

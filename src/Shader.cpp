@@ -130,13 +130,11 @@ NAMESPACE {
     //UNI_TEXTURE = glGetUniformLocation(id, "uniTexture");
     
     glLinkProgram(id);
-
-    glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
+    /*glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
     shader_log = c_shader_log;
     exitAssert(shader_log.length() == 0,
 	       "Error linking shader %s: %s",
-	       filename.c_str(), c_shader_log);
-
+	       filename.c_str(), c_shader_log);*/
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 

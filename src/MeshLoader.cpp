@@ -43,8 +43,7 @@ NAMESPACE {
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
       tex_coord.y = 1 - tex_coord.y;
-      //log::message("Position: " + pos.toString());
-      //log::message("Normal: " + norm.toString());
+      //log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
       data.push_back(StaticMeshData(pos, norm, tex_coord));
       /*data.push_back(StaticMeshData(readVec3f(file),
 	readVec3f(file)));*/
@@ -94,7 +93,7 @@ NAMESPACE {
 
     Texture model_texture = Texture::getTexture();
     model_texture.use();
-    model_texture.load(filename, Shader::UNI_TEXTURE);
+    model_texture.load(filename, &Shader::UNI_TEXTURE);
 
     for (uint32_t mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {

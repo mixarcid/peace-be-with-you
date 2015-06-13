@@ -10,6 +10,7 @@ NAMESPACE {
   namespace graphics {
     
     void init();
+    void checkError();
     void terminate();
   }
 

@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -std=c++11
 INCLUDE = -Isrc/Standard -IThirdParty/include #-I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
-INCLUDE += -I/usr/local/include/SOIL
+#INCLUDE += -I/usr/local/include/SOIL
 LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi -lGL
 LIB_DIR = -LThirdParty/lib/Linux
 #LIB_DIR = -L/usr/lib64
