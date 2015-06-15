@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "Macros.hpp"
-#include "Logger.hpp"
+#include "Log.hpp"
 #include "String.hpp"
 
 NAMESPACE {

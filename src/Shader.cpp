@@ -33,17 +33,17 @@ NAMESPACE {
     
     char contents[MAX_CHARS_IN_FILE];
     FILE* file = fopen(filename, "r");
-    exitAssert(file != NULL,
+    fatalAssert(file != NULL,
 	       "Error opening %s", filename);
     int line_num = -1;
 
     while (!feof(file)) {
-      exitAssert(line_num < MAX_CHARS_IN_FILE,
+      fatalAssert(line_num < MAX_CHARS_IN_FILE,
 		 "File %s is too long", filename);
       contents[++line_num] = fgetc(file);
     }
     contents[line_num] = '\0';
-    exitAssert(contents != NULL,
+    fatalAssert(contents != NULL,
 	       "Error reading %s", filename);
 
     fclose(file);
@@ -95,7 +95,7 @@ NAMESPACE {
 			 DIR_FRAG_EXTENSION).c_str());
     const char* vert_source = vert_str.c_str();
     const char* frag_source = frag_str.c_str();
-    //log::message("%s", vert_source);
+    //Log::message("%s", vert_source);
 
     GLuint vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &vert_source, NULL);
@@ -105,17 +105,17 @@ NAMESPACE {
     glShaderSource(frag_id, 1, &frag_source, NULL);
     glCompileShader(frag_id);
 
-    char c_shader_log[MAX_LOG_SIZE];
-    glGetShaderInfoLog(vert_id, MAX_LOG_SIZE, NULL, c_shader_log);
-    String shader_log = c_shader_log;
-    exitAssert(shader_log.length() == 0,
+    char c_shader_Log[MAX_LOG_SIZE];
+    glGetShaderInfoLog(vert_id, MAX_LOG_SIZE, NULL, c_shader_Log);
+    String shader_Log = c_shader_Log;
+    fatalAssert(shader_Log.length() == 0,
 	       "Error compiling %s.vs: %s",
-	       filename.c_str(), c_shader_log);
-    glGetShaderInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
-    shader_log = c_shader_log;
-    exitAssert(shader_log.length() == 0,
+	       filename.c_str(), c_shader_Log);
+    glGetShaderInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_Log);
+    shader_Log = c_shader_Log;
+    fatalAssert(shader_Log.length() == 0,
 	       "Error compiling %s.fs: %s",
-	       filename.c_str(), c_shader_log);
+	       filename.c_str(), c_shader_Log);
 
     id = glCreateProgram();
     glAttachShader(id, vert_id);
@@ -130,15 +130,15 @@ NAMESPACE {
     //UNI_TEXTURE = glGetUniformLocation(id, "uniTexture");
     
     glLinkProgram(id);
-    /*glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
-    shader_log = c_shader_log;
-    exitAssert(shader_log.length() == 0,
+    /*glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_Log);
+    shader_Log = c_shader_Log;
+    fatalAssert(shader_Log.length() == 0,
 	       "Error linking shader %s: %s",
-	       filename.c_str(), c_shader_log);*/
+	       filename.c_str(), c_shader_Log);*/
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
-    log::message("Loaded shader %s", filename.c_str());
+    Log::message("Loaded shader %s", filename.c_str());
   }
 
   void Shader::use() {

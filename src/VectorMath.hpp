@@ -311,7 +311,7 @@ NAMESPACE {
     //fovy is in radians
     static Mat4 perspective(T fovy, T aspect, T z_near, T z_far) {
       T sub = z_near - z_far;
-      //log::message("%f",fovy);
+      //Log::message("%f",fovy);
       T f = 1/tan(fovy/(T)2);
       T data[16] = {
 	f/aspect, 0, 0, 0,

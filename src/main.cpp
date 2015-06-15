@@ -27,7 +27,7 @@ void windowSize(GLFWwindow* window, int width, int height) {
   float ratio = width / (float) height;
   glViewport(0, 0, width, height);
   Mat4f proj = Mat4f::perspective(degreesToRadians(45.0f),
-			    ratio, 1, 10);
+			    ratio, 1, 100);
 
   Shader::UNI_PROJ.registerMat4f(proj);
   Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,1.5f),
@@ -79,7 +79,9 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
 
 int main() {
 
-  log::init(NULL);
+  Log::init(NULL);
+  SystemManager man({&Log::logger});
+  man.start();
   graphics::init();
 
   GLFWwindow* window = glfwCreateWindow(win_width, win_height,
@@ -102,11 +104,7 @@ int main() {
   const unsigned char* version = glGetString(GL_VERSION);
   fatalAssert(version != NULL,
 	      "Cannot determine OpenGL version");
-  log::message("Your OpenGL version is %s", version);
-  //delete version;
-  
-  VAO::init();
-  Texture::init();
+  Log::message("Your OpenGL version is %s", version);
 
   Shader shade("Toon");
   shade.use();
@@ -114,19 +112,29 @@ int main() {
   MeshLoader loader("Monkey");
   MeshLoader loader2("WoodenBox");
   StaticMesh* cube = loader2.getStaticMesh("Cube");
-  StaticMesh* frank = loader.getStaticMesh("Suzanne");
+  StaticMesh* suzanne = loader.getStaticMesh("Suzanne");
+  MeshLoader loader3("Soldier");
+  StaticMesh* frank = loader3.getStaticMesh("Frank");
+  MeshLoader loader4("Grass");
+  StaticMesh* grass = loader4.getStaticMesh("Grid");
   Vec3f axis(0,0,1);
   
   Transform trans1;
   trans1.setTranslateAbs(Vec3f(0,0,-5));
-  //trans1.setRotateAbs(Vec3f(0,1,0), degreesToRadians(30.0f));
   trans1.flush();
     
   Transform trans2;
-  trans2.setTranslateAbs(Vec3f(5,0,-5));
-  //trans2.setScaleAbs(Vec3f(1,1.5,1));
-  //trans2.setRotateAbs(Vec3f(0,1,0), degreesToRadians(90.0f));
+  trans2.setTranslateAbs(Vec3f(-5,0,-5));
   trans2.flush();
+
+  Transform trans3;
+  trans2.setTranslateAbs(Vec3f(5,0,5));
+  trans2.flush();
+
+  Transform trans4;
+  trans4.setTranslateAbs(Vec3f(0,-2,0));
+  trans4.setScaleAbs(Vec3f(100,5,100));
+  trans4.flush();
 
   Time start, end;
   end.makeCurrent();
@@ -143,9 +151,13 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Transform::combine(trans1, model).use();
-    cube->render();
-    Transform::combine(trans2, model).use();
     frank->render();
+    Transform::combine(trans2, model).use();
+    suzanne->render();
+    Transform::combine(trans3, model).use();
+    cube->render();
+    Transform::combine(trans4, model).use();
+    grass->render();
       
     // Swap buffers
     glfwSwapBuffers(window);
@@ -154,11 +166,11 @@ int main() {
     
     start = end;
   }
+  //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   
   graphics::terminate();
-  log::terminate();
-  VAO::terminate();
-  Texture::terminate();
+  Log::terminate();
+  //Texture::terminate();
 
   return EXIT_SUCCESS;
 }

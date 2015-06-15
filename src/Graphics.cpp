@@ -6,11 +6,11 @@ NAMESPACE {
 
     void init() {
       if (!glfwInit()) {
-	log::error("Unable to initialize GLFW");
+	Log::error("Unable to initialize GLFW");
 	glfwTerminate();
 	exit(EXIT_FAILURE);
       }
-      log::message("Initialized graphics libraries");
+      Log::message("Initialized graphics libraries");
     }
 
     void checkError()  {
@@ -32,7 +32,7 @@ NAMESPACE {
 	  error="INVALID_FRAMEBUFFER_OPERATION";  break;
 	}
  
-	log::error("GL_" + error);
+	Log::error("GL_" + error);
 	err=glGetError();
       }
     }

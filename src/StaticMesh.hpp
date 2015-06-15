@@ -24,13 +24,14 @@ NAMESPACE {
 
   };
 
-  struct StaticMesh : RenderableEBO<StaticMeshData> {
+  struct StaticMesh : Renderable<StaticMeshData> {
 
-    Texture tex;
+    Texture* tex;
     
     StaticMesh(Array<StaticMeshData> mesh_data,
 	       Array<GLuint> mesh_elems, Texture* texture);
     virtual void render();
+    ~StaticMesh();
     
   };
   

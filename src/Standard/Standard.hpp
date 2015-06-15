@@ -1,4 +1,4 @@
 #include "Macros.hpp"
-#include "Logger.hpp"
+#include "Log.hpp"
 #include "String.hpp"
 #include "Exceptions.hpp"

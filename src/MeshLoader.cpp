@@ -30,20 +30,20 @@ NAMESPACE {
     Array<GLuint> elems;
 
     //String tex_name = fio::readString(file);
-    //log::message("Texture name: " + tex_name);
+    //Log::message("Texture name: " + tex_name);
 
     uint32_t num_verts = fio::readLittleEndian<uint32_t>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
 
-    //log::message("#Verts: %u", num_verts);
+    //Log::message("#Verts: %u", num_verts);
     for (uint32_t index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
       tex_coord.y = 1 - tex_coord.y;
-      //log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
+      //Log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
       data.push_back(StaticMeshData(pos, norm, tex_coord));
       /*data.push_back(StaticMeshData(readVec3f(file),
 	readVec3f(file)));*/
@@ -53,11 +53,11 @@ NAMESPACE {
     uint32_t num_elems = 3*fio::readLittleEndian<uint32_t>(file);
     debugAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
-    //log::message("#Elements: %u", num_elems);
+    //Log::message("#Elements: %u", num_elems);
 
     for (uint32_t index = 0; index < num_elems; ++index) {
       uint32_t elem = fio::readLittleEndian<uint32_t>(file);
-      //log::message("Element: %u", elem);
+      //Log::message("Element: %u", elem);
       elems.push_back(elem);
     }
 
@@ -87,34 +87,34 @@ NAMESPACE {
 		full_name.c_str());
 
     uint32_t num_meshes = fio::readLittleEndian<uint32_t>(file);
-    //log::message("%u", num_meshes);
+    //Log::message("%u", num_meshes);
     debugAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
 
-    Texture model_texture = Texture::getTexture();
-    model_texture.use();
-    model_texture.load(filename, &Shader::UNI_TEXTURE);
+    Texture* model_texture = new Texture();
+    model_texture->use();
+    model_texture->load(filename, Shader::UNI_TEXTURE);
 
     for (uint32_t mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);
-      //log::message("Mesh name: " + mesh_name);
+      //Log::message("Mesh name: " + mesh_name);
       
       unsigned char mesh_type;
       fread(&mesh_type, sizeof(char), 1, file);
 
       switch(mesh_type) {
       case PMF_TYPE_STATIC_NO_TEXTURE:
-	log::fatalError("PMF type STATIC_NO_TEXTURE is"
+	Log::fatalError("PMF type STATIC_NO_TEXTURE is"
 			" no longer supported");
 	break;
       case PMF_TYPE_STATIC_TEXTURE:
 	static_meshes[mesh_name] = loadStaticMesh(file,
-						  &model_texture);
+						  model_texture);
 	break;
       default:
-	  log::fatalError("Unable to determine type of"
+	  Log::fatalError("Unable to determine type of"
 			  "mesh %s in model %s",
 			  mesh_name.c_str(), full_name.c_str());
 	break;
@@ -122,7 +122,7 @@ NAMESPACE {
     }
 
     fclose(file);
-    log::message("Loaded model %s", filename.c_str());
+    Log::message("Loaded model %s", filename.c_str());
     
   }
 

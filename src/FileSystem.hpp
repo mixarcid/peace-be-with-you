@@ -16,5 +16,5 @@
 #define DIR_TEXTURE_EXTENSION ".png"
 
 NAMESPACE {
-  void logCurrentDirectory();
+  void LogCurrentDirectory();
 }

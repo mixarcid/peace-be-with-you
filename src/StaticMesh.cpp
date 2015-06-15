@@ -6,20 +6,21 @@ NAMESPACE {
 			 Array<GLuint> mesh_elems,
 			 Texture* texture) {
 
-    tex = *texture;
-    RenderableEBO<StaticMeshData>::shader_vars
-      = {Shader::POSITION, Shader::NORMAL, Shader::TEX_COORD};
-    RenderableEBO<StaticMeshData>::is_dynamic = false;
+    tex = texture;
     Renderable<StaticMeshData>::data = mesh_data;
-    RenderableEBO<StaticMeshData>::elements = mesh_elems;
-    RenderableEBO<StaticMeshData>::init(/*{Shader::POSITION,
-					  Shader::NORMAL, Shader::TEX_COORD}, false*/);
+    Renderable<StaticMeshData>::elements = mesh_elems;
+    Renderable<StaticMeshData>::init({Shader::POSITION,
+	  Shader::NORMAL, Shader::TEX_COORD}, false);
       
   }
 
+  StaticMesh::~StaticMesh() {
+    delete tex;
+  }
+
   void StaticMesh::render() {
-    tex.use();
-    RenderableEBO<StaticMeshData>::render();
+    tex->use();
+    Renderable<StaticMeshData>::render();
   }
 
 }
