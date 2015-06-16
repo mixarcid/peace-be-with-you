@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Standard.hpp"
-#include "Graphics.hpp"
+#include "GL.hpp"
 
 NAMESPACE {
 

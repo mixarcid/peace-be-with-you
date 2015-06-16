@@ -24,8 +24,10 @@ NAMESPACE {
 
   };
 
-  struct StaticMesh : Renderable<StaticMeshData> {
-
+  struct StaticMesh : Renderable {
+    
+    Array<StaticMeshData> data;
+    Array<GLuint> elements;
     Texture* tex;
     
     StaticMesh(Array<StaticMeshData> mesh_data,

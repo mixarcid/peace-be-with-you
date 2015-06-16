@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics.hpp"
+#include "GL.hpp"
 #include "Standard.hpp"
 #include "String.hpp"
 #include "Shader.hpp"

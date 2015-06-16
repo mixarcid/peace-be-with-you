@@ -2,7 +2,7 @@
 
 #include <math.h>
 #include <string.h>
-#include "Graphics.hpp"
+#include "GL.hpp"
 #include "Standard.hpp"
 
 NAMESPACE {

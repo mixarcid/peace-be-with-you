@@ -1,14 +1,12 @@
-// Link statically with GLEW
-#define GLEW_STATIC
-
 #include "VectorMath.hpp"
 #include "Transform.hpp"
 #include "VertexObjects.hpp"
 #include "Containers.hpp"
-#include "Graphics.hpp"
+#include "GL.hpp"
 #include "Shader.hpp"
 #include "MeshLoader.hpp"
 #include "Time.hpp"
+#include "Node.hpp"
 
 using namespace peace;
 
@@ -41,11 +39,8 @@ void cursorCallBack(GLFWwindow* window, double x, double y) {
   Vec3f mouse;
   mouse.x = x - (win_width/2);
   mouse.z = (win_height/2) - y;
-  /*Vec3f axis = Vec3f::cross(UP, mouse);
-    axis.makeUnit();
-    float angle = degreesToRadians(dt*rot_speed);//-sin(axis.abs())*dt*rot_speed;*/
-  model.rotate(Vec3f(0,1,0), mouse.x*rot_speed*dt);
-  model.rotate(Vec3f(1,0,0), mouse.z*rot_speed*dt);
+  model.rotateRel(Quaternionf(mouse.z*rot_speed*dt,
+			      mouse.x*rot_speed*dt, 0));
   glfwSetCursorPos(window, win_width/2, win_height/2);
 }
 
@@ -57,22 +52,22 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
     glfwDestroyWindow(window);
     break;
   case GLFW_KEY_W:
-    model.translate(Vec3f(0,0,trans_speed*dt));
+    model.translateRel(Vec3f(0,0,trans_speed*dt));
     break;
   case GLFW_KEY_A:
-    model.translate(Vec3f(trans_speed*dt,0,0));
+    model.translateRel(Vec3f(trans_speed*dt,0,0));
     break;
   case GLFW_KEY_S:
-    model.translate(Vec3f(0,0,-trans_speed*dt));
+    model.translateRel(Vec3f(0,0,-trans_speed*dt));
     break;
   case GLFW_KEY_D:
-    model.translate(Vec3f(-trans_speed*dt,0,0));
+    model.translateRel(Vec3f(-trans_speed*dt,0,0));
     break;
   case GLFW_KEY_Q:
-    model.translate(Vec3f(0,-trans_speed*dt,0));
+    model.translateRel(Vec3f(0,-trans_speed*dt,0));
     break;
   case GLFW_KEY_Z:
-    model.translate(Vec3f(0,trans_speed*dt,0));
+    model.translateRel(Vec3f(0,trans_speed*dt,0));
     break;
   }
 }
@@ -82,7 +77,7 @@ int main() {
   Log::init(NULL);
   SystemManager man({&Log::logger});
   man.start();
-  graphics::init();
+  gl::init();
 
   GLFWwindow* window = glfwCreateWindow(win_width, win_height,
 					"Peace", NULL, NULL);
@@ -110,31 +105,13 @@ int main() {
   shade.use();
 
   MeshLoader loader("Monkey");
-  MeshLoader loader2("WoodenBox");
-  StaticMesh* cube = loader2.getStaticMesh("Cube");
-  StaticMesh* suzanne = loader.getStaticMesh("Suzanne");
-  MeshLoader loader3("Soldier");
-  StaticMesh* frank = loader3.getStaticMesh("Frank");
-  MeshLoader loader4("Grass");
-  StaticMesh* grass = loader4.getStaticMesh("Grid");
+  StaticMesh* monk = loader.getStaticMesh("Suzanne");
   Vec3f axis(0,0,1);
   
-  Transform trans1;
-  trans1.setTranslateAbs(Vec3f(0,0,-5));
-  trans1.flush();
-    
-  Transform trans2;
-  trans2.setTranslateAbs(Vec3f(-5,0,-5));
-  trans2.flush();
-
-  Transform trans3;
-  trans2.setTranslateAbs(Vec3f(5,0,5));
-  trans2.flush();
-
-  Transform trans4;
-  trans4.setTranslateAbs(Vec3f(0,-2,0));
-  trans4.setScaleAbs(Vec3f(100,5,100));
-  trans4.flush();
+  Node monk_node;
+  monk_node.translateAbs(Vec3f(0,0,-5));
+  //monk_node.flush();
+  monk_node.addRenderable(monk);
 
   Time start, end;
   end.makeCurrent();
@@ -150,25 +127,19 @@ int main() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    Transform::combine(trans1, model).use();
-    frank->render();
-    Transform::combine(trans2, model).use();
-    suzanne->render();
-    Transform::combine(trans3, model).use();
-    cube->render();
-    Transform::combine(trans4, model).use();
-    grass->render();
+    //Log::message(model.getMat().toString());
+    monk_node.render(model.getMat());
       
     // Swap buffers
     glfwSwapBuffers(window);
     glfwPollEvents();
-    graphics::checkError();
+    gl::checkError();
     
     start = end;
   }
   //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   
-  graphics::terminate();
+  gl::terminate();
   Log::terminate();
   //Texture::terminate();
 

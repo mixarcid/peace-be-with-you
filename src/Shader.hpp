@@ -2,7 +2,7 @@
 
 #include "Standard.hpp"
 #include "String.hpp"
-#include "Graphics.hpp"
+#include "GL.hpp"
 #include "VectorMath.hpp"
 
 NAMESPACE {

@@ -4,13 +4,14 @@ NAMESPACE {
 
   StaticMesh::StaticMesh(Array<StaticMeshData> mesh_data,
 			 Array<GLuint> mesh_elems,
-			 Texture* texture) {
+			 Texture* texture)
+    : data(mesh_data), elements(mesh_elems), tex(texture) {
 
-    tex = texture;
-    Renderable<StaticMeshData>::data = mesh_data;
-    Renderable<StaticMeshData>::elements = mesh_elems;
-    Renderable<StaticMeshData>::init({Shader::POSITION,
-	  Shader::NORMAL, Shader::TEX_COORD}, false);
+    Renderable::init();
+    Renderable::vbo.bindArray(data, false);
+    Renderable::ebo.bindArray(elements, false);
+    Renderable::vao.registerVars({Shader::POSITION,
+	  Shader::NORMAL, Shader::TEX_COORD});
       
   }
 
@@ -20,7 +21,7 @@ NAMESPACE {
 
   void StaticMesh::render() {
     tex->use();
-    Renderable<StaticMeshData>::render();
+    Renderable::render();
   }
 
 }
