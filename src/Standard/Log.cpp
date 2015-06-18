@@ -24,20 +24,18 @@ NAMESPACE {
     
     switch (msg.type) {
     case MESSAGE:
-      
       fprintf(Log::logger.logfile, "%s%s\n", LOG_MSG, c_msg);
       fflush(Log::logger.logfile);
       if (Log::logger.print_messages) {
 	printf("%s%s\n", LOG_MSG, c_msg);
       }	
       break;
-      
     case ERROR:
       fprintf(Log::logger.logfile, "%s%s\n", ERROR_MSG, c_msg);
       fflush(Log::logger.logfile);
       break;
     case FATAL_ERROR:
-      fprintf(Log::logger.logfile, "%s%s\n", LOG_MSG, c_msg);
+      fprintf(Log::logger.logfile, "%s%s\n", ERROR_MSG, c_msg);
       fflush(Log::logger.logfile);
       throw FatalError(msg.message);
     }
