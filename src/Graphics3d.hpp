@@ -1,8 +1,11 @@
 #pragma once
 
-#include "Node.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
+
+  struct Camera;
+  struct Node;
 
   struct Graphics3d {
 
@@ -11,9 +14,9 @@ NAMESPACE {
     Camera* cam;
 
     void addNode(Node* node);
-    vois setCamera(Camera* camera);
+    void setCamera(Camera* camera);
     void setShader(String name);
-    void render(GLFWWindow* window);
-  }
+    void render(GLFWwindow* window);
+  };
 
 }

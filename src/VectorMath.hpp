@@ -103,6 +103,10 @@ NAMESPACE {
 		  z - b.z);
     }
 
+    Vec3 operator-() {
+      return Vec3(-x, -y, -z);
+    }
+
     Vec3 operator+=(const Vec3 b) {
       return Vec3(x += b.x,
 		  y += b.y,
@@ -212,7 +216,7 @@ NAMESPACE {
       (*this) = (*this) * b;
     }
 
-    void translate(Vec3<T> trans) {
+    /*void translate(Vec3<T> trans) {
       data[12] += data[0]*trans.x +
 	data[4]*trans.y + data[8]*trans.z;
       
@@ -237,7 +241,7 @@ NAMESPACE {
       data[0] *= scal.x;
       data[5] *= scal.y;
       data[10] *= scal.z;
-    }
+      }*/
 
     void makeIdentity() {
       (*this) = Mat4();

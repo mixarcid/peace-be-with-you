@@ -18,6 +18,7 @@ float rot_speed = 0.0005;
 
 int win_width = 700;
 int win_height = 500;
+Vec3f cam_dir(0,0,0);
 
 void windowSize(GLFWwindow* window, int width, int height) {
   win_width = width;
@@ -29,19 +30,24 @@ void windowSize(GLFWwindow* window, int width, int height) {
 
   Shader::UNI_PROJ.registerMat4f(proj);
   Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,1.5f),
-		       Vec3f(0,0,0),
-		       Vec3f(0,1,0));
+			     Vec3f(0,0,0),
+			     Vec3f(0,1,0));
   Shader::UNI_VIEW.registerMat4f(view);
 }
 
 void cursorCallBack(GLFWwindow* window, double x, double y) {
   //const Vec3f UP(0,1,0);
   Vec3f mouse;
-  mouse.x = x - (win_width/2);
-  mouse.z = (win_height/2) - y;
-  model.rotateRel(Quaternionf(mouse.z*rot_speed*dt,
-			      mouse.x*rot_speed*dt, 0));
+  mouse.x = (x - (win_width/2))*rot_speed*dt;
+  mouse.z = ((win_height/2) - y)*rot_speed*dt;
+  cam_dir += mouse;
+  //model.rotateRel(Quaternionf(mouse.z*rot_speed*dt,
+  //			      mouse.x*rot_speed*dt, 0));
   glfwSetCursorPos(window, win_width/2, win_height/2);
+  Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,1.5f),
+			     cam_dir,
+			     Vec3f(0,1,0));
+  Shader::UNI_VIEW.registerMat4f(view);
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode,
@@ -110,6 +116,7 @@ int main() {
   
   Node monk_node;
   monk_node.translateAbs(Vec3f(0,0,-5));
+  //monk_node.rotateAbs(Quaternionf(degreesToRadians(10), 0, 0));
   //monk_node.flush();
   monk_node.addRenderable(monk);
 
@@ -128,6 +135,8 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //Log::message(model.getMat().toString());
+    monk_node.rotateRel(Quaternionf(0, 0,
+				    degreesToRadians(0.01*dt)));
     monk_node.render(model.getMat());
       
     // Swap buffers
