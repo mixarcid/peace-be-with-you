@@ -1,0 +1,8 @@
+#!/bin/bash
+
+git add src/*.hpp src/*.cpp src/Standard/*.cpp src/Standard/*.hpp
+git add Assets/Textures/*.png Assets/Models/*.blend Assets/Models/*.pmf
+git add Makefile
+
+git commit -m $1
+git push

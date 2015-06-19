@@ -79,31 +79,31 @@ NAMESPACE {
       memcpy(this, &b, sizeof(Vec3<T>));
     }
 
-    Vec3 operator*(const T b) {
+    Vec3 operator*(const T b) const {
       return Vec3(x*b,
 		  y*b,
 		  z*b);
     }
 
-    Vec3 operator/(const T b) {
+    Vec3 operator/(const T b) const {
       return Vec3(x/b,
 		  y/b,
 		  z/b);
     }
 	
-    Vec3 operator+(const Vec3 b) {
+    Vec3 operator+(const Vec3 b) const {
       return Vec3(x + b.x,
 		  y + b.y,
 		  z + b.z);
     }
       
-    Vec3 operator-(const Vec3 b) {
+    Vec3 operator-(const Vec3 b) const {
       return Vec3(x - b.x,
 		  y - b.y,
 		  z - b.z);
     }
 
-    Vec3 operator-() {
+    Vec3 operator-() const {
       return Vec3(-x, -y, -z);
     }
 
@@ -119,12 +119,12 @@ NAMESPACE {
 		  z -= b.z);
     }
     
-    T abs() {
+    T abs() const {
       return sqrt(sqr(x) + sqr(y) + sqr(z));
     }
 
     const T UNIT_MAX_ERROR = 0.01;
-    bool isUnit() {
+    bool isUnit() const {
       T mag = abs();
       return mag < 1.0f + UNIT_MAX_ERROR
 		   && mag > 1.0f - UNIT_MAX_ERROR;
@@ -134,7 +134,7 @@ NAMESPACE {
       (*this) = (*this)/abs();
     }
 
-    Vec3 getUnit() {
+    Vec3 getUnit() const {
       return (*this)/abs();
     }
 

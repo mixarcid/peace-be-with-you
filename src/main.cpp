@@ -18,7 +18,9 @@ float rot_speed = 0.0005;
 
 int win_width = 700;
 int win_height = 500;
-Vec3f cam_dir(0,0,0);
+Vec3f cam_dir(0,0,1);
+Vec3f cam_up(0,1,0);
+bool running = true;
 
 void windowSize(GLFWwindow* window, int width, int height) {
   win_width = width;
@@ -40,13 +42,19 @@ void cursorCallBack(GLFWwindow* window, double x, double y) {
   Vec3f mouse;
   mouse.x = (x - (win_width/2))*rot_speed*dt;
   mouse.z = ((win_height/2) - y)*rot_speed*dt;
-  cam_dir += mouse;
+  Quaternionf q(mouse);
+  q.makeUnit();
+  cam_dir = q * cam_dir;
+  //cam_up = q * cam_up;
   //model.rotateRel(Quaternionf(mouse.z*rot_speed*dt,
   //			      mouse.x*rot_speed*dt, 0));
   glfwSetCursorPos(window, win_width/2, win_height/2);
-  Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,1.5f),
+  Log::message("Rot: " + q.toString());
+  Log::message("Direction: " + cam_dir.toString());
+  Log::message("Up: " + cam_up.toString() + "\n\n");
+  Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,0.0f),
 			     cam_dir,
-			     Vec3f(0,1,0));
+			     cam_up);
   Shader::UNI_VIEW.registerMat4f(view);
 }
 
@@ -56,6 +64,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode,
   switch (key) {
   case GLFW_KEY_ESCAPE:
     glfwDestroyWindow(window);
+    running = false;
     break;
   case GLFW_KEY_W:
     model.translateRel(Vec3f(0,0,trans_speed*dt));
@@ -126,7 +135,7 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   windowSize(window, win_width, win_height);
-  while(!glfwWindowShouldClose(window)) {
+  while(!glfwWindowShouldClose(window) && running) {
 
     end.makeCurrent();
     dt = end.getMilliseconds() - start.getMilliseconds();
@@ -147,9 +156,9 @@ int main() {
     start = end;
   }
   //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-  
   gl::terminate();
   Log::terminate();
+  //man.kill();
   //Texture::terminate();
 
   return EXIT_SUCCESS;

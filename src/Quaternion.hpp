@@ -82,6 +82,13 @@ NAMESPACE {
       return Mat4<T>(data);
     }
 
+    String toString() {
+      return to_string(w) + " + "
+	+ to_string(x) + "i + "
+	+ to_string(y) + "j + "
+	+ to_string(z) + "k";
+    }
+
     void operator=(const Quaternion b) {
       memcpy(this, &b, sizeof(Quaternion<T>));
     }

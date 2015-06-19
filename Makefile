@@ -1,40 +1,32 @@
+CXX=clang++
+CXXFLAGS= -Wall -std=c++11
+INCLUDE = -Isrc/Standard -IThirdParty/include
+SOURCES=$(wildcard src/*.cpp) $(wildcard src/Standard/*.cpp)
+#OBJDIR = obj/
+OBJECTS=$(SOURCES:.cpp=.o)
+OUTDIR = bin/
+EXECUTABLE= $(OUTDIR)peace
+
 UNAME = $(shell uname)
-CXX = clang++
-CXXFLAGS = -Wall -std=c++11
-INCLUDE = -Isrc/Standard -IThirdParty/include #-I/usr/include -I/usr/local/include
 
 ifeq ($(UNAME), Linux)
-#INCLUDE += -I/usr/local/include/SOIL
 LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi -lGL
-LIB_DIR = -LThirdParty/lib/Linux
-#LIB_DIR = -L/usr/lib64
+LIBDIR = -LThirdParty/lib/Linux
 endif
 ifeq ($(UNAME), Darwin)
 LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation
-LIB_DIR = -LThirdParty/lib/OSX
+LIBDIR = -LThirdParty/lib/OSX
 endif
 
 LIBS += -lGLEW -lglfw3 -lSOIL
-#LIB_DIR += —L/usr/local/lib L/usr/local/lib
 
-OUTPUT = peace
-OUT_DIR = bin
-OBJ_DIR = obj
+all: $(SOURCES) $(EXECUTABLE)
 
-OBJECTS = $(CXX) $(CXXFLAGS) $(INCLUDE) -c
-EXECUTABLE = $(CXX) $(LIB_DIR) $(CXXFLAGS) -o $(OUT_DIR)/$(OUTPUT)
+$(EXECUTABLE): $(OBJECTS) 
+	$(CXX) $(LIBDIR) $(LIBS) $(OBJECTS) -o $@ $(LIBS)
 
-all: debug
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c -o $@ $<
 
-debug: main
-
-release: CXXFLAGS += -DNDEBUG -O3
-release: main
-
-main:
-	$(OBJECTS) $(wildcard src/Standard/*.cpp) $(wildcard src/*.cpp)
-	@mv *.o $(OBJ_DIR)
-	$(EXECUTABLE) $(OBJ_DIR)/*.o $(LIBS)
 clean:
-	@rm $(OUT_DIR)/$(OUTPUT)
-	@rm $(OBJ_DIR)/*.o
+	@rm $(OBJECTS) $(EXECUTABLE)
