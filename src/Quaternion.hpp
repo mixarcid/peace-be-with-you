@@ -33,10 +33,10 @@ NAMESPACE {
       T s2 = sin(euler.y * 0.5);
       T s3 = sin(euler.x * 0.5);
 
-      x = c1*c2*c3 + s1*s2*s3;
+      w = c1*c2*c3 + s1*s2*s3;
       y = c1*s2*c3 + s1*c2*s3;
       z = s1*c2*c3 - c1*s2*s3;
-      w = c1*c2*s3 - s1*s2*c3;
+      x = c1*c2*s3 - s1*s2*c3;
     }
 
     T getAbs() const {

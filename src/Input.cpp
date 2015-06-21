@@ -94,5 +94,9 @@ NAMESPACE {
     removeAndReplace(Input::input.mouse_button_callbacks,
 		     index);
   }
+
+  void Input::getWindowSize(int* width, int* height) {
+    glfwGetWindowSize(Input::input.win, width, height);
+  }
   
 }

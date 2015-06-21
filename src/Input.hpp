@@ -43,8 +43,9 @@ NAMESPACE {
     static void removeCursorPosCallback(unsigned int index);
     static void removeWindowResizeCallback(unsigned int index);
     static void removeMouseButtonCallback(unsigned int index);
-    
 
+    static void getWindowSize(int* width, int* height);
+    
     static Input input;
   };
 

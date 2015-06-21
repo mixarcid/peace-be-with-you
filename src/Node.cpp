@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  Node::Node(Node* node_parent) : parent(node_parent) {}
+  //Node::Node(Node* node_parent) : parent(node_parent) {}
 
   void Node::addChild(Node* child) {
     children.push_back(child);
@@ -22,7 +22,7 @@ NAMESPACE {
   }
 
   void Node::render(Mat4f mat) {
-    Mat4f comb = mat * this->getMat();
+    Mat4f comb = this->getMat() * mat;
     for (Node* child : children) {
       child->render(comb);
     }

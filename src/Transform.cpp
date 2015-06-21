@@ -3,7 +3,12 @@
 
 NAMESPACE {
   
-  Transform::Transform() : scal(1,1,1) {}
+  Transform::Transform(Vec3f translation,
+		       Quaternionf rotation,
+		       Vec3f scale)
+    : trans(translation),
+    rot(rotation),
+    scal(scale) {}
 
   void Transform::translateAbs(Vec3f trans_v) {
     trans = trans_v;

@@ -8,6 +8,7 @@
 NAMESPACE {
 
   struct ShaderVar;
+  struct BoundingObject;
   
   struct Renderable {
 
@@ -16,6 +17,8 @@ NAMESPACE {
     EBO ebo;
     
     void init();
+    virtual BoundingObject* getBoundingObject() = 0;
+    virtual BoundingObject* getPhysicalBoundingObject() = 0;
     virtual void render();
     virtual ~Renderable() {}
     

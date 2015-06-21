@@ -26,7 +26,7 @@ NAMESPACE {
     
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
-    Array<StaticMeshData> data;
+    Array<BasicMeshData> data;
     Array<GLuint> elems;
 
     //String tex_name = fio::readString(file);
@@ -44,8 +44,8 @@ NAMESPACE {
       Vec2f tex_coord = readVec2f(file);
       tex_coord.y = 1 - tex_coord.y;
       //Log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
-      data.push_back(StaticMeshData(pos, norm, tex_coord));
-      /*data.push_back(StaticMeshData(readVec3f(file),
+      data.push_back(BasicMeshData(pos, norm, tex_coord));
+      /*data.push_back(BasicMeshData(readVec3f(file),
 	readVec3f(file)));*/
       
     }

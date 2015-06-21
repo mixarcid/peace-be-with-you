@@ -1,88 +1,22 @@
-#include "VectorMath.hpp"
-#include "Transform.hpp"
-#include "VertexObjects.hpp"
-#include "Containers.hpp"
-#include "GL.hpp"
-#include "Shader.hpp"
+#include "Graphics3d.hpp"
+#include "Input.hpp"
+#include "StaticMesh.hpp"
 #include "MeshLoader.hpp"
-#include "Time.hpp"
 #include "Node.hpp"
+#include "Camera.hpp"
+#include "Time.hpp"
+#include "Physics.hpp"
 
 using namespace peace;
 
-Transform model;
-
-unsigned int dt = 0;
-float trans_speed = 0.005;
-float rot_speed = 0.0005;
-
-int win_width = 700;
-int win_height = 500;
-Vec3f cam_dir(0,0,1);
-Vec3f cam_up(0,1,0);
 bool running = true;
-
-void windowSize(GLFWwindow* window, int width, int height) {
-  win_width = width;
-  win_height = height;
-  float ratio = width / (float) height;
-  glViewport(0, 0, width, height);
-  Mat4f proj = Mat4f::perspective(degreesToRadians(45.0f),
-			    ratio, 1, 100);
-
-  Shader::UNI_PROJ.registerMat4f(proj);
-  Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,1.5f),
-			     Vec3f(0,0,0),
-			     Vec3f(0,1,0));
-  Shader::UNI_VIEW.registerMat4f(view);
-}
-
-void cursorCallBack(GLFWwindow* window, double x, double y) {
-  //const Vec3f UP(0,1,0);
-  Vec3f mouse;
-  mouse.x = (x - (win_width/2))*rot_speed*dt;
-  mouse.z = ((win_height/2) - y)*rot_speed*dt;
-  Quaternionf q(mouse);
-  q.makeUnit();
-  cam_dir = q * cam_dir;
-  //cam_up = q * cam_up;
-  //model.rotateRel(Quaternionf(mouse.z*rot_speed*dt,
-  //			      mouse.x*rot_speed*dt, 0));
-  glfwSetCursorPos(window, win_width/2, win_height/2);
-  Log::message("Rot: " + q.toString());
-  Log::message("Direction: " + cam_dir.toString());
-  Log::message("Up: " + cam_up.toString() + "\n\n");
-  Mat4f view = Mat4f::lookAt(Vec3f(0.0f,0.0f,0.0f),
-			     cam_dir,
-			     cam_up);
-  Shader::UNI_VIEW.registerMat4f(view);
-}
 
 void keyCallback(GLFWwindow* window, int key, int scancode,
 		 int action, int mods) {
-  
   switch (key) {
   case GLFW_KEY_ESCAPE:
     glfwDestroyWindow(window);
     running = false;
-    break;
-  case GLFW_KEY_W:
-    model.translateRel(Vec3f(0,0,trans_speed*dt));
-    break;
-  case GLFW_KEY_A:
-    model.translateRel(Vec3f(trans_speed*dt,0,0));
-    break;
-  case GLFW_KEY_S:
-    model.translateRel(Vec3f(0,0,-trans_speed*dt));
-    break;
-  case GLFW_KEY_D:
-    model.translateRel(Vec3f(-trans_speed*dt,0,0));
-    break;
-  case GLFW_KEY_Q:
-    model.translateRel(Vec3f(0,-trans_speed*dt,0));
-    break;
-  case GLFW_KEY_Z:
-    model.translateRel(Vec3f(0,trans_speed*dt,0));
     break;
   }
 }
@@ -94,18 +28,17 @@ int main() {
   man.start();
   gl::init();
 
-  GLFWwindow* window = glfwCreateWindow(win_width, win_height,
+  GLFWwindow* window = glfwCreateWindow(700, 400,
 					"Peace", NULL, NULL);
   if (!window) {
     glfwTerminate();
     return -1;
   }
 
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  Input::init(window);
+  Input::addKeyCallback(keyCallback);
+
   glfwMakeContextCurrent(window);
-  glfwSetKeyCallback(window,keyCallback);
-  glfwSetWindowSizeCallback(window,windowSize);
-  glfwSetCursorPosCallback(window,cursorCallBack);
   
   // Initialize GLEW
   glewExperimental = GL_TRUE;
@@ -116,50 +49,70 @@ int main() {
 	      "Cannot determine OpenGL version");
   Log::message("Your OpenGL version is %s", version);
 
-  Shader shade("Toon");
-  shade.use();
+  Graphics3d graphics("Toon");
+  //graphics.setShader("Toon");
+  Camera cam(Vec3f(0,0,0),
+	     Vec3f(0,0,-1),
+	     Vec3f(0,1,0),
+	     degreesToRadians(90),
+	     1, 100);
+  graphics.setCamera(&cam);
+  float cam_speed = 0.1;
+  float cam_rot_speed = 0.1;
+  Input::addKeyCallback([&cam, cam_speed](GLFWwindow* win, int key,
+					  int code, int act, int mods) {
+			  Vec3f axis = Vec3f::cross(cam.dir, cam.up);
+			  switch(key) {
+			  case GLFW_KEY_W:
+			    cam.pos += cam.dir * cam_speed;
+			    break;
+			  case GLFW_KEY_S:
+			    cam.pos -= cam.dir * cam_speed;
+			    break;
+			  case GLFW_KEY_A:
+			    cam.pos -= axis * cam_speed;
+			    break;
+			  case GLFW_KEY_D:
+			    cam.pos += axis * cam_speed;
+			    break;
+			  }
+			});
+  Physics phys;
 
   MeshLoader loader("Monkey");
   StaticMesh* monk = loader.getStaticMesh("Suzanne");
-  Vec3f axis(0,0,1);
   
-  Node monk_node;
-  monk_node.translateAbs(Vec3f(0,0,-5));
-  //monk_node.rotateAbs(Quaternionf(degreesToRadians(10), 0, 0));
-  //monk_node.flush();
+  DynamicObject monk_node(1, Vec3f(0,0,-5), Vec3f(0,1,-1));
   monk_node.addRenderable(monk);
+  graphics.addNode(&monk_node);
+  phys.addDynamicObject(&monk_node);
 
   Time start, end;
+  float dt = 0;
   end.makeCurrent();
-
-  glEnable(GL_DEPTH_TEST);
-
-  windowSize(window, win_width, win_height);
+  start.makeCurrent();
+  
   while(!glfwWindowShouldClose(window) && running) {
 
     end.makeCurrent();
-    dt = end.getMilliseconds() - start.getMilliseconds();
+    dt = (float) (end.getMilliseconds() - start.getMilliseconds())/1000;
+
+    monk_node.rotateRel(Quaternionf(0,dt,0));
+
+    phys.update(dt);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //Log::message(model.getMat().toString());
-    monk_node.rotateRel(Quaternionf(0, 0,
-				    degreesToRadians(0.01*dt)));
-    monk_node.render(model.getMat());
-      
-    // Swap buffers
+    graphics.render(window);
+    
     glfwSwapBuffers(window);
     glfwPollEvents();
     gl::checkError();
     
     start = end;
   }
-  //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   gl::terminate();
   Log::terminate();
-  //man.kill();
-  //Texture::terminate();
 
   return EXIT_SUCCESS;
 }

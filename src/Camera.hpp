@@ -18,7 +18,8 @@ NAMESPACE {
     int win_height;
     float aspect;
     
-    Camera(float cam_fovy, float cam_near, float cam_far);
+    Camera(Vec3f cam_pos, Vec3f cam_dir, Vec3f cam_up,
+	   float cam_fovy, float cam_near, float cam_far);
     
     void onWindowResize(int width, int height);
     /* void setHeadingAbs(float radians);

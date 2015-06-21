@@ -13,7 +13,9 @@ NAMESPACE {
     Array<Node*> children;
     Array<Renderable*> renderables;
 
-    Node(Node* node_parent = NULL);
+    //Node(Node* node_parent);
+    using Transform::Transform;
+    
     void addChild(Node* child);
     void addRenderable(Renderable* renderable);
     Mat4f getAbsMat();

@@ -2,6 +2,11 @@
 
 NAMESPACE {
 
+  Camera::Camera(Vec3f cam_pos, Vec3f cam_dir, Vec3f cam_up,
+		 float cam_fovy, float cam_near, float cam_far)
+    : pos(cam_pos), dir(cam_dir), up(cam_up),
+    fovy(cam_fovy), near_clip(cam_near), far_clip(cam_far) {}
+
   Mat4f Camera::getModel() {
     return Mat4f::makeTranslate(-pos);
   }
@@ -17,6 +22,7 @@ NAMESPACE {
 
   void Camera::onWindowResize(int width, int height) {
     aspect = width / (float) height;
+    glViewport(0,0,width,height);
   }
 
 }

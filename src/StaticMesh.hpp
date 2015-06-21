@@ -6,32 +6,22 @@
 #include "Containers.hpp"
 #include "String.hpp"
 #include "Texture.hpp"
+#include "BasicMesh.hpp"
+#include "BoundingObject.hpp"
 
 NAMESPACE {
 
-  struct StaticMeshData {
-
-    Vec3f pos;
-    Vec3f norm;
-    Vec2f tex_coord;
-
-    StaticMeshData(Vec3f position, Vec3f normal,
-		   Vec2f texture_coord) {
-      pos = position;
-      norm = normal;
-      tex_coord = texture_coord;
-    }
-
-  };
-
   struct StaticMesh : Renderable {
     
-    Array<StaticMeshData> data;
+    Array<BasicMeshData> data;
     Array<GLuint> elements;
     Texture* tex;
+    BoundingSphere b_sphere;
     
-    StaticMesh(Array<StaticMeshData> mesh_data,
+    StaticMesh(Array<BasicMeshData> mesh_data,
 	       Array<GLuint> mesh_elems, Texture* texture);
+    virtual BoundingObject* getBoundingObject();
+    virtual BoundingObject* getPhysicalBoundingObject();
     virtual void render();
     ~StaticMesh();
     

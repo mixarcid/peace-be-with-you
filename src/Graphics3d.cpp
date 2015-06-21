@@ -5,6 +5,10 @@
 
 NAMESPACE {
 
+  Graphics3d::Graphics3d(String shader_name) : shade(shader_name) {
+    shade.use();
+  }
+
   void Graphics3d::addNode(Node* node) {
     nodes.push_back(node);
   }
@@ -15,12 +19,15 @@ NAMESPACE {
 					  int w, int h) {
 				     cam->onWindowResize(w,h);
 				   });
+    int w, h;
+    Input::getWindowSize(&w,&h);
+    cam->onWindowResize(w,h);
   }
   
-  void Graphics3d::setShader(String name) {
+  /*void Graphics3d::setShader(String name) {
     shade = Shader(name);
     shade.use();
-  }
+  }*/
 
   void Graphics3d::render(GLFWwindow* window) {
     
@@ -29,6 +36,8 @@ NAMESPACE {
 		"a Camera before rendering");
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    shade.use();
 
     Shader::UNI_PROJ.registerMat4f(cam->getProj());
     Shader::UNI_VIEW.registerMat4f(cam->getView());

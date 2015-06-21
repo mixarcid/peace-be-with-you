@@ -12,8 +12,9 @@ NAMESPACE {
     Vec3f scal;
     Quaternionf rot;
 
-    Transform();
-    Transform(Mat4f matrix);
+    Transform(Vec3f translation = Vec3f(0,0,0),
+	      Quaternionf rotation = Quaternionf(0,0,0,1),
+	      Vec3f scale = Vec3f(1,1,1));
 
     void translateAbs(Vec3f trans_v);
     void translateRel(Vec3f trans_v);

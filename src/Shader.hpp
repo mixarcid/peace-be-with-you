@@ -45,7 +45,7 @@ NAMESPACE {
     
     GLuint id;
 
-    Shader(const String filename);
+    Shader(const String filename = "Default");
     void use();
     ShaderVar getVar(const char* name, ShaderTypeName type);
     ShaderUniform getUniform(const char* name);
