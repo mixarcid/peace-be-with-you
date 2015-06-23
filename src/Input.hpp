@@ -38,11 +38,11 @@ NAMESPACE {
     addMouseButtonCallback(function<void(GLFWwindow*, int,
 					 int, int)> fun);
 
-    static void removeKeyCallback(unsigned int index);
-    static void removeCharCallback(unsigned int index);
-    static void removeCursorPosCallback(unsigned int index);
-    static void removeWindowResizeCallback(unsigned int index);
-    static void removeMouseButtonCallback(unsigned int index);
+    static void removeKeyCallback(u32 index);
+    static void removeCharCallback(u32 index);
+    static void removeCursorPosCallback(u32 index);
+    static void removeWindowResizeCallback(u32 index);
+    static void removeMouseButtonCallback(u32 index);
 
     static void getWindowSize(int* width, int* height);
     

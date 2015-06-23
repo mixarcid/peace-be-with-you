@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include "Types.hpp"
 
 NAMESPACE {
 
@@ -9,7 +10,7 @@ NAMESPACE {
     using Array = typename std::vector<T>;
 
   template <typename T>
-    void removeAndReplace(Array<T> arr, unsigned int index) {
+    void removeAndReplace(Array<T> arr, u32 index) {
     arr[index] = arr.back();
     arr.pop_back();
   }

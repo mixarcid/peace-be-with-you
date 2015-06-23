@@ -9,13 +9,13 @@ NAMESPACE {
 
   struct Texture {
 
-    unsigned int length;
+    u32 length;
     GLuint* ids;
 
-    Texture(unsigned int num_textures = 1);
+    Texture(u32 num_textures = 1);
     void load(String filename, ShaderUniform tex_uniform,
-	      unsigned int index = 0);
-    void use(unsigned int index = 0);
+	      u32 index = 0);
+    void use(u32 index = 0);
     ~Texture();
   };
 

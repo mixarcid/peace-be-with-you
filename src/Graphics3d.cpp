@@ -16,10 +16,10 @@ NAMESPACE {
   void Graphics3d::setCamera(Camera* camera) {
     cam = camera;
     Input::addWindowResizeCallback([this](GLFWwindow* win,
-					  int w, int h) {
+					  i32 w, i32 h) {
 				     cam->onWindowResize(w,h);
 				   });
-    int w, h;
+    i32 w, h;
     Input::getWindowSize(&w,&h);
     cam->onWindowResize(w,h);
   }

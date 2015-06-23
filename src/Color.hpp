@@ -22,6 +22,6 @@ NAMESPACE {
     
   };
 
-  typedef Color4<float> Color4f;
+  typedef Color4<f32> Color4f;
   
 }

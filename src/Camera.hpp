@@ -10,22 +10,22 @@ NAMESPACE {
     Vec3f dir;
     Vec3f up;
 
-    float fovy; //in radians, naturally
-    float near_clip;
-    float far_clip;
+    f32 fovy; //in radians, naturally
+    f32 near_clip;
+    f32 far_clip;
 
-    int win_width;
-    int win_height;
-    float aspect;
+    i32 win_width;
+    i32 win_height;
+    f32 aspect;
     
     Camera(Vec3f cam_pos, Vec3f cam_dir, Vec3f cam_up,
-	   float cam_fovy, float cam_near, float cam_far);
+	   f32 cam_fovy, f32 cam_near, f32 cam_far);
     
-    void onWindowResize(int width, int height);
-    /* void setHeadingAbs(float radians);
-    void setHeadingRel(float radians);
-    void setPitchAbs(float radians);
-    void setPitchRel(float radians);
+    void onWindowResize(i32 width, i32 height);
+    /* void setHeadingAbs(f32 radians);
+    void setHeadingRel(f32 radians);
+    void setPitchAbs(f32 radians);
+    void setPitchRel(f32 radians);
     void setTransAbs(Vec3f trans);
     void setTransRel(Vec3f trans);*/
     

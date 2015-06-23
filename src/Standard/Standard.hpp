@@ -2,3 +2,4 @@
 #include "Log.hpp"
 #include "String.hpp"
 #include "Exceptions.hpp"
+#include "Types.hpp"

@@ -7,8 +7,8 @@ NAMESPACE {
 		       Quaternionf rotation,
 		       Vec3f scale)
     : trans(translation),
-    rot(rotation),
-    scal(scale) {}
+    scal(scale),
+    rot(rotation) {}
 
   void Transform::translateAbs(Vec3f trans_v) {
     trans = trans_v;

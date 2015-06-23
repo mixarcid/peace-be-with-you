@@ -17,8 +17,9 @@ NAMESPACE {
     EBO ebo;
     
     void init();
-    virtual BoundingObject* getBoundingObject() = 0;
-    virtual BoundingObject* getPhysicalBoundingObject() = 0;
+    virtual BoundingObject getBoundingObject() = 0;
+    virtual BoundingObject getPhysicalBoundingObject() = 0;
+    virtual BoundingObject getPrimaryBoundingObject() = 0;
     virtual void render();
     virtual ~Renderable() {}
     

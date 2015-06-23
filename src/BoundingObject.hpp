@@ -5,25 +5,58 @@
 
 NAMESPACE {
 
+  struct Transform;
+
   enum BoundingObjectType {
     BOUNDING_SPHERE
+  };
+
+  struct BoundingSphere  {
+
+    Vec3f center;
+    f32 radius;
+
+    BoundingSphere(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    void transform(Transform* t);
+    bool testIntersection(BoundingSphere b);
+  };
+
+  struct BoundingOBB {
+
+    Vec3f center;
+    Vec3f halves;
+    Vec3f coord[3];
+
+    BoundingOBB(Array<BasicMeshData> data);
+    bool testIntersection(BoundingOBB b);
+    
   };
 
   struct BoundingObject {
     
     BoundingObjectType type;
+    union {
+      BoundingSphere sphere;
+      BoundingOBB obb;
+    };
 
-    BoundingObject(BoundingObjectType obj_type);
-    
+    BoundingObject(BoundingObjectType obj_type,
+		   Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    void transform(Transform* t);
   };
-  
-  struct BoundingSphere : BoundingObject {
 
-    Vec3f center;
-    float radius;
+  struct Manifold {
 
-    BoundingSphere(Array<BasicMeshData> data);
-    
+    Vec3f normal;
+    f32 penetration;
+
+    //note that these assume the objects have already collided
+    Manifold(BoundingSphere a, BoundingSphere b);
+    Manifold(BoundingObject a, BoundingObject b);
   };
 
   /*struct BoundingAABB : BoundingObject {
@@ -35,6 +68,6 @@ NAMESPACE {
     
   }*/
 
-  bool testIntersection(BoundingObject* a, BoundingObject* b);
+  bool testIntersection(BoundingObject a, BoundingObject b);
 
 }

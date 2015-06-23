@@ -1,21 +1,10 @@
 #pragma once
 
-#include <math.h>
-#include <string.h>
+#include "Math.hpp"
 #include "GL.hpp"
 #include "Standard.hpp"
 
 NAMESPACE {
-
-  template<typename T>
-    inline T degreesToRadians(T deg) {
-    return deg*(M_PI/(T)180);
-  }
-
-  template<typename T>
-    inline T sqr(T x) {
-    return x*x;
-  }
 
   template <typename T>
     struct Vec2 {
@@ -53,7 +42,7 @@ NAMESPACE {
     }
   };
 
-  typedef Vec2<GLfloat> Vec2f;
+  typedef Vec2<f32> Vec2f;
   
   
   template <typename T>
@@ -118,6 +107,12 @@ NAMESPACE {
 		  y -= b.y,
 		  z -= b.z);
     }
+
+    T operator[](const u8 index) {
+      debugAssert(index < 3,
+		  "Vec3 index must be 0 to 2");
+      return (*((T*)this + sizeof(T)*index)); //that's right
+    }
     
     T abs() const {
       return sqrt(sqr(x) + sqr(y) + sqr(z));
@@ -156,7 +151,7 @@ NAMESPACE {
     
   };
   
-  typedef Vec3<GLfloat> Vec3f;
+  typedef Vec3<f32> Vec3f;
 
   template <typename T>
     struct Mat4 {
@@ -175,20 +170,20 @@ NAMESPACE {
       /*for (int n = 0; n < 16; ++n) {
 	data[n] = initial_data[n];
 	}*/
-      memcpy(this, initial_data, 16*sizeof(T));
+      memcpy(this, initial_data, sizeof(Mat4<T>));
     }
 
     /*Mat4(Mat4 b) {
       (*this) = b;
       }*/
 
-    T operator()(unsigned int row, unsigned int col) const {
+    T operator()(u8 row, u8 col) const {
       debugAssert(row < 4 && col < 4, "Matrix index out of bounds");
       return data[(row*4) + col];
     }
 
     void operator=(const Mat4 b) {
-      memcpy(this, &b, 16*sizeof(T));
+      memcpy(this, &b, sizeof(Mat4<T>));
     }
 
     Mat4 operator+(const Mat4 b) {
@@ -201,10 +196,10 @@ NAMESPACE {
 
     Mat4 operator*(const Mat4 b) {
       Mat4 ret;
-      for (unsigned int row=0; row<4; ++row) {
-	for (unsigned int col=0; col<4; ++col) {
+      for (u32 row=0; row<4; ++row) {
+	for (u32 col=0; col<4; ++col) {
 	  ret.data[row*4 + col] = 0;
-	  for (unsigned int n=0; n<4; ++n) {
+	  for (u32 n=0; n<4; ++n) {
 	    ret.data[row*4 + col] += (*this)(row, n)*(b(n, col));
 	  }
 	}
@@ -249,12 +244,12 @@ NAMESPACE {
 
     String toString() {
       String ret = "\n";
-      for (unsigned int row = 0; row < 4; ++row) {
+      for (u8 row = 0; row < 4; ++row) {
 	ret += "| ";
-	for (unsigned int col = 0; col < 4; ++col) {
+	for (u8 col = 0; col < 4; ++col) {
 	  ret += to_string((*this)(col, row)) + " ";
 	}
-	ret += "|\n";
+	ret += "|";
       }
       return ret;
     }
@@ -341,6 +336,76 @@ NAMESPACE {
     }
   };
 
-  typedef Mat4<GLfloat> Mat4f;
+  typedef Mat4<f32> Mat4f;
+
+  template <typename T>
+    struct Mat3 {
+    
+    T data[9];
+
+    Mat3() {
+      T d[9] = {1,0,0,
+		 0,1,0,
+		 0,0,1};
+      memcpy(this, d, sizeof(Mat3<T>));
+    }
+
+    Mat3(const T* initial_data) {
+      memcpy(this, initial_data, sizeof(Mat3<T>));
+    }
+    
+    T operator()(u8 row, u8 col) const {
+      debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
+      return data[(row*3) + col];
+    }
+
+    void operator=(const Mat3 b) {
+      memcpy(this, &b, sizeof(Mat3<T>));
+    }
+
+    Mat3 operator+(const Mat3 b) {
+      Mat3 ret;
+      for (int n = 0; n < 9; ++n) {
+	ret[n] = data[n] + b.data[n];
+      }
+      return ret;
+    }
+
+    Mat3 operator*(const Mat3 b) {
+      Mat3 ret;
+      for (u32 row=0; row<3; ++row) {
+	for (u32 col=0; col<3; ++col) {
+	  ret.data[row*3 + col] = 0;
+	  for (u32 n=0; n<3; ++n) {
+	    ret.data[row*3 + col] += (*this)(row, n)*(b(n, col));
+	  }
+	}
+      }
+      return ret;
+    }
+
+    void operator*=(const Mat3 b) {
+      (*this) = (*this) * b;
+    }
+
+    void makeIdentity() {
+      (*this) = Mat3();
+    }
+
+    String toString() {
+      String ret = "\n";
+      for (u8 row = 0; row < 3; ++row) {
+	ret += "| ";
+	for (u8 col = 0; col < 3; ++col) {
+	  ret += to_string((*this)(col, row)) + " ";
+	}
+	ret += "|";
+      }
+      return ret;
+    }
+    
+  };
+
+  typedef Mat3<f32> Mat3f;
   
 }

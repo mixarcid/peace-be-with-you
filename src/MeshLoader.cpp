@@ -12,15 +12,15 @@ NAMESPACE {
   const char PMF_TYPE_STATIC_TEXTURE = 1;
 
   Vec3f readVec3f(FILE* file) {
-    float x = fio::readLittleEndian<float>(file);
-    float y = fio::readLittleEndian<float>(file);
-    float z = fio::readLittleEndian<float>(file);
+    f32 x = fio::readLittleEndian<f32>(file);
+    f32 y = fio::readLittleEndian<f32>(file);
+    f32 z = fio::readLittleEndian<f32>(file);
     return Vec3f(x,y,z);
   }
 
   Vec2f readVec2f(FILE* file) {
-    float x = fio::readLittleEndian<float>(file);
-    float y = fio::readLittleEndian<float>(file);
+    f32 x = fio::readLittleEndian<f32>(file);
+    f32 y = fio::readLittleEndian<f32>(file);
     return Vec2f(x,y);
   }
     
@@ -32,12 +32,12 @@ NAMESPACE {
     //String tex_name = fio::readString(file);
     //Log::message("Texture name: " + tex_name);
 
-    uint32_t num_verts = fio::readLittleEndian<uint32_t>(file);
+    u32 num_verts = fio::readLittleEndian<u32>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
 
     //Log::message("#Verts: %u", num_verts);
-    for (uint32_t index = 0; index < num_verts; ++index) {
+    for (u32 index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
@@ -50,13 +50,13 @@ NAMESPACE {
       
     }
     
-    uint32_t num_elems = 3*fio::readLittleEndian<uint32_t>(file);
+    u32 num_elems = 3*fio::readLittleEndian<u32>(file);
     debugAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
     //Log::message("#Elements: %u", num_elems);
 
-    for (uint32_t index = 0; index < num_elems; ++index) {
-      uint32_t elem = fio::readLittleEndian<uint32_t>(file);
+    for (u32 index = 0; index < num_elems; ++index) {
+      u32 elem = fio::readLittleEndian<u32>(file);
       //Log::message("Element: %u", elem);
       elems.push_back(elem);
     }
@@ -86,7 +86,7 @@ NAMESPACE {
 		"Incorrect PMF version for model %s",
 		full_name.c_str());
 
-    uint32_t num_meshes = fio::readLittleEndian<uint32_t>(file);
+    u32 num_meshes = fio::readLittleEndian<u32>(file);
     //Log::message("%u", num_meshes);
     debugAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
@@ -95,7 +95,7 @@ NAMESPACE {
     model_texture->use();
     model_texture->load(filename, Shader::UNI_TEXTURE);
 
-    for (uint32_t mesh_index = 0;
+    for (u32 mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);

@@ -16,12 +16,13 @@ NAMESPACE {
     Array<BasicMeshData> data;
     Array<GLuint> elements;
     Texture* tex;
-    BoundingSphere b_sphere;
+    BoundingObject b_sphere;
     
     StaticMesh(Array<BasicMeshData> mesh_data,
 	       Array<GLuint> mesh_elems, Texture* texture);
-    virtual BoundingObject* getBoundingObject();
-    virtual BoundingObject* getPhysicalBoundingObject();
+    virtual BoundingObject getBoundingObject();
+    virtual BoundingObject getPhysicalBoundingObject();
+    virtual BoundingObject getPrimaryBoundingObject();
     virtual void render();
     ~StaticMesh();
     

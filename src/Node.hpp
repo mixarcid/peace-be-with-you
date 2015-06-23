@@ -7,9 +7,14 @@
 
 NAMESPACE {
 
+  struct BoundingObject;
+
   struct Node : Transform {
 
     Node* parent;
+    /*BoundingObject* bounding_obj;
+    BoundingObject* physical_bounding_obj;
+    BoundingObject* primary_bounding_obj;*/
     Array<Node*> children;
     Array<Renderable*> renderables;
 
@@ -18,6 +23,9 @@ NAMESPACE {
     
     void addChild(Node* child);
     void addRenderable(Renderable* renderable);
+    BoundingObject getBoundingObject();
+    BoundingObject getPhysicalBoundingObject();
+    BoundingObject getPrimaryBoundingObject();
     Mat4f getAbsMat();
     void render(Mat4f trans);
 

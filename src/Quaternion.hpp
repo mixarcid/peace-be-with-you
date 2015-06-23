@@ -57,15 +57,15 @@ NAMESPACE {
 
     Mat4<T> getMat() const {
       
-      float x2 = x * x;
-      float y2 = y * y;
-      float z2 = z * z;
-      float xy = x * y;
-      float xz = x * z;
-      float yz = y * z;
-      float wx = w * x;
-      float wy = w * y;
-      float wz = w * z;
+      f32 x2 = x * x;
+      f32 y2 = y * y;
+      f32 z2 = z * z;
+      f32 xy = x * y;
+      f32 xz = x * z;
+      f32 yz = y * z;
+      f32 wx = w * x;
+      f32 wy = w * y;
+      f32 wz = w * z;
       
       /*T data[16] = {
 	1 - 2 * (y2 + z2), 2 * (xy - wz), 2 * (xz + wy), 0,
@@ -128,6 +128,6 @@ NAMESPACE {
 
   };
 
-  typedef Quaternion<GLfloat> Quaternionf;
+  typedef Quaternion<f32> Quaternionf;
 
 }

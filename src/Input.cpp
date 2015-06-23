@@ -8,15 +8,15 @@ NAMESPACE {
     Input::input.win = window;
     
     glfwSetKeyCallback(window,[](GLFWwindow* win,
-			       int key, int code,
-			       int action, int mods) {
+			       i32 key, i32 code,
+			       i32 action, i32 mods) {
 	for (auto callback : Input::input.key_callbacks) {
 	  callback(win, key, code, action, mods);
 	}
       });
     
     glfwSetWindowSizeCallback(window,[](GLFWwindow* win,
-				      int w, int h) {
+				      i32 w, i32 h) {
 	for (auto callback : Input::input.resize_callbacks) {
 	  callback(win, w, h);
 	}
@@ -30,16 +30,16 @@ NAMESPACE {
       });
 
     glfwSetCharCallback(window,[](GLFWwindow* win,
-				unsigned int code) {
+				u32 code) {
 	for (auto callback : Input::input.char_callbacks) {
 	  callback(win, code);
 	}
       });
 
     glfwSetMouseButtonCallback(window,[](GLFWwindow* win,
-				       int button,
-				       int action,
-				       int mods) {
+				       i32 button,
+				       i32 action,
+				       i32 mods) {
 	for (auto callback : Input::input.mouse_button_callbacks) {
 	  callback(win, button, action, mods);
 	}
@@ -78,19 +78,19 @@ NAMESPACE {
     return Input::input.mouse_button_callbacks.size() - 1;
   }
 
-  void Input::removeKeyCallback(unsigned int index) {
+  void Input::removeKeyCallback(u32 index) {
     removeAndReplace(Input::input.key_callbacks, index);
   }
-  void Input::removeCharCallback(unsigned int index) {
+  void Input::removeCharCallback(u32 index) {
     removeAndReplace(Input::input.char_callbacks, index);
   }
-  void Input::removeCursorPosCallback(unsigned int index) {
+  void Input::removeCursorPosCallback(u32 index) {
     removeAndReplace(Input::input.cursor_pos_callbacks, index);
   }
-  void Input::removeWindowResizeCallback(unsigned int index) {
+  void Input::removeWindowResizeCallback(u32 index) {
     removeAndReplace(Input::input.resize_callbacks, index);
   }
-  void Input::removeMouseButtonCallback(unsigned int index) {
+  void Input::removeMouseButtonCallback(u32 index) {
     removeAndReplace(Input::input.mouse_button_callbacks,
 		     index);
   }

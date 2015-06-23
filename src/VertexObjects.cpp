@@ -3,19 +3,19 @@
 
 NAMESPACE {
 
-  void VAO::init(unsigned int num_vaos) {
+  void VAO::init(u32 num_vaos) {
     length = num_vaos;
     ids = new GLuint[length];
     glGenVertexArrays(length, ids);
   }
 
-  void VAO::use(unsigned int index) {
+  void VAO::use(u32 index) {
     debugAssert(index < length, "VAO index out of bounds");
     glBindVertexArray(ids[index]);
   }
 
   void VAO::registerVars(Array<ShaderVar> vars,
-			 unsigned int index) {
+			 u32 index) {
     Array<size_t> offsets;
     size_t total_size = 0;
 
@@ -36,7 +36,7 @@ NAMESPACE {
     delete ids;
   }
 
-  void VBO::init(unsigned int num_vbos) {
+  void VBO::init(u32 num_vbos) {
     length = num_vbos;
     ids = new GLuint[length];
     lengths = new unsigned int[length];
@@ -52,19 +52,19 @@ NAMESPACE {
     delete lengths;
   }
 
-  void VBO::draw(GLenum mode, unsigned int index) {
+  void VBO::draw(GLenum mode, u32 index) {
     glDrawArrays(mode, 0, lengths[index]);
   }
 
 
-  void EBO::init(unsigned int num_vbos) {
+  void EBO::init(u32 num_vbos) {
     length = num_vbos;
     ids = new GLuint[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
   }
 
-  /*EBO EBO::getEBO(unsigned int num_ebos) {
+  /*EBO EBO::getEBO(u32 num_ebos) {
     EBO ret;
     ret.length = num_ebos;
     ret.ids = new GLuint[ret.length];
@@ -74,7 +74,7 @@ NAMESPACE {
     }*/
 
   void EBO::bindArray(Array<GLuint> arr, bool dynamic,
-		      unsigned int index) {
+		      u32 index) {
     lengths[index] = arr.size();
     //Log::message("EBO ID: %u", ids[index]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[index]);
@@ -84,13 +84,13 @@ NAMESPACE {
   }
 
   /*void EBO::rebindArray(Array<GLuint> arr, bool dynamic,
-		   unsigned int index) {
+		   u32 index) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 		 lengths[index], &arr[0],
 		 dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   }*/
 
-  void EBO::draw(GLenum mode, unsigned int index) {
+  void EBO::draw(GLenum mode, u32 index) {
     //Log::message("%u", lengths[index]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[index]);
     glDrawElements(mode, lengths[index], GL_UNSIGNED_INT, NULL);

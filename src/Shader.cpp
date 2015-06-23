@@ -22,8 +22,8 @@ NAMESPACE {
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
-  const static int MAX_CHARS_IN_FILE = 5000;
-  const static int MAX_LOG_SIZE = 1000;
+  const static i32 MAX_CHARS_IN_FILE = 5000;
+  const static i32 MAX_LOG_SIZE = 1000;
 
   static String vert_header;
   static String frag_header;
@@ -35,7 +35,7 @@ NAMESPACE {
     FILE* file = fopen(filename, "r");
     fatalAssert(file != NULL,
 	       "Error opening %s", filename);
-    int line_num = -1;
+    i32 line_num = -1;
 
     while (!feof(file)) {
       fatalAssert(line_num < MAX_CHARS_IN_FILE,

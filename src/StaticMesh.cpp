@@ -6,7 +6,7 @@ NAMESPACE {
 			 Array<GLuint> mesh_elems,
 			 Texture* texture)
     : data(mesh_data), elements(mesh_elems),
-    tex(texture), b_sphere(mesh_data) {
+    tex(texture), b_sphere(BOUNDING_SPHERE, mesh_data) {
     
     Renderable::init();
     Renderable::vbo.bindArray(data, false);
@@ -20,12 +20,16 @@ NAMESPACE {
     delete tex;
   }
 
-  BoundingObject* StaticMesh::getBoundingObject() {
-    return (BoundingObject*) &b_sphere;
+  BoundingObject StaticMesh::getBoundingObject() {
+    return b_sphere;
   }
   
-  BoundingObject* StaticMesh::getPhysicalBoundingObject() {
-    return (BoundingObject*) &b_sphere;
+  BoundingObject StaticMesh::getPhysicalBoundingObject() {
+    return b_sphere;
+  }
+
+  BoundingObject StaticMesh::getPrimaryBoundingObject() {
+    return b_sphere;
   }
 
   void StaticMesh::render() {

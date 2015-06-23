@@ -11,8 +11,8 @@ using namespace peace;
 
 bool running = true;
 
-void keyCallback(GLFWwindow* window, int key, int scancode,
-		 int action, int mods) {
+void keyCallback(GLFWwindow* window, i32 key, i32 scancode,
+		 i32 action, i32 mods) {
   switch (key) {
   case GLFW_KEY_ESCAPE:
     glfwDestroyWindow(window);
@@ -28,7 +28,7 @@ int main() {
   man.start();
   gl::init();
 
-  GLFWwindow* window = glfwCreateWindow(700, 400,
+  GLFWwindow* window = glfwCreateWindow(700, 700,
 					"Peace", NULL, NULL);
   if (!window) {
     glfwTerminate();
@@ -57,10 +57,10 @@ int main() {
 	     degreesToRadians(90),
 	     1, 100);
   graphics.setCamera(&cam);
-  float cam_speed = 0.1;
-  float cam_rot_speed = 0.1;
-  Input::addKeyCallback([&cam, cam_speed](GLFWwindow* win, int key,
-					  int code, int act, int mods) {
+  f32 cam_speed = 0.1;
+  f32 cam_rot_speed = 0.1;
+  Input::addKeyCallback([&cam, cam_speed](GLFWwindow* win, i32 key,
+					  i32 code, i32 act, i32 mods) {
 			  Vec3f axis = Vec3f::cross(cam.dir, cam.up);
 			  switch(key) {
 			  case GLFW_KEY_W:
@@ -81,27 +81,33 @@ int main() {
 
   MeshLoader loader("Monkey");
   StaticMesh* monk = loader.getStaticMesh("Suzanne");
+  MeshLoader l2("WoodenBox");
+  StaticMesh* cube = l2.getStaticMesh("Cube");
   
-  DynamicObject monk_node(1, Vec3f(0,0,-5), Vec3f(0,1,-1));
-  monk_node.addRenderable(monk);
+  PhysicalObject monk_node(cube, Material(1, 0.5), Vec3f(0,4,-5),
+			   Vec3f(0,-10,0));
   graphics.addNode(&monk_node);
   phys.addDynamicObject(&monk_node);
 
+  StaticObject cube_node(cube, Vec3f(0,-3,-5));
+  graphics.addNode(&cube_node);
+  phys.addStaticObject(&cube_node);
+
   Time start, end;
-  float dt = 0;
+  f32 dt = 0;
   end.makeCurrent();
   start.makeCurrent();
   
   while(!glfwWindowShouldClose(window) && running) {
 
     end.makeCurrent();
-    dt = (float) (end.getMilliseconds() - start.getMilliseconds())/1000;
+    dt = (f32) (end.getMilliseconds() - start.getMilliseconds())/1000;
 
-    monk_node.rotateRel(Quaternionf(0,dt,0));
+    //monk_node.rotateRel(Quaternionf(0,dt,0));
 
     phys.update(dt);
 
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     graphics.render(window);
     

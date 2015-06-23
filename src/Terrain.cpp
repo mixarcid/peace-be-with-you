@@ -2,8 +2,8 @@
 
 NAMESPACE {
 
-  const float TERRAIN_CHUNK_SIZE = 10.0f;
-  const unsigned int TERRAIN_CHUNK_RES = 20;
+  const f32 TERRAIN_CHUNK_SIZE = 10.0f;
+  const u32 TERRAIN_CHUNK_RES = 20;
 
   void Terrain::generate(Vec2<unsigned int> size) {
     

@@ -4,15 +4,15 @@
 
 NAMESPACE {
 
-  Texture::Texture(unsigned int num_textures) {
+  Texture::Texture(u32 num_textures) {
     length = num_textures;
     ids = new GLuint[length];
     glGenTextures(length, ids);
   }
   
   void Texture::load(String filename, ShaderUniform tex_uniform,
-		     unsigned int index) {
-    int width, height;
+		     u32 index) {
+    i32 width, height;
     const char* full_name = (DIR_TEXTURES + filename
 			     + DIR_TEXTURE_EXTENSION).c_str();
     unsigned char* image =
@@ -43,7 +43,7 @@ NAMESPACE {
     Log::message("Loaded texture %s", filename.c_str());
   }
 
-  void Texture::use(unsigned int index) {
+  void Texture::use(u32 index) {
     GLenum tex_index = GL_TEXTURE0 + index;
     fatalAssert(tex_index < GL_MAX_TEXTURE_UNITS,
 	       "The requested texture index is too large.");
