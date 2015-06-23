@@ -29,9 +29,9 @@ NAMESPACE {
     a->veloc += impulse*a->mass_data.inv_mass;
     b->veloc -= impulse*b->mass_data.inv_mass;
 
-    f32 cf32  = COLLISION_POS_CORRECTION * m.penetration
+    f32 cf  = COLLISION_POS_CORRECTION * m.penetration
       / (a->mass_data.inv_mass + b->mass_data.inv_mass);
-    Vec3f correction = -m.normal*cf32;
+    Vec3f correction = -m.normal*cf;
     a->translateRel(-correction * a->mass_data.inv_mass);
     b->translateRel(correction * b->mass_data.inv_mass);
     
