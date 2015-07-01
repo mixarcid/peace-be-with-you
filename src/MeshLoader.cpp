@@ -67,6 +67,7 @@ NAMESPACE {
 
   MeshLoader::MeshLoader(String filename) {
 
+    //gl::checkError();
     String full_name = (DIR_MODELS + filename
 			+ DIR_MODEL_EXTENSION);
     
@@ -90,7 +91,7 @@ NAMESPACE {
     //Log::message("%u", num_meshes);
     debugAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
-
+    
     Texture* model_texture = new Texture();
     model_texture->use();
     model_texture->load(filename, Shader::UNI_TEXTURE);

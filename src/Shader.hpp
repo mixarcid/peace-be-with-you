@@ -21,6 +21,8 @@ NAMESPACE {
     TYPE_VECTOR2F,
     TYPE_VECTOR3F,
     TYPE_COLOR4F,
+    TYPE_BONES_INDEX,
+    TYPE_BONE_WEIGHT,
     TYPE_LAST
   };
   
@@ -56,10 +58,10 @@ NAMESPACE {
     const static ShaderVar TEX_COORD;
     const static ShaderVar NORMAL;
 
-    const static ShaderUniform UNI_TEXTURE;
-    const static ShaderUniform UNI_MODEL;
-    const static ShaderUniform UNI_VIEW;
-    const static ShaderUniform UNI_PROJ;
+    static ShaderUniform UNI_TEXTURE;
+    static ShaderUniform UNI_MODEL;
+    static ShaderUniform UNI_VIEW;
+    static ShaderUniform UNI_PROJ;
   };
   
 }

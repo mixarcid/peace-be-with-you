@@ -8,6 +8,8 @@ NAMESPACE {
     ShaderTypeInfo(GL_FLOAT, 2, sizeof(Vec2f)),
     ShaderTypeInfo(GL_FLOAT, 3, sizeof(Vec3f)),
     ShaderTypeInfo(GL_FLOAT, 4, sizeof(Color4f)),
+    ShaderTypeInfo(GL_UNSIGNED_INT, 1, sizeof(u32)),
+    ShaderTypeInfo(
   };
   
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
@@ -15,10 +17,10 @@ NAMESPACE {
   const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
   const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
 
-  const ShaderUniform Shader::UNI_TEXTURE(0);
-  const ShaderUniform Shader::UNI_MODEL(1);
-  const ShaderUniform Shader::UNI_VIEW(2);
-  const ShaderUniform Shader::UNI_PROJ(3);
+  ShaderUniform Shader::UNI_TEXTURE(0);
+  ShaderUniform Shader::UNI_MODEL(1);
+  ShaderUniform Shader::UNI_VIEW(2);
+  ShaderUniform Shader::UNI_PROJ(3);
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
@@ -130,11 +132,6 @@ NAMESPACE {
     //UNI_TEXTURE = glGetUniformLocation(id, "uniTexture");
     
     glLinkProgram(id);
-    /*glGetProgramInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_Log);
-    shader_Log = c_shader_Log;
-    fatalAssert(shader_Log.length() == 0,
-	       "Error linking shader %s: %s",
-	       filename.c_str(), c_shader_Log);*/
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
@@ -142,6 +139,10 @@ NAMESPACE {
   }
 
   void Shader::use() {
+    UNI_TEXTURE.id = glGetUniformLocation(id, "uniTexture");
+    UNI_MODEL.id = glGetUniformLocation(id, "uniModel");
+    UNI_VIEW.id = glGetUniformLocation(id, "uniView");
+    UNI_PROJ.id = glGetUniformLocation(id, "uniProj");
     glUseProgram(id);
   }
 
