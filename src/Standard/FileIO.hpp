@@ -13,9 +13,8 @@ NAMESPACE {
       
       bool isLittle;
 
-      TestEndian() {
+      TestEndian() : isLittle(true) {
 	int t = 1;
-	isLittle = true;
 	isLittle = (*((char*)&t) == 1);
       }
       

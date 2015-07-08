@@ -4,7 +4,7 @@ import struct
 from bpy_extras.io_utils import ExportHelper
 
 bl_info = {
-    "name":         "PMF Exporter",
+    "name":         "PMF format",
     "author":       "Michael Arcidiacono",
     "blender":      (2,6,2),
     "version":      (0,0,2),
@@ -21,16 +21,18 @@ def vec2Cmp(v1, v2):
 
 class PMFFile:
 
+    VERSION = b'\x04'
+
     TYPE_STATIC_NO_TEXTURE = 0
     TYPE_STATIC_TEXTURE = 1
     TYPE_BONED_TEXTURE = 2
 
-    MAX_WEIGHTS_PER_VERTEX = 5
+    MAX_WEIGHTS_PER_VERTEX = 8
 
     def __init__(self, filename):
         self.file = open(filename, 'bw')
-        self.file.write(b'PMF') #signature
-        self.file.write(b'\x03') #version
+        self.file.write(b'PMF')
+        self.file.write(PMFFile.VERSION)
 
     def writeStruct(self, fmt, *arg):
         self.file.write(struct.pack("<"+fmt, *arg))
@@ -73,6 +75,7 @@ class PMFFile:
             
             self.writeString(mesh.name)
             self.writeStruct("B", mesh_type)
+            #self.writeStruct("I", flags)
             #self.writeString(mesh.uv_textures.active.data[0].image.name)
 
             vert_uvs = [[] for x in range(len(bm.verts))]
@@ -101,11 +104,11 @@ class PMFFile:
                     self.writeVec3f(vert.normal)
                     self.writeVec2f(uv)
                     if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
-                        i = 0
+                        g_len = len(vert.groups)
+                        if (g_len > PMFFile.MAX_WEIGHTS_PER_VERTEX):
+                            raise Exception("Too many bones per vertex")
+                        self.writeStruct("B", g_len)
                         for g in vert.groups:
-                            i += 1
-                            if i > PMFFile.MAX_WEIGHTS_PER_VERTEX:
-                                raise Exception("Too many weights per vertex")
                             self.writeStruct("I", g.group)
                             self.writeStruct("f", g.weight)
 
@@ -121,7 +124,12 @@ class PMFFile:
                     self.writeStruct("L", vert_indexes[vert.index] + n)
 
             if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
+                
                 self.writeStruct("I", len(armature.data.bones))
+                bpy.context.scene.frame_set(0)
+                for bone in armature.pose.bones:
+                    self.writeQuaternionf(bone.rotation_quaternion)
+                
                 self.writeStruct("I", len(actions))
                 for act in actions:
                     mesh_obj.animation_data.action = act

@@ -11,7 +11,7 @@ NAMESPACE {
   struct VAO {
 
     u32 length;
-    GLuint* ids;
+    u32* ids;
 
     void init(u32 num_vaos = 1);
     void use(u32 index  = 0);
@@ -27,7 +27,7 @@ NAMESPACE {
   struct VBO {
     
     u32 length;
-    GLuint* ids;
+    u32* ids;
     unsigned int* lengths;
 
     void init(u32 num_vbos = 1);
@@ -56,14 +56,14 @@ NAMESPACE {
   struct EBO {
     
     u32 length;
-    GLuint* ids;
+    u32* ids;
     unsigned int* lengths;
 
     void init(u32 num_ebos = 1);
-    void bindArray(Array<GLuint> arr, bool dynamic,
+    void bindArray(Array<u32> arr, bool dynamic,
 		   u32 index = 0);
     //the new array must be the same size as before
-    /*void rebindArray(Array<GLuint> arr, bool dynamic,
+    /*void rebindArray(Array<u32> arr, bool dynamic,
       u32 index = 0);*/
     void draw(GLenum mode, u32 index = 0);
     ~EBO();

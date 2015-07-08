@@ -5,22 +5,37 @@
 NAMESPACE {
 
   const static ShaderTypeInfo SHADER_TYPES[TYPE_LAST] = {
-    ShaderTypeInfo(GL_FLOAT, 2, sizeof(Vec2f)),
-    ShaderTypeInfo(GL_FLOAT, 3, sizeof(Vec3f)),
-    ShaderTypeInfo(GL_FLOAT, 4, sizeof(Color4f)),
+    ShaderTypeInfo(GL_FLOAT, 1, sizeof(f32)),
     ShaderTypeInfo(GL_UNSIGNED_INT, 1, sizeof(u32)),
-    ShaderTypeInfo(
+    ShaderTypeInfo(GL_FLOAT, 2, 2*sizeof(f32)),
+    ShaderTypeInfo(GL_FLOAT, 3, 3*sizeof(f32)),
+    ShaderTypeInfo(GL_FLOAT, 4, 4*sizeof(f32)),
+    ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32))
+    /*ShaderTypeInfo(GL_UNSIGNED_INT, Shader::MAX_BONES_PER_VERTEX,
+		   Shader::MAX_BONES_PER_VERTEX*sizeof(u32)),
+    ShaderTypeInfo(GL_FLOAT, Shader::MAX_BONES_PER_VERTEX,
+		   Shader::MAX_BONES_PER_VERTEX*sizeof(f32))*/
   };
   
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
-  const ShaderVar Shader::COLOR(1, TYPE_COLOR4F);
+  const ShaderVar Shader::COLOR(1, TYPE_VECTOR4F);
   const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
   const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
+  const ShaderVar Shader::NUM_BONES(4, TYPE_U32);
+  const ShaderVar Shader::BONE_INDEXES0(5, TYPE_VECTOR4U);
+  const ShaderVar Shader::BONE_WEIGHTS0(6, TYPE_VECTOR4F);
+  const ShaderVar Shader::BONE_INDEXES1(7, TYPE_VECTOR4U);
+  const ShaderVar Shader::BONE_WEIGHTS1(8, TYPE_VECTOR4F);
 
   ShaderUniform Shader::UNI_TEXTURE(0);
   ShaderUniform Shader::UNI_MODEL(1);
   ShaderUniform Shader::UNI_VIEW(2);
   ShaderUniform Shader::UNI_PROJ(3);
+  ShaderUniform Shader::UNI_BONES(4);
+  ShaderUniform Shader::UNI_FLAGS(5);
+
+  const u8 Shader::MAX_BONES;
+  const u8 Shader::MAX_BONES_PER_VERTEX;
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
@@ -99,11 +114,11 @@ NAMESPACE {
     const char* frag_source = frag_str.c_str();
     //Log::message("%s", vert_source);
 
-    GLuint vert_id = glCreateShader(GL_VERTEX_SHADER);
+    u32 vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &vert_source, NULL);
     glCompileShader(vert_id);
 
-    GLuint frag_id = glCreateShader(GL_FRAGMENT_SHADER);
+    u32 frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(frag_id, 1, &frag_source, NULL);
     glCompileShader(frag_id);
 
@@ -128,8 +143,11 @@ NAMESPACE {
     glBindAttribLocation(id, COLOR.id, "inColor");
     glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
     glBindAttribLocation(id, NORMAL.id, "inNormal");
-
-    //UNI_TEXTURE = glGetUniformLocation(id, "uniTexture");
+    glBindAttribLocation(id, NUM_BONES.id, "inNumBones");
+    glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
+    glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
+    glBindAttribLocation(id, BONE_INDEXES1.id, "inBoneIndexes0");
+    glBindAttribLocation(id, BONE_WEIGHTS1.id, "inBoneWeights0");
     
     glLinkProgram(id);
     glDeleteShader(vert_id);
@@ -143,6 +161,8 @@ NAMESPACE {
     UNI_MODEL.id = glGetUniformLocation(id, "uniModel");
     UNI_VIEW.id = glGetUniformLocation(id, "uniView");
     UNI_PROJ.id = glGetUniformLocation(id, "uniProj");
+    UNI_BONES.id = glGetUniformLocation(id, "uniBones");
+    UNI_FLAGS.id = glGetUniformLocation(id, "uniFlags");
     glUseProgram(id);
   }
 

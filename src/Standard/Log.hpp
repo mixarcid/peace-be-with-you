@@ -46,6 +46,9 @@ NAMESPACE {
     static void error(String message);
     static void fatalError(String message);
 
+    static void __assert_print(const char* message, ...);
+    static void __assert_print(String message);
+
     static Log logger;
     
   };

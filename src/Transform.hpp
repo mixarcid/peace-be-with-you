@@ -9,12 +9,12 @@ NAMESPACE {
   struct Transform {
 
     Vec3f trans;
-    Vec3f scal;
+    f32 pad[1];
+    //Vec3f scal;
     Quaternionf rot;
 
     Transform(Vec3f translation = Vec3f(0,0,0),
-	      Quaternionf rotation = Quaternionf(0,0,0,1),
-	      Vec3f scale = Vec3f(1,1,1));
+	      Quaternionf rotation = Quaternionf(0,0,0,1));
 
     void translateAbs(Vec3f trans_v);
     void translateRel(Vec3f trans_v);
@@ -22,10 +22,12 @@ NAMESPACE {
     void rotateAbs(Quaternionf q);
     void rotateRel(Quaternionf q);
     
-    void scaleAbs(Vec3f scale_v);
-    void scaleRel(Vec3f scale_v);
-
+    //void scaleAbs(Vec3f scale_v);
+    //void scaleRel(Vec3f scale_v);
+    
     Mat4f getMat();
+
+    static Transform combine(Transform a, Transform b);
     
   };
 

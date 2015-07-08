@@ -7,13 +7,13 @@ NAMESPACE {
   template <typename T>
     struct Quaternion {
 
+    T w;
     T x;
     T y;
     T z;
-    T w;
 
-    Quaternion(T qx = 0, T qy = 0, T qz = 0, T qw = 1) :
-      x(qx), y(qy), z(qz), w(qw) {}
+    Quaternion(T qw = 1, T qx = 0, T qy = 0, T qz = 0) :
+      w(qw), x(qx), y(qy), z(qz) {}
 
     //angle in radians, as always
     Quaternion(Vec3<T> axis, T angle) {

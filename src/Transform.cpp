@@ -3,11 +3,9 @@
 
 NAMESPACE {
   
-  Transform::Transform(Vec3f translation,
-		       Quaternionf rotation,
-		       Vec3f scale)
+  Transform::Transform(Vec3f translation, Quaternionf rotation)
     : trans(translation),
-    scal(scale),
+    //scal(scale),
     rot(rotation) {}
 
   void Transform::translateAbs(Vec3f trans_v) {
@@ -25,16 +23,22 @@ NAMESPACE {
     rot.makeUnit();
   }
     
-  void Transform::scaleAbs(Vec3f scale_v) {
+  /*void Transform::scaleAbs(Vec3f scale_v) {
     scal = scale_v;
   }
   void Transform::scaleRel(Vec3f scale_v) {
     scal += scale_v;
-  }
+    }*/
 
   Mat4f Transform::getMat() {
-    Mat4f ret = Mat4f::makeScale(scal) *
+    Mat4f ret = //Mat4f::makeScale(scal) *
       rot.getMat() * Mat4f::makeTranslate(trans);
+    return ret;
+  }
+
+  Transform Transform::combine(Transform a, Transform b) {
+    Transform ret(a.trans + (a.rot * b.trans),
+		  b.rot*a.rot);
     return ret;
   }
   

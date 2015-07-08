@@ -22,11 +22,13 @@ void keyCallback(GLFWwindow* window, i32 key, i32 scancode,
 }
 
 int main() {
+  
+  Log::init(NULL);
+  SystemManager man({&Log::logger});
+  man.start();
+  gl::init();
+  
   try {
-    Log::init(NULL);
-    SystemManager man({&Log::logger});
-    man.start();
-    gl::init();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -86,18 +88,26 @@ int main() {
     Physics phys;
 
     MeshLoader loader("Soldier");
-    StaticMesh* monk = loader.getStaticMesh("Frank");
-    MeshLoader l2("WoodenBox");
+    BonedMesh monk = loader.getBonedMesh("Frank");
+    /*MeshLoader l2("WoodenBox");
     StaticMesh* cube = l2.getStaticMesh("Cube");
   
-    PhysicalObject monk_node(monk, Material(1, 0.5), Vec3f(0,4,-5),
+    PhysicalObject monk_node(&monk, Material(1, 0.5), Vec3f(0,4,-5),
 			     Vec3f(0,-10,0));
     graphics.addNode(&monk_node);
     phys.addDynamicObject(&monk_node);
 
-    StaticObject cube_node(cube, Vec3f(0,-3,-5));
+    StaticObject cube_node(cube, Vec3f(0,-2,-5));
     graphics.addNode(&cube_node);
-    phys.addStaticObject(&cube_node);
+    phys.addStaticObject(&cube_node);*/
+
+    StaticObject monk_node(&monk, Vec3f(0, 0,-5));
+    monk_node.rotateAbs(Quaternionf(0,
+				    degreesToRadians(-90.0f),
+				    degreesToRadians(90.0f)));
+    graphics.addNode(&monk_node);
+    phys.addStaticObject(&monk_node);
+
 
     Time start, end;
     f32 dt = 0;
@@ -123,11 +133,11 @@ int main() {
     
       start = end;
     }
-    gl::terminate();
-    Log::terminate();
-  } catch (...) {
-    exit(EXIT_FAILURE);
+  } catch (FatalError e) {
+    Log::error(e.what());
   }
 
+  gl::terminate();
+  Log::terminate();
   return EXIT_SUCCESS;
 }

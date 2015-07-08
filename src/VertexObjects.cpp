@@ -5,7 +5,7 @@ NAMESPACE {
 
   void VAO::init(u32 num_vaos) {
     length = num_vaos;
-    ids = new GLuint[length];
+    ids = new u32[length];
     glGenVertexArrays(length, ids);
   }
 
@@ -14,8 +14,7 @@ NAMESPACE {
     glBindVertexArray(ids[index]);
   }
 
-  void VAO::registerVars(Array<ShaderVar> vars,
-			 u32 index) {
+  void VAO::registerVars(Array<ShaderVar> vars, u32 index) {
     Array<size_t> offsets;
     size_t total_size = 0;
 
@@ -38,7 +37,7 @@ NAMESPACE {
 
   void VBO::init(u32 num_vbos) {
     length = num_vbos;
-    ids = new GLuint[length];
+    ids = new u32[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
   }
@@ -59,7 +58,7 @@ NAMESPACE {
 
   void EBO::init(u32 num_vbos) {
     length = num_vbos;
-    ids = new GLuint[length];
+    ids = new u32[length];
     lengths = new unsigned int[length];
     glGenBuffers(length, ids);
   }
@@ -67,23 +66,22 @@ NAMESPACE {
   /*EBO EBO::getEBO(u32 num_ebos) {
     EBO ret;
     ret.length = num_ebos;
-    ret.ids = new GLuint[ret.length];
+    ret.ids = new u32[ret.length];
     ret.lengths = new unsigned int[ret.length];
     glGenBuffers(ret.length, ret.ids);
     return ret;
     }*/
 
-  void EBO::bindArray(Array<GLuint> arr, bool dynamic,
-		      u32 index) {
+  void EBO::bindArray(Array<u32> arr, bool dynamic, u32 index) {
     lengths[index] = arr.size();
     //Log::message("EBO ID: %u", ids[index]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[index]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		 lengths[index]*sizeof(GLuint), &arr[0],
+		 lengths[index]*sizeof(u32), &arr[0],
 		 dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   }
 
-  /*void EBO::rebindArray(Array<GLuint> arr, bool dynamic,
+  /*void EBO::rebindArray(Array<u32> arr, bool dynamic,
 		   u32 index) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 		 lengths[index], &arr[0],

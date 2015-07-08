@@ -18,11 +18,12 @@ NAMESPACE {
   };
 
   enum ShaderTypeName {
+    TYPE_F32,
+    TYPE_U32,
     TYPE_VECTOR2F,
     TYPE_VECTOR3F,
-    TYPE_COLOR4F,
-    TYPE_BONES_INDEX,
-    TYPE_BONE_WEIGHT,
+    TYPE_VECTOR4F,
+    TYPE_VECTOR4U,
     TYPE_LAST
   };
   
@@ -45,7 +46,7 @@ NAMESPACE {
   
   struct Shader {
     
-    GLuint id;
+    u32 id;
 
     Shader(const String filename = "Default");
     void use();
@@ -57,11 +58,21 @@ NAMESPACE {
     const static ShaderVar COLOR;
     const static ShaderVar TEX_COORD;
     const static ShaderVar NORMAL;
+    const static ShaderVar NUM_BONES;
+    const static ShaderVar BONE_INDEXES0;
+    const static ShaderVar BONE_WEIGHTS0;
+    const static ShaderVar BONE_INDEXES1;
+    const static ShaderVar BONE_WEIGHTS1;
 
     static ShaderUniform UNI_TEXTURE;
     static ShaderUniform UNI_MODEL;
     static ShaderUniform UNI_VIEW;
     static ShaderUniform UNI_PROJ;
+    static ShaderUniform UNI_BONES;
+    static ShaderUniform UNI_FLAGS;
+
+    const static u8 MAX_BONES = 50;
+    const static u8 MAX_BONES_PER_VERTEX = 8;
   };
   
 }

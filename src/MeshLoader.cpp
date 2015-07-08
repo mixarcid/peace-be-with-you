@@ -7,9 +7,10 @@
 
 NAMESPACE {
 
-  const char PMF_VERSION = 0x03;
+  const char PMF_VERSION = 0x04;
   const char PMF_TYPE_STATIC_NO_TEXTURE = 0;
   const char PMF_TYPE_STATIC_TEXTURE = 1;
+  const char PMF_TYPE_BONED_TEXTURE = 2;
 
   Vec3f readVec3f(FILE* file) {
     f32 x = fio::readLittleEndian<f32>(file);
@@ -23,11 +24,19 @@ NAMESPACE {
     f32 y = fio::readLittleEndian<f32>(file);
     return Vec2f(x,y);
   }
+
+  Quaternionf readQuaternionf(FILE* file) {
+    f32 w = fio::readLittleEndian<f32>(file);
+    f32 x = fio::readLittleEndian<f32>(file);
+    f32 y = fio::readLittleEndian<f32>(file);
+    f32 z = fio::readLittleEndian<f32>(file);
+    return Quaternionf(w,x,y,z);
+  }
     
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
     Array<BasicMeshData> data;
-    Array<GLuint> elems;
+    Array<u32> elems;
 
     //String tex_name = fio::readString(file);
     //Log::message("Texture name: " + tex_name);
@@ -45,8 +54,6 @@ NAMESPACE {
       tex_coord.y = 1 - tex_coord.y;
       //Log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
       data.push_back(BasicMeshData(pos, norm, tex_coord));
-      /*data.push_back(BasicMeshData(readVec3f(file),
-	readVec3f(file)));*/
       
     }
     
@@ -61,8 +68,71 @@ NAMESPACE {
       elems.push_back(elem);
     }
 
-    return new StaticMesh(data, elems, tex);
+    StaticMesh* ret = new StaticMesh(data, elems, tex);
+    ret->init();
+    return ret;
+  }
+
+  BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
+
+    Array<BasicMeshData> data;
+    Array<BonedMeshData> bone_data;
+    Array<Bone> bones;
+    Array<u32> elems;
+
+    u32 num_verts = fio::readLittleEndian<u32>(file);
+    debugAssert(num_verts > 0,
+		"Why are you loading a mesh with no vertices?");
     
+    //Log::message("#Verts: %u", num_verts);
+    for (u32 index = 0; index < num_verts; ++index) {
+
+      Vec3f pos = readVec3f(file);
+      Vec3f norm = readVec3f(file);
+      Vec2f tex_coord = readVec2f(file);
+      tex_coord.y = 1 - tex_coord.y;
+
+      /*Log::message("Pos: " + pos.toString());
+      Log::message("Norm: " + norm.toString());
+      Log::message("Tex_coord: " + tex_coord.toString());*/
+
+      BonedMeshData d;
+      d.num_bones = fio::readLittleEndian<u8>(file);
+      //Log::message("#bones: %u", d.num_bones);
+      fatalAssert(d.num_bones <= Shader::MAX_BONES_PER_VERTEX,
+		  "Too many bones per vertex!");
+      for (int i = 0; i < d.num_bones; ++i) {
+	d.indexes[i] = fio::readLittleEndian<u32>(file);
+	d.weights[i] = fio::readLittleEndian<f32>(file);
+      }
+      
+      data.push_back(BasicMeshData(pos, norm, tex_coord));
+      bone_data.push_back(d);
+      
+    }
+    
+    u32 num_elems = 3*fio::readLittleEndian<u32>(file);
+    debugAssert(num_elems > 0,
+		"Why are you loading a mesh with no faces?");
+    //Log::message("#Elements: %u", num_elems);
+
+    for (u32 index = 0; index < num_elems; ++index) {
+      u32 elem = fio::readLittleEndian<u32>(file);
+      //Log::message("Element: %u", elem);
+      elems.push_back(elem);
+    }
+
+    u32 num_bones = fio::readLittleEndian<u32>(file);
+
+    for (u32 i = 0; i < num_bones; ++i) {
+      Quaternionf rot = readQuaternionf(file);
+      bones.push_back(Bone(Vec3f(0,0,0),
+			   rot));
+    }
+
+    BonedMeshBase* ret = new BonedMeshBase(data, elems, tex, bone_data, bones);
+    ret->init();
+    return ret;
   }
 
   MeshLoader::MeshLoader(String filename) {
@@ -100,6 +170,7 @@ NAMESPACE {
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);
+
       //Log::message("Mesh name: " + mesh_name);
       
       unsigned char mesh_type;
@@ -114,9 +185,13 @@ NAMESPACE {
 	static_meshes[mesh_name] = loadStaticMesh(file,
 						  model_texture);
 	break;
+      case PMF_TYPE_BONED_TEXTURE:
+	boned_meshes[mesh_name] = loadBonedMesh(file,
+						model_texture);
+	break;
       default:
 	  Log::fatalError("Unable to determine type of"
-			  "mesh %s in model %s",
+			  " mesh %s in model %s",
 			  mesh_name.c_str(), full_name.c_str());
 	break;
       }
@@ -130,13 +205,24 @@ NAMESPACE {
   StaticMesh* MeshLoader::getStaticMesh(String name) {
     StaticMesh* ret = static_meshes[name];
     fatalAssert(ret != NULL,
-		"The static mesh " + name +
-		" does not exist in this model");
+		"The static mesh \"" + name +
+		"\" does not exist in this model");
     return ret;
+  }
+
+  BonedMesh MeshLoader::getBonedMesh(String name) {
+    BonedMeshBase* base = boned_meshes[name];
+    fatalAssert(base != NULL,
+		"The boned mesh \"" + name +
+		"\" does not exist in this model");
+    return BonedMesh(base);
   }
 
   MeshLoader::~MeshLoader() {
     for (const auto pair : static_meshes) {
+      delete pair.second; //the mesh
+    }
+    for (const auto pair : boned_meshes) {
       delete pair.second; //the mesh
     }
   }

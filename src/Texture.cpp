@@ -6,7 +6,7 @@ NAMESPACE {
 
   Texture::Texture(u32 num_textures) {
     length = num_textures;
-    ids = new GLuint[length];
+    ids = new u32[length];
     glGenTextures(length, ids);
   }
   
