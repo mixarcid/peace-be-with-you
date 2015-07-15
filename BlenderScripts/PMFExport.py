@@ -2,9 +2,10 @@ import bpy
 import bmesh
 import struct
 from bpy_extras.io_utils import ExportHelper
+from functools import reduce
 
 bl_info = {
-    "name":         "PMF Exporter",
+    "name":         "PMF format",
     "author":       "Michael Arcidiacono",
     "blender":      (2,6,2),
     "version":      (0,0,2),
@@ -21,13 +22,18 @@ def vec2Cmp(v1, v2):
 
 class PMFFile:
 
+    VERSION = b'\x04'
+
     TYPE_STATIC_NO_TEXTURE = 0
     TYPE_STATIC_TEXTURE = 1
+    TYPE_BONED_TEXTURE = 2
+
+    MAX_WEIGHTS_PER_VERTEX = 8
 
     def __init__(self, filename):
         self.file = open(filename, 'bw')
-        self.file.write(b'PMF') #signature
-        self.file.write(b'\x03') #version
+        self.file.write(b'PMF')
+        self.file.write(PMFFile.VERSION)
 
     def writeStruct(self, fmt, *arg):
         self.file.write(struct.pack("<"+fmt, *arg))
@@ -40,26 +46,38 @@ class PMFFile:
 
     def writeVec2f(self, vec):
         self.writeStruct("ff", vec.x, vec.y)
+
+    def writeQuaternionf(self, q):
+        self.writeStruct("ffff", q.w, q.x, q.y, q.z)
         
-    def loadMeshes(self, meshes):
+    def loadMeshes(self, mesh_objects, scene, actions):
 
         bm = bmesh.new()
         
         #header stuff
-        self.writeStruct("I", len(meshes))
+        self.writeStruct("I", len(mesh_objects))
 
         #the body
-        for mesh in meshes:
+        for mesh_obj in mesh_objects:
 
+            mesh = mesh_obj.data
             bm.from_mesh(mesh)
             bmesh.ops.triangulate(bm, faces = bm.faces)
 
             uv_layer = bm.loops.layers.uv.active
             if uv_layer is None:
                 raise Exception("No UV Layer!")
+
+            armature = mesh_obj.find_armature()
+            if armature is None or mesh_obj.animation_data is None:
+                mesh_type = PMFFile.TYPE_STATIC_TEXTURE
+            else:
+                mesh_type = PMFFile.TYPE_BONED_TEXTURE
+                bone_names = [bone.name for bone in armature.data.bones]
             
             self.writeString(mesh.name)
-            self.writeStruct("B", PMFFile.TYPE_STATIC_TEXTURE)
+            self.writeStruct("B", mesh_type)
+            #self.writeStruct("I", flags)
             #self.writeString(mesh.uv_textures.active.data[0].image.name)
 
             vert_uvs = [[] for x in range(len(bm.verts))]
@@ -80,13 +98,29 @@ class PMFFile:
             
             self.writeStruct("L", vert_length)
             #print(len(bm.verts))
-            for vert in bm.verts:
+            for vert in mesh.vertices:
                 #self.writeStruct"B", len(vert_uvs[vert.index])
-                print("UVs: " + str(vert_uvs[vert.index]))
+                #print("UVs: " + str(vert_uvs[vert.index]))
                 for uv in vert_uvs[vert.index]:
                     self.writeVec3f(vert.co)
                     self.writeVec3f(vert.normal)
                     self.writeVec2f(uv)
+                    if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
+                        bone_indexes = []
+                        bone_weights = []
+                        for g in vert.groups:
+                            for n in range(len(bone_names)):
+                                if mesh_obj.vertex_groups[g.group].name == bone_names[n]:
+                                    bone_indexes.append(n)
+                                    bone_weights.append(g.weight)
+                                    break
+                        b_len = len(bone_indexes)
+                        if (b_len > PMFFile.MAX_WEIGHTS_PER_VERTEX):
+                            raise Exception("Too many bones per vertex")
+                        self.writeStruct("B", b_len)
+                        for n in range(b_len):
+                            self.writeStruct("I", bone_indexes[n])
+                            self.writeStruct("f", bone_weights[n])
 
             self.writeStruct("L", len(bm.faces))
             for face in bm.faces:
@@ -96,8 +130,43 @@ class PMFFile:
                         if vec2Cmp(uv, loop[uv_layer].uv):
                             break
                         n = n + 1
-                    print("My index: " + str(vert_indexes[vert.index]) + " | real index: " + str(vert.index))
+                    #print("My index: " + str(vert_indexes[vert.index]) + " | real index: " + str(vert.index))
                     self.writeStruct("L", vert_indexes[vert.index] + n)
+
+            if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
+
+                def calcQuat(bone):
+                    quats = [bone.rotation_quaternion]
+                    b = bone.parent
+                    while b is not None:
+                        quats.append(b.rotation_quaternion)
+                        b = b.parent
+                    return reduce(lambda x,y: x*y, (quats))
+                
+                self.writeStruct("I", len(armature.data.bones))
+                bpy.context.scene.frame_set(0)
+                for bone in armature.pose.bones:
+                    self.writeQuaternionf(calcQuat(bone))
+                
+                self.writeStruct("I", len(actions))
+                for act in actions:
+                    mesh_obj.animation_data.action = act
+
+                    keyframes = []
+                    bpy.ops.screen.frame_jump(0)
+                    while bpy.ops.screen.keyframe_jump() == {'FINISHED'}:
+                        keyframes.append(bpy.context.scene.frame_current-1)
+
+                    self.writeString(act.name)
+                    self.writeStruct("I", len(keyframes))
+                    #print(keyframes)
+                    for frame in keyframes:
+                        bpy.context.scene.frame_set(frame)
+                        self.writeStruct("f", frame/bpy.context.scene.render.fps)
+                        for bone in armature.pose.bones:
+                            #print(bone.rotation_quaternion)
+                            self.writeQuaternionf(calcQuat(bone))
+                            
 
     def flush(self):
         self.file.flush()
@@ -113,11 +182,12 @@ class PMFExport(bpy.types.Operator, ExportHelper):
     def execute(self, context):
 
         if self.filepath == "":
-            print("Please provide a valid filename")
+            raise Exception("Please provide a valid filename")
             return {'FINISHED'}
         
         pmf = PMFFile(self.filepath)
-        pmf.loadMeshes(bpy.data.meshes)
+        meshes = [m for m in bpy.data.objects if m.type == 'MESH']
+        pmf.loadMeshes(meshes, bpy.context.scene, bpy.data.actions)
         pmf.flush()
         return {'FINISHED'}
 

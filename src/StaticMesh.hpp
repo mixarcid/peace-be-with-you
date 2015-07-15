@@ -14,12 +14,13 @@ NAMESPACE {
   struct StaticMesh : Renderable {
     
     Array<BasicMeshData> data;
-    Array<GLuint> elements;
+    Array<u32> elements;
     Texture* tex;
     BoundingObject b_sphere;
     
     StaticMesh(Array<BasicMeshData> mesh_data,
-	       Array<GLuint> mesh_elems, Texture* texture);
+	       Array<u32> mesh_elems, Texture* texture);
+    void init();
     virtual BoundingObject getBoundingObject();
     virtual BoundingObject getPhysicalBoundingObject();
     virtual BoundingObject getPrimaryBoundingObject();

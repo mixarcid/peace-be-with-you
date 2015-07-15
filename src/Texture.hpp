@@ -10,7 +10,7 @@ NAMESPACE {
   struct Texture {
 
     u32 length;
-    GLuint* ids;
+    u32* ids;
 
     Texture(u32 num_textures = 1);
     void load(String filename, ShaderUniform tex_uniform,

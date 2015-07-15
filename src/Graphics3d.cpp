@@ -35,6 +35,7 @@ NAMESPACE {
 		"You need to give Graphics3d"
 		"a Camera before rendering");
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shade.use();

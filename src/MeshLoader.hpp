@@ -3,16 +3,18 @@
 #include "Standard.hpp"
 #include "String.hpp"
 #include "Containers.hpp"
-#include "StaticMesh.hpp"
+#include "BonedMesh.hpp"
 
 NAMESPACE {
 
   struct MeshLoader {
 
     HashMap<String, StaticMesh*> static_meshes;
+    HashMap<String, BonedMeshBase*> boned_meshes;
     
     MeshLoader(String filename);
     StaticMesh* getStaticMesh(String mesh_name);
+    BonedMesh getBonedMesh(String mesh_name);
     ~MeshLoader();
   };
 

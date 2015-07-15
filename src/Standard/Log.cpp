@@ -32,10 +32,16 @@ NAMESPACE {
       break;
     case ERROR:
       fprintf(Log::logger.logfile, "%s%s\n", ERROR_MSG, c_msg);
+      if (Log::logger.print_messages) {
+	fprintf(stderr, "%s%s\n", ERROR_MSG, c_msg);
+      }
       fflush(Log::logger.logfile);
       break;
     case FATAL_ERROR:
       fprintf(Log::logger.logfile, "%s%s\n", ERROR_MSG, c_msg);
+      if (Log::logger.print_messages) {
+	fprintf(stderr, "%s%s\n", ERROR_MSG, c_msg);
+      }
       fflush(Log::logger.logfile);
       throw FatalError(msg.message);
     }
@@ -71,8 +77,9 @@ NAMESPACE {
   }
 
   void Log::fatalError(String message) {
-    Log::logger.addEvent(LogMessage(FATAL_ERROR,
-			       message));
+    throw FatalError(message);
+    /*Log::logger.addEvent(LogMessage(FATAL_ERROR,
+      message));*/
   }
 
   void Log::message(const char* message, ...) {
@@ -95,4 +102,18 @@ NAMESPACE {
     Log::fatalError(str::vformat(message, args));
     va_end(args);
   }
+
+  void Log::__assert_print(const char* message, ...) {
+    va_list args;
+    va_start(args, message);
+    fprintf(stderr, "%s", ERROR_MSG);
+    vfprintf(stderr, message, args);
+    fprintf(stderr, "\n");
+    va_end(args);
+  }
+
+  void Log::__assert_print(String message) {
+    fprintf(stderr, "%s%s\n", ERROR_MSG, message.c_str());
+  }
+  
 }

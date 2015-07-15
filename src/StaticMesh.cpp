@@ -3,17 +3,20 @@
 NAMESPACE {
 
   StaticMesh::StaticMesh(Array<BasicMeshData> mesh_data,
-			 Array<GLuint> mesh_elems,
+			 Array<u32> mesh_elems,
 			 Texture* texture)
     : data(mesh_data), elements(mesh_elems),
-    tex(texture), b_sphere(BOUNDING_SPHERE, mesh_data) {
-    
+    tex(texture), b_sphere(BOUNDING_SPHERE, mesh_data) {}
+
+  void StaticMesh::init() {
     Renderable::init();
+    /*for (BasicMeshData d : data) {
+      Log::message(d.pos.toString());
+    }*/
     Renderable::vbo.bindArray(data, false);
     Renderable::ebo.bindArray(elements, false);
     Renderable::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
-      
   }
 
   StaticMesh::~StaticMesh() {

@@ -13,6 +13,7 @@ NAMESPACE {
     
     void init();
     void checkError();
+    void ignoreError(GLenum code);
     void terminate();
     
   }

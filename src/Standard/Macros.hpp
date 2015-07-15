@@ -9,7 +9,8 @@
 
 #define debugAssert(cond, ...) do {	\
     if (!(cond)) {				\
-      Log::fatalError(__VA_ARGS__);			\
+      Log::__assert_print(__VA_ARGS__);		\
+      exit(EXIT_FAILURE);			\
     }						\
   } while (0)
 

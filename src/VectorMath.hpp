@@ -6,21 +6,15 @@
 
 NAMESPACE {
 
+  const float VEC_UNIT_MAX_ERROR = 0.01;
+
   template <typename T>
     struct Vec2 {
 
     T x;
     T y;
     
-    Vec2(T xval, T yval) {
-      x = xval;
-      y = yval;
-    }
-
-    Vec2() {
-      x = 0;
-      y = 0;
-    }
+    Vec2(T xval = 0, T yval = 0) : x(xval), y(yval) {}
 
     void operator=(const Vec2 b) {
       memcpy(this, &b, sizeof(Vec2<T>));
@@ -52,17 +46,8 @@ NAMESPACE {
     T y;
     T z;
 
-    Vec3(T xval, T yval, T zval) {
-      x = xval;
-      y = yval;
-      z = zval;
-    }
-
-    Vec3() {
-      x = 0;
-      y = 0;
-      z = 0;
-    }
+    Vec3(T xval = 0 , T yval = 0 , T zval = 0)
+      : x(xval), y(yval), z(zval) {}
 
     void operator=(const Vec3 b) {
       memcpy(this, &b, sizeof(Vec3<T>));
@@ -118,11 +103,9 @@ NAMESPACE {
       return sqrt(sqr(x) + sqr(y) + sqr(z));
     }
 
-    const T UNIT_MAX_ERROR = 0.01;
     bool isUnit() const {
       T mag = abs();
-      return mag < 1.0f + UNIT_MAX_ERROR
-		   && mag > 1.0f - UNIT_MAX_ERROR;
+      return abs(mag - 1) < VEC_UNIT_MAX_ERROR;
     }
 
     void makeUnit() {
@@ -147,6 +130,12 @@ NAMESPACE {
 
     static T dot(Vec3 v1, Vec3 v2) {
       return (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z); 
+    }
+
+    static Vec3 lerp(Vec3 a, Vec3 b, T h) {
+      debugAssert(h > 0.0 && h < 1.0,
+		  "H must be between 0 and 1 for Vec3 lerp");
+      return a*(1-h) + b*h;
     }
     
   };

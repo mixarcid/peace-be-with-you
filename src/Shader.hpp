@@ -18,9 +18,12 @@ NAMESPACE {
   };
 
   enum ShaderTypeName {
+    TYPE_F32,
+    TYPE_U32,
     TYPE_VECTOR2F,
     TYPE_VECTOR3F,
-    TYPE_COLOR4F,
+    TYPE_VECTOR4F,
+    TYPE_VECTOR4U,
     TYPE_LAST
   };
   
@@ -34,16 +37,30 @@ NAMESPACE {
 
   struct ShaderUniform {
 
-    GLint id;
+    union {
+      i32 id;
+      struct {  //if it's a uniform buffer object
+	u32 block_id;
+	u32 buffer_id;
+      };
+    };
 
     ShaderUniform(GLint uniform_id);
     void registerInt(GLint i) const;
     void registerMat4f(Mat4f mat) const;
+    template <typename T>
+    void registerBufferData(Array<T> data) {
+      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+      glBufferData(GL_UNIFORM_BUFFER,
+		   data.size()*sizeof(T),
+		   &data[0], GL_DYNAMIC_DRAW);
+      glBindBufferBase(GL_UNIFORM_BUFFER, block_id, buffer_id);
+    }
   };
   
   struct Shader {
     
-    GLuint id;
+    u32 id;
 
     Shader(const String filename = "Default");
     void use();
@@ -55,11 +72,21 @@ NAMESPACE {
     const static ShaderVar COLOR;
     const static ShaderVar TEX_COORD;
     const static ShaderVar NORMAL;
+    const static ShaderVar NUM_BONES;
+    const static ShaderVar BONE_INDEXES0;
+    const static ShaderVar BONE_WEIGHTS0;
+    const static ShaderVar BONE_INDEXES1;
+    const static ShaderVar BONE_WEIGHTS1;
 
-    const static ShaderUniform UNI_TEXTURE;
-    const static ShaderUniform UNI_MODEL;
-    const static ShaderUniform UNI_VIEW;
-    const static ShaderUniform UNI_PROJ;
+    static ShaderUniform UNI_TEXTURE;
+    static ShaderUniform UNI_MODEL;
+    static ShaderUniform UNI_VIEW;
+    static ShaderUniform UNI_PROJ;
+    static ShaderUniform UNI_BONES;
+    static ShaderUniform UNI_FLAGS;
+
+    const static u8 MAX_BONES = 50;
+    const static u8 MAX_BONES_PER_VERTEX = 8;
   };
   
 }
