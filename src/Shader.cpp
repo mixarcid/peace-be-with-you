@@ -11,10 +11,6 @@ NAMESPACE {
     ShaderTypeInfo(GL_FLOAT, 3, 3*sizeof(f32)),
     ShaderTypeInfo(GL_FLOAT, 4, 4*sizeof(f32)),
     ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32))
-    /*ShaderTypeInfo(GL_UNSIGNED_INT, Shader::MAX_BONES_PER_VERTEX,
-		   Shader::MAX_BONES_PER_VERTEX*sizeof(u32)),
-    ShaderTypeInfo(GL_FLOAT, Shader::MAX_BONES_PER_VERTEX,
-		   Shader::MAX_BONES_PER_VERTEX*sizeof(f32))*/
   };
   
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
@@ -101,7 +97,6 @@ NAMESPACE {
     if (first_shader_load) {
       vert_header = getFileContents(SHADER_HEADER_VERT);
       frag_header = getFileContents(SHADER_HEADER_FRAG);
-      first_shader_load = false;
     }
 
     String vert_str = vert_header + "\n"
@@ -137,7 +132,7 @@ NAMESPACE {
     id = glCreateProgram();
     glAttachShader(id, vert_id);
     glAttachShader(id, frag_id);
-    
+
     glBindFragDataLocation(id, 0, "outColor");
     glBindAttribLocation(id, POSITION.id, "inPosition");
     glBindAttribLocation(id, COLOR.id, "inColor");
@@ -146,13 +141,21 @@ NAMESPACE {
     glBindAttribLocation(id, NUM_BONES.id, "inNumBones");
     glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
     glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
-    glBindAttribLocation(id, BONE_INDEXES1.id, "inBoneIndexes0");
-    glBindAttribLocation(id, BONE_WEIGHTS1.id, "inBoneWeights0");
-    
+    glBindAttribLocation(id, BONE_INDEXES1.id, "inBoneIndexes1");
+    glBindAttribLocation(id, BONE_WEIGHTS1.id, "inBoneWeights1");
+
     glLinkProgram(id);
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
+    //Load all the uniform buffer objects
+    if (first_shader_load) {
+      UNI_BONES.block_id = glGetUniformBlockIndex(id, "uniBoneData");
+      glGenBuffers(1, &UNI_BONES.buffer_id);
+      glBindBuffer(GL_UNIFORM_BUFFER, UNI_BONES.buffer_id);
+      first_shader_load = false;
+    }
+    
     Log::message("Loaded shader %s", filename.c_str());
   }
 
@@ -161,7 +164,6 @@ NAMESPACE {
     UNI_MODEL.id = glGetUniformLocation(id, "uniModel");
     UNI_VIEW.id = glGetUniformLocation(id, "uniView");
     UNI_PROJ.id = glGetUniformLocation(id, "uniProj");
-    UNI_BONES.id = glGetUniformLocation(id, "uniBones");
     UNI_FLAGS.id = glGetUniformLocation(id, "uniFlags");
     glUseProgram(id);
   }

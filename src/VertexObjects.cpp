@@ -22,11 +22,19 @@ NAMESPACE {
       offsets.push_back(total_size);
       total_size += var.info->size;
     }
+    //Log::message("%u", vars.size());
     for (int n=0; n<vars.size(); ++n) {
       glEnableVertexAttribArray(vars[n].id);
-      glVertexAttribPointer(vars[n].id, vars[n].info->elem_num,
-			    vars[n].info->elem_type, GL_FALSE,
-			    total_size, (void*) offsets[n]);
+      if (vars[n].info->elem_type == GL_UNSIGNED_INT
+	  || vars[n].info->elem_type == GL_INT) {
+	glVertexAttribIPointer(vars[n].id, vars[n].info->elem_num,
+			      vars[n].info->elem_type,
+			      total_size, (void*) offsets[n]);
+      } else {
+	glVertexAttribPointer(vars[n].id, vars[n].info->elem_num,
+			      vars[n].info->elem_type, GL_FALSE,
+			      total_size, (void*) offsets[n]);
+      }
     }
   }
 

@@ -2,6 +2,7 @@ import bpy
 import bmesh
 import struct
 from bpy_extras.io_utils import ExportHelper
+from functools import reduce
 
 bl_info = {
     "name":         "PMF format",
@@ -72,6 +73,7 @@ class PMFFile:
                 mesh_type = PMFFile.TYPE_STATIC_TEXTURE
             else:
                 mesh_type = PMFFile.TYPE_BONED_TEXTURE
+                bone_names = [bone.name for bone in armature.data.bones]
             
             self.writeString(mesh.name)
             self.writeStruct("B", mesh_type)
@@ -104,13 +106,21 @@ class PMFFile:
                     self.writeVec3f(vert.normal)
                     self.writeVec2f(uv)
                     if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
-                        g_len = len(vert.groups)
-                        if (g_len > PMFFile.MAX_WEIGHTS_PER_VERTEX):
-                            raise Exception("Too many bones per vertex")
-                        self.writeStruct("B", g_len)
+                        bone_indexes = []
+                        bone_weights = []
                         for g in vert.groups:
-                            self.writeStruct("I", g.group)
-                            self.writeStruct("f", g.weight)
+                            for n in range(len(bone_names)):
+                                if mesh_obj.vertex_groups[g.group].name == bone_names[n]:
+                                    bone_indexes.append(n)
+                                    bone_weights.append(g.weight)
+                                    break
+                        b_len = len(bone_indexes)
+                        if (b_len > PMFFile.MAX_WEIGHTS_PER_VERTEX):
+                            raise Exception("Too many bones per vertex")
+                        self.writeStruct("B", b_len)
+                        for n in range(b_len):
+                            self.writeStruct("I", bone_indexes[n])
+                            self.writeStruct("f", bone_weights[n])
 
             self.writeStruct("L", len(bm.faces))
             for face in bm.faces:
@@ -124,11 +134,19 @@ class PMFFile:
                     self.writeStruct("L", vert_indexes[vert.index] + n)
 
             if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
+
+                def calcQuat(bone):
+                    quats = [bone.rotation_quaternion]
+                    b = bone.parent
+                    while b is not None:
+                        quats.append(b.rotation_quaternion)
+                        b = b.parent
+                    return reduce(lambda x,y: x*y, (quats))
                 
                 self.writeStruct("I", len(armature.data.bones))
                 bpy.context.scene.frame_set(0)
                 for bone in armature.pose.bones:
-                    self.writeQuaternionf(bone.rotation_quaternion)
+                    self.writeQuaternionf(calcQuat(bone))
                 
                 self.writeStruct("I", len(actions))
                 for act in actions:
@@ -144,9 +162,10 @@ class PMFFile:
                     #print(keyframes)
                     for frame in keyframes:
                         bpy.context.scene.frame_set(frame)
+                        self.writeStruct("f", frame/bpy.context.scene.render.fps)
                         for bone in armature.pose.bones:
                             #print(bone.rotation_quaternion)
-                            self.writeQuaternionf(bone.rotation_quaternion)
+                            self.writeQuaternionf(calcQuat(bone))
                             
 
     def flush(self):

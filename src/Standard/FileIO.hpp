@@ -23,6 +23,21 @@ NAMESPACE {
     const TestEndian ENDIAN;
 
     template <typename T>
+    T byteReverse(T val) {
+      //Thanks, Michael Manner from Stack Overflow
+      T data = val;
+      unsigned char* lo = (unsigned char*) &data;
+      unsigned char* hi = (unsigned char*) &data + sizeof(T) - 1;
+      unsigned char swap;
+      while (lo < hi) {
+	swap = *lo;
+	*lo++ = *hi;
+	*hi-- = swap;
+      }
+      return data;
+    }
+    
+    template <typename T>
     T readLittleEndian(FILE* file) {
 
       T data;
@@ -31,15 +46,7 @@ NAMESPACE {
 		  " another file I/O error");
       
       if (!ENDIAN.isLittle) {
-	//Thanks, Michael Manner from Stack Overflow
-	unsigned char* lo = (unsigned char*) &data;
-	unsigned char* hi = (unsigned char*) &data + sizeof(T) - 1;
-	unsigned char swap;
-	while (lo < hi) {
-	  swap = *lo;
-	  *lo++ = *hi;
-	  *hi-- = swap;
-	  }
+	data = fio::byteReverse(data);
       }
 
       return data;

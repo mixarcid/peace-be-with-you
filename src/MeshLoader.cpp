@@ -30,7 +30,7 @@ NAMESPACE {
     f32 x = fio::readLittleEndian<f32>(file);
     f32 y = fio::readLittleEndian<f32>(file);
     f32 z = fio::readLittleEndian<f32>(file);
-    return Quaternionf(w,x,y,z);
+    return Quaternionf(x,y,z,w);
   }
     
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
@@ -74,7 +74,6 @@ NAMESPACE {
   }
 
   BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
-
     Array<BasicMeshData> data;
     Array<BonedMeshData> bone_data;
     Array<Bone> bones;
@@ -101,8 +100,11 @@ NAMESPACE {
       //Log::message("#bones: %u", d.num_bones);
       fatalAssert(d.num_bones <= Shader::MAX_BONES_PER_VERTEX,
 		  "Too many bones per vertex!");
+      memset(d.indexes, 0u, sizeof(d.indexes));
+      memset(d.weights, 0.0f, sizeof(d.weights));
       for (int i = 0; i < d.num_bones; ++i) {
-	d.indexes[i] = fio::readLittleEndian<u32>(file);
+	d.indexes[i] = fio::readLittleEndian<u32>(file);\
+	//d.indexes[i] = 1u;
 	d.weights[i] = fio::readLittleEndian<f32>(file);
       }
       

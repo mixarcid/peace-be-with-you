@@ -37,11 +37,25 @@ NAMESPACE {
 
   struct ShaderUniform {
 
-    GLint id;
+    union {
+      i32 id;
+      struct {  //if it's a uniform buffer object
+	u32 block_id;
+	u32 buffer_id;
+      };
+    };
 
     ShaderUniform(GLint uniform_id);
     void registerInt(GLint i) const;
     void registerMat4f(Mat4f mat) const;
+    template <typename T>
+    void registerBufferData(Array<T> data) {
+      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+      glBufferData(GL_UNIFORM_BUFFER,
+		   data.size()*sizeof(T),
+		   &data[0], GL_DYNAMIC_DRAW);
+      glBindBufferBase(GL_UNIFORM_BUFFER, block_id, buffer_id);
+    }
   };
   
   struct Shader {

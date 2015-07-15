@@ -102,9 +102,9 @@ int main() {
     phys.addStaticObject(&cube_node);*/
 
     StaticObject monk_node(&monk, Vec3f(0, 0,-5));
-    monk_node.rotateAbs(Quaternionf(0,
-				    degreesToRadians(-90.0f),
-				    degreesToRadians(90.0f)));
+    monk_node.rotateAbs(Quaternionf(degreesToRadians(-90.0f),
+				    0,
+				    0));
     graphics.addNode(&monk_node);
     phys.addStaticObject(&monk_node);
 

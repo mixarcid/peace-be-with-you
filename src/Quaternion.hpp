@@ -7,13 +7,16 @@ NAMESPACE {
   template <typename T>
     struct Quaternion {
 
-    T w;
     T x;
     T y;
     T z;
+    T w;
 
-    Quaternion(T qw = 1, T qx = 0, T qy = 0, T qz = 0) :
-      w(qw), x(qx), y(qy), z(qz) {}
+    Quaternion(T qx, T qy, T qz, T qw)
+      : x(qx), y(qy), z(qz), w(qw) {}
+
+    Quaternion()
+      : x(0), y(0), z(0), w(1) {}
 
     //angle in radians, as always
     Quaternion(Vec3<T> axis, T angle) {
@@ -25,13 +28,13 @@ NAMESPACE {
       w = cos(half);
     }
 
-    Quaternion(Vec3<T> euler) {
-      T c1 = cos(euler.z * 0.5);
-      T c2 = cos(euler.y * 0.5);
-      T c3 = cos(euler.x * 0.5);
-      T s1 = sin(euler.z * 0.5);
-      T s2 = sin(euler.y * 0.5);
-      T s3 = sin(euler.x * 0.5);
+    Quaternion(T euler_x, T euler_y, T euler_z) {
+      T c1 = cos(euler_z * 0.5);
+      T c2 = cos(euler_y * 0.5);
+      T c3 = cos(euler_x * 0.5);
+      T s1 = sin(euler_z * 0.5);
+      T s2 = sin(euler_y * 0.5);
+      T s3 = sin(euler_x * 0.5);
 
       w = c1*c2*c3 + s1*s2*s3;
       y = c1*s2*c3 + s1*c2*s3;
@@ -124,6 +127,12 @@ NAMESPACE {
       res *= *this;
       return Vec3<T>(res.x, res.y, res.z);
       
+    }
+
+    static Quaternion lerp(Quaternion a, Quaternion b, T h) {
+      debugAssert(h > 0.0 && h < 1.0,
+		  "H must be between 0 and 1 for Quaternion lerp");
+      return a*(1-h) + b*h;
     }
 
   };

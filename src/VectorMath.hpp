@@ -131,6 +131,12 @@ NAMESPACE {
     static T dot(Vec3 v1, Vec3 v2) {
       return (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z); 
     }
+
+    static Vec3 lerp(Vec3 a, Vec3 b, T h) {
+      debugAssert(h > 0.0 && h < 1.0,
+		  "H must be between 0 and 1 for Vec3 lerp");
+      return a*(1-h) + b*h;
+    }
     
   };
   

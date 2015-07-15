@@ -28,7 +28,7 @@ NAMESPACE {
     
     u32 length;
     u32* ids;
-    unsigned int* lengths;
+    u32* lengths;
 
     void init(u32 num_vbos = 1);
     template <typename T>
@@ -57,7 +57,7 @@ NAMESPACE {
     
     u32 length;
     u32* ids;
-    unsigned int* lengths;
+    u32* lengths;
 
     void init(u32 num_ebos = 1);
     void bindArray(Array<u32> arr, bool dynamic,
