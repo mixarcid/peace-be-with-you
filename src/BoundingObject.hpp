@@ -5,10 +5,12 @@
 
 NAMESPACE {
 
-  struct Transform;
+  struct Node;
 
   enum BoundingObjectType {
-    BOUNDING_SPHERE
+    BOUNDING_SPHERE,
+    BOUNDING_OBB,
+    BOUNDING_NONE
   };
 
   struct BoundingSphere  {
@@ -19,7 +21,7 @@ NAMESPACE {
     BoundingSphere(Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
-    void transform(Transform* t);
+    void transform(Node* t);
     bool testIntersection(BoundingSphere b);
   };
 
@@ -30,7 +32,12 @@ NAMESPACE {
     Vec3f coord[3];
 
     BoundingOBB(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    Vec3f getClosestPoint(Vec3f point);
+    void transform(Node* t);
     bool testIntersection(BoundingOBB b);
+    bool testIntersection(BoundingSphere b);
     
   };
 
@@ -46,7 +53,7 @@ NAMESPACE {
 		   Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
-    void transform(Transform* t);
+    void transform(Node* t);
   };
 
   struct Manifold {
@@ -56,6 +63,9 @@ NAMESPACE {
 
     //note that these assume the objects have already collided
     Manifold(BoundingSphere a, BoundingSphere b);
+    Manifold(BoundingOBB a, BoundingOBB b);
+    Manifold(BoundingSphere a, BoundingOBB b);
+    Manifold(BoundingOBB a, BoundingSphere b);
     Manifold(BoundingObject a, BoundingObject b);
   };
 
