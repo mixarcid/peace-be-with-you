@@ -91,7 +91,7 @@ NAMESPACE {
     center = (max + min)/2;
     halves = max - center;
     coord[0] = Vec3f(1,0,0);
-    coord[0] = Vec3f(0,1,0);
+    coord[1] = Vec3f(0,1,0);
     coord[2] = Vec3f(0,0,1);
 
   }
@@ -104,6 +104,13 @@ NAMESPACE {
     //let's pretend it's a cube
     f32 size = (halves.x+halves.y+halves.z)*(2/3);
     return (mass*sqr(size))/6;
+  }
+
+  void BoundingOBB::transform(Node* t) {
+    center += t->trans;
+    coord[0] = t->rot * coord[0];
+    coord[1] = t->rot * coord[1];
+    coord[2] = t->rot * coord[2];
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -205,7 +212,7 @@ NAMESPACE {
 
   bool BoundingOBB::testIntersection(BoundingSphere b) {
     Vec3f d = getClosestPoint(b.center) - b.center;
-    return Vec3f::dot(d,d) > sq(b.radius);
+    return Vec3f::dot(d,d) > sqr(b.radius);
   }
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
@@ -237,7 +244,7 @@ NAMESPACE {
     case BOUNDING_SPHERE:
       return sphere.getInertia(mass);
     case BOUNDING_OBB:
-      return obb.getInteria(mass);
+      return obb.getInertia(mass);
     case BOUNDING_NONE:
       return 0;
     }
@@ -270,6 +277,14 @@ NAMESPACE {
   }
 
   Manifold::Manifold(BoundingOBB a, BoundingOBB b) {
+    
+  }
+
+  Manifold::Manifold(BoundingSphere a, BoundingOBB b) {
+    
+  }
+
+  Manifold::Manifold(BoundingOBB a, BoundingSphere b) {
     
   }
   

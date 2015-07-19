@@ -3,12 +3,21 @@
 
 NAMESPACE {
 
-  Animation::Animation(Array<KeyFrame> anim_keyframes)
+  BonedMeshData::BonedMeshData(u32 bone_num)
+    : num_bones(bone_num) {
+      memset(indexes, 0u, sizeof(indexes));
+      memset(weights, 0.0f, sizeof(weights));
+  }
+
+  KeyFrame::KeyFrame(f32 frame_time, u32 num_bones)
+    : time(frame_time), bones(num_bones) {}
+
+  BonedAnimation::BonedAnimation(Array<KeyFrame> anim_keyframes)
     : current_time(0.0),
     last_keyframe(0),
     keyframes(anim_keyframes) {}
   
-  void Animation::step(Array<Bone> bones, float dt) {
+  void BonedAnimation::step(Array<Bone> bones, float dt) {
 
   }
 
@@ -16,17 +25,21 @@ NAMESPACE {
 			       Array<u32> elems,
 			       Texture* tex,
 			       Array<BonedMeshData> bone_data,
-			       Array<Bone> default_bones)
-    : StaticMesh(static_data, elems, tex), b_data(bone_data),
-    bones(default_bones) {}
+			       Array<Bone> default_bones,
+			       HashMap<String,
+			       BonedAnimation> mesh_animations)
+    : StaticMesh(static_data, elems, tex),
+    b_data(bone_data),
+    bones(default_bones),
+    animations(mesh_animations) {}
 
   void BonedMeshBase::init() {
 
-    for (Bone b : bones) {
+    /*for (Bone b : bones) {
       Log::message(b.rot.toString());
     }
 
-    /*for (BonedMeshData d : b_data) {
+    for (BonedMeshData d : b_data) {
       Log::message("#Bones: " + to_string(d.num_bones)
 		   + ", Index0: " + to_string(d.indexes[0])
 		   + ", Weight0: " + to_string(d.weights[0]));
@@ -61,7 +74,8 @@ NAMESPACE {
   }
 
   BonedMesh::BonedMesh(BonedMeshBase* base_mesh)
-    : base(base_mesh), bones(base_mesh->bones) {}
+    : base(base_mesh),
+    bones(base_mesh->bones) {}
 
   void BonedMesh::render() {
     Shader::UNI_BONES.registerBufferData(bones);

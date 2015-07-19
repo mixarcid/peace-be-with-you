@@ -12,7 +12,7 @@ NAMESPACE {
     Renderable::init();
     /*for (BasicMeshData d : data) {
       Log::message(d.pos.toString());
-    }*/
+      }*/
     Renderable::vbo.bindArray(data, false);
     Renderable::ebo.bindArray(elements, false);
     Renderable::vao.registerVars({Shader::POSITION,

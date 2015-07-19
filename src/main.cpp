@@ -30,10 +30,10 @@ int main() {
   
   try {
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);*/
     GLFWwindow* window = glfwCreateWindow(700, 700,
 					  "Peace", NULL, NULL);
     if (!window) {
@@ -66,7 +66,7 @@ int main() {
 	       1, 100);
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
-    f32 cam_rot_speed = 0.1;
+    //f32 cam_rot_speed = 0.1;
     Input::addKeyCallback([&cam, cam_speed](GLFWwindow* win, i32 key,
 					    i32 code, i32 act, i32 mods) {
 			    Vec3f axis = Vec3f::cross(cam.dir, cam.up);
@@ -87,8 +87,14 @@ int main() {
 			  });
     Physics phys;
 
-    MeshLoader loader("Soldier");
-    BonedMesh monk = loader.getBonedMesh("Frank");
+    //MeshLoader loader("Soldier");
+    MeshLoader loader2("WoodenBox");
+
+    StaticMesh* monk = loader2.getStaticMesh("Cube");
+    StaticObject monk_node(monk, Vec3f(0,-10,0));
+    graphics.addNode(&monk_node);
+    //phys.addStaticObject(&monk_node);
+    //BonedMesh monk = loader.getBonedMesh("Frank");
     /*MeshLoader l2("WoodenBox");
     StaticMesh* cube = l2.getStaticMesh("Cube");
   
@@ -101,12 +107,12 @@ int main() {
     graphics.addNode(&cube_node);
     phys.addStaticObject(&cube_node);*/
 
-    StaticObject monk_node(&monk, Vec3f(0, 0,-5));
+    /*StaticObject monk_node(&monk, Vec3f(0, 0,-5));
     monk_node.rotateAbs(Quaternionf(degreesToRadians(-90.0f),
 				    0,
 				    0));
-    graphics.addNode(&monk_node);
-    phys.addStaticObject(&monk_node);
+    //graphics.addNode(&monk_node);
+    phys.addStaticObject(&monk_node);*/
 
 
     Time start, end;

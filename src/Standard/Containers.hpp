@@ -17,5 +17,7 @@ NAMESPACE {
   
   template <typename Key, typename Val>
     using HashMap = typename std::unordered_map<Key, Val>;
+  template <typename A, typename B>
+    using Pair = typename std::pair<A, B>;
 }
 

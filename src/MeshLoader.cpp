@@ -35,15 +35,14 @@ NAMESPACE {
     
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
-    Array<BasicMeshData> data;
-    Array<u32> elems;
-
     //String tex_name = fio::readString(file);
     //Log::message("Texture name: " + tex_name);
 
     u32 num_verts = fio::readLittleEndian<u32>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
+    Array<BasicMeshData> data;
+    data.reserve(num_verts);
 
     //Log::message("#Verts: %u", num_verts);
     for (u32 index = 0; index < num_verts; ++index) {
@@ -58,6 +57,8 @@ NAMESPACE {
     }
     
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
+    Array<u32> elems;
+    elems.reserve(num_elems);
     debugAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
     //Log::message("#Elements: %u", num_elems);
@@ -74,14 +75,14 @@ NAMESPACE {
   }
 
   BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
-    Array<BasicMeshData> data;
-    Array<BonedMeshData> bone_data;
-    Array<Bone> bones;
-    Array<u32> elems;
 
     u32 num_verts = fio::readLittleEndian<u32>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
+    Array<BasicMeshData> data;
+    data.reserve(num_verts);
+    Array<BonedMeshData> bone_data;
+    bone_data.reserve(num_verts);
     
     //Log::message("#Verts: %u", num_verts);
     for (u32 index = 0; index < num_verts; ++index) {
@@ -95,13 +96,12 @@ NAMESPACE {
       Log::message("Norm: " + norm.toString());
       Log::message("Tex_coord: " + tex_coord.toString());*/
 
-      BonedMeshData d;
-      d.num_bones = fio::readLittleEndian<u8>(file);
+      u8 vert_num_bones = fio::readLittleEndian<u8>(file);
+      BonedMeshData d(vert_num_bones);
       //Log::message("#bones: %u", d.num_bones);
       fatalAssert(d.num_bones <= Shader::MAX_BONES_PER_VERTEX,
 		  "Too many bones per vertex!");
-      memset(d.indexes, 0u, sizeof(d.indexes));
-      memset(d.weights, 0.0f, sizeof(d.weights));
+      
       for (int i = 0; i < d.num_bones; ++i) {
 	d.indexes[i] = fio::readLittleEndian<u32>(file);\
 	//d.indexes[i] = 1u;
@@ -116,6 +116,8 @@ NAMESPACE {
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
     debugAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
+    Array<u32> elems;
+    elems.reserve(num_elems);
     //Log::message("#Elements: %u", num_elems);
 
     for (u32 index = 0; index < num_elems; ++index) {
@@ -125,6 +127,8 @@ NAMESPACE {
     }
 
     u32 num_bones = fio::readLittleEndian<u32>(file);
+    Array<Bone> bones;
+    bones.reserve(num_bones);
 
     for (u32 i = 0; i < num_bones; ++i) {
       Quaternionf rot = readQuaternionf(file);
@@ -132,7 +136,39 @@ NAMESPACE {
 			   rot));
     }
 
-    BonedMeshBase* ret = new BonedMeshBase(data, elems, tex, bone_data, bones);
+    u32 num_actions = fio::readLittleEndian<u32>(file);
+    HashMap<String, BonedAnimation> actions(num_actions);
+
+    for (u32 i = 0; i < num_actions; ++i) {
+      
+      String name = fio::readString(file);
+      u32 num_keyframes= fio::readLittleEndian<u32>(file);
+      Array<KeyFrame> keyframes;
+      keyframes.reserve(num_keyframes);
+      
+      for (u32 i = 0; i < num_keyframes; ++i) {
+	
+        f32 time = fio::readLittleEndian<f32>(file);
+	KeyFrame frame(time, num_bones);
+
+	for (u32 i = 0; i < num_bones; ++i) {
+	  Quaternionf rot = readQuaternionf(file);
+	  frame.bones.push_back(Bone(Vec3f(0,0,0),
+			       rot));
+	}
+	keyframes.push_back(frame);
+      }
+      actions.insert(Pair<String, BonedAnimation>
+		     (name,
+		      BonedAnimation(keyframes)));
+    }
+
+    BonedMeshBase* ret = new BonedMeshBase(data,
+					   elems,
+					   tex,
+					   bone_data,
+					   bones,
+					   actions);
     ret->init();
     return ret;
   }
