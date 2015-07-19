@@ -1,6 +1,6 @@
-in vec4 color;
+smooth in vec4 color;
 in vec2 tex;
-in vec3 normal;
+smooth in vec3 normal;
 
 uniform vec3 light_dir = normalize(vec3(-1,-1,-1));
 //uniform float light_intensity = 2;
