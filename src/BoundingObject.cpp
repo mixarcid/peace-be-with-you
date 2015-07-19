@@ -1,5 +1,5 @@
 #include "BoundingObject.hpp"
-#include "Transform.hpp"
+#include "Node.hpp"
 
 NAMESPACE {
 
@@ -58,7 +58,7 @@ NAMESPACE {
     return (2/5)*mass*sqr(radius);
   }
 
-  void BoundingSphere::transform(Transform* t) {
+  void BoundingSphere::transform(Node* t) {
     center += t->trans;
   }
 
@@ -74,8 +74,56 @@ NAMESPACE {
 
   BoundingOBB::BoundingOBB(Array<BasicMeshData> data) {
 
+    //just computes the AABB, currently
+    debugAssert(data.size() > 0,
+		"Why does your mesh have no data?");
+    Vec3f max, min = data[0].pos;
+
+    for (BasicMeshData d : data) {
+      max.x = max.x > d.pos.x ? max.x : d.pos.x;
+      max.y = max.y > d.pos.y ? max.y : d.pos.y;
+      max.z = max.z > d.pos.z ? max.z : d.pos.z;
+      min.x = min.x < d.pos.x ? min.x : d.pos.x;
+      min.y = min.y < d.pos.y ? min.y : d.pos.y;
+      min.z = min.z < d.pos.z ? min.z : d.pos.z;
+    }
+
+    center = (max + min)/2;
+    halves = max - center;
+    coord[0] = Vec3f(1,0,0);
+    coord[0] = Vec3f(0,1,0);
+    coord[2] = Vec3f(0,0,1);
+
   }
 
+  f32 BoundingOBB::getVolume() {
+    return halves.x*halves.y*halves.z*8;
+  }
+
+  f32 BoundingOBB::getInertia(f32 mass) {
+    //let's pretend it's a cube
+    f32 size = (halves.x+halves.y+halves.z)*(2/3);
+    return (mass*sqr(size))/6;
+  }
+
+  Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
+    
+    Vec3f d = point - center;
+    Vec3f ret = center;
+
+    for (u8 i = 0; i < 3; ++i) {
+      f32 dist = Vec3f::dot(d, coord[i]);
+      if (dist > halves[i]) {
+	dist = halves[i];
+      }
+      if (dist < -halves[i]) {
+	dist = -halves[i];
+      }
+      ret += coord[i]*dist;
+    }
+    return ret;
+  }
+ 
   const f32 OBB_TEST_EPSILON = 0.0001;
   bool BoundingOBB::testIntersection(BoundingOBB b) {
     
@@ -103,14 +151,17 @@ NAMESPACE {
 
     for (u8 i = 0; i < 3; ++i) {
       ra = halves[i];
-      rb = b.halves[0] * ar(i,0) + b.halves[1] * ar(i,1) + b.halves[2] * ar(i,2);
+      rb = b.halves[0] * ar(i,0) +
+	b.halves[1] * ar(i,1) + b.halves[2] * ar(i,2);
       if (abs(t[i]) > ra + rb) return false;
     }
 
     for (u8 i = 0; i < 3; ++i) {
-      ra = halves[0] * ar(0,i) + halves[1] * ar(1,i) + halves[2] * ar(2,i);
+      ra = halves[0] * ar(0,i) +
+	halves[1] * ar(1,i) + halves[2] * ar(2,i);
       rb = b.halves[i];
-      if (abs(t[0] * r(0,i) + t[1] * r(1,i) + t[2] * r(2,i)) > ra + rb) return false;
+      if (abs(t[0] * r(0,i) + t
+	      [1] * r(1,i) + t[2] * r(2,i)) > ra + rb) return false;
     }
 
     ra = halves[1] * ar(2,0) + halves[2] * ar(1,0);
@@ -152,12 +203,21 @@ NAMESPACE {
     return true;
   }
 
+  bool BoundingOBB::testIntersection(BoundingSphere b) {
+    Vec3f d = getClosestPoint(b.center) - b.center;
+    return Vec3f::dot(d,d) > sq(b.radius);
+  }
+
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
 				 Array<BasicMeshData> data)
     : type(obj_type) {
     switch(type) {
     case BOUNDING_SPHERE:
       sphere = BoundingSphere(data);
+    case BOUNDING_OBB:
+      obb = BoundingOBB(data);
+    case BOUNDING_NONE:
+      return;
     }
   }
 
@@ -165,6 +225,10 @@ NAMESPACE {
     switch(type) {
     case BOUNDING_SPHERE:
       return sphere.getVolume();
+    case BOUNDING_OBB:
+      return obb.getVolume();
+    case BOUNDING_NONE:
+      return 0;
     }
   }
 
@@ -172,13 +236,21 @@ NAMESPACE {
     switch(type) {
     case BOUNDING_SPHERE:
       return sphere.getInertia(mass);
+    case BOUNDING_OBB:
+      return obb.getInteria(mass);
+    case BOUNDING_NONE:
+      return 0;
     }
   }
 
-  void BoundingObject::transform(Transform* t) {
+  void BoundingObject::transform(Node* t) {
     switch (type) {
     case BOUNDING_SPHERE:
       sphere.transform(t);
+    case BOUNDING_OBB:
+      obb.transform(t);
+    case BOUNDING_NONE:
+      ;
     }
   }
 
@@ -196,6 +268,10 @@ NAMESPACE {
       normal = Vec3f(1,0,0);
     }
   }
+
+  Manifold::Manifold(BoundingOBB a, BoundingOBB b) {
+    
+  }
   
   Manifold::Manifold(BoundingObject a, BoundingObject b) {
     switch (a.type) {
@@ -203,7 +279,26 @@ NAMESPACE {
       switch(b.type) {
       case BOUNDING_SPHERE:
 	*this = Manifold(a.sphere, b.sphere);
+        return;
+      case BOUNDING_OBB:
+	*this = Manifold(a.sphere, b.obb);
+	return;
+      case BOUNDING_NONE:
+	return;
       }
+    case BOUNDING_OBB:
+      switch(b.type) {
+      case BOUNDING_SPHERE:
+	*this = Manifold(a.obb, b.sphere);
+	return;
+      case BOUNDING_OBB:
+	*this = Manifold(a.obb, b.obb);
+	return;
+      case BOUNDING_NONE:
+	return;
+      }
+    case BOUNDING_NONE:
+      return;
     }
   }
 
@@ -213,7 +308,22 @@ NAMESPACE {
       switch(b.type) {
       case BOUNDING_SPHERE:
 	return a.sphere.testIntersection(b.sphere);
+      case BOUNDING_OBB:
+	return b.obb.testIntersection(a.sphere);
+      case BOUNDING_NONE:
+	return false;
       }
+    case BOUNDING_OBB:
+      switch(b.type) {
+      case BOUNDING_SPHERE:
+	return a.obb.testIntersection(b.sphere);
+      case BOUNDING_OBB:
+	return a.obb.testIntersection(b.obb);
+      case BOUNDING_NONE:
+	return false;
+      }
+    case BOUNDING_NONE:
+      return false;
     }
   }
     
