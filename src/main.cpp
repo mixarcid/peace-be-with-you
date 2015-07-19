@@ -91,7 +91,9 @@ int main() {
     MeshLoader loader2("WoodenBox");
 
     StaticMesh* monk = loader2.getStaticMesh("Cube");
-    StaticObject monk_node(monk, Vec3f(0,-10,0));
+    Node monk_node;
+    monk_node.addRenderable(monk);
+    //StaticObject monk_node(monk, Vec3f(0,-10,0));
     graphics.addNode(&monk_node);
     //phys.addStaticObject(&monk_node);
     //BonedMesh monk = loader.getBonedMesh("Frank");
