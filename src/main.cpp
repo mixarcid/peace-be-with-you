@@ -60,8 +60,8 @@ int main() {
     
     //graphics.setShader("Toon");
     Camera cam(Vec3f(0,0,0),
-	       Vec3f(0,0,-1),
 	       Vec3f(0,1,0),
+	       Vec3f(0,0,1),
 	       degreesToRadians(90),
 	       1, 100);
     graphics.setCamera(&cam);
@@ -91,22 +91,22 @@ int main() {
     MeshLoader loader2("SubjectA");
 
     BonedMesh sword = loader2.getBonedMesh("Subject");
-    //StaticObject sword_node(&sword, Vec3f(0,0,-10));
+    StaticObject sword_node(&sword, Vec3f(0,10,0));
     //sword_node.rotateAbs(Quaternionf(degreesToRadians(-90.0),0,0));
-    //graphics.addNode(&sword_node);
-    //phys.addStaticObject(&sword_node);
+    graphics.addNode(&sword_node);
+    phys.addStaticObject(&sword_node);
     //BonedMesh frank = loader.getBonedMesh("Frank");
-    MeshLoader l2("WoodenBox");
-    StaticMesh* cube = l2.getStaticMesh("Cube");
+    //MeshLoader l2("WoodenBox");
+    //StaticMesh* cube = l2.getStaticMesh("Cube");
   
     /*PhysicalObject monk_node(&monk, Material(1, 0.5), Vec3f(0,4,-5),
 			     Vec3f(0,-10,0));
     graphics.addNode(&monk_node);
     phys.addDynamicObject(&monk_node);*/
 
-    StaticObject cube_node(cube, Vec3f(0,-2,-5));
-    graphics.addNode(&cube_node);
-    phys.addStaticObject(&cube_node);
+    //StaticObject cube_node(cube, Vec3f(0,-2,-5));
+    //graphics.addNode(&cube_node);
+    //phys.addStaticObject(&cube_node);
 
     /*StaticObject monk_node(&monk, Vec3f(0, 0,-5));
     monk_node.rotateAbs(Quaternionf(degreesToRadians(-90.0f),

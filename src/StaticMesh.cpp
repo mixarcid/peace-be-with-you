@@ -9,13 +9,13 @@ NAMESPACE {
     tex(texture), b_sphere(BOUNDING_SPHERE, mesh_data) {}
 
   void StaticMesh::init() {
-    Renderable::init();
+    RenderableReg::init();
     /*for (BasicMeshData d : data) {
       Log::message(d.pos.toString());
       }*/
-    Renderable::vbo.bindArray(data, false);
-    Renderable::ebo.bindArray(elements, false);
-    Renderable::vao.registerVars({Shader::POSITION,
+    RenderableReg::vbo.bindArray(data, false);
+    RenderableReg::ebo.bindArray(elements, false);
+    RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
   }
 
@@ -37,7 +37,7 @@ NAMESPACE {
 
   void StaticMesh::render() {
     tex->use();
-    Renderable::render();
+    RenderableReg::render();
   }
 
 }

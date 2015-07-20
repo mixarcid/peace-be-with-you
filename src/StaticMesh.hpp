@@ -11,7 +11,7 @@
 
 NAMESPACE {
 
-  struct StaticMesh : Renderable {
+  struct StaticMesh : RenderableReg {
     
     Array<BasicMeshData> data;
     Array<u32> elements;

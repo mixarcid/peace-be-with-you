@@ -23,9 +23,9 @@ void main() {
       index = inBoneIndexes1[tmp];
       weight = inBoneWeights1[tmp];
     }
-    //quat.w = weight * uniBones[index].rot.w + (1-weight);
-    //quat.xyz = weight * uniBones[index].rot.xyz;
-    quat = uniBones[index].rot;
+    quat.w = weight * uniBones[index].rot.w + (1-weight);
+    quat.xyz = weight * uniBones[index].rot.xyz;
+    //quat = uniBones[index].rot;
     quat = normalize(quat);
     position = quatRot(quat, position);
     normal = quatRot(quat, normal);

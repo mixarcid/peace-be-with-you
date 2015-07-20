@@ -9,19 +9,25 @@ NAMESPACE {
 
   struct ShaderVar;
   struct BoundingObject;
-  
+
   struct Renderable {
+    
+    virtual BoundingObject getBoundingObject() = 0;
+    virtual BoundingObject getPhysicalBoundingObject() = 0;
+    virtual BoundingObject getPrimaryBoundingObject() = 0;
+    virtual void render() = 0;
+    virtual ~Renderable() {}
+    
+  };
+  
+  struct RenderableReg : Renderable {
 
     VBO vbo;
     VAO vao;
     EBO ebo;
     
     void init();
-    virtual BoundingObject getBoundingObject() = 0;
-    virtual BoundingObject getPhysicalBoundingObject() = 0;
-    virtual BoundingObject getPrimaryBoundingObject() = 0;
     virtual void render();
-    virtual ~Renderable() {}
     
   };
   

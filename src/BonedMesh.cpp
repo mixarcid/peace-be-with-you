@@ -56,21 +56,21 @@ NAMESPACE {
 
     //memset(&b_data[0], 1.0f, b_data.size()*sizeof(BonedMeshData));
     
-    Renderable::init();
+    RenderableReg::init();
     b_vbo.init();
 
-    Renderable::vbo.bindArray(StaticMesh::data, false);
-    Renderable::vao.registerVars({Shader::POSITION,
+    RenderableReg::vbo.bindArray(StaticMesh::data, false);
+    RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
 
     b_vbo.bindArray(b_data, false);
-    Renderable::vao.registerVars({Shader::NUM_BONES,
+    RenderableReg::vao.registerVars({Shader::NUM_BONES,
 	  Shader::BONE_INDEXES0,
 	  Shader::BONE_INDEXES1,
 	  Shader::BONE_WEIGHTS0,
 	  Shader::BONE_WEIGHTS1});
 
-    Renderable::ebo.bindArray(StaticMesh::elements, false);
+    RenderableReg::ebo.bindArray(StaticMesh::elements, false);
   }
 
   BonedMesh::BonedMesh(BonedMeshBase* base_mesh)

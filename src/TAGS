@@ -47,7 +47,7 @@ NAMESPACE 4,61
 Physics.cpp,16
 NAMESPACE 4,49
 
-Renderable.cpp,16
+RenderableReg.cpp,16
 NAMESPACE 4,28
 
 Shader.cpp,16
@@ -189,7 +189,7 @@ Node.hpp,236
   struct Node 12,155
     Node* parent;Node::parent14,184
     Array<Node*> children;Node::children18,325
-    Array<Renderable*> renderables;Node::renderables19,352
+    Array<RenderableReg*> renderables;Node::renderables19,352
     using Transform::Transform;Node::Transform::Transform22,420
 
 PhysicalObject.hpp,671
@@ -244,11 +244,11 @@ Quaternion.hpp,1171
   typedef Quaternion<f32> Quaternionf;140,3250
 
 Renderable.hpp,192
-  struct Renderable 13,177
-    VBO vbo;Renderable::vbo15,200
-    VAO vao;Renderable::vao16,213
-    EBO ebo;Renderable::ebo17,226
-    virtual ~Renderable(Renderable::~Renderable24,459
+  struct RenderableReg 13,177
+    VBO vbo;RenderableReg::vbo15,200
+    VAO vao;RenderableReg::vao16,213
+    EBO ebo;RenderableReg::ebo17,226
+    virtual ~RenderableReg(RenderableReg::~RenderableReg24,459
 
 Shader.hpp,1948
   struct ShaderTypeInfo 10,120
