@@ -69,7 +69,7 @@ class PMFFile:
                 raise Exception("No UV Layer!")
 
             armature = mesh_obj.find_armature()
-            if armature is None or mesh_obj.animation_data is None:
+            if armature is None or armature.animation_data is None:
                 mesh_type = PMFFile.TYPE_STATIC_TEXTURE
             else:
                 mesh_type = PMFFile.TYPE_BONED_TEXTURE
@@ -150,7 +150,7 @@ class PMFFile:
                 
                 self.writeStruct("I", len(actions))
                 for act in actions:
-                    mesh_obj.animation_data.action = act
+                    armature.animation_data.action = act
 
                     keyframes = []
                     bpy.ops.screen.frame_jump(0)

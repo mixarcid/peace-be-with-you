@@ -102,7 +102,7 @@ NAMESPACE {
       fatalAssert(d.num_bones <= Shader::MAX_BONES_PER_VERTEX,
 		  "Too many bones per vertex!");
       
-      for (int i = 0; i < d.num_bones; ++i) {
+      for (u32 i = 0; i < d.num_bones; ++i) {
 	d.indexes[i] = fio::readLittleEndian<u32>(file);\
 	//d.indexes[i] = 1u;
 	d.weights[i] = fio::readLittleEndian<f32>(file);
@@ -139,15 +139,16 @@ NAMESPACE {
     u32 num_actions = fio::readLittleEndian<u32>(file);
     HashMap<String, BonedAnimation> actions(num_actions);
 
-    for (u32 i = 0; i < num_actions; ++i) {
+    /* for (u32 i = 0; i < num_actions; ++i) {
       
       String name = fio::readString(file);
       u32 num_keyframes= fio::readLittleEndian<u32>(file);
       Array<KeyFrame> keyframes;
       keyframes.reserve(num_keyframes);
+      //Log::message(name);
       
       for (u32 i = 0; i < num_keyframes; ++i) {
-	
+
         f32 time = fio::readLittleEndian<f32>(file);
 	KeyFrame frame(time, num_bones);
 
@@ -161,7 +162,7 @@ NAMESPACE {
       actions.insert(Pair<String, BonedAnimation>
 		     (name,
 		      BonedAnimation(keyframes)));
-    }
+		      }*/
 
     BonedMeshBase* ret = new BonedMeshBase(data,
 					   elems,
@@ -257,11 +258,12 @@ NAMESPACE {
   }
 
   MeshLoader::~MeshLoader() {
+    //printf("????\n");
     for (const auto pair : static_meshes) {
       delete pair.second; //the mesh
     }
     for (const auto pair : boned_meshes) {
-      delete pair.second; //the mesh
+      delete pair.second;
     }
   }
 }

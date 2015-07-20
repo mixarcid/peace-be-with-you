@@ -23,7 +23,7 @@ NAMESPACE {
       total_size += var.info->size;
     }
     //Log::message("%u", vars.size());
-    for (int n=0; n<vars.size(); ++n) {
+    for (u32 n=0; n<vars.size(); ++n) {
       glEnableVertexAttribArray(vars[n].id);
       if (vars[n].info->elem_type == GL_UNSIGNED_INT
 	  || vars[n].info->elem_type == GL_INT) {
@@ -46,17 +46,18 @@ NAMESPACE {
   void VBO::init(u32 num_vbos) {
     length = num_vbos;
     ids = new u32[length];
-    lengths = new unsigned int[length];
+    lengths = new u32[length];
     glGenBuffers(length, ids);
   }
 
   VBO::~VBO() {
-
     if (ids != NULL) {
       glDeleteBuffers(length, ids);
       delete ids;
     }
-    delete lengths;
+    if (lengths != NULL) {
+      delete lengths;
+    }
   }
 
   void VBO::draw(GLenum mode, u32 index) {
@@ -67,8 +68,10 @@ NAMESPACE {
   void EBO::init(u32 num_vbos) {
     length = num_vbos;
     ids = new u32[length];
-    lengths = new unsigned int[length];
+    lengths = new u32[length];
     glGenBuffers(length, ids);
+    //Log::message("init ids: %p", ids);
+    //Log::message("init lengths: %p", lengths);
   }
 
   /*EBO EBO::getEBO(u32 num_ebos) {
@@ -103,11 +106,15 @@ NAMESPACE {
   }
 
   EBO::~EBO() {
+    //Log::message("del ids: %p", ids);
+    //Log::message("del lengths: %p", lengths);
     if (ids != NULL) {
       glDeleteBuffers(length, ids);
       delete ids;
     }
-    delete lengths;
+    if (lengths != NULL) {
+      delete lengths;
+    }
   }
 
 }

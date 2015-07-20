@@ -17,7 +17,7 @@ vec4 quatMult(vec4 q1, vec4 q2)
 }
 
 vec3 quatRot( vec4 q, vec3 v ) {
-  vec3 qv = vec3(-q.z, q.x, q.y);
+  vec3 qv = vec3(q.x, q.z, q.y);
   //vec3 qv = vec3(-q.x,-q.y,-q.z);
   return v + 2.0*cross(cross(v, qv) + q.w*v, qv);
 }

@@ -237,6 +237,7 @@ NAMESPACE {
     case BOUNDING_NONE:
       return 0;
     }
+    return 0;
   }
 
   f32 BoundingObject::getInertia(f32 mass) {
@@ -248,6 +249,7 @@ NAMESPACE {
     case BOUNDING_NONE:
       return 0;
     }
+    return 0;
   }
 
   void BoundingObject::transform(Node* t) {
@@ -340,6 +342,6 @@ NAMESPACE {
     case BOUNDING_NONE:
       return false;
     }
+    return false;
   }
-    
 }

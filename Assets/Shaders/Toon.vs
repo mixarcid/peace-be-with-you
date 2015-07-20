@@ -11,7 +11,7 @@ void main() {
 
   color = vec4(1,1,1,1);
 
-  /*vec4 quat = vec4(0,0,0,1);
+  vec4 quat = vec4(0,0,0,1);
   for (uint n = 0u; n < inNumBones; ++n) {
     uint index;
     float weight;
@@ -23,14 +23,15 @@ void main() {
       index = inBoneIndexes1[tmp];
       weight = inBoneWeights1[tmp];
     }
-    quat.w = weight * uniBones[index].rot.w + (1-weight);
-    quat.xyz = weight * uniBones[index].rot.xyz;
+    //quat.w = weight * uniBones[index].rot.w + (1-weight);
+    //quat.xyz = weight * uniBones[index].rot.xyz;
+    quat = uniBones[index].rot;
     quat = normalize(quat);
     position = quatRot(quat, position);
     normal = quatRot(quat, normal);
     }
   //color.r = uniBones[3].rot.y;
-  //position = quatRot(vec4(0,0,0,1), position);*/
+  //position = quatRot(vec4(0,0,0,1), position);
 
   normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
 

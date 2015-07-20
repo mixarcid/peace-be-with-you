@@ -10,7 +10,7 @@ EXECUTABLE= $(OUTDIR)peace
 UNAME = $(shell uname)
 
 ifeq ($(UNAME), Linux)
-LIBS = -lXxf86vm -lXcursor -lXinerama -lX11 -lXrandr -lpthread -lXi -lGL
+LIBS = -lX11 -lXxf86vm -lXcursor -lXinerama -lXrandr -lXext -lXi -lGL
 LIBDIR = -LThirdParty/lib/Linux
 endif
 ifeq ($(UNAME), Darwin)
@@ -18,12 +18,12 @@ LIBS = -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo 
 LIBDIR = -LThirdParty/lib/OSX
 endif
 
-LIBS += -lGLEW -lglfw3 -lSOIL
+LIBS += -lGLEW -lglfw3 -lSOIL -lpthread
 
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CXX) $(LIBDIR) $(LIBS) $(OBJECTS) -o $@ $(LIBS)
+	$(CXX) $(LIBDIR) $(LIBS) $(LIBS) $(OBJECTS) -o $@ $(LIBS) $(LIBS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c -o $@ $<

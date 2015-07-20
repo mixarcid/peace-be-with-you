@@ -35,11 +35,11 @@ NAMESPACE {
 
   void BonedMeshBase::init() {
 
-    /*for (Bone b : bones) {
+    for (Bone b : bones) {
       Log::message(b.rot.toString());
     }
 
-    for (BonedMeshData d : b_data) {
+    /*for (BonedMeshData d : b_data) {
       Log::message("#Bones: " + to_string(d.num_bones)
 		   + ", Index0: " + to_string(d.indexes[0])
 		   + ", Weight0: " + to_string(d.weights[0]));

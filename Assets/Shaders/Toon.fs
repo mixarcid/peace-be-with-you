@@ -19,5 +19,5 @@ void main() {
   } else {
     intensity = 0.25f;
   }
-  outColor = color;//vec4(test_color.rgb*intensity, 1.0f)*texture(uniTexture, tex);
+  outColor = vec4(test_color.rgb*intensity, 1.0f)*texture(uniTexture, tex);
 }

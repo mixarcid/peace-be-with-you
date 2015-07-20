@@ -30,10 +30,10 @@ int main() {
   
   try {
 
-    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);*/
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     GLFWwindow* window = glfwCreateWindow(700, 700,
 					  "Peace", NULL, NULL);
     if (!window) {
@@ -88,26 +88,25 @@ int main() {
     Physics phys;
 
     //MeshLoader loader("Soldier");
-    MeshLoader loader2("WoodenBox");
+    MeshLoader loader2("SubjectA");
 
-    StaticMesh* monk = loader2.getStaticMesh("Cube");
-    Node monk_node;
-    monk_node.addRenderable(monk);
-    //StaticObject monk_node(monk, Vec3f(0,-10,0));
-    graphics.addNode(&monk_node);
-    //phys.addStaticObject(&monk_node);
-    //BonedMesh monk = loader.getBonedMesh("Frank");
-    /*MeshLoader l2("WoodenBox");
+    BonedMesh sword = loader2.getBonedMesh("Subject");
+    //StaticObject sword_node(&sword, Vec3f(0,0,-10));
+    //sword_node.rotateAbs(Quaternionf(degreesToRadians(-90.0),0,0));
+    //graphics.addNode(&sword_node);
+    //phys.addStaticObject(&sword_node);
+    //BonedMesh frank = loader.getBonedMesh("Frank");
+    MeshLoader l2("WoodenBox");
     StaticMesh* cube = l2.getStaticMesh("Cube");
   
-    PhysicalObject monk_node(&monk, Material(1, 0.5), Vec3f(0,4,-5),
+    /*PhysicalObject monk_node(&monk, Material(1, 0.5), Vec3f(0,4,-5),
 			     Vec3f(0,-10,0));
     graphics.addNode(&monk_node);
-    phys.addDynamicObject(&monk_node);
+    phys.addDynamicObject(&monk_node);*/
 
     StaticObject cube_node(cube, Vec3f(0,-2,-5));
     graphics.addNode(&cube_node);
-    phys.addStaticObject(&cube_node);*/
+    phys.addStaticObject(&cube_node);
 
     /*StaticObject monk_node(&monk, Vec3f(0, 0,-5));
     monk_node.rotateAbs(Quaternionf(degreesToRadians(-90.0f),
@@ -127,7 +126,7 @@ int main() {
       end.makeCurrent();
       dt = (f32) (end.getMilliseconds() - start.getMilliseconds())/1000;
 
-      //monk_node.rotateRel(Quaternionf(0,dt,0));
+      //sword_node.rotateRel(Quaternionf(0,0,dt));
 
       phys.update(dt);
 
@@ -144,6 +143,7 @@ int main() {
   } catch (FatalError e) {
     Log::error(e.what());
   }
+  //printf("WHAT??\n");
 
   gl::terminate();
   Log::terminate();
