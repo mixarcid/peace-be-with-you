@@ -10,15 +10,42 @@ NAMESPACE {
   }
 
   KeyFrame::KeyFrame(f32 frame_time, u32 num_bones)
-    : time(frame_time), bones(num_bones) {}
+    : time(frame_time) {
+    bones.reserve(num_bones);
+  }
 
   BonedAnimation::BonedAnimation(Array<KeyFrame> anim_keyframes)
-    : current_time(0.0),
+    : playing(true),
+    last_time(0.0f),
     last_keyframe(0),
     keyframes(anim_keyframes) {}
   
-  void BonedAnimation::step(Array<Bone> bones, float dt) {
+  void BonedAnimation::step(Array<Bone> bones, f32 dt) {
+    
+    if (!playing) return;
+    
+    f32 cur_time = last_time + dt;
+    u32 cur_keyframe;
+    
+    for (u32 i = cur_keyframe; i < keyframes.length(); ++i) {
+      if (cur_time >= keyframes[i].time) {
+	if (i == keyframes.length()) {
+	  playing = false;
+	  return;
+	}
+	cur_keyframe = i+1;
+	break;
+      }
+    }
 
+    f32 h = ((cur_time - keyframes[last_keyframe].time)
+	     /(cur_keyframe - keyframes[cur_keyframe].time));
+    for (u32 i = 0; i < bones.length(); ++i) {
+      bones[i] = Transform::interp(bones[i],
+				   keyframes[cur_keyframe]
+				   .bones[i],
+				   h);
+    }
   }
 
   BonedMeshBase::BonedMeshBase(Array<BasicMeshData> static_data,
@@ -35,26 +62,14 @@ NAMESPACE {
 
   void BonedMeshBase::init() {
 
-    for (Bone b : bones) {
+    /*for (Bone b : bones) {
+      Log::message(b.trans.toString());
       Log::message(b.rot.toString());
-    }
-
-    /*for (BonedMeshData d : b_data) {
-      Log::message("#Bones: " + to_string(d.num_bones)
-		   + ", Index0: " + to_string(d.indexes[0])
-		   + ", Weight0: " + to_string(d.weights[0]));
-      f32 w = 0;
-      for (u32 n=0; n<8; ++n) {
-	w += d.weights[n];
-      }
-      Log::message("Weight: %f", w);
       }*/
-
-    /*for (u32 n = 0; n < b_data.size(); ++n) {
-      b_data[n].weights[0] = 1.0;
+    /*for (auto d : StaticMesh::data) {
+      Log::message("Normal: " + d.norm.toString());
+      Log::message("Abs: %f\n", d.norm.abs());
       }*/
-
-    //memset(&b_data[0], 1.0f, b_data.size()*sizeof(BonedMeshData));
     
     RenderableReg::init();
     b_vbo.init();
@@ -77,7 +92,12 @@ NAMESPACE {
     : base(base_mesh),
     bones(base_mesh->bones) {}
 
-  void BonedMesh::render() {
+  void BonedMesh::startAnimation(String name) {
+    cur_animation = base->getAnimation(name);
+  }
+
+  void BonedMesh::render(RenderContext c) {
+    cur_animation.step(c.dt);
     Shader::UNI_BONES.registerBufferData(bones);
     base->render();
   }

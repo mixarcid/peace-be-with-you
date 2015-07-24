@@ -4,9 +4,8 @@
 
 NAMESPACE {
 
-  template<typename T>
-    inline T degreesToRadians(T deg) {
-    return deg*(M_PI/(T)180);
+  constexpr f64 degreesToRadians(f64 deg) {
+    return deg*(M_PI/(f64)180);
   }
 
   template<typename T>

@@ -1,4 +1,9 @@
+#define GLM_FORCE_RADIANS
 #include "Camera.hpp"
+#include <glm/gtx/string_cast.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 NAMESPACE {
 
@@ -8,16 +13,20 @@ NAMESPACE {
     fovy(cam_fovy), near_clip(cam_near), far_clip(cam_far) {}
 
   Mat4f Camera::getModel() {
-    return Mat4f::makeTranslate(-pos);
+    Mat4f mat =  Mat4f::makeTranslate(-pos);
+    return mat;
   }
 
   Mat4f Camera::getView() {
-    return Mat4f::lookAt(pos, pos + dir, up);
+    
+    Mat4f mat =  Mat4f::lookAt(Vec3f(0,0,0), dir, up);
+    return mat;
   }
 
   Mat4f Camera::getProj() {
-    return Mat4f::perspective(fovy, aspect,
-			      near_clip, far_clip);
+    Mat4f mat = Mat4f::perspective(fovy, aspect,
+				   near_clip, far_clip);
+    return mat;
   }
 
   void Camera::onWindowResize(i32 width, i32 height) {
@@ -26,3 +35,4 @@ NAMESPACE {
   }
 
 }
+

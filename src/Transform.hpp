@@ -28,6 +28,7 @@ NAMESPACE {
     Mat4f getMat();
 
     static Transform combine(Transform a, Transform b);
+    static Transform interp(Transform a, Transform b, f32 h);
     
   };
 

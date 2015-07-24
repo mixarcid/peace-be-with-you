@@ -7,6 +7,10 @@
 
 NAMESPACE {
 
+  struct RenderContext {
+    f32 dt;
+  }
+
   struct ShaderVar;
   struct BoundingObject;
 
@@ -15,7 +19,7 @@ NAMESPACE {
     virtual BoundingObject getBoundingObject() = 0;
     virtual BoundingObject getPhysicalBoundingObject() = 0;
     virtual BoundingObject getPrimaryBoundingObject() = 0;
-    virtual void render() = 0;
+    virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}
     
   };
@@ -27,7 +31,7 @@ NAMESPACE {
     EBO ebo;
     
     void init();
-    virtual void render();
+    virtual void render(RenderContext c);
     
   };
   

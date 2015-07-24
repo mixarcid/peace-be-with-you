@@ -53,6 +53,7 @@ NAMESPACE {
 
   void Node::render(Mat4f mat) {
     Mat4f comb = this->getMat() * mat;
+    //Log::message(comb.toString());
     for (Node* child : children) {
       child->render(comb);
     }

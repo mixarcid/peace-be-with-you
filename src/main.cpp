@@ -62,8 +62,8 @@ int main() {
     Camera cam(Vec3f(0,0,0),
 	       Vec3f(0,1,0),
 	       Vec3f(0,0,1),
-	       degreesToRadians(90),
-	       1, 100);
+	       degreesToRadians(60),
+	       1, 50);
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
     //f32 cam_rot_speed = 0.1;
@@ -88,11 +88,11 @@ int main() {
     Physics phys;
 
     //MeshLoader loader("Soldier");
-    MeshLoader loader2("SubjectA");
+    MeshLoader loader2("SubjectB");
 
     BonedMesh sword = loader2.getBonedMesh("Subject");
-    StaticObject sword_node(&sword, Vec3f(0,10,0));
-    //sword_node.rotateAbs(Quaternionf(degreesToRadians(-90.0),0,0));
+    StaticObject sword_node(&sword, Vec3f(0,7,0));
+    //sword_node.rotateAbs(Quaternionf(0,0,degreesToRadians(90.0f)));
     graphics.addNode(&sword_node);
     phys.addStaticObject(&sword_node);
     //BonedMesh frank = loader.getBonedMesh("Frank");
@@ -130,7 +130,7 @@ int main() {
 
       phys.update(dt);
 
-      //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
       graphics.render(window);
     
@@ -140,10 +140,13 @@ int main() {
     
       start = end;
     }
-  } catch (FatalError e) {
+  } catch(Exception& e) {
     Log::error(e.what());
   }
   //printf("WHAT??\n");
+
+  //Log::message("%u", sizeof(Transform));
+  //Log::message("%u", sizeof(Bone));
 
   gl::terminate();
   Log::terminate();

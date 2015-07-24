@@ -127,13 +127,15 @@ NAMESPACE {
     }
 
     u32 num_bones = fio::readLittleEndian<u32>(file);
+    
     Array<Bone> bones;
     bones.reserve(num_bones);
-
+    
     for (u32 i = 0; i < num_bones; ++i) {
+      Vec3f trans = readVec3f(file);
+      //Log::message(trans.toString());
       Quaternionf rot = readQuaternionf(file);
-      bones.push_back(Bone(Vec3f(0,0,0),
-			   rot));
+      bones.push_back(Bone(trans, rot));
     }
 
     u32 num_actions = fio::readLittleEndian<u32>(file);

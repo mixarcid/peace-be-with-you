@@ -17,12 +17,12 @@ vec4 quatMult(vec4 q1, vec4 q2)
 }
 
 vec3 quatRot( vec4 q, vec3 v ) {
-  vec3 qv = vec3(q.x, q.z, q.y);
-  //vec3 qv = vec3(-q.x,-q.y,-q.z);
+  vec3 qv = vec3(-q.x, -q.y, -q.z);
+  //vec3 qv = vec3x-q.x,-q.y,-q.z);
   return v + 2.0*cross(cross(v, qv) + q.w*v, qv);
 }
 
-struct Transform {
+struct Bone {
   vec3 trans;
   vec4 rot;
 };
@@ -41,5 +41,5 @@ uniform mat4 uniModel;
 uniform mat4 uniView;
 uniform mat4 uniProj;
 layout(std140) uniform uniBoneData {
-  Transform uniBones[MAX_BONES];
+  Bone uniBones[MAX_BONES];
 };

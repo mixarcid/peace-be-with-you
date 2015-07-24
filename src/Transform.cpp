@@ -41,5 +41,9 @@ NAMESPACE {
 		  b.rot*a.rot);
     return ret;
   }
-  
+
+  Transform Transform::interp(Transform a, Transform b, f32 h) {
+    return Transform(Vec3f::lerp(a.trans, b.trans, h),
+		     Quaternionf::lerp(a.rot, b.rot, h));
+  }
 }

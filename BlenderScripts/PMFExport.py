@@ -2,6 +2,7 @@ import bpy
 import bmesh
 import struct
 from bpy_extras.io_utils import ExportHelper
+from mathutils import Matrix, Vector
 from functools import reduce
 
 bl_info = {
@@ -142,11 +143,42 @@ class PMFFile:
                         quats.append(b.rotation_quaternion)
                         b = b.parent
                     return reduce(lambda x,y: x*y, (quats))
+                        
+                def writeBone(bone):
+                    #self.writeQuaternionf(calcQuat(bone))
+                    """bone_space = Matrix(((1,0,0,0),
+                                         (0,0,1,0),
+                                         (0,-1,0,0),
+                                         (0,0,0,1)))
+                    mat = armature.convert_space(pose_bone=bone,
+                                                 matrix=bone.matrix,
+                                                 from_space='LOCAL',
+                    to_space='POSE')#*bone_space"""
+                    mat = bone.matrix_channel
+                    """mat = armature.convert_space(pose_bone=bone,
+                    matrix=bone.matrix_channel,
+                    from_space='POSE',
+                    to_space='WORLD')"""
+                    trans, rot, scal = mat.decompose()
+                    head = armature.matrix_world * bone.head
+                    x = head.x
+                    y = head.y
+                    z = head.z
+                    r = rot.to_matrix()
+                    #Dat's right. MAGIC
+                    magic = Vector((x - r[0][0]*x - r[0][1]*y - r[0][2]*z,
+                                    y - r[1][0]*x - r[1][1]*y - r[1][2]*z,
+                                    z - r[2][0]*x - r[2][1]*y - r[2][2]*z))
+                    #print(magic)
+                    final_trans = magic #+ trans
+                    #print(final_trans)
+                    self.writeVec3f(final_trans)
+                    self.writeQuaternionf(rot)
                 
                 self.writeStruct("I", len(armature.data.bones))
                 bpy.context.scene.frame_set(0)
                 for bone in armature.pose.bones:
-                    self.writeQuaternionf(calcQuat(bone))
+                    writeBone(bone)
                 
                 self.writeStruct("I", len(actions))
                 for act in actions:
@@ -165,7 +197,7 @@ class PMFFile:
                         self.writeStruct("f", frame/bpy.context.scene.render.fps)
                         for bone in armature.pose.bones:
                             #print(bone.rotation_quaternion)
-                            self.writeQuaternionf(calcQuat(bone))
+                            writeBone(bone)
                             
 
     def flush(self):
