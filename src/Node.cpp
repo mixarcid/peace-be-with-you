@@ -51,15 +51,15 @@ NAMESPACE {
     }
   }
 
-  void Node::render(Mat4f mat) {
-    Mat4f comb = this->getMat() * mat;
+  void Node::render(RenderContext c, Mat4f model) {
+    Mat4f comb = this->getMat() * model;
     //Log::message(comb.toString());
     for (Node* child : children) {
-      child->render(comb);
+      child->render(c, comb);
     }
     for (Renderable* rend : renderables) {
       Shader::UNI_MODEL.registerMat4f(comb);
-      rend->render();
+      rend->render(c);
     }
   }
 }

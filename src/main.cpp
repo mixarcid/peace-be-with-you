@@ -67,8 +67,18 @@ int main() {
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
     //f32 cam_rot_speed = 0.1;
-    Input::addKeyCallback([&cam, cam_speed](GLFWwindow* win, i32 key,
-					    i32 code, i32 act, i32 mods) {
+    Physics phys;
+
+    //MeshLoader loader("Soldier");
+    MeshLoader loader2("SubjectB");
+
+    BonedMesh sword = loader2.getBonedMesh("Subject");
+    StaticObject sword_node(&sword, Vec3f(0,7,0));
+
+    Input::addKeyCallback([&cam,
+			   cam_speed,
+			   &sword](GLFWwindow* win, i32 key,
+				   i32 code, i32 act, i32 mods) {
 			    Vec3f axis = Vec3f::cross(cam.dir, cam.up);
 			    switch(key) {
 			    case GLFW_KEY_W:
@@ -83,15 +93,11 @@ int main() {
 			    case GLFW_KEY_D:
 			      cam.pos += axis * cam_speed;
 			      break;
+			    case GLFW_KEY_SPACE:
+			      sword.startAnimation("ArmatureAction");
+			      break;
 			    }
 			  });
-    Physics phys;
-
-    //MeshLoader loader("Soldier");
-    MeshLoader loader2("SubjectB");
-
-    BonedMesh sword = loader2.getBonedMesh("Subject");
-    StaticObject sword_node(&sword, Vec3f(0,7,0));
     //sword_node.rotateAbs(Quaternionf(0,0,degreesToRadians(90.0f)));
     graphics.addNode(&sword_node);
     phys.addStaticObject(&sword_node);
@@ -132,7 +138,7 @@ int main() {
 
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-      graphics.render(window);
+      graphics.render(window,dt);
     
       glfwSwapBuffers(window);
       glfwPollEvents();

@@ -135,44 +135,38 @@ class PMFFile:
                     self.writeStruct("L", vert_indexes[vert.index] + n)
 
             if mesh_type == PMFFile.TYPE_BONED_TEXTURE:
-
-                def calcQuat(bone):
-                    quats = [bone.rotation_quaternion]
-                    b = bone.parent
-                    while b is not None:
-                        quats.append(b.rotation_quaternion)
-                        b = b.parent
-                    return reduce(lambda x,y: x*y, (quats))
+                        
+                def getTransform(bone):
+                    inv_rot = Matrix()
+                    final_rot = bone.matrix_channel.decompose()[1]
+                    final_trans = Vector((0,0,0))
+                    final_mat = Matrix()
+                    tot_bones = list(reversed(bone.parent_recursive)) + [bone]
+                    for b in tot_bones:
+                        head = armature.matrix_world * b.head - final_trans
+                        rot = (b.matrix_channel.decompose()[1]).to_matrix()
+                        rot.resize_4x4()
+                        r = rot * inv_rot
+                        inv_rot = inv_rot * r.inverted()
+                        there = Matrix.Translation(head)
+                        back = Matrix.Translation(-head)
+                        mat = there * r * back
+                        final_mat = final_mat * mat
+                        trans = (mat).decompose()[0]
+                        final_trans += trans
+                    return final_rot, final_trans
+                        
+                    """if bone is None:
+                        return Matrix()
+                    head = armature.matrix_world * bone.head
+                    r = (getLocalMat(bone).decompose()[1]).to_matrix()
+                    r.resize_4x4()
+                    head_mat = Matrix.Translation(head)
+                    return head_mat * r * Matrix.inverted(head_mat)"""      
                         
                 def writeBone(bone):
-                    #self.writeQuaternionf(calcQuat(bone))
-                    """bone_space = Matrix(((1,0,0,0),
-                                         (0,0,1,0),
-                                         (0,-1,0,0),
-                                         (0,0,0,1)))
-                    mat = armature.convert_space(pose_bone=bone,
-                                                 matrix=bone.matrix,
-                                                 from_space='LOCAL',
-                    to_space='POSE')#*bone_space"""
-                    mat = bone.matrix_channel
-                    """mat = armature.convert_space(pose_bone=bone,
-                    matrix=bone.matrix_channel,
-                    from_space='POSE',
-                    to_space='WORLD')"""
-                    trans, rot, scal = mat.decompose()
-                    head = armature.matrix_world * bone.head
-                    x = head.x
-                    y = head.y
-                    z = head.z
-                    r = rot.to_matrix()
-                    #Dat's right. MAGIC
-                    magic = Vector((x - r[0][0]*x - r[0][1]*y - r[0][2]*z,
-                                    y - r[1][0]*x - r[1][1]*y - r[1][2]*z,
-                                    z - r[2][0]*x - r[2][1]*y - r[2][2]*z))
-                    #print(magic)
-                    final_trans = magic #+ trans
-                    #print(final_trans)
-                    self.writeVec3f(final_trans)
+                    rot, trans = getTransform(bone)
+                    self.writeVec3f(trans)
                     self.writeQuaternionf(rot)
                 
                 self.writeStruct("I", len(armature.data.bones))

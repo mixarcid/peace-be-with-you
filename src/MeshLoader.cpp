@@ -133,21 +133,22 @@ NAMESPACE {
     
     for (u32 i = 0; i < num_bones; ++i) {
       Vec3f trans = readVec3f(file);
-      //Log::message(trans.toString());
       Quaternionf rot = readQuaternionf(file);
       bones.push_back(Bone(trans, rot));
     }
 
     u32 num_actions = fio::readLittleEndian<u32>(file);
-    HashMap<String, BonedAnimation> actions(num_actions);
+    Log::message("#actions: %u", num_actions);
+    HashMap<String, BonedAnimationBase> actions(num_actions);
 
-    /* for (u32 i = 0; i < num_actions; ++i) {
+    for (u32 i = 0; i < num_actions; ++i) {
       
       String name = fio::readString(file);
       u32 num_keyframes= fio::readLittleEndian<u32>(file);
       Array<KeyFrame> keyframes;
       keyframes.reserve(num_keyframes);
-      //Log::message(name);
+      Log::message(name);
+      Log::message("#keyframes: %u", num_keyframes);
       
       for (u32 i = 0; i < num_keyframes; ++i) {
 
@@ -155,16 +156,17 @@ NAMESPACE {
 	KeyFrame frame(time, num_bones);
 
 	for (u32 i = 0; i < num_bones; ++i) {
+	  Vec3f trans = readVec3f(file);
 	  Quaternionf rot = readQuaternionf(file);
-	  frame.bones.push_back(Bone(Vec3f(0,0,0),
-			       rot));
+	  frame.bones.push_back(Bone(trans,
+				     rot));
 	}
 	keyframes.push_back(frame);
       }
-      actions.insert(Pair<String, BonedAnimation>
+      actions.insert(Pair<String, BonedAnimationBase>
 		     (name,
-		      BonedAnimation(keyframes)));
-		      }*/
+		      BonedAnimationBase(keyframes)));
+    }
 
     BonedMeshBase* ret = new BonedMeshBase(data,
 					   elems,

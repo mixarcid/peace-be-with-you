@@ -24,7 +24,7 @@ NAMESPACE {
     virtual BoundingObject getBoundingObject();
     virtual BoundingObject getPhysicalBoundingObject();
     virtual BoundingObject getPrimaryBoundingObject();
-    virtual void render();
+    virtual void render(RenderContext c);
     ~StaticMesh();
     
   };

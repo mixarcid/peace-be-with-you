@@ -29,7 +29,7 @@ NAMESPACE {
     shade.use();
   }*/
 
-  void Graphics3d::render(GLFWwindow* window) {
+  void Graphics3d::render(GLFWwindow* window,f32 dt) {
     
     debugAssert(cam != NULL,
 		"You need to give Graphics3d"
@@ -43,9 +43,10 @@ NAMESPACE {
     Shader::UNI_PROJ.registerMat4f(cam->getProj());
     Shader::UNI_VIEW.registerMat4f(cam->getView());
     Mat4f model = cam->getModel();
+    RenderContext c(dt);
     
     for (Node* node : nodes) {
-      node->render(model);
+      node->render(c, model);
     }
     
   }

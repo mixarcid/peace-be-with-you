@@ -8,6 +8,7 @@ NAMESPACE {
 
   struct Bone : Transform {
     using Transform::Transform;
+    void operator=(const Transform b);
   };
 
   struct BonedMeshData {
@@ -30,8 +31,8 @@ NAMESPACE {
   struct BonedAnimationBase {
     Array<KeyFrame> keyframes;
     BonedAnimationBase(Array<KeyFrame>
-		       anim_keyframes);
-  }
+		       anim_keyframes = {});
+  };
 
   struct BonedAnimation {
 
@@ -41,8 +42,9 @@ NAMESPACE {
     Array<KeyFrame> keyframes;
 
     BonedAnimation(Array<KeyFrame> anim_keyframes);
+    BonedAnimation();
     //returns true if animation is finished
-    bool step(Array<Bone> bones, float dt);
+    void step(Array<Bone> bones, float dt);
     
   };
 
@@ -59,7 +61,7 @@ NAMESPACE {
 		  Array<BonedMeshData> bone_data,
 		  Array<Bone> default_bones,
 		  HashMap<String,
-		  BonedAnimation> mesh_animations);
+		  BonedAnimationBase> mesh_animations);
     void init();
     BonedAnimation getAnimation(String name);
   };

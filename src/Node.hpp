@@ -27,7 +27,7 @@ NAMESPACE {
     BoundingObject getPhysicalBoundingObject();
     BoundingObject getPrimaryBoundingObject();
     Mat4f getAbsMat();
-    void render(Mat4f trans);
+    void render(RenderContext c, Mat4f model);
 
   };
 

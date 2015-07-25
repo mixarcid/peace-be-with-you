@@ -7,12 +7,13 @@
 
 NAMESPACE {
 
-  struct RenderContext {
-    f32 dt;
-  }
-
   struct ShaderVar;
   struct BoundingObject;
+
+  struct RenderContext {
+    f32 dt;
+    RenderContext(f32 delta_time);
+  };
 
   struct Renderable {
     

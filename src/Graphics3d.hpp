@@ -18,7 +18,7 @@ NAMESPACE {
     void addNode(Node* node);
     void setCamera(Camera* camera);
     //void setShader(String name);
-    void render(GLFWwindow* window);
+    void render(GLFWwindow* window, f32 dt);
   };
 
 }

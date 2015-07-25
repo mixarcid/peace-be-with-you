@@ -70,12 +70,6 @@ NAMESPACE {
       f32 wy = w * y;
       f32 wz = w * z;
       
-      /*T data[16] = {
-	1 - 2 * (y2 + z2), 2 * (xy - wz), 2 * (xz + wy), 0,
-	2 * (xy + wz), 1 - 2 * (x2 + z2), 2 * (yz - wx), 0,
-	2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (x2 + y2), 0,
-	0, 0, 0, 1
-	};*/
       T data[16] = {
 	1 - 2 * (y2 + z2), 2 * (xy + wz), 2 * (xz - wy), 0,
 	2 * (xy - wz), 1 - 2 * (x2 + z2), 2 * (yz + wx), 0,
@@ -94,6 +88,13 @@ NAMESPACE {
 
     void operator=(const Quaternion b) {
       memcpy(this, &b, sizeof(Quaternion<T>));
+    }
+
+    Quaternion operator+(const Quaternion b) {
+      return Quaternion(x + b.x,
+			y + b.y,
+			z + b.z,
+			w + b.w);
     }
 
     Quaternion operator*(const T scal) const {

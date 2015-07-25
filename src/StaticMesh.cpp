@@ -35,9 +35,9 @@ NAMESPACE {
     return b_sphere;
   }
 
-  void StaticMesh::render() {
+  void StaticMesh::render(RenderContext c) {
     tex->use();
-    RenderableReg::render();
+    RenderableReg::render(c);
   }
 
 }
