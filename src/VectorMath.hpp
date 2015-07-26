@@ -133,9 +133,29 @@ NAMESPACE {
     }
 
     static Vec3 lerp(Vec3 a, Vec3 b, T h) {
-      debugAssert(h > 0.0 && h < 1.0,
+      debugAssert(h >= 0.0 && h <= 1.0,
 		  "H must be between 0 and 1 for Vec3 lerp");
       return a*(1-h) + b*h;
+    }
+
+    static Vec3 slerp(Vec3 a, Vec3 b, T h) {
+      
+      debugAssert(h > 0.0 && h < 1.0,
+		  "H must be between 0 and 1 for Vec3 slerp");
+      T cos_half_angle = Vec3::dot(a,b);
+      
+      if (fabs(cos_half_angle) >= 1.0f) {
+	return a;
+      }
+      
+      T half_angle = acos(cos_half_angle);
+      T sin_half_angle = sqrt(1 - sqr(cos_half_angle));
+      T r1 = sin((1 - h) * half_angle)/sin_half_angle;
+      T r2 = sin(h * half_angle)/sin_half_angle;
+      
+      return Vec3(a.x*r1 + b.x*r2,
+		  a.y*r1 + b.y*r2,
+		  a.z*r1 + b.z*r2);
     }
     
   };

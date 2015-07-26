@@ -29,7 +29,7 @@ class PMFFile:
     TYPE_STATIC_TEXTURE = 1
     TYPE_BONED_TEXTURE = 2
 
-    MAX_WEIGHTS_PER_VERTEX = 8
+    MAX_WEIGHTS_PER_VERTEX = 4
 
     def __init__(self, filename):
         self.file = open(filename, 'bw')
@@ -116,12 +116,14 @@ class PMFFile:
                                     bone_weights.append(g.weight)
                                     break
                         b_len = len(bone_indexes)
+                        b_data = zip(bone_indexes, bone_weights)            
                         if (b_len > PMFFile.MAX_WEIGHTS_PER_VERTEX):
-                            raise Exception("Too many bones per vertex")
+                            b_len = PMFFile.MAX_WEIGHTS_PER_VERTEX
+                            b_data = list(sorted(b_data, key = lambda x: x[1]))[:PMFFile.MAX_WEIGHTS_PER_VERTEX]
                         self.writeStruct("B", b_len)
-                        for n in range(b_len):
-                            self.writeStruct("I", bone_indexes[n])
-                            self.writeStruct("f", bone_weights[n])
+                        for d in b_data:
+                            self.writeStruct("I", d[0])
+                            self.writeStruct("f", d[1])
 
             self.writeStruct("L", len(bm.faces))
             for face in bm.faces:
@@ -178,7 +180,7 @@ class PMFFile:
                 for act in actions:
                     armature.animation_data.action = act
 
-                    keyframes = []
+                    keyframes = [0]
                     bpy.ops.screen.frame_jump(0)
                     while bpy.ops.screen.keyframe_jump() == {'FINISHED'}:
                         keyframes.append(bpy.context.scene.frame_current-1)

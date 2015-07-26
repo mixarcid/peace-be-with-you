@@ -31,11 +31,8 @@ in vec3 inPosition;
 in vec4 inColor;
 in vec2 inTexCoord;
 in vec3 inNormal;
-in uint inNumBones;
 in uvec4 inBoneIndexes0;
 in vec4 inBoneWeights0;
-in uvec4 inBoneIndexes1;
-in vec4 inBoneWeights1;
 
 uniform mat4 uniModel;
 uniform mat4 uniView;

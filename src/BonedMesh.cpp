@@ -7,8 +7,7 @@ NAMESPACE {
     memcpy(this, &b, sizeof(Transform));
   }
 
-  BonedMeshData::BonedMeshData(u32 bone_num)
-    : num_bones(bone_num) {
+  BonedMeshData::BonedMeshData() {
       memset(indexes, 0u, sizeof(indexes));
       memset(weights, 0.0f, sizeof(weights));
   }
@@ -24,26 +23,25 @@ NAMESPACE {
   
   BonedAnimation::BonedAnimation(Array<KeyFrame> anim_keyframes)
     : playing(true),
-    last_time(0.0f),
-    last_keyframe(0),
+    cur_time(0.0f),
+    cur_keyframe(1),
     keyframes(anim_keyframes) {}
 
   BonedAnimation::BonedAnimation()
     : playing(false),
-    last_time(0.0f),
-    last_keyframe(0),
+    cur_time(0.0f),
+    cur_keyframe(1),
     keyframes({}) {}
-  
-  void BonedAnimation::step(Array<Bone> bones, f32 dt) {
+
+  void BonedAnimation::step(Array<Bone>& bones, f32 dt) {
     
     if (!playing) return;
     
-    f32 cur_time = last_time + dt;
-    u32 cur_keyframe = 0;
-    
-    for (u32 i = last_keyframe; i < keyframes.size(); ++i) {
+    cur_time += dt;
+
+    for (u32 i = cur_keyframe; i < keyframes.size(); ++i) {
       if (cur_time >= keyframes[i].time) {
-	if (i == keyframes.size()) {
+	if (i == keyframes.size()-1) {
 	  playing = false;
 	  return;
 	}
@@ -51,17 +49,24 @@ NAMESPACE {
 	break;
       }
     }
-
-    f32 h = ((cur_time - keyframes[last_keyframe].time)
-	     /(cur_keyframe - keyframes[cur_keyframe].time));
+    debugAssert(cur_keyframe > 0,
+		"Current keyframe should be greater than 0");
+    f32 h;
+    /*if (cur_keyframe == 0) {
+      h = (cur_time/keyframes[cur_keyframe].time) * ANIM_H_MULTIPLIER;
+      } else {*/
+    h = (((cur_time - keyframes[cur_keyframe-1].time))
+	 /(keyframes[cur_keyframe].time - keyframes[cur_keyframe-1].time));
+      //}
+    
     for (u32 i = 0; i < bones.size(); ++i) {
-      bones[i] = Transform::interp(bones[i],
+      bones[i] = Transform::interp(keyframes[cur_keyframe - 1]
+				   .bones[i],
 				   keyframes[cur_keyframe]
 				   .bones[i],
 				   h);
     }
-    last_time = cur_time;
-    last_keyframe = cur_keyframe;
+    //Log::message("h: %f, ck: %u, t: %f", h, cur_keyframe, cur_time);
   }
 
   BonedMeshBase::BonedMeshBase(Array<BasicMeshData> static_data,
@@ -78,10 +83,10 @@ NAMESPACE {
 
   void BonedMeshBase::init() {
 
-    for (u32 i = 0; i < bones.size(); ++i) {
+    /*for (u32 i = 0; i < bones.size(); ++i) {
       Log::message(to_string(i) + ": " + bones[i].trans.toString());
     }
-    /*for (auto d : StaticMesh::data) {
+    for (auto d : StaticMesh::data) {
       Log::message("Normal: " + d.norm.toString());
       Log::message("Abs: %f\n", d.norm.abs());
       }*/
@@ -94,11 +99,8 @@ NAMESPACE {
 	  Shader::NORMAL, Shader::TEX_COORD});
 
     b_vbo.bindArray(b_data, false);
-    RenderableReg::vao.registerVars({Shader::NUM_BONES,
-	  Shader::BONE_INDEXES0,
-	  Shader::BONE_INDEXES1,
-	  Shader::BONE_WEIGHTS0,
-	  Shader::BONE_WEIGHTS1});
+    RenderableReg::vao.registerVars({Shader::BONE_INDEXES0,
+	  Shader::BONE_WEIGHTS0});
 
     RenderableReg::ebo.bindArray(StaticMesh::elements, false);
   }

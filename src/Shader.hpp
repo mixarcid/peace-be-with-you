@@ -72,11 +72,8 @@ NAMESPACE {
     const static ShaderVar COLOR;
     const static ShaderVar TEX_COORD;
     const static ShaderVar NORMAL;
-    const static ShaderVar NUM_BONES;
     const static ShaderVar BONE_INDEXES0;
     const static ShaderVar BONE_WEIGHTS0;
-    const static ShaderVar BONE_INDEXES1;
-    const static ShaderVar BONE_WEIGHTS1;
 
     static ShaderUniform UNI_TEXTURE;
     static ShaderUniform UNI_MODEL;
@@ -86,7 +83,7 @@ NAMESPACE {
     static ShaderUniform UNI_FLAGS;
 
     const static u8 MAX_BONES = 50;
-    const static u8 MAX_BONES_PER_VERTEX = 8;
+    const static u8 MAX_BONES_PER_VERTEX = 4;
   };
   
 }

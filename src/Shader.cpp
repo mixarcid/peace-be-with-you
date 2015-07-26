@@ -17,11 +17,8 @@ NAMESPACE {
   const ShaderVar Shader::COLOR(1, TYPE_VECTOR4F);
   const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
   const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
-  const ShaderVar Shader::NUM_BONES(4, TYPE_U32);
   const ShaderVar Shader::BONE_INDEXES0(5, TYPE_VECTOR4U);
   const ShaderVar Shader::BONE_WEIGHTS0(6, TYPE_VECTOR4F);
-  const ShaderVar Shader::BONE_INDEXES1(7, TYPE_VECTOR4U);
-  const ShaderVar Shader::BONE_WEIGHTS1(8, TYPE_VECTOR4F);
 
   ShaderUniform Shader::UNI_TEXTURE(0);
   ShaderUniform Shader::UNI_MODEL(1);
@@ -138,11 +135,8 @@ NAMESPACE {
     glBindAttribLocation(id, COLOR.id, "inColor");
     glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
     glBindAttribLocation(id, NORMAL.id, "inNormal");
-    glBindAttribLocation(id, NUM_BONES.id, "inNumBones");
     glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
     glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
-    glBindAttribLocation(id, BONE_INDEXES1.id, "inBoneIndexes1");
-    glBindAttribLocation(id, BONE_WEIGHTS1.id, "inBoneWeights1");
 
     glLinkProgram(id);
     glDeleteShader(vert_id);

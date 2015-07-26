@@ -97,12 +97,12 @@ NAMESPACE {
       Log::message("Tex_coord: " + tex_coord.toString());*/
 
       u8 vert_num_bones = fio::readLittleEndian<u8>(file);
-      BonedMeshData d(vert_num_bones);
+      BonedMeshData d;
       //Log::message("#bones: %u", d.num_bones);
-      fatalAssert(d.num_bones <= Shader::MAX_BONES_PER_VERTEX,
+      fatalAssert(vert_num_bones <= Shader::MAX_BONES_PER_VERTEX,
 		  "Too many bones per vertex!");
       
-      for (u32 i = 0; i < d.num_bones; ++i) {
+      for (u32 i = 0; i < vert_num_bones; ++i) {
 	d.indexes[i] = fio::readLittleEndian<u32>(file);\
 	//d.indexes[i] = 1u;
 	d.weights[i] = fio::readLittleEndian<f32>(file);
@@ -138,7 +138,7 @@ NAMESPACE {
     }
 
     u32 num_actions = fio::readLittleEndian<u32>(file);
-    Log::message("#actions: %u", num_actions);
+    //Log::message("#actions: %u", num_actions);
     HashMap<String, BonedAnimationBase> actions(num_actions);
 
     for (u32 i = 0; i < num_actions; ++i) {
@@ -147,8 +147,8 @@ NAMESPACE {
       u32 num_keyframes= fio::readLittleEndian<u32>(file);
       Array<KeyFrame> keyframes;
       keyframes.reserve(num_keyframes);
-      Log::message(name);
-      Log::message("#keyframes: %u", num_keyframes);
+      //Log::message(name);
+      //Log::message("#keyframes: %u", num_keyframes);
       
       for (u32 i = 0; i < num_keyframes; ++i) {
 

@@ -12,11 +12,10 @@ NAMESPACE {
   };
 
   struct BonedMeshData {
-    u32 num_bones;
     u32 indexes[Shader::MAX_BONES_PER_VERTEX];
     f32 weights[Shader::MAX_BONES_PER_VERTEX];
 
-    BonedMeshData(u32 bone_num);
+    BonedMeshData();
   };
 
   struct KeyFrame {
@@ -37,14 +36,14 @@ NAMESPACE {
   struct BonedAnimation {
 
     bool playing;
-    float last_time;
-    u32 last_keyframe;
+    float cur_time;
+    u32 cur_keyframe;
     Array<KeyFrame> keyframes;
 
     BonedAnimation(Array<KeyFrame> anim_keyframes);
     BonedAnimation();
     //returns true if animation is finished
-    void step(Array<Bone> bones, float dt);
+    void step(Array<Bone>& bones, float dt);
     
   };
 
