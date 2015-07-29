@@ -164,7 +164,7 @@ NAMESPACE {
 
   template <typename T>
     struct Mat4 {
-    
+
     T data[16];
 
     Mat4() {
@@ -349,13 +349,18 @@ NAMESPACE {
 
   template <typename T>
     struct Mat3 {
-    
-    T data[9];
+
+    union {
+      struct {
+	Vec3<T> rows[3];
+      };
+      T data[9];
+    };
 
     Mat3() {
       T d[9] = {1,0,0,
-		 0,1,0,
-		 0,0,1};
+		0,1,0,
+		0,0,1};
       memcpy(this, d, sizeof(Mat3<T>));
     }
 
@@ -366,6 +371,11 @@ NAMESPACE {
     T operator()(u8 row, u8 col) const {
       debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
       return data[(row*3) + col];
+    }
+
+    T operator[](u8 row) const {
+      debugAssert(row < 3, "Matrix index out of bounds");
+      return rows[row];
     }
 
     void operator=(const Mat3 b) {
