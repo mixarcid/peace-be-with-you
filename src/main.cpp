@@ -94,7 +94,7 @@ int main() {
 			      cam.pos += axis * cam_speed;
 			      break;
 			    case GLFW_KEY_SPACE:
-			      sword.startAnimation("ArmatureAction");
+			      sword.startAnimation("Walk");
 			      break;
 			    }
 			  });
