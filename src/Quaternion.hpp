@@ -58,7 +58,7 @@ NAMESPACE {
       return Quaternion(-x, -y, -z, w);
     }
 
-    Mat4<T> getMat() const {
+    Mat4<T> getMat4() const {
       
       f32 x2 = x * x;
       f32 y2 = y * y;
@@ -77,6 +77,26 @@ NAMESPACE {
 	0, 0, 0, 1
       };
       return Mat4<T>(data);
+    }
+
+    Mat3<T> getMat3() const {
+      
+      f32 x2 = x * x;
+      f32 y2 = y * y;
+      f32 z2 = z * z;
+      f32 xy = x * y;
+      f32 xz = x * z;
+      f32 yz = y * z;
+      f32 wx = w * x;
+      f32 wy = w * y;
+      f32 wz = w * z;
+      
+      T data[16] = {
+	1 - 2 * (y2 + z2), 2 * (xy + wz), 2 * (xz - wy),
+	2 * (xy - wz), 1 - 2 * (x2 + z2), 2 * (yz + wx),
+	2 * (xz + wy), 2 * (yz - wx), 1 - 2 * (x2 + y2)
+      };
+      return Mat3<T>(data);
     }
 
     String toString() {

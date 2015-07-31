@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Standard.hpp"
+#include "Function.hpp"
 
 #define DIR_SEP "/"
 
@@ -16,5 +17,12 @@
 #define DIR_TEXTURE_EXTENSION ".png"
 
 NAMESPACE {
+  
   void LogCurrentDirectory();
+
+  struct Asset {
+    Asset(Function<void(void)>> loader);
+    static Array<Function<void(void)>> loaders;
+    static void loadAll();
+  }
 }

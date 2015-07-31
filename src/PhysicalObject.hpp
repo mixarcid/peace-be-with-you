@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.hpp"
+#include "Messageable.hpp"
 #include "Containers.hpp"
 
 NAMESPACE {
@@ -25,7 +26,7 @@ NAMESPACE {
     const static Material STATIC;
   };
 
-  struct PhysicalObject : Node {
+  struct PhysicalObject : Node, Messageable {
 
     Material material;
     MassData mass_data;

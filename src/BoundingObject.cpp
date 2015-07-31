@@ -62,16 +62,6 @@ NAMESPACE {
     center += t->trans;
   }
 
-  bool BoundingSphere::testIntersection(BoundingSphere b) {
-    //Log::message("testing...");
-    Vec3f d = center - b.center;
-    f32 dsq = Vec3f::dot(d,d);
-    f32 rsq = sqr(radius + b.radius);
-    //Log::message("d: " + d.toString());
-    //Log::message("rsq: " + to_string(rsq) + "\n");
-    return dsq < rsq;
-  }
-
   BoundingOBB::BoundingOBB(Array<BasicMeshData> data) {
 
     //just computes the AABB, currently
@@ -90,9 +80,6 @@ NAMESPACE {
 
     center = (max + min)/2;
     halves = max - center;
-    coord[0] = Vec3f(1,0,0);
-    coord[1] = Vec3f(0,1,0);
-    coord[2] = Vec3f(0,0,1);
 
   }
 
@@ -108,9 +95,7 @@ NAMESPACE {
 
   void BoundingOBB::transform(Node* t) {
     center += t->trans;
-    coord[0] = t->rot * coord[0];
-    coord[1] = t->rot * coord[1];
-    coord[2] = t->rot * coord[2];
+    
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -129,90 +114,6 @@ NAMESPACE {
       ret += coord[i]*dist;
     }
     return ret;
-  }
- 
-  const f32 OBB_TEST_EPSILON = 0.0001;
-  bool BoundingOBB::testIntersection(BoundingOBB b) {
-    
-    f32 ra, rb;
-    Mat3f r, ar;
-
-    for (u8 i = 0; i < 3; ++i) {
-      for (u8 j = 0; j < 3; ++j) {
-	r.data[i*3 + j] = Vec3f::dot(coord[i], b.coord[j]); 
-      }
-    }
-    
-    Vec3f t = b.center - center;
-    t = Vec3f(Vec3f::dot(t, coord[0]),
-	      Vec3f::dot(t, coord[1]),
-	      Vec3f::dot(t, coord[2]));
-    
-    for (u8 i = 0; i < 3; ++i) {
-      for (u8 j = 0; j < 3; ++j) {
-	ar.data[3*i + j] = abs(r(i,j)) + OBB_TEST_EPSILON;
-      }
-    }
-
-    //Now let's test some axes!
-
-    for (u8 i = 0; i < 3; ++i) {
-      ra = halves[i];
-      rb = b.halves[0] * ar(i,0) +
-	b.halves[1] * ar(i,1) + b.halves[2] * ar(i,2);
-      if (abs(t[i]) > ra + rb) return false;
-    }
-
-    for (u8 i = 0; i < 3; ++i) {
-      ra = halves[0] * ar(0,i) +
-	halves[1] * ar(1,i) + halves[2] * ar(2,i);
-      rb = b.halves[i];
-      if (abs(t[0] * r(0,i) + t
-	      [1] * r(1,i) + t[2] * r(2,i)) > ra + rb) return false;
-    }
-
-    ra = halves[1] * ar(2,0) + halves[2] * ar(1,0);
-    rb = b.halves[1] * ar(0,2) + b.halves[2] * ar(0,1);
-    if (abs(t[2] * r(1,0) - t[1] * r(2,0)) > ra + rb) return false;
-
-    ra = halves[1] * ar(2,1) + halves[2] * ar(1,1);
-    rb = b.halves[0] * ar(0,2) + b.halves[2] * ar(0,0);
-    if (abs(t[2] * r(1,1) - t[1] * r(2,1)) > ra + rb) return false;
-
-    ra = halves[1] * ar(2,2) + halves[2] * ar(1,2);
-    rb = b.halves[0] * ar(0,1) + b.halves[1] * ar(0,0);
-    if (abs(t[2] * r(1,2) - t[1] * r(2,2)) > ra + rb) return false;
-
-    ra = halves[0] * ar(2,0) + halves[2] * ar(0,0);
-    rb = b.halves[1] * ar(1,2) + b.halves[2] * ar(1,1);
-    if (abs(t[0] * r(2,0) - t[2] * r(0,0)) > ra + rb) return false;
-
-    ra = halves[0] * ar(2,1) + halves[2] * ar(0,1);
-    rb = b.halves[0] * ar(1,2) + b.halves[2] * ar(1,0);
-    if (abs(t[0] * r(2,1) - t[2] * r(0,1)) > ra + rb) return false;
-
-    ra = halves[0] * ar(2,2) + halves[2] * ar(0,2);
-    rb = b.halves[0] * ar(1,1) + b.halves[1] * ar(1,0);
-    if (abs(t[0] * r(2,2) - t[2] * r(0,2)) > ra + rb) return false;
-
-    ra = halves[0] * ar(1,0) + halves[1] * ar(0,0);
-    rb = b.halves[1] * ar(2,2) + b.halves[2] * ar(2,1);
-    if (abs(t[1] * r(0,0) - t[0] * r(1,0)) > ra + rb) return false;
-
-    ra = halves[0] * ar(1,1) + halves[1] * ar(0,1);
-    rb = b.halves[0] * ar(2,2) + b.halves[2] * ar(2,0);
-    if (abs(t[1] * r(0,1) - t[0] * r(1,1)) > ra + rb) return false;
-
-    ra = halves[0] * ar(1,2) + halves[1] * ar(0,2);
-    rb = b.halves[0] * ar(2,1) + b.halves[1] * ar(2,0);
-    if (abs(t[1] * r(0,2) - t[0] * r(1,2)) > ra + rb) return false;
- 
-    return true;
-  }
-
-  bool BoundingOBB::testIntersection(BoundingSphere b) {
-    Vec3f d = getClosestPoint(b.center) - b.center;
-    return Vec3f::dot(d,d) > sqr(b.radius);
   }
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
@@ -261,87 +162,5 @@ NAMESPACE {
     case BOUNDING_NONE:
       ;
     }
-  }
-
-  Manifold::Manifold(BoundingSphere a, BoundingSphere b) {
-    Vec3f n = (a.center - b.center);
-    f32 d = n.abs();
-    f32 r = a.radius + b.radius;
-    if (d != 0) {
-      penetration = r - d;
-      //Log::message("P: %f", penetration);
-      normal = n/d;
-      //Log::message("n: " + normal.toString());
-    } else {
-      penetration = a.radius;
-      normal = Vec3f(1,0,0);
-    }
-  }
-
-  Manifold::Manifold(BoundingOBB a, BoundingOBB b) {
-    
-  }
-
-  Manifold::Manifold(BoundingSphere a, BoundingOBB b) {
-    
-  }
-
-  Manifold::Manifold(BoundingOBB a, BoundingSphere b) {
-    
-  }
-  
-  Manifold::Manifold(BoundingObject a, BoundingObject b) {
-    switch (a.type) {
-    case BOUNDING_SPHERE:
-      switch(b.type) {
-      case BOUNDING_SPHERE:
-	*this = Manifold(a.sphere, b.sphere);
-        return;
-      case BOUNDING_OBB:
-	*this = Manifold(a.sphere, b.obb);
-	return;
-      case BOUNDING_NONE:
-	return;
-      }
-    case BOUNDING_OBB:
-      switch(b.type) {
-      case BOUNDING_SPHERE:
-	*this = Manifold(a.obb, b.sphere);
-	return;
-      case BOUNDING_OBB:
-	*this = Manifold(a.obb, b.obb);
-	return;
-      case BOUNDING_NONE:
-	return;
-      }
-    case BOUNDING_NONE:
-      return;
-    }
-  }
-
-  bool testIntersection(BoundingObject a, BoundingObject b) {
-    switch (a.type) {
-    case BOUNDING_SPHERE:
-      switch(b.type) {
-      case BOUNDING_SPHERE:
-	return a.sphere.testIntersection(b.sphere);
-      case BOUNDING_OBB:
-	return b.obb.testIntersection(a.sphere);
-      case BOUNDING_NONE:
-	return false;
-      }
-    case BOUNDING_OBB:
-      switch(b.type) {
-      case BOUNDING_SPHERE:
-	return a.obb.testIntersection(b.sphere);
-      case BOUNDING_OBB:
-	return a.obb.testIntersection(b.obb);
-      case BOUNDING_NONE:
-	return false;
-      }
-    case BOUNDING_NONE:
-      return false;
-    }
-    return false;
   }
 }

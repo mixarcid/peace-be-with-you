@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include "FileSystem.hpp"
+#include "Assets.hpp"
 
 NAMESPACE {
 
@@ -10,6 +10,17 @@ NAMESPACE {
     debugAssert(getcwd(cwd, sizeof(cwd)) != NULL,
 		"Error getting the current directory");
     Log::message("Current directory: %s", cwd);
+  }
+
+  Asset::Asset(Function<void(void)>> loader) {
+    loaders.push_back(loader);
+  }
+
+  void Asset::loadAll() {
+    for (loader : loaders) {
+      loader();
+    }
+    Log::message("Finshed loading assets");
   }
 
 }

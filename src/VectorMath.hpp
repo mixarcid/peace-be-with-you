@@ -367,13 +367,25 @@ NAMESPACE {
     Mat3(const T* initial_data) {
       memcpy(this, initial_data, sizeof(Mat3<T>));
     }
+
+    Vec3<T> vecMul(Vec3<T> vec) {
+      return Vec3<T>(vec.x*data[0] + vec.y*data[3] + vec.z*data[6],
+		     vec.x*data[1] + vec.y*data[4] + vec.z*data[7],
+		     vec.x*data[2] + vec.y*data[5] + vec.z*data[8]);
+    }
+
+    Vec3<T> vecMulT(Vec3<T> vec) {
+      return Vec3<T>(Vec3<T>::dot(vec,rows[0]),
+		     Vec3<T>::dot(vec,rows[1]),
+		     Vec3<T>::dot(vec,rows[2]));
+    }
     
     T operator()(u8 row, u8 col) const {
       debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
       return data[(row*3) + col];
     }
 
-    T operator[](u8 row) const {
+    Vec3<T> operator[](u8 row) const {
       debugAssert(row < 3, "Matrix index out of bounds");
       return rows[row];
     }

@@ -1,7 +1,7 @@
 #include "MeshLoader.hpp"
 #include "String.hpp"
 #include "FileIO.hpp"
-#include "FileSystem.hpp"
+#include "Assets.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
 

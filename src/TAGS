@@ -11,7 +11,7 @@ NAMESPACE 3,23
 Collision.cpp,16
 NAMESPACE 4,56
 
-FileSystem.cpp,16
+Assets.cpp,16
 NAMESPACE 4,47
 
 GL.cpp,180
@@ -140,7 +140,7 @@ Color.hpp,200
     Color4(Color4::Color416,152
   typedef Color4<f32> Color4f;25,286
 
-FileSystem.hpp,306
+Assets.hpp,306
 #define DIR_SEP 5,39
 #define DIR_ASSETS 7,60
 #define DIR_SHADERS 8,96

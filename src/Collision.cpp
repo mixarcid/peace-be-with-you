@@ -1,5 +1,5 @@
 #include "Collision.hpp"
-#include "BoundingObject.hpp"
+#include "Contact.hpp"
 
 NAMESPACE {
 
@@ -10,11 +10,11 @@ NAMESPACE {
     if (b == a) return;
     if (!testIntersection(a->getPhysicalBoundingObject(),
 			  b->getPhysicalBoundingObject())) return;
+    Log::message("!");
+    /*Manifold m;
     if (!testIntersection(a->getPrimaryBoundingObject(),
-			  b->getPrimaryBoundingObject())) return;
+			  b->getPrimaryBoundingObject()), &m) return;
 
-    Manifold m(a->getPrimaryBoundingObject(),
-	       b->getPrimaryBoundingObject());
     f32 vn = Vec3f::dot((b->veloc - a->veloc), m.normal);
     
     if (vn <= 0) return;
@@ -33,7 +33,7 @@ NAMESPACE {
       / (a->mass_data.inv_mass + b->mass_data.inv_mass);
     Vec3f correction = -m.normal*cf;
     a->translateRel(-correction * a->mass_data.inv_mass);
-    b->translateRel(correction * b->mass_data.inv_mass);
+    b->translateRel(correction * b->mass_data.inv_mass);*/
     
   }
 
