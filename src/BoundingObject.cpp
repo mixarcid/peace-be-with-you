@@ -46,8 +46,8 @@ NAMESPACE {
       radius = r_test > radius ? r_test : radius;
     }
 
-    //Log::message("center: " + center.toString()
-    // + "\nRadius: " + to_string(radius));
+    /*Log::message("Center: " + center.toString()
+      + "\nRadius: " + to_string(radius));*/
   }
 
   f32 BoundingSphere::getVolume() {
@@ -59,11 +59,12 @@ NAMESPACE {
   }
 
   void BoundingSphere::transform(Node* t) {
+    //Log::message(center.toString());
     center += t->trans;
   }
 
   BoundingOBB::BoundingOBB(Array<BasicMeshData> data) {
-
+    
     //just computes the AABB, currently
     debugAssert(data.size() > 0,
 		"Why does your mesh have no data?");
@@ -80,7 +81,6 @@ NAMESPACE {
 
     center = (max + min)/2;
     halves = max - center;
-
   }
 
   f32 BoundingOBB::getVolume() {
@@ -95,7 +95,6 @@ NAMESPACE {
 
   void BoundingOBB::transform(Node* t) {
     center += t->trans;
-    
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -122,8 +121,10 @@ NAMESPACE {
     switch(type) {
     case BOUNDING_SPHERE:
       sphere = BoundingSphere(data);
+      break;
     case BOUNDING_OBB:
       obb = BoundingOBB(data);
+      break;
     case BOUNDING_NONE:
       return;
     }
@@ -157,8 +158,10 @@ NAMESPACE {
     switch (type) {
     case BOUNDING_SPHERE:
       sphere.transform(t);
+      break;
     case BOUNDING_OBB:
       obb.transform(t);
+      break;
     case BOUNDING_NONE:
       ;
     }

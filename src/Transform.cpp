@@ -32,7 +32,7 @@ NAMESPACE {
 
   Mat4f Transform::getMat() {
     Mat4f ret = //Mat4f::makeScale(scal) *
-      rot.getMat() * Mat4f::makeTranslate(trans);
+      rot.getMat4() * Mat4f::makeTranslate(trans);
     return ret;
   }
 

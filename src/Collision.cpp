@@ -8,14 +8,14 @@ NAMESPACE {
   void resolveCollision(PhysicalObject* a, PhysicalObject* b) {
 
     if (b == a) return;
-    if (!testIntersection(a->getPhysicalBoundingObject(),
-			  b->getPhysicalBoundingObject())) return;
-    Log::message("!");
-    /*Manifold m;
+    /*if (!testIntersection(a->getPhysicalBoundingObject(),
+      b->getPhysicalBoundingObject())) return;*/
+    Manifold m;
     if (!testIntersection(a->getPrimaryBoundingObject(),
-			  b->getPrimaryBoundingObject()), &m) return;
+			  b->getPrimaryBoundingObject(), &m)) return;
 
-    f32 vn = Vec3f::dot((b->veloc - a->veloc), m.normal);
+    Log::message("Yeah");
+    /*f32 vn = Vec3f::dot((b->veloc - a->veloc), m.normal);
     
     if (vn <= 0) return;
     //Log::message("VN: %f", vn);

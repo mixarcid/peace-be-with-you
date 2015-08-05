@@ -17,6 +17,7 @@ NAMESPACE {
     Array<u32> elements;
     Texture* tex;
     BoundingObject b_sphere;
+    BoundingObject b_obb;
     
     StaticMesh(Array<BasicMeshData> mesh_data,
 	       Array<u32> mesh_elems, Texture* texture);

@@ -21,8 +21,8 @@ NAMESPACE {
   void LogCurrentDirectory();
 
   struct Asset {
-    Asset(Function<void(void)>> loader);
-    static Array<Function<void(void)>> loaders;
+    Asset(function<void(void)> loader);
+    static Array<function<void(void)>> loaders;
     static void loadAll();
-  }
+  };
 }

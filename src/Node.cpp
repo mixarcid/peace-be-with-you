@@ -22,7 +22,7 @@ NAMESPACE {
   BoundingObject Node::getBoundingObject() {
     debugAssert(renderables.size() > 0,
 	       "Why haven't you attached a renderable to the node?");
-    BoundingObject obj =  renderables[0]->getBoundingObject();
+    BoundingObject obj = renderables[0]->getBoundingObject();
     obj.transform(this);
     return obj;
   }
@@ -31,7 +31,9 @@ NAMESPACE {
     debugAssert(renderables.size() > 0,
 	       "Why haven't you attached a renderable to the node?");
     BoundingObject obj = renderables[0]->getPhysicalBoundingObject();
+    //Log::message(Transform::trans.toString());
     obj.transform(this);
+    //Log::message(obj.sphere.center.toString() + "\n");
     return obj;
   }
 

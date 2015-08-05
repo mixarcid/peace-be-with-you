@@ -12,12 +12,14 @@ NAMESPACE {
     Log::message("Current directory: %s", cwd);
   }
 
-  Asset::Asset(Function<void(void)>> loader) {
+  Array<function<void(void)>> Asset::loaders;
+
+  Asset::Asset(function<void(void)> loader) {
     loaders.push_back(loader);
   }
 
   void Asset::loadAll() {
-    for (loader : loaders) {
+    for (auto loader : loaders) {
       loader();
     }
     Log::message("Finshed loading assets");

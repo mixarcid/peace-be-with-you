@@ -44,6 +44,7 @@ int main() {
     Input::init(window);
     Input::addKeyCallback(keyCallback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwMakeContextCurrent(window);
 
     // Initialize GLEW
@@ -59,73 +60,79 @@ int main() {
     Graphics3d graphics("Toon");
     
     //graphics.setShader("Toon");
-    Camera cam(Vec3f(0,0,0),
-	       Vec3f(0,1,0),
-	       Vec3f(0,0,1),
-	       degreesToRadians(60),
-	       1, 50);
+    Camera cam(degreesToRadians(60), 1, 50);
+    cam.rotateAbs(Quaternionf(degreesToRadians(90.0f),0,0));
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
-    //f32 cam_rot_speed = 0.1;
+    f32 cam_rot_speed = 0.001;
     Physics phys;
 
-    //MeshLoader loader("Soldier");
-    MeshLoader loader2("SubjectB");
+    MeshLoader loader("WoodenBox");
 
-    BonedMesh sword = loader2.getBonedMesh("Subject");
-    StaticObject sword_node(&sword, Vec3f(0,7,0));
+    Input::addCursorPosCallback
+      ([&cam, cam_rot_speed]
+       (GLFWwindow* win,
+	f64 x, f64 y) {
+	
+	static f64 prev_x = x;
+	static f64 prev_y = y;
 
-    Input::addKeyCallback([&cam,
-			   cam_speed,
-			   &sword](GLFWwindow* win, i32 key,
-				   i32 code, i32 act, i32 mods) {
-			    Vec3f axis = Vec3f::cross(cam.dir, cam.up);
-			    switch(key) {
-			    case GLFW_KEY_W:
-			      cam.pos += cam.dir * cam_speed;
-			      break;
-			    case GLFW_KEY_S:
-			      cam.pos -= cam.dir * cam_speed;
-			      break;
-			    case GLFW_KEY_A:
-			      cam.pos -= axis * cam_speed;
-			      break;
-			    case GLFW_KEY_D:
-			      cam.pos += axis * cam_speed;
-			      break;
-			    case GLFW_KEY_SPACE:
-			      sword.startAnimation("Walk");
-			      break;
-			    }
-			  });
-    //sword_node.rotateAbs(Quaternionf(0,0,degreesToRadians(90.0f)));
-    graphics.addNode(&sword_node);
-    phys.addStaticObject(&sword_node);
-    //BonedMesh frank = loader.getBonedMesh("Frank");
-    //MeshLoader l2("WoodenBox");
-    //StaticMesh* cube = l2.getStaticMesh("Cube");
-  
-    /*PhysicalObject monk_node(&monk, Material(1, 0.5), Vec3f(0,4,-5),
-			     Vec3f(0,-10,0));
-    graphics.addNode(&monk_node);
-    phys.addDynamicObject(&monk_node);*/
+	f64 dx = x - prev_x;
+	f64 dy = y - prev_y;
+	
+	Quaternionf q(-dy*cam_rot_speed,
+		      dx*cam_rot_speed,
+		      0);
+	cam.rotateRel(q);
+	
+	prev_x = x;
+	prev_y = y;
+	  
+      });
 
-    //StaticObject cube_node(cube, Vec3f(0,-2,-5));
-    //graphics.addNode(&cube_node);
-    //phys.addStaticObject(&cube_node);
+    Input::addKeyCallback
+      ([&cam,
+	cam_speed]
+       (GLFWwindow* win,
+	i32 key,
+	i32 code,
+	i32 act,
+	i32 mods) {
+	switch(key) {
+	case GLFW_KEY_W:
+	  cam.translateRel(cam.getDir()*cam_speed);
+	  break;
+	case GLFW_KEY_S:
+	  cam.translateRel(-cam.getDir()*cam_speed);
+	  break;
+	case GLFW_KEY_A:
+	  cam.translateRel(-cam.getRight()*cam_speed);
+	  break;
+	case GLFW_KEY_D:
+	  cam.translateRel(cam.getRight()*cam_speed);
+	  break;
+	case GLFW_KEY_SPACE:
+	  break;
+	}
+      });
 
-    /*StaticObject monk_node(&monk, Vec3f(0, 0,-5));
-    monk_node.rotateAbs(Quaternionf(degreesToRadians(-90.0f),
-				    0,
-				    0));
-    //graphics.addNode(&monk_node);
-    phys.addStaticObject(&monk_node);*/
+    StaticMesh* cube = loader.getStaticMesh("Cube");
+    StaticObject cube1(cube, Vec3f(0,7,-3));
+    PhysicalObject cube2(cube, Material(1, 0.5), Vec3f(1,7,2),
+			 Vec3f(0,0,0));
+    debugAssert(cube != NULL, "What!");
 
+    graphics.addNode(&cube1);
+    phys.addStaticObject(&cube1);
+    graphics.addNode(&cube2);
+    phys.addDynamicObject(&cube2);
 
     Time start, end;
     f32 dt = 0;
     end.makeCurrent();
     start.makeCurrent();
+
+    cam.getView();
     
     while(!glfwWindowShouldClose(window) && running) {
 
@@ -149,10 +156,6 @@ int main() {
   } catch(Exception& e) {
     Log::error(e.what());
   }
-  //printf("WHAT??\n");
-
-  //Log::message("%u", sizeof(Transform));
-  //Log::message("%u", sizeof(Bone));
 
   gl::terminate();
   Log::terminate();

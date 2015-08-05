@@ -2,25 +2,56 @@
 
 NAMESPACE {
 
-  Camera::Camera(Vec3f cam_pos, Vec3f cam_dir, Vec3f cam_up,
-		 f32 cam_fovy, f32 cam_near, f32 cam_far)
-    : pos(cam_pos), dir(cam_dir), up(cam_up),
-    fovy(cam_fovy), near_clip(cam_near), far_clip(cam_far) {}
+  Camera::Camera(f32 cam_fovy,
+		 f32 cam_near,
+		 f32 cam_far)
+    : fovy(cam_fovy),
+    near_clip(cam_near),
+    far_clip(cam_far) {}
 
+  void Camera::translateAbs(Vec3f trans) {
+    pos = trans;
+  }
+  
+  void Camera::translateRel(Vec3f trans) {
+    pos += trans;
+  }
+  
+  void Camera::rotateAbs(Quaternionf q) {
+    rot = q.getMat3();
+  }
+  
+  void Camera::rotateRel(Quaternionf q) {
+    rot *= q.getMat3();
+  }
+
+  Vec3f Camera::getRight() {
+    return rot[0];
+  }
+
+  Vec3f Camera::getDir() {
+    return rot[1];
+  }
+
+  Vec3f Camera::getUp() {
+    return rot[2];
+  }
+    
   Mat4f Camera::getModel() {
     Mat4f mat =  Mat4f::makeTranslate(-pos);
     return mat;
   }
 
   Mat4f Camera::getView() {
-    
-    Mat4f mat =  Mat4f::lookAt(Vec3f(0,0,0), dir, up);
+    Mat4f mat(rot, pos);
     return mat;
   }
 
   Mat4f Camera::getProj() {
-    Mat4f mat = Mat4f::perspective(fovy, aspect,
-				   near_clip, far_clip);
+    Mat4f mat = Mat4f::perspective(fovy,
+				   aspect,
+				   near_clip,
+				   far_clip);
     return mat;
   }
 

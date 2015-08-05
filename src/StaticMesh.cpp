@@ -5,8 +5,11 @@ NAMESPACE {
   StaticMesh::StaticMesh(Array<BasicMeshData> mesh_data,
 			 Array<u32> mesh_elems,
 			 Texture* texture)
-    : data(mesh_data), elements(mesh_elems),
-    tex(texture), b_sphere(BOUNDING_SPHERE, mesh_data) {}
+    : data(mesh_data),
+    elements(mesh_elems),
+    tex(texture),
+    b_sphere(BOUNDING_SPHERE, mesh_data),
+    b_obb(BOUNDING_OBB, mesh_data) {}
 
   void StaticMesh::init() {
     RenderableReg::init();
@@ -32,7 +35,7 @@ NAMESPACE {
   }
 
   BoundingObject StaticMesh::getPrimaryBoundingObject() {
-    return b_sphere;
+    return b_obb;
   }
 
   void StaticMesh::render(RenderContext c) {

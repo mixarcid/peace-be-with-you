@@ -31,6 +31,7 @@ NAMESPACE {
     veloc(vi), force(Vec3f(0,0,0)) {
     
     Node::addRenderable(rend);
+    //Log::message("%u", Node::renderables.size());
     f32 mass = Node::getPrimaryBoundingObject().getVolume()
       * mat.density;
     f32 inertia = Node::getPrimaryBoundingObject().getInertia(mass);

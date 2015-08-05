@@ -41,10 +41,15 @@ NAMESPACE {
   
   template <typename T>
     struct Vec3 {
-    
-    T x;
-    T y;
-    T z;
+
+    union {
+      struct {
+	T x;
+	T y;
+	T z;
+      };
+      T data[3];
+    };
 
     Vec3(T xval = 0 , T yval = 0 , T zval = 0)
       : x(xval), y(yval), z(zval) {}
@@ -95,8 +100,9 @@ NAMESPACE {
 
     T operator[](const u8 index) {
       debugAssert(index < 3,
-		  "Vec3 index must be 0 to 2");
-      return (*((T*)this + sizeof(T)*index)); //that's right
+		  "Vec3 index must be less than 3");
+      //Log::message("yeah: " + to_string(data[index]));
+      return data[index];
     }
     
     T abs() const {
@@ -162,6 +168,98 @@ NAMESPACE {
   
   typedef Vec3<f32> Vec3f;
 
+    template <typename T>
+    struct Mat3 {
+
+    union {
+      struct {
+	Vec3<T> cols[3];
+      };
+      T data[9];
+    };
+
+    Mat3() {
+      T d[9] = {1,0,0,
+		0,1,0,
+		0,0,1};
+      memcpy(this, d, sizeof(Mat3<T>));
+    }
+
+    Mat3(const T* initial_data) {
+      memcpy(this, initial_data, sizeof(Mat3<T>));
+    }
+
+    Vec3<T> vecMulT(Vec3<T> vec) {
+      return Vec3<T>(Vec3<T>::dot(vec,cols[0]),
+		     Vec3<T>::dot(vec,cols[1]),
+		     Vec3<T>::dot(vec,cols[2]));
+    }
+
+    Vec3<T> vecMul(Vec3<T> vec) {
+      return Vec3<T>(vec.x*data[0] + vec.y*data[3] + vec.z*data[6],
+		     vec.x*data[1] + vec.y*data[4] + vec.z*data[7],
+		     vec.x*data[2] + vec.y*data[5] + vec.z*data[8]);
+    }
+    
+    T operator()(u8 row, u8 col) const {
+      debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
+      return data[(row*3) + col];
+    }
+
+    Vec3<T> operator[](u8 row) const {
+      debugAssert(row < 3, "Matrix index out of bounds");
+      return Vec3f(data[row], data[row+3], data[row+6]);
+    }
+
+    void operator=(const Mat3 b) {
+      memcpy(this, &b, sizeof(Mat3<T>));
+    }
+
+    Mat3 operator+(const Mat3 b) {
+      Mat3 ret;
+      for (int n = 0; n < 9; ++n) {
+	ret[n] = data[n] + b.data[n];
+      }
+      return ret;
+    }
+
+    Mat3 operator*(const Mat3 b) const {
+      Mat3 ret;
+      for (u32 row=0; row<3; ++row) {
+	for (u32 col=0; col<3; ++col) {
+	  ret.data[row*3 + col] = 0;
+	  for (u32 n=0; n<3; ++n) {
+	    ret.data[row*3 + col] += (*this)(row, n)*(b(n, col));
+	  }
+	}
+      }
+      return ret;
+    }
+
+    void operator*=(const Mat3 b) {
+      (*this) = b*(*this);
+    }
+
+    void makeIdentity() {
+      (*this) = Mat3();
+    }
+
+    String toString() {
+      String ret = "\n";
+      for (u8 row = 0; row < 3; ++row) {
+	ret += "| ";
+	for (u8 col = 0; col < 3; ++col) {
+	  ret += to_string((*this)(col, row)) + " ";
+	}
+	ret += "|\n";
+      }
+      return ret;
+    }
+    
+  };
+
+  typedef Mat3<f32> Mat3f;
+
   template <typename T>
     struct Mat4 {
 
@@ -180,6 +278,21 @@ NAMESPACE {
 	data[n] = initial_data[n];
 	}*/
       memcpy(this, initial_data, sizeof(Mat4<T>));
+    }
+
+    Mat4(Mat3<T> rot) {
+      T d[16] = {rot(0,0), rot(1,0), rot(2,0), 0,
+		 rot(0,1), rot(1,1), rot(2,1), 0,
+		 rot(0,2), rot(1,2), rot(2,2), 0,
+		 0, 0, 0, 1};
+      memcpy(this, d, sizeof(Mat4<T>));
+    }
+
+    Mat4(Mat3<T> rot, Vec3<T> trans) {
+      (*this) =
+	makeTranslate(trans)
+	* Mat4(rot)
+	* makeTranslate(-trans);
     }
 
     /*Mat4(Mat4 b) {
@@ -346,97 +459,5 @@ NAMESPACE {
   };
 
   typedef Mat4<f32> Mat4f;
-
-  template <typename T>
-    struct Mat3 {
-
-    union {
-      struct {
-	Vec3<T> rows[3];
-      };
-      T data[9];
-    };
-
-    Mat3() {
-      T d[9] = {1,0,0,
-		0,1,0,
-		0,0,1};
-      memcpy(this, d, sizeof(Mat3<T>));
-    }
-
-    Mat3(const T* initial_data) {
-      memcpy(this, initial_data, sizeof(Mat3<T>));
-    }
-
-    Vec3<T> vecMul(Vec3<T> vec) {
-      return Vec3<T>(vec.x*data[0] + vec.y*data[3] + vec.z*data[6],
-		     vec.x*data[1] + vec.y*data[4] + vec.z*data[7],
-		     vec.x*data[2] + vec.y*data[5] + vec.z*data[8]);
-    }
-
-    Vec3<T> vecMulT(Vec3<T> vec) {
-      return Vec3<T>(Vec3<T>::dot(vec,rows[0]),
-		     Vec3<T>::dot(vec,rows[1]),
-		     Vec3<T>::dot(vec,rows[2]));
-    }
-    
-    T operator()(u8 row, u8 col) const {
-      debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
-      return data[(row*3) + col];
-    }
-
-    Vec3<T> operator[](u8 row) const {
-      debugAssert(row < 3, "Matrix index out of bounds");
-      return rows[row];
-    }
-
-    void operator=(const Mat3 b) {
-      memcpy(this, &b, sizeof(Mat3<T>));
-    }
-
-    Mat3 operator+(const Mat3 b) {
-      Mat3 ret;
-      for (int n = 0; n < 9; ++n) {
-	ret[n] = data[n] + b.data[n];
-      }
-      return ret;
-    }
-
-    Mat3 operator*(const Mat3 b) {
-      Mat3 ret;
-      for (u32 row=0; row<3; ++row) {
-	for (u32 col=0; col<3; ++col) {
-	  ret.data[row*3 + col] = 0;
-	  for (u32 n=0; n<3; ++n) {
-	    ret.data[row*3 + col] += (*this)(row, n)*(b(n, col));
-	  }
-	}
-      }
-      return ret;
-    }
-
-    void operator*=(const Mat3 b) {
-      (*this) = (*this) * b;
-    }
-
-    void makeIdentity() {
-      (*this) = Mat3();
-    }
-
-    String toString() {
-      String ret = "\n";
-      for (u8 row = 0; row < 3; ++row) {
-	ret += "| ";
-	for (u8 col = 0; col < 3; ++col) {
-	  ret += to_string((*this)(col, row)) + " ";
-	}
-	ret += "|";
-      }
-      return ret;
-    }
-    
-  };
-
-  typedef Mat3<f32> Mat3f;
   
 }

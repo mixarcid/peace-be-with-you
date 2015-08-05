@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  Physics::Physics() : gravity(0,-9.8,0) {}
+  Physics::Physics() : gravity(0,0,/*-9.8067*/-2) {}
 
   void Physics::update(f32 dt) {
     for (PhysicalObject* a : dynamic_objects) {
