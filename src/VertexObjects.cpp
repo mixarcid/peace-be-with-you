@@ -78,7 +78,7 @@ NAMESPACE {
     EBO ret;
     ret.length = num_ebos;
     ret.ids = new u32[ret.length];
-    ret.lengths = new unsigned int[ret.length];
+    ret.lengths = new u32[ret.length];
     glGenBuffers(ret.length, ret.ids);
     return ret;
     }*/

@@ -9,7 +9,7 @@ NAMESPACE {
 
     Array<StaticMesh> chunks;
     
-    void generate(Vec2<unsigned int> size);
+    void generate(Vec2<u32> size);
     
   };
 

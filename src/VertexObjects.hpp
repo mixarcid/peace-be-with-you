@@ -16,7 +16,7 @@ NAMESPACE {
     void init(u32 num_vaos = 1);
     void use(u32 index  = 0);
     /*the types of the shader vars must entirely be composed of 
-      either doubles or f32s; for example Vector3f and Color4d 
+      either f64s or f32s; for example Vector3f and Color4d 
       must not be mixed */
     void registerVars(Array<ShaderVar> vars,
 		      u32 index = 0);

@@ -2,13 +2,11 @@
 
 #include "VectorMath.hpp"
 #include "Quaternion.hpp"
+#include "Transform.hpp"
 
 NAMESPACE {
 
-  struct Camera {
-
-    Vec3f pos;
-    Mat3f rot;
+  struct Camera : Transform {
     
     f32 fovy; //in radians, naturally
     f32 near_clip;
@@ -20,14 +18,7 @@ NAMESPACE {
     
     Camera(f32 cam_fovy, f32 cam_near, f32 cam_far);
 
-    void translateAbs(Vec3f trans);
-    void translateRel(Vec3f trans);
-    void rotateAbs(Quaternionf q);
-    void rotateRel(Quaternionf q);
-
-    Vec3f getRight();
-    Vec3f getDir();
-    Vec3f getUp();
+    Mat3f getCoord();
 
     Mat4f getModel();
     Mat4f getView();

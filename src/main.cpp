@@ -76,14 +76,19 @@ int main() {
 	
 	static f64 prev_x = x;
 	static f64 prev_y = y;
+	static f32 x_tot = 0;
+	static f32 y_tot = 0;
 
 	f64 dx = x - prev_x;
 	f64 dy = y - prev_y;
+	x_tot += dx;
+	y_tot += dy;
 	
-	Quaternionf q(-dy*cam_rot_speed,
-		      dx*cam_rot_speed,
-		      0);
-	cam.rotateRel(q);
+	Quaternionf q(degreesToRadians(90)
+		      -y_tot*cam_rot_speed,
+		      0,
+		      x_tot*cam_rot_speed);
+	cam.rotateAbs(q);
 	
 	prev_x = x;
 	prev_y = y;
@@ -98,18 +103,25 @@ int main() {
 	i32 code,
 	i32 act,
 	i32 mods) {
+
+	Mat3f coord = cam.getCoord();
+	Vec3f right = coord[0];
+	Vec3f dir = coord[1];
+	PEACE_SWAP(right.z, right.y);
+	PEACE_SWAP(dir.z, dir.y);
+	
 	switch(key) {
 	case GLFW_KEY_W:
-	  cam.translateRel(cam.getDir()*cam_speed);
+	  cam.translateRel(-dir*cam_speed);
 	  break;
 	case GLFW_KEY_S:
-	  cam.translateRel(-cam.getDir()*cam_speed);
+	  cam.translateRel(dir*cam_speed);
 	  break;
 	case GLFW_KEY_A:
-	  cam.translateRel(-cam.getRight()*cam_speed);
+	  cam.translateRel(-right*cam_speed);
 	  break;
 	case GLFW_KEY_D:
-	  cam.translateRel(cam.getRight()*cam_speed);
+	  cam.translateRel(right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
 	  break;

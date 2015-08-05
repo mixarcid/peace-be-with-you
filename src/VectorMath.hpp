@@ -209,6 +209,7 @@ NAMESPACE {
     Vec3<T> operator[](u8 row) const {
       debugAssert(row < 3, "Matrix index out of bounds");
       return Vec3f(data[row], data[row+3], data[row+6]);
+      //return cols[row];
     }
 
     void operator=(const Mat3 b) {
@@ -374,6 +375,15 @@ NAMESPACE {
 	ret += "|";
       }
       return ret;
+    }
+
+    Mat3<T> getMat3() {
+      T d[9] = {
+	data[0], data[1], data[2],
+	data[5], data[6], data[7],
+	data[9], data[10], data[11]
+      };
+      return Mat3<T>(d);
     }
 
     static Mat4 translate(Mat4 mat, Vec3<T> trans) {

@@ -23,7 +23,7 @@ NAMESPACE {
       });
 
     glfwSetCursorPosCallback(window,[](GLFWwindow* win,
-				     double x, double y) {
+				     f64 x, f64 y) {
 	for (auto callback : Input::input.cursor_pos_callbacks) {
 	  callback(win, x, y);
 	}
@@ -46,31 +46,31 @@ NAMESPACE {
       });
   }
     
-  unsigned int
+  u32
     Input::addKeyCallback(function<void(GLFWwindow*, int,
 				 int, int, int)> fun) {
     Input::input.key_callbacks.push_back(fun);
     return Input::input.key_callbacks.size() - 1;
   }
-  unsigned int
+  u32
     Input::addCharCallback(function<void(GLFWwindow*,
-				  unsigned int)> fun) {
+				  u32)> fun) {
     Input::input.char_callbacks.push_back(fun);
     return Input::input.char_callbacks.size() - 1;
   }
-  unsigned int
+  u32
     Input::addCursorPosCallback(function<void(GLFWwindow*,
-				       double, double)> fun) {
+				       f64, f64)> fun) {
     Input::input.cursor_pos_callbacks.push_back(fun);
     return Input::input.cursor_pos_callbacks.size() - 1;
   }
-  unsigned int
+  u32
     Input::addWindowResizeCallback(function<void(GLFWwindow*,
 					  int, int)> fun) {
     Input::input.resize_callbacks.push_back(fun);
     return Input::input.resize_callbacks.size() - 1;
   }
-  unsigned int
+  u32
     Input::addMouseButtonCallback(function<void(GLFWwindow*,
 						int, int,
 						int)> fun) {

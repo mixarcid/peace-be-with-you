@@ -11,9 +11,9 @@ NAMESPACE {
     GLFWwindow* win;
     Array<function<void(GLFWwindow*, int, int, int, int)>>
     key_callbacks;
-    Array<function<void(GLFWwindow*, unsigned int)>>
+    Array<function<void(GLFWwindow*, u32)>>
     char_callbacks;
-    Array<function<void(GLFWwindow*, double, double)>>
+    Array<function<void(GLFWwindow*, f64, f64)>>
     cursor_pos_callbacks;
     Array<function<void(GLFWwindow*, int, int)>>
     resize_callbacks;
@@ -22,19 +22,19 @@ NAMESPACE {
 
     static void init(GLFWwindow* window);
     
-    static unsigned int
+    static u32
     addKeyCallback(function<void(GLFWwindow*, int,
 				 int, int, int)> fun);
-    static unsigned int
+    static u32
     addCharCallback(function<void(GLFWwindow*,
-				  unsigned int)> fun);
-    static unsigned int
+				  u32)> fun);
+    static u32
     addCursorPosCallback(function<void(GLFWwindow*,
-				       double, double)> fun);
-    static unsigned int
+				       f64, f64)> fun);
+    static u32
     addWindowResizeCallback(function<void(GLFWwindow*,
 					  int, int)> fun);
-    static unsigned int
+    static u32
     addMouseButtonCallback(function<void(GLFWwindow*, int,
 					 int, int)> fun);
 

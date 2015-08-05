@@ -9,7 +9,7 @@ NAMESPACE {
     near_clip(cam_near),
     far_clip(cam_far) {}
 
-  void Camera::translateAbs(Vec3f trans) {
+  /*void Camera::translateAbs(Vec3f trans) {
     pos = trans;
   }
   
@@ -35,15 +35,19 @@ NAMESPACE {
 
   Vec3f Camera::getUp() {
     return rot[2];
+    }*/
+
+  Mat3f Camera::getCoord() {
+    return rot.getMat3();
   }
     
   Mat4f Camera::getModel() {
-    Mat4f mat =  Mat4f::makeTranslate(-pos);
+    Mat4f mat =  Mat4f::makeTranslate(-trans);
     return mat;
   }
 
   Mat4f Camera::getView() {
-    Mat4f mat(rot, pos);
+    Mat4f mat(rot.getMat3());
     return mat;
   }
 
