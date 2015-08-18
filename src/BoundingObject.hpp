@@ -1,6 +1,7 @@
 #pragma once
 
-#include "VectorMath.hpp"
+#include "Vector.hpp"
+#include "Matrix.hpp"
 #include "BasicMesh.hpp"
 
 NAMESPACE {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "VectorMath.hpp"
+#include "Vector.hpp"
+#include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "Transform.hpp"
 
@@ -20,7 +21,6 @@ NAMESPACE {
 
     Mat3f getCoord();
 
-    Mat4f getModel();
     Mat4f getView();
     Mat4f getProj();
 

@@ -43,7 +43,7 @@ NAMESPACE {
     BonedAnimation(Array<KeyFrame> anim_keyframes);
     BonedAnimation();
     //returns true if animation is finished
-    void step(Array<Bone>& bones, float dt);
+    void step(Array<Bone>* bones, float dt);
     
   };
 

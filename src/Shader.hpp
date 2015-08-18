@@ -3,7 +3,8 @@
 #include "Standard.hpp"
 #include "String.hpp"
 #include "GL.hpp"
-#include "VectorMath.hpp"
+#include "Vector.hpp"
+#include "Matrix.hpp"
 
 NAMESPACE {
   

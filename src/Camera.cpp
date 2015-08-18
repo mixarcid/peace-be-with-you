@@ -1,4 +1,10 @@
 #include "Camera.hpp"
+#include "GL.hpp"
+
+/*#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/matrix_transform.hpp>*/
 
 NAMESPACE {
 
@@ -38,16 +44,21 @@ NAMESPACE {
     }*/
 
   Mat3f Camera::getCoord() {
-    return rot.getMat3();
-  }
-    
-  Mat4f Camera::getModel() {
-    Mat4f mat =  Mat4f::makeTranslate(-trans);
-    return mat;
+    return rot.mat3();
   }
 
+  /*const Mat4f CAM_BASE_ROT
+    = Quaternionf(degreesToRadians(-90),0,0).mat4();*/
   Mat4f Camera::getView() {
-    Mat4f mat(rot.getMat3());
+    //Mat4f mat = rot.mat4();
+    Mat3f coord = getCoord();
+    Vec3f dir = coord.col(1);
+    Vec3f up = coord.col(2);
+    Mat4f mat = Mat4f::lookAt(trans,
+			      trans + dir,
+			      up);
+    //Log::message(to_string(mat));
+    //Log::message(to_string(rot.mat3()));
     return mat;
   }
 
@@ -56,6 +67,8 @@ NAMESPACE {
 				   aspect,
 				   near_clip,
 				   far_clip);
+    //Log::message(to_string(mat));
+    //Log::message(glm::to_string(glm::perspective(fovy,aspect,near_clip,far_clip)));
     return mat;
   }
 

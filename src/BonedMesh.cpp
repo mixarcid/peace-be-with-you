@@ -33,7 +33,7 @@ NAMESPACE {
     cur_keyframe(1),
     keyframes({}) {}
 
-  void BonedAnimation::step(Array<Bone>& bones, f32 dt) {
+  void BonedAnimation::step(Array<Bone>* bones, f32 dt) {
     
     if (!playing) return;
     
@@ -59,8 +59,8 @@ NAMESPACE {
 	 /(keyframes[cur_keyframe].time - keyframes[cur_keyframe-1].time));
       //}
     
-    for (u32 i = 0; i < bones.size(); ++i) {
-      bones[i] = Transform::interp(keyframes[cur_keyframe - 1]
+    for (u32 i = 0; i < bones->size(); ++i) {
+      (*bones)[i] = Transform::interp(keyframes[cur_keyframe - 1]
 				   .bones[i],
 				   keyframes[cur_keyframe]
 				   .bones[i],
@@ -118,7 +118,7 @@ NAMESPACE {
   }
 
   void BonedMesh::render(RenderContext c) {
-    cur_animation.step(bones, c.dt);
+    cur_animation.step(&bones, c.dt);
     Shader::UNI_BONES.registerBufferData(bones);
     base->render(c);
   }

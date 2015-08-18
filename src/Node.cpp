@@ -54,8 +54,8 @@ NAMESPACE {
   }
 
   void Node::render(RenderContext c, Mat4f model) {
-    Mat4f comb = this->getMat() * model;
-    //Log::message(comb.toString());
+    Mat4f comb = model*Transform::getMat();
+    //Log::message(to_string(comb));
     for (Node* child : children) {
       child->render(c, comb);
     }
@@ -65,3 +65,8 @@ NAMESPACE {
     }
   }
 }
+
+/*|   1.000   0.000   0.000   0.000 |
+  |   0.000   0.000  -1.000   0.000 |
+  |  -0.000   1.000   0.000   0.000 |
+  |   0.000   0.000   0.000   1.000 |*/

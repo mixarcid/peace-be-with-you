@@ -50,7 +50,7 @@ NAMESPACE {
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
-      tex_coord.y = 1 - tex_coord.y;
+      tex_coord.data[1] = 1 - tex_coord.data[1];
       //Log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
       data.push_back(BasicMeshData(pos, norm, tex_coord));
       
@@ -75,7 +75,6 @@ NAMESPACE {
   }
 
   BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
-
     u32 num_verts = fio::readLittleEndian<u32>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
@@ -90,7 +89,7 @@ NAMESPACE {
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
-      tex_coord.y = 1 - tex_coord.y;
+      tex_coord.data[1] = 1 - tex_coord.data[1];
 
       /*Log::message("Pos: " + pos.toString());
       Log::message("Norm: " + norm.toString());

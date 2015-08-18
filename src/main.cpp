@@ -61,13 +61,33 @@ int main() {
     
     //graphics.setShader("Toon");
     Camera cam(degreesToRadians(60), 1, 50);
-    cam.rotateAbs(Quaternionf(degreesToRadians(90.0f),0,0));
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
     f32 cam_rot_speed = 0.001;
     Physics phys;
 
     MeshLoader loader("WoodenBox");
+    MeshLoader loader2("Monkey");
+    StaticMesh* cube = loader.getStaticMesh("Cube");
+    StaticMesh* monk = loader2.getStaticMesh("Suzanne");
+    StaticObject cube1(cube, Vec3f(0,7,-2));
+    PhysicalObject cube2(cube,
+			 Material(1, 0.5),
+			 Vec3f(0.5,7,2),
+			 Vec3f(0,0,0));
+    cube1.rotateAbs(Quaternionf(degreesToRadians(0),
+				degreesToRadians(0),
+				degreesToRadians(0)));
+    cube2.rotateAbs(Quaternionf(degreesToRadians(10),
+				degreesToRadians(45),
+				degreesToRadians(10)));
+
+    graphics.addNode(&cube1);
+    phys.addStaticObject(&cube1);
+    //graphics.addNode(&test);
+    //phys.addStaticObject(&test);
+    graphics.addNode(&cube2);
+    phys.addDynamicObject(&cube2);
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -84,10 +104,9 @@ int main() {
 	x_tot += dx;
 	y_tot += dy;
 	
-	Quaternionf q(degreesToRadians(90)
-		      -y_tot*cam_rot_speed,
+	Quaternionf q(-y_tot*cam_rot_speed,
 		      0,
-		      x_tot*cam_rot_speed);
+		      -x_tot*cam_rot_speed);
 	cam.rotateAbs(q);
 	
 	prev_x = x;
@@ -97,7 +116,8 @@ int main() {
 
     Input::addKeyCallback
       ([&cam,
-	cam_speed]
+	cam_speed,
+	&cube1]
        (GLFWwindow* win,
 	i32 key,
 	i32 code,
@@ -105,17 +125,20 @@ int main() {
 	i32 mods) {
 
 	Mat3f coord = cam.getCoord();
-	Vec3f right = coord[0];
-	Vec3f dir = coord[1];
-	PEACE_SWAP(right.z, right.y);
-	PEACE_SWAP(dir.z, dir.y);
+	//Log::message("\n" + to_string(coord));
+	Vec3f right = coord.col(0);
+	Vec3f dir = coord.col(1);
+	//Log::message("right: " + to_string(right));
+	//Log::message("dir: " + to_string(dir));
+	//PEACE_SWAP(right.data[2], right.data[1]);
+	//PEACE_SWAP(dir.data[2], dir.data[1]);
 	
 	switch(key) {
 	case GLFW_KEY_W:
-	  cam.translateRel(-dir*cam_speed);
+	  cam.translateRel(dir*cam_speed);
 	  break;
 	case GLFW_KEY_S:
-	  cam.translateRel(dir*cam_speed);
+	  cam.translateRel(-dir*cam_speed);
 	  break;
 	case GLFW_KEY_A:
 	  cam.translateRel(-right*cam_speed);
@@ -124,20 +147,12 @@ int main() {
 	  cam.translateRel(right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
+	  cube1.rotateRel(Quaternionf(degreesToRadians(2),
+				      degreesToRadians(0),
+				      degreesToRadians(0)));
 	  break;
 	}
       });
-
-    StaticMesh* cube = loader.getStaticMesh("Cube");
-    StaticObject cube1(cube, Vec3f(0,7,-3));
-    PhysicalObject cube2(cube, Material(1, 0.5), Vec3f(1,7,2),
-			 Vec3f(0,0,0));
-    debugAssert(cube != NULL, "What!");
-
-    graphics.addNode(&cube1);
-    phys.addStaticObject(&cube1);
-    graphics.addNode(&cube2);
-    phys.addDynamicObject(&cube2);
 
     Time start, end;
     f32 dt = 0;

@@ -2,7 +2,7 @@
 
 #include "Standard.hpp"
 #include "Renderable.hpp"
-#include "VectorMath.hpp"
+#include "Vector.hpp"
 #include "Containers.hpp"
 #include "String.hpp"
 #include "Texture.hpp"

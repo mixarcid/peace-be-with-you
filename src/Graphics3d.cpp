@@ -42,7 +42,7 @@ NAMESPACE {
 
     Shader::UNI_PROJ.registerMat4f(cam->getProj());
     Shader::UNI_VIEW.registerMat4f(cam->getView());
-    Mat4f model = cam->getModel();
+    Mat4f model;
     RenderContext c(dt);
     
     for (Node* node : nodes) {

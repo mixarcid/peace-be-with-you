@@ -9,20 +9,20 @@
 
 #define debugAssert(cond, ...) do {	\
     if (!(cond)) {				\
-      Log::__assert_print(__VA_ARGS__);		\
+      Log::__assert_print(__VA_ARGS__);	\
       exit(EXIT_FAILURE);			\
     }						\
   } while (0)
 
 #define fatalAssert(cond, ...) \
-    debugAssert(cond, __VA_ARGS__);
+  debugAssert(cond, __VA_ARGS__);
 
 #else
     
 #define debugAssert(cond, ...)
 #define fatalAssert(cond, ...) do {	\
     if (!(cond)) {				\
-      Log::fatalError(__VA_ARGS__);		\
+      Log::fatalError(__VA_ARGS__);	\
     }						\
   } while (0)
 #endif
@@ -33,4 +33,6 @@
      memcpy(swap_temp,&y,sizeof(x)); \
      memcpy(&y,&x,       sizeof(x)); \
      memcpy(&x,swap_temp,sizeof(x)); \
-    } while(0)
+   } while(0)
+
+#define PEACE_STRING(x) #x

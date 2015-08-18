@@ -1,5 +1,6 @@
 #include <string.h>
 #include <math.h>
+#include <float.h>
 #include "Standard.hpp"
 
 NAMESPACE {
@@ -26,6 +27,11 @@ NAMESPACE {
   template<typename T>
     inline T abs(T num) {
     return num > 0 ? num : -num;
+  }
+  
+  template <typename T>
+    inline bool floatEqual(T a, T b) {
+    return abs(a - b) < T(0.000001);
   }
 
 }

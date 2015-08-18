@@ -16,11 +16,12 @@ NAMESPACE {
   }
 
   void Transform::rotateAbs(Quaternionf q) {
-    rot = q.getUnit();
+    rot = q.normalized();
   }
   void Transform::rotateRel(Quaternionf q) {
     rot *= q;
-    rot.makeUnit();
+    //Log::message("??");
+    rot.normalize();
   }
     
   /*void Transform::scaleAbs(Vec3f scale_v) {
@@ -32,7 +33,9 @@ NAMESPACE {
 
   Mat4f Transform::getMat() {
     Mat4f ret = //Mat4f::makeScale(scal) *
-      rot.getMat4() * Mat4f::makeTranslate(trans);
+      Mat4f::translate(trans)*rot.mat4();
+    //Log::message(to_string(rot));
+    //Log::message(to_string(rot.mat4()));
     return ret;
   }
 

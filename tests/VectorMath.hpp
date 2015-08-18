@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Math.hpp"
-#include "GL.hpp"
-#include "Standard.hpp"
 
 NAMESPACE {
 
@@ -129,10 +127,10 @@ NAMESPACE {
     }
 
     static Vec3 cross(Vec3 v1, Vec3 v2) {
-	return Vec3((v1.y*v2.z) - (v1.z*v2.y),
-		    (v1.z*v2.x) - (v1.x*v2.z),
-		    (v1.x*v2.y) - (v1.y*v2.x));
-      }
+      return Vec3((v1.y*v2.z) - (v1.z*v2.y),
+		  (v1.z*v2.x) - (v1.x*v2.z),
+		  (v1.x*v2.y) - (v1.y*v2.x));
+    }
 
     static T dot(Vec3 v1, Vec3 v2) {
       return (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z); 
@@ -168,7 +166,7 @@ NAMESPACE {
   
   typedef Vec3<f32> Vec3f;
 
-    template <typename T>
+  template <typename T>
     struct Mat3 {
 
     union {
@@ -189,19 +187,32 @@ NAMESPACE {
       memcpy(this, initial_data, sizeof(Mat3<T>));
     }
 
-    Vec3<T> vecMulT(Vec3<T> vec) {
+    Vec3<T> mulT(Vec3<T> vec) {
       return Vec3<T>(Vec3<T>::dot(vec,cols[0]),
 		     Vec3<T>::dot(vec,cols[1]),
 		     Vec3<T>::dot(vec,cols[2]));
     }
+      
+    Mat3 mulT( Mat3 b) {
+      Mat3 ret;
+      for (u32 row=0; row<3; ++row) {
+	for (u32 col=0; col<3; ++col) {
+	  ret.data[row*3 + col] = 0;
+	  for (u32 n=0; n<3; ++n) {
+	    ret.data[row*3 + col] += (*this)(n, row)*(b(n, col));
+	  }
+	}
+      }
+      return ret;
+    }
 
-    Vec3<T> vecMul(Vec3<T> vec) {
+    Vec3<T> mul(Vec3<T> vec) {
       return Vec3<T>(vec.x*data[0] + vec.y*data[3] + vec.z*data[6],
 		     vec.x*data[1] + vec.y*data[4] + vec.z*data[7],
 		     vec.x*data[2] + vec.y*data[5] + vec.z*data[8]);
     }
     
-    T operator()(u8 row, u8 col) const {
+    T& operator()(u8 row, u8 col) {
       debugAssert(row < 3 && col < 3, "Matrix index out of bounds");
       return data[(row*3) + col];
     }
@@ -223,8 +234,8 @@ NAMESPACE {
       }
       return ret;
     }
-
-    Mat3 operator*(const Mat3 b) const {
+      
+    Mat3 operator*(Mat3 b) {
       Mat3 ret;
       for (u32 row=0; row<3; ++row) {
 	for (u32 col=0; col<3; ++col) {
@@ -237,7 +248,7 @@ NAMESPACE {
       return ret;
     }
 
-    void operator*=(const Mat3 b) {
+    void operator*=(Mat3 b) {
       (*this) = b*(*this);
     }
 
@@ -336,26 +347,26 @@ NAMESPACE {
 
     /*void translate(Vec3<T> trans) {
       data[12] += data[0]*trans.x +
-	data[4]*trans.y + data[8]*trans.z;
+      data[4]*trans.y + data[8]*trans.z;
       
       data[13] += data[1]*trans.x +
-	data[5]*trans.y + data[9]*trans.z;
+      data[5]*trans.y + data[9]*trans.z;
       
       data[14] += data[2]*trans.x +
-	data[6]*trans.y + data[10]*trans.z;
+      data[6]*trans.y + data[10]*trans.z;
       
       data[15] += data[3]*trans.x +
-	data[7]*trans.y + data[11]*trans.z;
-    }
-
-    //angle is in radians
-    void rotate (Vec3<T> u, T angle) {
-      if (angle != 0) {
-	(*this) *= Mat4::makeRotate(u, angle);
+      data[7]*trans.y + data[11]*trans.z;
       }
-    }
+
+      //angle is in radians
+      void rotate (Vec3<T> u, T angle) {
+      if (angle != 0) {
+      (*this) *= Mat4::makeRotate(u, angle);
+      }
+      }
     
-    void scale(Vec3<T> scal) {
+      void scale(Vec3<T> scal) {
       data[0] *= scal.x;
       data[5] *= scal.y;
       data[10] *= scal.z;

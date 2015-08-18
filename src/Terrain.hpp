@@ -1,7 +1,7 @@
 #pragma once
 
 #include "StaticMesh.hpp"
-#include "VectorMath.hpp"
+#include "Vector.hpp"
 
 NAMESPACE {
 

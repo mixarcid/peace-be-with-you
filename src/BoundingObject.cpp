@@ -16,7 +16,7 @@ NAMESPACE {
 
     for (BasicMeshData d : data) {
       //Log::message(d.pos.toString());
-      test_dist = (d.pos - x).abs();
+      test_dist = (d.pos -x).norm();
       if (test_dist > dist) {
 	dist = test_dist;
 	y = d.pos;
@@ -29,7 +29,7 @@ NAMESPACE {
     dist = 0;
     test_dist = 0;
     for (BasicMeshData d : data) {
-      test_dist = (d.pos - y).abs();
+      test_dist = (d.pos - y).norm();
       if (test_dist > dist) {
 	dist = test_dist;
 	z = d.pos;
@@ -42,7 +42,7 @@ NAMESPACE {
 
     f32 r_test = radius;
     for (BasicMeshData d : data) {
-      r_test = (d.pos - center).abs();
+      r_test = (d.pos - center).norm();
       radius = r_test > radius ? r_test : radius;
     }
 
@@ -71,12 +71,12 @@ NAMESPACE {
     Vec3f max, min = data[0].pos;
 
     for (BasicMeshData d : data) {
-      max.x = max.x > d.pos.x ? max.x : d.pos.x;
-      max.y = max.y > d.pos.y ? max.y : d.pos.y;
-      max.z = max.z > d.pos.z ? max.z : d.pos.z;
-      min.x = min.x < d.pos.x ? min.x : d.pos.x;
-      min.y = min.y < d.pos.y ? min.y : d.pos.y;
-      min.z = min.z < d.pos.z ? min.z : d.pos.z;
+      max.data[0] = max.x() > d.pos.x() ? max.x() : d.pos.x();
+      max.data[1] = max.y() > d.pos.y() ? max.y() : d.pos.y();
+      max.data[2] = max.z() > d.pos.z() ? max.z() : d.pos.z();
+      min.data[0] = min.x() < d.pos.x() ? min.x() : d.pos.x();
+      min.data[1] = min.y() < d.pos.y() ? min.y() : d.pos.y();
+      min.data[2] = min.z() < d.pos.z() ? min.z() : d.pos.z();
     }
 
     center = (max + min)/2;
@@ -84,17 +84,18 @@ NAMESPACE {
   }
 
   f32 BoundingOBB::getVolume() {
-    return halves.x*halves.y*halves.z*8;
+    return halves.x()*halves.y()*halves.z()*8;
   }
 
   f32 BoundingOBB::getInertia(f32 mass) {
     //let's pretend it's a cube
-    f32 size = (halves.x+halves.y+halves.z)*(2/3);
+    f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
     return (mass*sqr(size))/6;
   }
 
   void BoundingOBB::transform(Node* t) {
     center += t->trans;
+    coord *= t->rot.mat3();
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -103,14 +104,14 @@ NAMESPACE {
     Vec3f ret = center;
 
     for (u8 i = 0; i < 3; ++i) {
-      f32 dist = Vec3f::dot(d, coord[i]);
+      f32 dist = Vec3f::dot(d, coord.row(i));
       if (dist > halves[i]) {
 	dist = halves[i];
       }
       if (dist < -halves[i]) {
 	dist = -halves[i];
       }
-      ret += coord[i]*dist;
+      ret += coord.row(i)*dist;
     }
     return ret;
   }
