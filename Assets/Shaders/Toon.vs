@@ -1,13 +1,22 @@
+#ifdef SHADER_USE_COLOR
 flat out vec4 color;
+#else
 out vec2 tex;
-smooth out vec3 normal;
+#endif
+out vec3 normal;
+out vec4 test;
 
 void main() {
+  #ifdef SHADER_USE_COLOR
   color = inColor;
+  #else
   tex = inTexCoord;
+  #endif
   normal = inNormal;
 
   vec3 position = inPosition;
+
+  #ifdef SHADER_SKELETAL
   vec4 quat = vec4(0,0,0,1);
   vec3 trans = vec3(0,0,0);
   for (uint n = 0u; n < 4u; ++n) {
@@ -23,9 +32,9 @@ void main() {
     normal = quatRot(quat, normal);
   }
   position += trans;
+  #endif
 
   normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
 
-  gl_Position = uniProj * uniView *
-    uniModel * vec4(position, 1.0);
+  gl_Position = uniViewProj * uniModel * vec4(position,1);
 }

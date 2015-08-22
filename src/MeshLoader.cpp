@@ -203,10 +203,12 @@ NAMESPACE {
     //Log::message("%u", num_meshes);
     debugAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
-    
+
+    Shader::setFlags(SHADER_NO_FLAGS);
     Texture* model_texture = new Texture();
     model_texture->use();
     model_texture->load(filename, Shader::UNI_TEXTURE);
+    textures.push_back(model_texture);
 
     for (u32 mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
@@ -224,8 +226,8 @@ NAMESPACE {
 			" no longer supported");
 	break;
       case PMF_TYPE_STATIC_TEXTURE:
-	static_meshes[mesh_name] = loadStaticMesh(file,
-						  model_texture);
+	static_meshes[mesh_name] =
+	  loadStaticMesh(file, model_texture);
 	break;
       case PMF_TYPE_BONED_TEXTURE:
 	boned_meshes[mesh_name] = loadBonedMesh(file,
@@ -261,12 +263,14 @@ NAMESPACE {
   }
 
   MeshLoader::~MeshLoader() {
-    //printf("????\n");
     for (const auto pair : static_meshes) {
       delete pair.second; //the mesh
     }
     for (const auto pair : boned_meshes) {
       delete pair.second;
+    }
+    for (Texture* tex : textures) {
+      delete tex;
     }
   }
 }

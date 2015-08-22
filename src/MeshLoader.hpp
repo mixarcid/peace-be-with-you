@@ -11,6 +11,7 @@ NAMESPACE {
 
     HashMap<String, StaticMesh*> static_meshes;
     HashMap<String, BonedMeshBase*> boned_meshes;
+    Array<Texture*> textures;
     
     MeshLoader(String filename);
     StaticMesh* getStaticMesh(String mesh_name);

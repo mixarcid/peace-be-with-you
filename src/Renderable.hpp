@@ -16,7 +16,7 @@ NAMESPACE {
   };
 
   struct Renderable {
-    
+
     virtual BoundingObject getBoundingObject() = 0;
     virtual BoundingObject getPhysicalBoundingObject() = 0;
     virtual BoundingObject getPrimaryBoundingObject() = 0;
@@ -30,7 +30,7 @@ NAMESPACE {
     VBO vbo;
     VAO vao;
     EBO ebo;
-    
+
     void init();
     virtual void render(RenderContext c);
     

@@ -15,7 +15,7 @@ NAMESPACE {
 
     void checkError()  {
       
-      GLenum err (glGetError());
+      GLenum err(glGetError());
       while(err!=GL_NO_ERROR) {
 	String error;
 	  
@@ -38,7 +38,7 @@ NAMESPACE {
     }
 
     void ignoreError(GLenum code) {
-      GLenum err (glGetError());
+      GLenum err(glGetError());
       if (err == code) return;
       while(err!=GL_NO_ERROR) {
 	String error;

@@ -1,11 +1,5 @@
 #version 150 core
 
-const uint MAX_BONES = 50u;
-
-/*vec4 quatConjugate(vec4 rot) {
-  return vec4(-rot.x, -rot.y, -rot.z, rot.w);
-  }*/
-
 vec4 quatMult(vec4 q1, vec4 q2)
 { 
   vec4 ret;
@@ -16,27 +10,40 @@ vec4 quatMult(vec4 q1, vec4 q2)
   return ret;
 }
 
-vec3 quatRot( vec4 q, vec3 v ) {
+vec3 quatRot(vec4 q, vec3 v) {
   vec3 qv = vec3(-q.x, -q.y, -q.z);
-  //vec3 qv = vec3x-q.x,-q.y,-q.z);
   return v + 2.0*cross(cross(v, qv) + q.w*v, qv);
 }
+
+in vec3 inPosition;
+in vec3 inNormal;
+
+#ifdef SHADER_USE_COLOR
+in vec4 inColor;
+#else
+in vec2 inTexCoord;
+#endif
+
+layout(std140) uniform _uniModel {
+  mat4 uniModel;
+};
+
+layout(std140) uniform _uniViewProj {
+  mat4 uniViewProj;
+};
+
+#ifdef SHADER_SKELETAL
+in uvec4 inBoneIndexes0;
+in vec4 inBoneWeights0;
 
 struct Bone {
   vec3 trans;
   vec4 rot;
 };
 
-in vec3 inPosition;
-in vec4 inColor;
-in vec2 inTexCoord;
-in vec3 inNormal;
-in uvec4 inBoneIndexes0;
-in vec4 inBoneWeights0;
+const uint MAX_BONES = 50u;
 
-uniform mat4 uniModel;
-uniform mat4 uniView;
-uniform mat4 uniProj;
-layout(std140) uniform uniBoneData {
+layout(std140) uniform uniBonesData {
   Bone uniBones[MAX_BONES];
 };
+#endif

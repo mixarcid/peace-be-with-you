@@ -119,7 +119,8 @@ NAMESPACE {
 
   void BonedMesh::render(RenderContext c) {
     cur_animation.step(&bones, c.dt);
-    Shader::UNI_BONES.registerBufferData(bones);
+    Shader::setFlags(SHADER_SKELETAL);
+    Shader::UNI_BONES.registerArray(bones);
     base->render(c);
   }
 

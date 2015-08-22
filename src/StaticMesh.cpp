@@ -13,17 +13,10 @@ NAMESPACE {
 
   void StaticMesh::init() {
     RenderableReg::init();
-    /*for (BasicMeshData d : data) {
-      Log::message(d.pos.toString());
-      }*/
     RenderableReg::vbo.bindArray(data, false);
     RenderableReg::ebo.bindArray(elements, false);
     RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
-  }
-
-  StaticMesh::~StaticMesh() {
-    delete tex;
   }
 
   BoundingObject StaticMesh::getBoundingObject() {
@@ -39,6 +32,7 @@ NAMESPACE {
   }
 
   void StaticMesh::render(RenderContext c) {
+    Shader::setFlags(SHADER_NO_FLAGS);
     tex->use();
     RenderableReg::render(c);
   }

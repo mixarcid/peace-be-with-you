@@ -60,7 +60,7 @@ NAMESPACE {
       child->render(c, comb);
     }
     for (Renderable* rend : renderables) {
-      Shader::UNI_MODEL.registerMat4f(comb);
+      Shader::UNI_MODEL.registerVal(comb);
       rend->render(c);
     }
   }

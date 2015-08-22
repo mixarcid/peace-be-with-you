@@ -15,9 +15,21 @@ void keyCallback(GLFWwindow* window, i32 key, i32 scancode,
 		 i32 action, i32 mods) {
   switch (key) {
   case GLFW_KEY_ESCAPE:
-    glfwDestroyWindow(window);
-    running = false;
-    break;
+    Input::setManager("Menu");
+    Input::addKeyCallback([](GLFWwindow* window,
+			     i32 key, i32 scancode,
+			     i32 action, i32 mods) {
+
+			    switch(key) {
+			    case GLFW_KEY_A:
+			      Input::setManager("Main");
+			      break;
+			    case GLFW_KEY_Q:
+			      glfwDestroyWindow(window);
+			      running = false;
+			      break;
+			    }
+			  });
   }
 }
 
@@ -42,9 +54,11 @@ int main() {
     }
 
     Input::init(window);
+    Input::setManager("Main");
+    Input::addFlags(INPUT_CURSOR_DISABLED);
     Input::addKeyCallback(keyCallback);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwMakeContextCurrent(window);
 
     // Initialize GLEW
@@ -58,8 +72,7 @@ int main() {
     Log::message("Your OpenGL version is %s", version);
 
     Graphics3d graphics("Toon");
-    
-    //graphics.setShader("Toon");
+
     Camera cam(degreesToRadians(60), 1, 50);
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
@@ -158,8 +171,6 @@ int main() {
     f32 dt = 0;
     end.makeCurrent();
     start.makeCurrent();
-
-    cam.getView();
     
     while(!glfwWindowShouldClose(window) && running) {
 
@@ -176,9 +187,8 @@ int main() {
     
       glfwSwapBuffers(window);
       glfwPollEvents();
-      gl::checkError();
-    
       start = end;
+      gl::checkError();
     }
   } catch(Exception& e) {
     Log::error(e.what());

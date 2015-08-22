@@ -20,12 +20,12 @@ NAMESPACE {
   const ShaderVar Shader::BONE_INDEXES0(5, TYPE_VECTOR4U);
   const ShaderVar Shader::BONE_WEIGHTS0(6, TYPE_VECTOR4F);
 
-  ShaderUniform Shader::UNI_TEXTURE(0);
-  ShaderUniform Shader::UNI_MODEL(1);
-  ShaderUniform Shader::UNI_VIEW(2);
-  ShaderUniform Shader::UNI_PROJ(3);
-  ShaderUniform Shader::UNI_BONES(4);
-  ShaderUniform Shader::UNI_FLAGS(5);
+  ShaderUniform Shader::UNI_TEXTURE;
+  ShaderUniform Shader::UNI_MODEL;
+  ShaderUniform Shader::UNI_VIEW_PROJ;
+  ShaderUniform Shader::UNI_BONES;
+
+  Shader* Shader::cur_shader = NULL;
 
   const u8 Shader::MAX_BONES;
   const u8 Shader::MAX_BONES_PER_VERTEX;
@@ -37,7 +37,15 @@ NAMESPACE {
 
   static String vert_header;
   static String frag_header;
-  static bool first_shader_load = true;
+  
+  PEACE_DEFINE_BITFIELD(FirstLoadFLags, 8,
+			FIRST_SHADER_LOAD = 0x01,
+			FIRST_COLOR_LOAD = 0x02,
+			FIRST_TEXTURE_LOAD = 0x04,
+			FIRST_SKELETAL_LOAD = 0x05,
+			FIRST_LOAD_ALL = 0xff)
+  
+  FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
 
   static String getFileContents(const char* filename) {
     
@@ -61,7 +69,7 @@ NAMESPACE {
     return String(contents);
   }
 
-  ShaderTypeInfo::ShaderTypeInfo(GLenum type_elem, GLint num_elem,
+  ShaderTypeInfo::ShaderTypeInfo(GLenum type_elem, i32 num_elem,
 				 size_t total_size) {
     debugAssert(num_elem < 5,
 		"ShaderTypeInfo elem_num must be less then 5");
@@ -70,109 +78,207 @@ NAMESPACE {
     size = total_size;
   }
 
-  ShaderVar::ShaderVar(GLint var_id, ShaderTypeName var_type) {
+  ShaderVar::ShaderVar(i32 var_id, ShaderTypeName var_type) {
     id = var_id;
     debugAssert(var_type < TYPE_LAST,
 		"ShaderVarType index out of bounds");
     info = &SHADER_TYPES[var_type];
   }
 
-  ShaderUniform::ShaderUniform(GLint uniform_id) {
-    id = uniform_id;
+  void ShaderUniform::initBuffer(u32 shader_id,
+				 String name) {
+    const char* c_name = ("_" + name).c_str();
+    block_id = glGetUniformBlockIndex(shader_id,
+				      c_name);
+    debugAssert(block_id != GL_INVALID_INDEX,
+		"The uniform block %s does not "
+		"exit in the shader", c_name);
+    glUniformBlockBinding(shader_id,
+			  block_id,
+			  block_id);
+    glGenBuffers(1, &buffer_id);
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+
+    /*i32 block_size;
+    glGetActiveUniformBlockiv(shader_id, block_id,
+			      GL_UNIFORM_BLOCK_DATA_SIZE,
+			      &block_size);
+    Log::message(name);
+    Log::message("name: %s, size: %d\n"
+		 "block id: %d, buffer id: %u",
+		 c_name,
+		 block_size,
+		 block_id,
+		 buffer_id);*/
   }
 
-  void ShaderUniform::registerInt(GLint i) const {
+  void ShaderUniform::registerInt(i32 i) const {
     glUniform1i(id, i);
   }
 
-  void ShaderUniform::registerMat4f(Mat4f mat) const {
+  /*void ShaderUniform::registerMat4f(Mat4f mat) const {
     glUniformMatrix4fv(id, 1, GL_FALSE, mat.data);
-  }
+    }*/
 
-  Shader::Shader(const String filename) {
+  Shader::Shader(const String filename)
+    : flags(SHADER_UNINITIALIZED) {
 
-    if (first_shader_load) {
+    for (u8 i=0; i<SHADER_FLAG_LAST; ++i) {
+      flag_ids[i] = -1;
+    }
+
+    //printf("%u\n", FIRST_SHADER_LOAD | first_load_flags);
+
+    if (first_load_flags & FIRST_SHADER_LOAD) {
       vert_header = getFileContents(SHADER_HEADER_VERT);
       frag_header = getFileContents(SHADER_HEADER_FRAG);
     }
 
-    String vert_str = vert_header + "\n"
+    vert_str = vert_header + "\n"
       + getFileContents((DIR_SHADERS + filename
 			 + DIR_VERT_EXTENSION).c_str());
-    String frag_str = frag_header + "\n"
+    frag_str = frag_header + "\n"
       + getFileContents((DIR_SHADERS + filename +
 			 DIR_FRAG_EXTENSION).c_str());
-    const char* vert_source = vert_str.c_str();
-    const char* frag_source = frag_str.c_str();
-    //Log::message("%s", vert_source);
+
+    localSetFlags(SHADER_NO_FLAGS);
+    Log::message("Loaded shader %s", filename.c_str());
+  }
+
+  void Shader::localSetFlags(ShaderFlags shade_flags) {
+    
+    if (flags == shade_flags) {
+      return;
+    }
+
+    debugAssert(flags < SHADER_FLAG_LAST,
+		"Shader::setFlags called with invalid flags");
+    i32 flag_id = flag_ids[shade_flags];
+    if (flag_id != -1) {
+      id = flag_id;
+      flags = shade_flags;
+      if (cur_shader == this) {
+	__use_no_check();
+      }
+      return;
+    }
+    //Log::message("!");
+
+    String preprocess = "";
+    if (flags & SHADER_USE_COLOR) {
+      preprocess += "#define SHADER_USE_COLOR\n";
+    }
+    if (flags & SHADER_SKELETAL) {
+      preprocess += "#define SKELETAL\n";
+    }
+    
+    String vert_source = preprocess + vert_str;
+    String frag_source = preprocess + frag_str;
+    const char* c_vert_source = vert_source.c_str();
+    const char* c_frag_source = frag_source.c_str();
+    //printf("%s", c_vert_source);
 
     u32 vert_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert_id, 1, &vert_source, NULL);
+    glShaderSource(vert_id, 1, &c_vert_source, NULL);
+    //printf("%p", &glCompileShader);
     glCompileShader(vert_id);
 
     u32 frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_id, 1, &frag_source, NULL);
+    glShaderSource(frag_id, 1, &c_frag_source, NULL);
     glCompileShader(frag_id);
 
-    char c_shader_Log[MAX_LOG_SIZE];
-    glGetShaderInfoLog(vert_id, MAX_LOG_SIZE, NULL, c_shader_Log);
-    String shader_Log = c_shader_Log;
-    fatalAssert(shader_Log.length() == 0,
-	       "Error compiling %s.vs: %s",
-	       filename.c_str(), c_shader_Log);
-    glGetShaderInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_Log);
-    shader_Log = c_shader_Log;
-    fatalAssert(shader_Log.length() == 0,
-	       "Error compiling %s.fs: %s",
-	       filename.c_str(), c_shader_Log);
+    char c_shader_log[MAX_LOG_SIZE];
+    glGetShaderInfoLog(vert_id, MAX_LOG_SIZE, NULL, c_shader_log);
+    String shader_log = c_shader_log;
+    fatalAssert(shader_log.length() == 0,
+		"%s", c_shader_log);
+    glGetShaderInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
+    shader_log = c_shader_log;
+    fatalAssert(shader_log.length() == 0,
+	       "%s", c_shader_log);
 
     id = glCreateProgram();
     glAttachShader(id, vert_id);
     glAttachShader(id, frag_id);
 
     glBindFragDataLocation(id, 0, "outColor");
+    
     glBindAttribLocation(id, POSITION.id, "inPosition");
-    glBindAttribLocation(id, COLOR.id, "inColor");
-    glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
     glBindAttribLocation(id, NORMAL.id, "inNormal");
-    glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
-    glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
+    
+    if (flags & SHADER_USE_COLOR) {
+      glBindAttribLocation(id, COLOR.id, "inColor");
+    } else {
+      glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
+    }
+    if (flags & SHADER_SKELETAL) {
+      glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
+      glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
+    }
 
     glLinkProgram(id);
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
-    //Load all the uniform buffer objects
-    if (first_shader_load) {
-      UNI_BONES.block_id = glGetUniformBlockIndex(id, "uniBoneData");
-      glGenBuffers(1, &UNI_BONES.buffer_id);
-      glBindBuffer(GL_UNIFORM_BUFFER, UNI_BONES.buffer_id);
-      first_shader_load = false;
+    flags = shade_flags;
+    flag_ids[flags] = id;
+    if (cur_shader == this) {
+      __use_no_check();
+    }
+  }
+
+  void Shader::__use_no_check() {
+
+    glUseProgram(id);
+    
+    if (!(flags & SHADER_USE_COLOR)) {
+      UNI_TEXTURE.id =
+	glGetUniformLocation(id, "uniTexture");
     }
     
-    Log::message("Loaded shader %s", filename.c_str());
+    //Uniform buffer objects; only loaded once
+    if (first_load_flags & FIRST_SHADER_LOAD) {
+      UNI_MODEL.initBuffer(id, "uniModel");
+      UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
+      //UNI_MODEL.block_id = 1;
+      //UNI_MODEL.initBuffer(id, "uniModel");
+      //UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
+      first_load_flags &= ~FIRST_SHADER_LOAD;
+    }
+
+    if ((first_load_flags & FIRST_SKELETAL_LOAD) &&
+	(flags & SHADER_SKELETAL)) {
+      UNI_BONES.initBuffer(id, "uniBones");
+      first_load_flags &= ~FIRST_SKELETAL_LOAD;
+    }
+    cur_shader = this;
   }
 
   void Shader::use() {
-    UNI_TEXTURE.id = glGetUniformLocation(id, "uniTexture");
-    UNI_MODEL.id = glGetUniformLocation(id, "uniModel");
-    UNI_VIEW.id = glGetUniformLocation(id, "uniView");
-    UNI_PROJ.id = glGetUniformLocation(id, "uniProj");
-    UNI_FLAGS.id = glGetUniformLocation(id, "uniFlags");
-    glUseProgram(id);
+    if (cur_shader != this) {
+      __use_no_check();
+    }
   }
 
-  ShaderVar Shader::getVar(const char* name,
+  /*ShaderVar Shader::getVar(const char* name,
 			   ShaderTypeName type) {
-    GLint var_id = glGetAttribLocation(id, name);
+    i32 var_id = glGetAttribLocation(id, name);
     return ShaderVar(var_id, type);
-  }
+    }*/
 
-  ShaderUniform Shader::getUniform(const char* name) {
-    return ShaderUniform(glGetUniformLocation(id, name));
-  }
+  /*ShaderUniform Shader::getUniform(const char* name) {
+    ShaderUniform ret;
+    ret.initBuffer(id, name);
+    return ret;
+    }*/
 
   Shader::~Shader() {
     glDeleteProgram(id);
+  }
+
+  void Shader::setFlags(ShaderFlags flags) {
+    debugAssert(cur_shader != NULL,
+		"You must use a shader before setting flags");
+    cur_shader->localSetFlags(flags);
   }
 }

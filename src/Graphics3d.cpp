@@ -34,14 +34,15 @@ NAMESPACE {
     debugAssert(cam != NULL,
 		"You need to give Graphics3d"
 		"a Camera before rendering");
+    
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shade.use();
 
-    Shader::UNI_PROJ.registerMat4f(cam->getProj());
-    Shader::UNI_VIEW.registerMat4f(cam->getView());
+    Mat4f view_proj = cam->getProj()*cam->getView();
+    Shader::UNI_VIEW_PROJ.registerVal(view_proj);
     Mat4f model;
     RenderContext c(dt);
     
@@ -50,5 +51,4 @@ NAMESPACE {
     }
     
   }
-
 }

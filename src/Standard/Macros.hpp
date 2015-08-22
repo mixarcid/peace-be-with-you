@@ -36,3 +36,23 @@
    } while(0)
 
 #define PEACE_STRING(x) #x
+
+#define PEACE_DEFINE_BITFIELD(name, size, ...)	\
+  enum name : u##size {				\
+    __VA_ARGS__					\
+      };					\
+  inline name operator~(const name a) {		\
+    return (name) ~ (u##size) a;		\
+  }						\
+  inline name operator|(const name a, const name b) {	\
+    return (name) ((u##size) a |  (u##size) b);	\
+  }						\
+  inline name operator&(const name a, const name b) {	\
+    return (name) ((u##size) a & (u##size) b);	\
+  }						\
+  inline void operator|=(name& a, const name b) {	\
+    a = a | b;						\
+  }							\
+  inline void operator&=(name& a, const name b) {	\
+    a = a & b;						\
+  }

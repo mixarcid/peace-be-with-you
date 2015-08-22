@@ -1,6 +1,10 @@
+#ifdef SHADER_USE_COLOR
 flat in vec4 color;
+#else
 in vec2 tex;
-smooth in vec3 normal;
+#endif
+in vec3 normal;
+in vec4 test;
 
 uniform vec3 light_dir = normalize(vec3(-1,1,-1));
 //uniform float light_intensity = 2;

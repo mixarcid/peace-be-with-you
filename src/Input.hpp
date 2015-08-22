@@ -6,47 +6,108 @@
 
 NAMESPACE {
 
-  struct Input {
+  PEACE_DEFINE_BITFIELD(InputFlags, 8,
+			INPUT_NO_FLAGS = 0x00,
+			INPUT_CURSOR_DISABLED = 0x01);
 
-    GLFWwindow* win;
-    Array<function<void(GLFWwindow*, int, int, int, int)>>
+  struct InputManager {
+    InputFlags flags;
+    HandledArray<function<void(GLFWwindow*, i32, i32, i32, i32)>>
     key_callbacks;
-    Array<function<void(GLFWwindow*, u32)>>
+    HandledArray<function<void(GLFWwindow*, u32)>>
     char_callbacks;
-    Array<function<void(GLFWwindow*, f64, f64)>>
+    HandledArray<function<void(GLFWwindow*, f64, f64)>>
     cursor_pos_callbacks;
-    Array<function<void(GLFWwindow*, int, int)>>
+    HandledArray<function<void(GLFWwindow*, i32, i32)>>
     resize_callbacks;
-    Array<function<void(GLFWwindow*, int, int, int)>>
+    HandledArray<function<void(GLFWwindow*, i32, i32, i32)>>
     mouse_button_callbacks;
+    InputManager();
+  };
 
-    static void init(GLFWwindow* window);
+  namespace Input {
     
-    static u32
-    addKeyCallback(function<void(GLFWwindow*, int,
-				 int, int, int)> fun);
-    static u32
+    void init(GLFWwindow* win);   
+    void setManager(String name);
+    
+    ArrayHandle
+    addKeyCallback(function<void(GLFWwindow*,
+				 i32,
+				 i32,
+				 i32,
+				 i32)> fun);
+    ArrayHandle
     addCharCallback(function<void(GLFWwindow*,
 				  u32)> fun);
-    static u32
+    ArrayHandle
     addCursorPosCallback(function<void(GLFWwindow*,
-				       f64, f64)> fun);
-    static u32
+				       f64,
+				       f64)> fun);
+    ArrayHandle
     addWindowResizeCallback(function<void(GLFWwindow*,
-					  int, int)> fun);
-    static u32
-    addMouseButtonCallback(function<void(GLFWwindow*, int,
-					 int, int)> fun);
+					  i32,
+					  i32)> fun);
+    ArrayHandle
+    addMouseButtonCallback(function<void(GLFWwindow*,
+					 i32,
+					 i32,
+					 i32)> fun);
 
-    static void removeKeyCallback(u32 index);
-    static void removeCharCallback(u32 index);
-    static void removeCursorPosCallback(u32 index);
-    static void removeWindowResizeCallback(u32 index);
-    static void removeMouseButtonCallback(u32 index);
+    void removeKeyCallback(ArrayHandle handle);
+    void removeCharCallback(ArrayHandle handle);
+    void removeCursorPosCallback(ArrayHandle handle);
+    void removeWindowResizeCallback(ArrayHandle handle);
+    void removeMouseButtonCallback(ArrayHandle handle);
 
-    static void getWindowSize(int* width, int* height);
-    
-    static Input input;
+    void addFlags(InputFlags flags);
+    void removeFlags(InputFlags flags);
+
+    ArrayHandle
+    addKeyCallback(String name,
+		   function<void(GLFWwindow*,
+				 i32,
+				 i32,
+				 i32,
+				 i32)> fun);
+    ArrayHandle
+    addCharCallback(String name,
+		   function<void(GLFWwindow*,
+				  u32)> fun);
+    ArrayHandle
+    addCursorPosCallback(String name,
+			 function<void(GLFWwindow*,
+				       f64,
+				       f64)> fun);
+    ArrayHandle
+    addWindowResizeCallback(String name,
+			    function<void(GLFWwindow*,
+					  i32,
+					  i32)> fun);
+    ArrayHandle
+    addMouseButtonCallback(String name,
+			   function<void(GLFWwindow*,
+					 i32,
+					 i32,
+					 i32)> fun);
+
+    void removeKeyCallback(String name,
+			   ArrayHandle handle);
+    void removeCharCallback(String name,
+			    ArrayHandle handle);
+    void removeCursorPosCallback(String name,
+				 ArrayHandle handle);
+    void removeWindowResizeCallback(String name,
+				    ArrayHandle handle);
+    void removeMouseButtonCallback(String name,
+				   ArrayHandle handle);
+
+    void addFlags(String name,
+		  InputFlags flags);
+    void removeFlags(String name,
+		     InputFlags flags);
+
+    void getWindowSize(i32* width, i32* height);
+
   };
 
 }
