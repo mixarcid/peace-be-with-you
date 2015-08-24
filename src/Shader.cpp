@@ -24,6 +24,8 @@ NAMESPACE {
   ShaderUniform Shader::UNI_MODEL;
   ShaderUniform Shader::UNI_VIEW_PROJ;
   ShaderUniform Shader::UNI_BONES;
+  ShaderUniform Shader::UNI_DIR_LIGHTS;
+  ShaderUniform Shader::UNI_AMBIENT;
 
   Shader* Shader::cur_shader = NULL;
 
@@ -90,16 +92,17 @@ NAMESPACE {
     const char* c_name = ("_" + name).c_str();
     block_id = glGetUniformBlockIndex(shader_id,
 				      c_name);
+    //Log::message(name);
     debugAssert(block_id != GL_INVALID_INDEX,
 		"The uniform block %s does not "
-		"exit in the shader", c_name);
+		"exist in the shader", c_name);
     glUniformBlockBinding(shader_id,
 			  block_id,
 			  block_id);
     glGenBuffers(1, &buffer_id);
     glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
 
-    /*i32 block_size;
+    i32 block_size;
     glGetActiveUniformBlockiv(shader_id, block_id,
 			      GL_UNIFORM_BLOCK_DATA_SIZE,
 			      &block_size);
@@ -109,7 +112,13 @@ NAMESPACE {
 		 c_name,
 		 block_size,
 		 block_id,
-		 buffer_id);*/
+		 buffer_id);
+  }
+
+  void ShaderUniform::keepBuffer(u32 shader_id) {
+    glUniformBlockBinding(shader_id,
+			  block_id,
+			  block_id);
   }
 
   void ShaderUniform::registerInt(i32 i) const {
@@ -146,6 +155,12 @@ NAMESPACE {
   }
 
   void Shader::localSetFlags(ShaderFlags shade_flags) {
+
+    /*Log::message("0x%x, 0x%x, 0x%x, 0x%x",
+		 shade_flags,
+		 flags,
+		 SHADER_SKELETAL,
+		 shade_flags & SHADER_SKELETAL);*/
     
     if (flags == shade_flags) {
       return;
@@ -164,19 +179,19 @@ NAMESPACE {
     }
     //Log::message("!");
 
-    String preprocess = "";
-    if (flags & SHADER_USE_COLOR) {
+    String preprocess = "#version 150 core\n";
+    if (shade_flags & SHADER_USE_COLOR) {
       preprocess += "#define SHADER_USE_COLOR\n";
     }
-    if (flags & SHADER_SKELETAL) {
-      preprocess += "#define SKELETAL\n";
+    if (shade_flags & SHADER_SKELETAL) {
+      preprocess += "#define SHADER_SKELETAL\n";
     }
     
     String vert_source = preprocess + vert_str;
     String frag_source = preprocess + frag_str;
     const char* c_vert_source = vert_source.c_str();
     const char* c_frag_source = frag_source.c_str();
-    //printf("%s", c_vert_source);
+    //Log::message(c_vert_source);
 
     u32 vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &c_vert_source, NULL);
@@ -206,12 +221,12 @@ NAMESPACE {
     glBindAttribLocation(id, POSITION.id, "inPosition");
     glBindAttribLocation(id, NORMAL.id, "inNormal");
     
-    if (flags & SHADER_USE_COLOR) {
+    if (shade_flags & SHADER_USE_COLOR) {
       glBindAttribLocation(id, COLOR.id, "inColor");
     } else {
       glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
     }
-    if (flags & SHADER_SKELETAL) {
+    if (shade_flags & SHADER_SKELETAL) {
       glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
       glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
     }
@@ -228,28 +243,24 @@ NAMESPACE {
   }
 
   void Shader::__use_no_check() {
-
     glUseProgram(id);
-    
     if (!(flags & SHADER_USE_COLOR)) {
       UNI_TEXTURE.id =
 	glGetUniformLocation(id, "uniTexture");
     }
-    
-    //Uniform buffer objects; only loaded once
     if (first_load_flags & FIRST_SHADER_LOAD) {
       UNI_MODEL.initBuffer(id, "uniModel");
       UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
-      //UNI_MODEL.block_id = 1;
-      //UNI_MODEL.initBuffer(id, "uniModel");
-      //UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
-      first_load_flags &= ~FIRST_SHADER_LOAD;
-    }
-
-    if ((first_load_flags & FIRST_SKELETAL_LOAD) &&
-	(flags & SHADER_SKELETAL)) {
       UNI_BONES.initBuffer(id, "uniBones");
-      first_load_flags &= ~FIRST_SKELETAL_LOAD;
+      UNI_DIR_LIGHTS.initBuffer(id, "uniDirLights");
+      UNI_AMBIENT.initBuffer(id, "uniAmbient");
+      first_load_flags &= ~FIRST_SHADER_LOAD;
+    } else {
+      UNI_MODEL.keepBuffer(id);
+      UNI_VIEW_PROJ.keepBuffer(id);
+      UNI_BONES.keepBuffer(id);
+      UNI_DIR_LIGHTS.keepBuffer(id);
+      UNI_AMBIENT.keepBuffer(id);
     }
     cur_shader = this;
   }

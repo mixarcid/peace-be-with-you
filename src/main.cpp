@@ -15,21 +15,8 @@ void keyCallback(GLFWwindow* window, i32 key, i32 scancode,
 		 i32 action, i32 mods) {
   switch (key) {
   case GLFW_KEY_ESCAPE:
-    Input::setManager("Menu");
-    Input::addKeyCallback([](GLFWwindow* window,
-			     i32 key, i32 scancode,
-			     i32 action, i32 mods) {
-
-			    switch(key) {
-			    case GLFW_KEY_A:
-			      Input::setManager("Main");
-			      break;
-			    case GLFW_KEY_Q:
-			      glfwDestroyWindow(window);
-			      running = false;
-			      break;
-			    }
-			  });
+    glfwDestroyWindow(window);
+    running = false;
   }
 }
 
@@ -72,6 +59,10 @@ int main() {
     Log::message("Your OpenGL version is %s", version);
 
     Graphics3d graphics("Toon");
+    DirLight light(Vec3f(0,0,1),
+		   Vec3f(1,1,1));
+    graphics.addDirLight(&light);
+    graphics.setAmbient(0);
 
     Camera cam(degreesToRadians(60), 1, 50);
     graphics.setCamera(&cam);
@@ -80,27 +71,30 @@ int main() {
     Physics phys;
 
     MeshLoader loader("WoodenBox");
-    MeshLoader loader2("Monkey");
+    MeshLoader loader2("Monkey");    
     StaticMesh* cube = loader.getStaticMesh("Cube");
     StaticMesh* monk = loader2.getStaticMesh("Suzanne");
     StaticObject cube1(cube, Vec3f(0,7,-2));
-    PhysicalObject cube2(cube,
+    PhysicalObject cube2(monk,
 			 Material(1, 0.5),
 			 Vec3f(0.5,7,2),
 			 Vec3f(0,0,0));
     cube1.rotateAbs(Quaternionf(degreesToRadians(0),
-				degreesToRadians(0),
+				degreesToRadians(10),
 				degreesToRadians(0)));
-    cube2.rotateAbs(Quaternionf(degreesToRadians(10),
+    /*cube2.rotateAbs(Quaternionf(degreesToRadians(10),
 				degreesToRadians(45),
-				degreesToRadians(10)));
+				degreesToRadians(10)));*/
 
     graphics.addNode(&cube1);
     phys.addStaticObject(&cube1);
-    //graphics.addNode(&test);
-    //phys.addStaticObject(&test);
     graphics.addNode(&cube2);
     phys.addDynamicObject(&cube2);
+    MeshLoader loader3("SubjectB");
+    BonedMesh subject = loader3.getBonedMesh("Subject");
+    StaticObject sub(&subject, Vec3f(0,10,0));
+    graphics.addNode(&sub);
+    phys.addStaticObject(&sub);
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -130,7 +124,7 @@ int main() {
     Input::addKeyCallback
       ([&cam,
 	cam_speed,
-	&cube1]
+	&subject]
        (GLFWwindow* win,
 	i32 key,
 	i32 code,
@@ -160,9 +154,7 @@ int main() {
 	  cam.translateRel(right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
-	  cube1.rotateRel(Quaternionf(degreesToRadians(2),
-				      degreesToRadians(0),
-				      degreesToRadians(0)));
+	  subject.startAnimation("Walk");
 	  break;
 	}
       });
@@ -180,6 +172,8 @@ int main() {
       //sword_node.rotateRel(Quaternionf(0,0,dt));
 
       phys.update(dt);
+      light.dir = Quaternionf(0,0,0.01)*light.dir;
+      light.dir.normalize();
 
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 

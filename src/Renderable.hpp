@@ -17,6 +17,10 @@ NAMESPACE {
 
   struct Renderable {
 
+    ShaderFlags shader_flags;
+
+    Renderable(ShaderFlags _shader_flags);
+
     virtual BoundingObject getBoundingObject() = 0;
     virtual BoundingObject getPhysicalBoundingObject() = 0;
     virtual BoundingObject getPrimaryBoundingObject() = 0;
@@ -31,6 +35,7 @@ NAMESPACE {
     VAO vao;
     EBO ebo;
 
+    using Renderable::Renderable;
     void init();
     virtual void render(RenderContext c);
     

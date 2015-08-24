@@ -4,8 +4,10 @@ NAMESPACE {
 
   StaticMesh::StaticMesh(Array<BasicMeshData> mesh_data,
 			 Array<u32> mesh_elems,
-			 Texture* texture)
-    : data(mesh_data),
+			 Texture* texture,
+			 ShaderFlags _shader_flags)
+    : RenderableReg(_shader_flags),
+    data(mesh_data),
     elements(mesh_elems),
     tex(texture),
     b_sphere(BOUNDING_SPHERE, mesh_data),
@@ -32,7 +34,7 @@ NAMESPACE {
   }
 
   void StaticMesh::render(RenderContext c) {
-    Shader::setFlags(SHADER_NO_FLAGS);
+    Shader::setFlags(Renderable::shader_flags);
     tex->use();
     RenderableReg::render(c);
   }

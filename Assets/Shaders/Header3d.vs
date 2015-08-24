@@ -1,7 +1,10 @@
-#version 150 core
+const uint MAX_BONES = 50u;
+struct Bone {
+  vec3 trans;
+  vec4 rot;
+};
 
-vec4 quatMult(vec4 q1, vec4 q2)
-{ 
+vec4 quatMult(vec4 q1, vec4 q2) { 
   vec4 ret;
   ret.x = (q1.w * q2.x) + (q1.x * q2.w) + (q1.y * q2.z) - (q1.z * q2.y);
   ret.y = (q1.w * q2.y) - (q1.x * q2.z) + (q1.y * q2.w) + (q1.z * q2.x);
@@ -23,6 +26,10 @@ in vec4 inColor;
 #else
 in vec2 inTexCoord;
 #endif
+#ifdef SHADER_SKELETAL
+in uvec4 inBoneIndexes0;
+in vec4 inBoneWeights0;
+#endif
 
 layout(std140) uniform _uniModel {
   mat4 uniModel;
@@ -32,18 +39,6 @@ layout(std140) uniform _uniViewProj {
   mat4 uniViewProj;
 };
 
-#ifdef SHADER_SKELETAL
-in uvec4 inBoneIndexes0;
-in vec4 inBoneWeights0;
-
-struct Bone {
-  vec3 trans;
-  vec4 rot;
-};
-
-const uint MAX_BONES = 50u;
-
-layout(std140) uniform uniBonesData {
+layout(std140) uniform _uniBones {
   Bone uniBones[MAX_BONES];
 };
-#endif

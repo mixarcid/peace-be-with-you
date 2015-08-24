@@ -76,7 +76,7 @@ NAMESPACE {
 			       Array<Bone> default_bones,
 			       HashMap<String,
 			       BonedAnimationBase> mesh_animations)
-    : StaticMesh(static_data, elems, tex),
+    : StaticMesh(static_data, elems, tex, SHADER_SKELETAL),
     b_data(bone_data),
     bones(default_bones),
     animations(mesh_animations) {}
@@ -110,7 +110,8 @@ NAMESPACE {
   }
 
   BonedMesh::BonedMesh(BonedMeshBase* base_mesh)
-    : base(base_mesh),
+    : Renderable(base_mesh->shader_flags),
+    base(base_mesh),
     bones(base_mesh->bones) {}
 
   void BonedMesh::startAnimation(String name) {
@@ -119,7 +120,6 @@ NAMESPACE {
 
   void BonedMesh::render(RenderContext c) {
     cur_animation.step(&bones, c.dt);
-    Shader::setFlags(SHADER_SKELETAL);
     Shader::UNI_BONES.registerArray(bones);
     base->render(c);
   }

@@ -48,6 +48,7 @@ NAMESPACE {
     };
 
     void initBuffer(u32 shader_id, String name);
+    void keepBuffer(u32 shader_id);
     
     void registerInt(i32 i) const;
     //void registerMat4f(Mat4f mat) const;
@@ -69,6 +70,17 @@ NAMESPACE {
       glBufferData(GL_UNIFORM_BUFFER,
 		   data.size()*sizeof(T),
 		   &data[0],
+		   GL_DYNAMIC_DRAW);
+      glBindBufferBase(GL_UNIFORM_BUFFER,
+			block_id, buffer_id);
+    }
+
+    template <typename T>
+    void registerArray(T* data, u32 num_elems) {
+      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+      glBufferData(GL_UNIFORM_BUFFER,
+		   num_elems*sizeof(T),
+		   data,
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 			block_id, buffer_id);
@@ -115,11 +127,14 @@ NAMESPACE {
     static ShaderUniform UNI_MODEL;
     static ShaderUniform UNI_VIEW_PROJ;
     static ShaderUniform UNI_BONES;
+    static ShaderUniform UNI_DIR_LIGHTS;
+    static ShaderUniform UNI_AMBIENT;
 
     static Shader* cur_shader;
 
     const static u8 MAX_BONES = 50;
     const static u8 MAX_BONES_PER_VERTEX = 4;
+    const static u8 MAX_DIR_LIGHTS = 1;
     
     static void setFlags(ShaderFlags flags);
   };

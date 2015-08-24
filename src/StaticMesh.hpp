@@ -20,7 +20,11 @@ NAMESPACE {
     BoundingObject b_obb;
     
     StaticMesh(Array<BasicMeshData> mesh_data,
-	       Array<u32> mesh_elems, Texture* texture);
+	       Array<u32> mesh_elems,
+	       Texture* texture,
+	       ShaderFlags _shader_flags
+	       = SHADER_NO_FLAGS);
+    
     void init();
     virtual BoundingObject getBoundingObject();
     virtual BoundingObject getPhysicalBoundingObject();

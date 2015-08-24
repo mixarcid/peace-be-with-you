@@ -7,6 +7,7 @@ out vec3 normal;
 out vec4 test;
 
 void main() {
+  Bone unused = uniBones[0];
   #ifdef SHADER_USE_COLOR
   color = inColor;
   #else
@@ -15,8 +16,8 @@ void main() {
   normal = inNormal;
 
   vec3 position = inPosition;
-
-  #ifdef SHADER_SKELETAL
+#ifdef SHADER_SKELETAL
+  //position = vec3(0,0,0);
   vec4 quat = vec4(0,0,0,1);
   vec3 trans = vec3(0,0,0);
   for (uint n = 0u; n < 4u; ++n) {
@@ -32,9 +33,9 @@ void main() {
     normal = quatRot(quat, normal);
   }
   position += trans;
-  #endif
+  test = inBoneWeights0;
+#endif
 
   normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
-
   gl_Position = uniViewProj * uniModel * vec4(position,1);
 }

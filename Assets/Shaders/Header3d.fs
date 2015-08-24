@@ -1,4 +1,16 @@
-#version 150 core
+const uint MAX_DIR_LIGHTS = 1;
+struct DirLight {
+  vec3 dir;
+  //float pad0[1];
+  vec3 color;
+};
+
+layout(std140) uniform _uniDirLights {
+  DirLight uniDirLights[MAX_DIR_LIGHTS];
+};
+layout(std140) uniform _uniAmbient {
+  float uniAmbient;
+};
 
 #ifdef SHADER_USE_COLOR
 #else
