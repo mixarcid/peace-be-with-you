@@ -102,7 +102,7 @@ NAMESPACE {
     glGenBuffers(1, &buffer_id);
     glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
 
-    i32 block_size;
+    /*i32 block_size;
     glGetActiveUniformBlockiv(shader_id, block_id,
 			      GL_UNIFORM_BLOCK_DATA_SIZE,
 			      &block_size);
@@ -112,7 +112,7 @@ NAMESPACE {
 		 c_name,
 		 block_size,
 		 block_id,
-		 buffer_id);
+		 buffer_id);*/
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id) {

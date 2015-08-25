@@ -172,7 +172,7 @@ int main() {
       //sword_node.rotateRel(Quaternionf(0,0,dt));
 
       phys.update(dt);
-      light.dir = Quaternionf(0,0,0.01)*light.dir;
+      light.dir = Quaternionf(0.02,0,0)*light.dir;
       light.dir.normalize();
 
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
