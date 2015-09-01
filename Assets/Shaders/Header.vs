@@ -19,8 +19,9 @@ vec3 quatRot(vec4 q, vec3 v) {
 }
 
 in vec3 inPosition;
+#ifndef SHADER_2D
 in vec3 inNormal;
-
+#endif
 #ifdef SHADER_USE_COLOR
 in vec4 inColor;
 #else

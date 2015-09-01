@@ -45,13 +45,13 @@ NAMESPACE {
     return obj;
   }
 
-  Mat4f Node::getAbsMat() {
+  /*Mat4f Node::getAbsMat() {
     if (parent) {
       return parent->getAbsMat() *  this->getMat();
     } else {
       return this->getMat();
     }
-  }
+    }*/
 
   void Node::render(RenderContext c, Mat4f model) {
     Mat4f comb = model*Transform::getMat();

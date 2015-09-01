@@ -58,7 +58,7 @@ int main() {
 		"Cannot determine OpenGL version");
     Log::message("Your OpenGL version is %s", version);
 
-    Graphics3d graphics("Toon");
+    Graphics graphics("Toon");
     DirLight light(Vec3f(0,0,1),
 		   Vec3f(1,1,1));
     graphics.addDirLight(&light);

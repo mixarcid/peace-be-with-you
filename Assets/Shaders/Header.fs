@@ -12,8 +12,7 @@ layout(std140) uniform _uniAmbient {
   float uniAmbient;
 };
 
-#ifdef SHADER_USE_COLOR
-#else
+#ifndef SHADER_USE_COLOR
 uniform sampler2D uniTexture;
 #endif
 out vec4 outColor;

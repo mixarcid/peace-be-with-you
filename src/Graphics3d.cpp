@@ -5,10 +5,6 @@
 
 NAMESPACE {
 
-  Graphics3d::Graphics3d(String shader_name) : shade(shader_name) {
-    shade.use();
-  }
-
   void Graphics3d::addNode(Node* node) {
     nodes.push_back(node);
   }
@@ -46,12 +42,6 @@ NAMESPACE {
     debugAssert(cam != NULL,
 		"You need to give Graphics3d"
 		"a Camera before rendering");
-    
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    shade.use();
 
     DirLight dir_light_arr[Shader::MAX_DIR_LIGHTS];
     /*memset(dir_light_arr,

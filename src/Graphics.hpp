@@ -1,17 +1,12 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "Standard.hpp"
+#include "Shader.hpp"
 
 NAMESPACE {
-  
-  namespace graphics {
-    
-    void init();
-    void checkError();
-    void terminate();
-  }
 
+  struct Graphics : Graphics3d, Graphics2d {
+    Shader shade;
+    Graphics(String shader_name);
+  }
+  
 }

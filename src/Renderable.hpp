@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Standard.hpp"
 #include "Containers.hpp"
 #include "VertexObjects.hpp"
 #include "Shader.hpp"
