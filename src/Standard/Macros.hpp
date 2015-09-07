@@ -7,22 +7,24 @@
 
 #ifndef NDEBUG
 
-#define debugAssert(cond, ...) do {	\
+#define debugAssert(cond, ...) do {		\
     if (!(cond)) {				\
-      Log::__assert_print(__VA_ARGS__);	\
+      Log::__assert_print(__VA_ARGS__);		\
+      fprintf(stderr, "Stack trace: %s",	\
+	      getStackTrace().c_str());		\
       exit(EXIT_FAILURE);			\
     }						\
   } while (0)
 
-#define fatalAssert(cond, ...) \
+#define fatalAssert(cond, ...)			\
   debugAssert(cond, __VA_ARGS__);
 
 #else
     
 #define debugAssert(cond, ...)
-#define fatalAssert(cond, ...) do {	\
+#define fatalAssert(cond, ...) do {		\
     if (!(cond)) {				\
-      Log::fatalError(__VA_ARGS__);	\
+      Log::fatalError(__VA_ARGS__);		\
     }						\
   } while (0)
 #endif
@@ -37,7 +39,7 @@
 
 #define PEACE_STRING(x) #x
 
-#define PEACE_DEFINE_BITFIELD(name, size, ...)	\
+#define PEACE_DEFINE_BITFLAGS(name, size, ...)	\
   enum name : u##size {				\
     __VA_ARGS__					\
       };					\

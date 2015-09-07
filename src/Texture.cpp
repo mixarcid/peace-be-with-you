@@ -10,7 +10,8 @@ NAMESPACE {
     glGenTextures(length, ids);
   }
   
-  void Texture::load(String filename, ShaderUniform tex_uniform,
+  void Texture::load(String filename,
+		     ShaderUniform tex_uniform,
 		     u32 index) {
     i32 width, height;
     const char* full_name = (DIR_TEXTURES + filename

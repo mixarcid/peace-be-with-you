@@ -18,8 +18,11 @@ vec3 quatRot(vec4 q, vec3 v) {
   return v + 2.0*cross(cross(v, qv) + q.w*v, qv);
 }
 
+
+#ifdef SHADER_2D
+in vec2 inPosition2d;
+#else
 in vec3 inPosition;
-#ifndef SHADER_2D
 in vec3 inNormal;
 #endif
 #ifdef SHADER_USE_COLOR

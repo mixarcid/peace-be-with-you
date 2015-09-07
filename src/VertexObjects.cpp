@@ -27,13 +27,18 @@ NAMESPACE {
       glEnableVertexAttribArray(vars[n].id);
       if (vars[n].info->elem_type == GL_UNSIGNED_INT
 	  || vars[n].info->elem_type == GL_INT) {
-	glVertexAttribIPointer(vars[n].id, vars[n].info->elem_num,
-			      vars[n].info->elem_type,
-			      total_size, (void*) offsets[n]);
+	glVertexAttribIPointer(vars[n].id,
+			       vars[n].info->elem_num,
+			       vars[n].info->elem_type,
+			       total_size,
+			       (void*) offsets[n]);
       } else {
-	glVertexAttribPointer(vars[n].id, vars[n].info->elem_num,
-			      vars[n].info->elem_type, GL_FALSE,
-			      total_size, (void*) offsets[n]);
+	glVertexAttribPointer(vars[n].id,
+			      vars[n].info->elem_num,
+			      vars[n].info->elem_type,
+			      GL_FALSE,
+			      total_size,
+			      (void*) offsets[n]);
       }
     }
   }

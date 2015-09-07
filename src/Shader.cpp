@@ -10,22 +10,25 @@ NAMESPACE {
     ShaderTypeInfo(GL_FLOAT, 2, 2*sizeof(f32)),
     ShaderTypeInfo(GL_FLOAT, 3, 3*sizeof(f32)),
     ShaderTypeInfo(GL_FLOAT, 4, 4*sizeof(f32)),
-    ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32))
+    ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32)),
+    ShaderTypeInfo(GL_SHORT, 2, 2*sizeof(i16))
   };
   
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
   const ShaderVar Shader::COLOR(1, TYPE_VECTOR4F);
   const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
+  const ShaderVar Shader::TEX_COORD_SHORT(2, TYPE_VECTOR2S);
   const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
-  const ShaderVar Shader::BONE_INDEXES0(5, TYPE_VECTOR4U);
-  const ShaderVar Shader::BONE_WEIGHTS0(6, TYPE_VECTOR4F);
+  const ShaderVar Shader::BONE_INDEXES0(4, TYPE_VECTOR4U);
+  const ShaderVar Shader::BONE_WEIGHTS0(5, TYPE_VECTOR4F);
+  const ShaderVar Shader::POSITION_2D_SHORT(6, TYPE_VECTOR2S);
 
-  ShaderUniform Shader::UNI_TEXTURE;
-  ShaderUniform Shader::UNI_MODEL;
-  ShaderUniform Shader::UNI_VIEW_PROJ;
-  ShaderUniform Shader::UNI_BONES;
-  ShaderUniform Shader::UNI_DIR_LIGHTS;
-  ShaderUniform Shader::UNI_AMBIENT;
+  ShaderUniform Shader::UNI_TEXTURE(0);
+  ShaderUniform Shader::UNI_MODEL(1);
+  ShaderUniform Shader::UNI_VIEW_PROJ(2);
+  ShaderUniform Shader::UNI_BONES(3);
+  ShaderUniform Shader::UNI_DIR_LIGHTS(4);
+  ShaderUniform Shader::UNI_AMBIENT(5);
 
   Shader* Shader::cur_shader = NULL;
 
@@ -40,11 +43,12 @@ NAMESPACE {
   static String vert_header;
   static String frag_header;
   
-  PEACE_DEFINE_BITFIELD(FirstLoadFLags, 8,
+  PEACE_DEFINE_BITFLAGS(FirstLoadFLags, 8,
 			FIRST_SHADER_LOAD = 0x01,
 			FIRST_COLOR_LOAD = 0x02,
 			FIRST_TEXTURE_LOAD = 0x04,
-			FIRST_SKELETAL_LOAD = 0x05,
+			FIRST_SKELETAL_LOAD = 0x08,
+			FIRST_3D_LOAD = 0x10,
 			FIRST_LOAD_ALL = 0xff)
   
   FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
@@ -87,6 +91,9 @@ NAMESPACE {
     info = &SHADER_TYPES[var_type];
   }
 
+  ShaderUniform::ShaderUniform(u32 _id)
+    : id(_id) {};
+
   void ShaderUniform::initBuffer(u32 shader_id,
 				 String name) {
     const char* c_name = ("_" + name).c_str();
@@ -98,7 +105,7 @@ NAMESPACE {
 		"exist in the shader", c_name);
     glUniformBlockBinding(shader_id,
 			  block_id,
-			  block_id);
+			  id);
     glGenBuffers(1, &buffer_id);
     glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
 
@@ -115,10 +122,33 @@ NAMESPACE {
 		 buffer_id);*/
   }
 
-  void ShaderUniform::keepBuffer(u32 shader_id) {
+  void ShaderUniform::keepBuffer(u32 shader_id,
+				 String name) {
+    PEACE_GL_CHECK_ERROR;
+    const char* c_name = ("_" + name).c_str();
+    block_id = glGetUniformBlockIndex(shader_id,
+      c_name);
+    //Log::message(name);
+    debugAssert(block_id != GL_INVALID_INDEX,
+		"The uniform block %s does not "
+		"exist in the shader", c_name);
     glUniformBlockBinding(shader_id,
 			  block_id,
-			  block_id);
+			  id);
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+
+    /*i32 block_size;
+    glGetActiveUniformBlockiv(shader_id, block_id,
+			      GL_UNIFORM_BLOCK_DATA_SIZE,
+			      &block_size);
+    Log::message(name);
+    Log::message("name: %s, size: %d\n"
+		 "block id: %d, buffer id: %u",
+		 c_name,
+		 block_size,
+		 block_id,
+		 buffer_id);*/
+    PEACE_GL_CHECK_ERROR;
   }
 
   void ShaderUniform::registerInt(i32 i) const {
@@ -150,12 +180,12 @@ NAMESPACE {
       + getFileContents((DIR_SHADERS + filename +
 			 DIR_FRAG_EXTENSION).c_str());
 
-    localSetFlags(SHADER_NO_FLAGS);
+    localSetFlags(SHADER_SKELETAL);
     Log::message("Loaded shader %s", filename.c_str());
   }
 
   void Shader::localSetFlags(ShaderFlags shade_flags) {
-
+    PEACE_GL_CHECK_ERROR;
     /*Log::message("0x%x, 0x%x, 0x%x, 0x%x",
 		 shade_flags,
 		 flags,
@@ -173,6 +203,7 @@ NAMESPACE {
       id = flag_id;
       flags = shade_flags;
       if (cur_shader == this) {
+	PEACE_GL_CHECK_ERROR;
 	__use_no_check();
       }
       return;
@@ -185,6 +216,9 @@ NAMESPACE {
     }
     if (shade_flags & SHADER_SKELETAL) {
       preprocess += "#define SHADER_SKELETAL\n";
+    }
+    if (shade_flags & SHADER_2D) {
+      preprocess += "#define SHADER_2D\n";
     }
     
     String vert_source = preprocess + vert_str;
@@ -217,9 +251,13 @@ NAMESPACE {
     glAttachShader(id, frag_id);
 
     glBindFragDataLocation(id, 0, "outColor");
-    
-    glBindAttribLocation(id, POSITION.id, "inPosition");
-    glBindAttribLocation(id, NORMAL.id, "inNormal");
+
+    if (shade_flags & SHADER_2D) {
+      glBindAttribLocation(id, POSITION_2D_SHORT.id, "inPosition2d");
+    } else {
+      glBindAttribLocation(id, POSITION.id, "inPosition");
+      glBindAttribLocation(id, NORMAL.id, "inNormal");
+    }
     
     if (shade_flags & SHADER_USE_COLOR) {
       glBindAttribLocation(id, COLOR.id, "inColor");
@@ -237,12 +275,15 @@ NAMESPACE {
 
     flags = shade_flags;
     flag_ids[flags] = id;
+    PEACE_GL_CHECK_ERROR;
     if (cur_shader == this) {
       __use_no_check();
     }
+    PEACE_GL_CHECK_ERROR;
   }
 
   void Shader::__use_no_check() {
+    PEACE_GL_CHECK_ERROR;
     glUseProgram(id);
     if (!(flags & SHADER_USE_COLOR)) {
       UNI_TEXTURE.id =
@@ -251,16 +292,31 @@ NAMESPACE {
     if (first_load_flags & FIRST_SHADER_LOAD) {
       UNI_MODEL.initBuffer(id, "uniModel");
       UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
-      UNI_BONES.initBuffer(id, "uniBones");
-      UNI_DIR_LIGHTS.initBuffer(id, "uniDirLights");
-      UNI_AMBIENT.initBuffer(id, "uniAmbient");
       first_load_flags &= ~FIRST_SHADER_LOAD;
     } else {
-      UNI_MODEL.keepBuffer(id);
-      UNI_VIEW_PROJ.keepBuffer(id);
-      UNI_BONES.keepBuffer(id);
-      UNI_DIR_LIGHTS.keepBuffer(id);
-      UNI_AMBIENT.keepBuffer(id);
+      UNI_MODEL.keepBuffer(id, "uniModel");
+      UNI_VIEW_PROJ.keepBuffer(id, "uniViewProj");
+    }
+    PEACE_GL_CHECK_ERROR;
+    if (!(flags & SHADER_2D)) {
+      if (first_load_flags & FIRST_3D_LOAD) {
+	UNI_DIR_LIGHTS.initBuffer(id, "uniDirLights");
+	UNI_AMBIENT.initBuffer(id, "uniAmbient");
+	first_load_flags &= ~FIRST_3D_LOAD;
+      } else {
+	UNI_DIR_LIGHTS.keepBuffer(id, "uniDirLights");
+	UNI_AMBIENT.keepBuffer(id, "uniAmbient");
+      }
+    }
+    PEACE_GL_CHECK_ERROR;
+    if (flags & SHADER_SKELETAL) {
+      //Log::message("0x%x", first_load_flags);
+      if (first_load_flags & FIRST_SKELETAL_LOAD) {
+	UNI_BONES.initBuffer(id, "uniBones");
+	first_load_flags &= ~FIRST_SKELETAL_LOAD;
+      } else {
+	UNI_BONES.keepBuffer(id, "uniBones");
+      }
     }
     cur_shader = this;
   }

@@ -47,6 +47,7 @@ NAMESPACE {
       BoundingOBB obb;
     };
 
+    BoundingObject();
     BoundingObject(BoundingObjectType obj_type,
 		   Array<BasicMeshData> data);
     f32 getVolume();

@@ -1,4 +1,5 @@
-#include "Graphics3d.hpp"
+#include "Graphics.hpp"
+#include "GUIBox.hpp"
 #include "Input.hpp"
 #include "StaticMesh.hpp"
 #include "MeshLoader.hpp"
@@ -96,6 +97,21 @@ int main() {
     graphics.addNode(&sub);
     phys.addStaticObject(&sub);
 
+    Texture onion;
+    onion.use();
+    onion.load("onion-man", Shader::UNI_TEXTURE);
+    GUIBox box(Vec2s(10,50),
+	       Vec2s(100,20),
+	       {Vec2s(0,0),
+		   Vec2s(0,1),
+		   Vec2s(1,1),
+		   Vec2s(1,0)},
+	       &onion,
+	       0);
+    GUINode node2d(GUI_FLOAT_BOTTOM_LEFT, 0);
+    node2d.addElem(&box);
+    graphics.addGUINode(&node2d);
+
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
        (GLFWwindow* win,
@@ -184,8 +200,11 @@ int main() {
       start = end;
       gl::checkError();
     }
-  } catch(Exception& e) {
-    Log::error(e.what());
+  } catch(FatalError& e) {
+    Log::error(e.msg +
+	       "\nStack trace for Exception: \n"
+	       + e.backtrace);
+    
   }
 
   gl::terminate();

@@ -116,6 +116,8 @@ NAMESPACE {
     return ret;
   }
 
+  BoundingObject::BoundingObject() : type(BOUNDING_NONE) {}
+
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
 				 Array<BasicMeshData> data)
     : type(obj_type) {

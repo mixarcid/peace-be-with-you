@@ -1,6 +1,7 @@
 #pragma once
 
 #define GLEW_STATIC
+//#define PEACE_GL_USE_POINTS
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -42,5 +43,6 @@ NAMESPACE {
       err=glGetError();					\
     }							\
   } while(0)
+#else
+#define PEACE_GL_CHECK_ERROR
 #endif
-

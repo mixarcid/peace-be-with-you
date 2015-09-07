@@ -19,6 +19,10 @@ NAMESPACE {
 		   size_t total_size);
   };
 
+  /* TYPE_VECTOR4U represents a 4-dimensional unsigned int vector that becomes
+     a uvec in glsl. TYPE_VECTOR(N)S represents a N-dimensional short vector
+     that becomes a regular vec is glsl. Yeah, it's stupid and hacky, but so 
+     far it works */
   enum ShaderTypeName {
     TYPE_F32,
     TYPE_U32,
@@ -26,6 +30,7 @@ NAMESPACE {
     TYPE_VECTOR3F,
     TYPE_VECTOR4F,
     TYPE_VECTOR4U,
+    TYPE_VECTOR2S,
     TYPE_LAST
   };
   
@@ -39,51 +44,47 @@ NAMESPACE {
 
   struct ShaderUniform {
 
-    union {
-      i32 id;
-      struct {  //if it's a uniform buffer object
-	u32 block_id;
-	u32 buffer_id;
-      };
-    };
+    u32 id;
+    u32 block_id;
+    u32 buffer_id;
+
+    ShaderUniform(u32 _id);
 
     void initBuffer(u32 shader_id, String name);
-    void keepBuffer(u32 shader_id);
+    void keepBuffer(u32 shader_id, String name);
     
     void registerInt(i32 i) const;
     //void registerMat4f(Mat4f mat) const;
     
     template <typename T>
     void registerVal(T val) {
+      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   sizeof(T),
 		   &val,
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
-		       block_id, buffer_id);
-    }
-    
-    template <typename T>
-    void registerArray(Array<T> data) {
-      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
-      glBufferData(GL_UNIFORM_BUFFER,
-		   data.size()*sizeof(T),
-		   &data[0],
-		   GL_DYNAMIC_DRAW);
-      glBindBufferBase(GL_UNIFORM_BUFFER,
-			block_id, buffer_id);
+		       id, buffer_id);
+      PEACE_GL_CHECK_ERROR;
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
+      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   num_elems*sizeof(T),
 		   data,
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
-			block_id, buffer_id);
+		       id, buffer_id);
+      PEACE_GL_CHECK_ERROR;
+    }
+    
+    template <typename T>
+    void registerArray(Array<T> data) {
+      registerArray(&data[0], data.size());
     }
 
     /*static void initBuffer(u32 shader_id,
@@ -93,7 +94,7 @@ NAMESPACE {
       
   };
 
-  PEACE_DEFINE_BITFIELD(ShaderFlags, 8,
+  PEACE_DEFINE_BITFLAGS(ShaderFlags, 8,
 			SHADER_NO_FLAGS = 0x00,
 			SHADER_UNINITIALIZED = 0x01,
 			SHADER_USE_COLOR = 0x02,
@@ -118,8 +119,10 @@ NAMESPACE {
     ~Shader();
 
     const static ShaderVar POSITION;
+    const static ShaderVar POSITION_2D_SHORT;
     const static ShaderVar COLOR;
     const static ShaderVar TEX_COORD;
+    const static ShaderVar TEX_COORD_SHORT;
     const static ShaderVar NORMAL;
     const static ShaderVar BONE_INDEXES0;
     const static ShaderVar BONE_WEIGHTS0;

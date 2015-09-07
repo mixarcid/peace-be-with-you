@@ -1,6 +1,6 @@
 #include <stdarg.h> 
 #include "Log.hpp"
-#include "Exceptions.hpp"
+#include "Exception.hpp"
 
 NAMESPACE {
 

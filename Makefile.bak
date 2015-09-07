@@ -165,14 +165,14 @@ src/VertexObjects.o: src/Vector.hpp src/Math.hpp /usr/include/string.h
 src/VertexObjects.o: /usr/include/features.h /usr/include/stdc-predef.h
 src/VertexObjects.o: /usr/include/xlocale.h /usr/include/math.h
 src/VertexObjects.o: src/Matrix.hpp
-src/Standard/Exception.o: src/Standard/Exception.hpp /usr/include/stdlib.h
-src/Standard/Exception.o: /usr/include/features.h /usr/include/stdc-predef.h
-src/Standard/Exception.o: /usr/include/alloca.h /usr/include/execinfo.h
+src/Standard/Exception.o: /usr/include/execinfo.h /usr/include/features.h
+src/Standard/Exception.o: /usr/include/stdc-predef.h /usr/include/stdlib.h
+src/Standard/Exception.o: /usr/include/alloca.h src/Standard/Exception.hpp
 src/Standard/Exception.o: src/Standard/Macros.hpp /usr/include/stdio.h
 src/Standard/Exception.o: /usr/include/libio.h /usr/include/_G_config.h
 src/Standard/Exception.o: /usr/include/wchar.h /usr/include/xlocale.h
-src/Standard/Exception.o: src/Standard/Types.hpp /usr/include/stdint.h
-src/Standard/Exception.o: src/Standard/String.hpp src/Standard/Log.hpp
+src/Standard/Exception.o: src/Standard/String.hpp src/Standard/Types.hpp
+src/Standard/Exception.o: /usr/include/stdint.h src/Standard/Log.hpp
 src/Standard/Exception.o: src/Standard/EventManager.hpp
 src/Standard/Exception.o: src/Standard/Containers.hpp src/Standard/System.hpp
 src/Standard/Exception.o: src/Standard/Thread.hpp
@@ -186,7 +186,6 @@ src/Standard/FileIO.o: src/Standard/Log.hpp src/Standard/String.hpp
 src/Standard/FileIO.o: src/Standard/EventManager.hpp
 src/Standard/FileIO.o: src/Standard/Containers.hpp src/Standard/Types.hpp
 src/Standard/FileIO.o: src/Standard/System.hpp src/Standard/Thread.hpp
-src/Standard/FileIO.o: src/Standard/Exception.hpp /usr/include/execinfo.h
 src/Standard/Log.o: src/Standard/Log.hpp src/Standard/Macros.hpp
 src/Standard/Log.o: /usr/include/stdio.h /usr/include/features.h
 src/Standard/Log.o: /usr/include/stdc-predef.h /usr/include/libio.h
@@ -196,7 +195,7 @@ src/Standard/Log.o: /usr/include/alloca.h src/Standard/String.hpp
 src/Standard/Log.o: src/Standard/EventManager.hpp src/Standard/Containers.hpp
 src/Standard/Log.o: src/Standard/Types.hpp /usr/include/stdint.h
 src/Standard/Log.o: src/Standard/System.hpp src/Standard/Thread.hpp
-src/Standard/Log.o: src/Standard/Exception.hpp /usr/include/execinfo.h
+src/Standard/Log.o: src/Standard/Exception.hpp
 src/Standard/String.o: src/Standard/String.hpp src/Standard/Macros.hpp
 src/Standard/String.o: /usr/include/stdio.h /usr/include/features.h
 src/Standard/String.o: /usr/include/stdc-predef.h /usr/include/libio.h

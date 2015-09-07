@@ -11,7 +11,7 @@ NAMESPACE {
 
   struct Node : Transform {
 
-    Node* parent;
+    //Node* parent;
     /*BoundingObject* bounding_obj;
     BoundingObject* physical_bounding_obj;
     BoundingObject* primary_bounding_obj;*/

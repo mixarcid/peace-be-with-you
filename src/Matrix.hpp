@@ -216,6 +216,15 @@ NAMESPACE {
       return Mat4(d);
     }
 
+    static inline Mat4 scaleTrans(Vec3<T> scal,
+				  Vec3<T> trans) {
+      T d[16] = {scal.x(), 0, 0, 0,
+		 0, scal.y(), 0, 0,
+		 0, 0, scal.z(), 0,
+		 trans.x(), trans.y(), trans.z(), 1};
+      return Mat4(d);
+    }
+
     static Mat4 perspective(T fovy, T aspect, T z_near, T z_far) {
       T sub = z_near - z_far;
       T f = 1/tan(fovy/(T)2);

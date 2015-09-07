@@ -9,6 +9,7 @@ in vec4 test;
 //uniform float light_intensity = 2;
 
 void main() {
+#ifndef SHADER_2D
   vec3 norm = normalize(normal);
   vec3 light_color = vec3(uniAmbient);
   for (uint i=0; i<MAX_DIR_LIGHTS; ++i) {
@@ -26,5 +27,18 @@ void main() {
     }
     light_color += uniDirLights[i].color*intensity;
   }
+#endif
+#ifdef SHADER_2D
+#ifdef SHADER_USE_COLOR
+  outColor = color;
+#else
+  outColor = texture(uniTexture, tex);
+#endif
+#else
+#ifdef SHADER_USE_COLOR
+  outColor = vec4(light_color,1)*color;
+#else
   outColor = vec4(light_color,1)*texture(uniTexture, tex);
+#endif
+#endif
 }

@@ -5,6 +5,7 @@
 #include "Macros.hpp"
 #include "Log.hpp"
 #include "String.hpp"
+#include "Exception.hpp"
 
 NAMESPACE {
   namespace fio {

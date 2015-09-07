@@ -55,6 +55,7 @@ NAMESPACE {
 
   void Node::render(RenderContext c, Mat4f model) {
     Mat4f comb = model*Transform::getMat();
+    //Log::message("!");
     //Log::message(to_string(comb));
     for (Node* child : children) {
       child->render(c, comb);

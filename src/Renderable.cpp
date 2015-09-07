@@ -18,7 +18,11 @@ NAMESPACE {
   }
   void RenderableReg::render(RenderContext c) {
     vao.use();
+#ifdef PEACE_GL_USE_POINTS
+    ebo.draw(GL_POINTS);
+#else
     ebo.draw(GL_TRIANGLES);
+#endif
   }
 
 }

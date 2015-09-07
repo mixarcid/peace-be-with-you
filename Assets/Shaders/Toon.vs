@@ -7,15 +7,15 @@ out vec3 normal;
 out vec4 test;
 
 void main() {
-  Bone unused = uniBones[0];
-  #ifdef SHADER_USE_COLOR
+#ifdef SHADER_USE_COLOR
   color = inColor;
-  #else
+#else
   tex = inTexCoord;
-  #endif
+#endif
+#ifndef SHADER_2D
   normal = inNormal;
-
   vec3 position = inPosition;
+#endif
 #ifdef SHADER_SKELETAL
   //position = vec3(0,0,0);
   vec4 quat = vec4(0,0,0,1);
@@ -36,6 +36,10 @@ void main() {
   test = inBoneWeights0;
 #endif
 
+#ifdef SHADER_2D
+  gl_Position = uniModel*uniViewProj*vec4(inPosition2d,0,1);
+#else
   normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
-  gl_Position = uniViewProj * uniModel * vec4(position,1);
+  gl_Position = uniViewProj*uniModel*vec4(position,1);
+#endif
 }
