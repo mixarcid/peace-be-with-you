@@ -1,5 +1,5 @@
 #include "Graphics.hpp"
-#include "GUIBox.hpp"
+#include "GUIWidgets.hpp"
 #include "Input.hpp"
 #include "StaticMesh.hpp"
 #include "MeshLoader.hpp"
@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Physics.hpp"
+#include "Assets.hpp"
 
 using namespace peace;
 
@@ -58,8 +59,11 @@ int main() {
     fatalAssert(version != NULL,
 		"Cannot determine OpenGL version");
     Log::message("Your OpenGL version is %s", version);
-
+    
     Graphics graphics("Toon");
+    PEACE_GL_CHECK_ERROR;
+    Asset::loadAll();
+    PEACE_GL_CHECK_ERROR;
     DirLight light(Vec3f(0,0,1),
 		   Vec3f(1,1,1));
     graphics.addDirLight(&light);
@@ -100,17 +104,28 @@ int main() {
     Texture onion;
     onion.use();
     onion.load("onion-man", Shader::UNI_TEXTURE);
-    GUIBox box(Vec2s(10,50),
-	       Vec2s(100,20),
-	       {Vec2s(0,0),
-		   Vec2s(0,1),
-		   Vec2s(1,1),
-		   Vec2s(1,0)},
+    GUIBox box(Vec2s(200,200),
+	       Vec2s(50,50),
+	       {Vec2f(1,1),
+		   Vec2f(1,0),
+		   Vec2f(0,0),
+		   Vec2f(0,1)},
 	       &onion,
 	       0);
-    GUINode node2d(GUI_FLOAT_BOTTOM_LEFT, 0);
+    GUIBasicTextBox text(Vec2s(-200,0),
+			 "Q{+=}&TeStInG^%*()%!",
+			 100,
+			 0,
+			 Vec4f(1,0,0,1),
+			 GUITextProperties
+			 (GUI_TEXT_STYLE_BOLD_ITALIC,
+			  GUI_TEXT_ALIGN_RIGHT));
+    GUINode node2d(GUI_FLOAT_CENTER, 0);
     node2d.addElem(&box);
+    GUINode node2d_3(GUI_FLOAT_CENTER, 0);
+    node2d_3.addElem(&text);
     graphics.addGUINode(&node2d);
+    graphics.addGUINode(&node2d_3);
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -179,7 +194,7 @@ int main() {
     f32 dt = 0;
     end.makeCurrent();
     start.makeCurrent();
-    
+
     while(!glfwWindowShouldClose(window) && running) {
 
       end.makeCurrent();
@@ -207,6 +222,7 @@ int main() {
     
   }
 
+  Asset::freeAll();
   gl::terminate();
   Log::terminate();
   return EXIT_SUCCESS;

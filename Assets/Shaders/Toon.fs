@@ -32,7 +32,7 @@ void main() {
 #ifdef SHADER_USE_COLOR
   outColor = color;
 #else
-  outColor = texture(uniTexture, tex);
+  outColor = uniColor*texture(uniTexture, tex);
 #endif
 #else
 #ifdef SHADER_USE_COLOR

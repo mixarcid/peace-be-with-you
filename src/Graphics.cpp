@@ -15,6 +15,7 @@ NAMESPACE {
 #ifdef PEACE_GL_USE_POINTS
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     i32 w, h;
     Input::getWindowSize(&w, &h);
     window_size.data[0] = w;

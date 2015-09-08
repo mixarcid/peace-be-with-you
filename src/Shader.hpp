@@ -122,7 +122,6 @@ NAMESPACE {
     const static ShaderVar POSITION_2D_SHORT;
     const static ShaderVar COLOR;
     const static ShaderVar TEX_COORD;
-    const static ShaderVar TEX_COORD_SHORT;
     const static ShaderVar NORMAL;
     const static ShaderVar BONE_INDEXES0;
     const static ShaderVar BONE_WEIGHTS0;
@@ -133,6 +132,7 @@ NAMESPACE {
     static ShaderUniform UNI_BONES;
     static ShaderUniform UNI_DIR_LIGHTS;
     static ShaderUniform UNI_AMBIENT;
+    static ShaderUniform UNI_COLOR;
 
     static Shader* cur_shader;
 

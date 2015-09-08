@@ -18,28 +18,39 @@ NAMESPACE {
 			     + DIR_TEXTURE_EXTENSION).c_str();
     unsigned char* image =
       SOIL_load_image(full_name, &width, &height,
-		      0, SOIL_LOAD_RGB);
+		      0, SOIL_LOAD_RGBA);
 
     //LogCurrentDirectory();
     fatalAssert(image != NULL,
 	       "Unable to load image %s", full_name);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
-		 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    PEACE_GL_CHECK_ERROR;
+    glTexImage2D(GL_TEXTURE_2D,
+		 0, GL_RGBA, width, height,
+		 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    PEACE_GL_CHECK_ERROR;
     glGenerateMipmap(GL_TEXTURE_2D);
+    PEACE_GL_CHECK_ERROR;
     
     SOIL_free_image_data(image);
     
     tex_uniform.registerInt(index);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+    PEACE_GL_CHECK_ERROR;
+    glTexParameteri(GL_TEXTURE_2D,
+		    GL_TEXTURE_WRAP_S,
 		    GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+    PEACE_GL_CHECK_ERROR;
+    glTexParameteri(GL_TEXTURE_2D,
+		    GL_TEXTURE_WRAP_T,
 		    GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+    PEACE_GL_CHECK_ERROR;
+    glTexParameteri(GL_TEXTURE_2D,
+		    GL_TEXTURE_MIN_FILTER,
 		    GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+    PEACE_GL_CHECK_ERROR;
+    glTexParameteri(GL_TEXTURE_2D,
+		    GL_TEXTURE_MAG_FILTER,
 		    GL_LINEAR);
+    PEACE_GL_CHECK_ERROR;
     
     Log::message("Loaded texture %s", filename.c_str());
   }

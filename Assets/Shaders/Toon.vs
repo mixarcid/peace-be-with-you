@@ -35,11 +35,13 @@ void main() {
   position += trans;
   test = inBoneWeights0;
 #endif
-
 #ifdef SHADER_2D
+  vec4 t = (uniModel*uniViewProj)[0];
   gl_Position = uniModel*uniViewProj*vec4(inPosition2d,0,1);
+  gl_PointSize = 100;
 #else
   normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
   gl_Position = uniViewProj*uniModel*vec4(position,1);
+  gl_PointSize = gl_Position.z < 1 ? 25 : 25/gl_Position.z;
 #endif
 }

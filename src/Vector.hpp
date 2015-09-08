@@ -175,11 +175,11 @@ NAMESPACE {
       Vec<T,2>::data[1] = y;
     }
 
-    inline T x() {
+    inline T x() const {
       return Vec<T,2>::data[0];
     }
     
-    inline T y() {
+    inline T y() const {
       return Vec<T,2>::data[1];
     }
     
@@ -202,15 +202,27 @@ NAMESPACE {
       Vec<T,3>::data[2] = z;
     }
 
-    inline T x() {
+    inline T x() const {
       return Vec<T,3>::data[0];
     }
     
-    inline T y() {
+    inline T y() const {
       return Vec<T,3>::data[1];
     }
     
-    inline T z() {
+    inline T z() const {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T r() const {
+      return Vec<T,3>::data[0];
+    }
+    
+    inline T g() const {
+      return Vec<T,3>::data[1];
+    }
+    
+    inline T b() const {
       return Vec<T,3>::data[2];
     }
 
@@ -240,19 +252,35 @@ NAMESPACE {
       Vec<T,4>::data[3] = w;
     }
 
-    inline T x() {
+    inline T x() const {
       return Vec<T,4>::data[0];
     }
     
-    inline T y() {
+    inline T y() const {
       return Vec<T,4>::data[1];
     }
     
-    inline T z() {
+    inline T z() const {
       return Vec<T,4>::data[2];
     }
 
-    inline T w() {
+    inline T w() const {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T r() const {
+      return Vec<T,4>::data[0];
+    }
+    
+    inline T g() const {
+      return Vec<T,4>::data[1];
+    }
+    
+    inline T b() const {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T a() const {
       return Vec<T,4>::data[3];
     }
     

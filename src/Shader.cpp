@@ -17,7 +17,6 @@ NAMESPACE {
   const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
   const ShaderVar Shader::COLOR(1, TYPE_VECTOR4F);
   const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
-  const ShaderVar Shader::TEX_COORD_SHORT(2, TYPE_VECTOR2S);
   const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
   const ShaderVar Shader::BONE_INDEXES0(4, TYPE_VECTOR4U);
   const ShaderVar Shader::BONE_WEIGHTS0(5, TYPE_VECTOR4F);
@@ -29,6 +28,7 @@ NAMESPACE {
   ShaderUniform Shader::UNI_BONES(3);
   ShaderUniform Shader::UNI_DIR_LIGHTS(4);
   ShaderUniform Shader::UNI_AMBIENT(5);
+  ShaderUniform Shader::UNI_COLOR(6);
 
   Shader* Shader::cur_shader = NULL;
 
@@ -49,6 +49,7 @@ NAMESPACE {
 			FIRST_TEXTURE_LOAD = 0x04,
 			FIRST_SKELETAL_LOAD = 0x08,
 			FIRST_3D_LOAD = 0x10,
+			FIRST_2D_LOAD = 0x20,
 			FIRST_LOAD_ALL = 0xff)
   
   FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
@@ -298,6 +299,15 @@ NAMESPACE {
       UNI_VIEW_PROJ.keepBuffer(id, "uniViewProj");
     }
     PEACE_GL_CHECK_ERROR;
+    if (flags & SHADER_2D) {
+      if (first_load_flags & FIRST_2D_LOAD) {
+	UNI_COLOR.initBuffer(id, "uniColor");
+	first_load_flags &= ~FIRST_2D_LOAD;
+      } else {
+	UNI_COLOR.keepBuffer(id, "uniColor");
+      }
+      UNI_COLOR.registerVal(Vec4f(1,1,1,1));
+    }
     if (!(flags & SHADER_2D)) {
       if (first_load_flags & FIRST_3D_LOAD) {
 	UNI_DIR_LIGHTS.initBuffer(id, "uniDirLights");

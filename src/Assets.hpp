@@ -10,6 +10,7 @@
 #define DIR_TEXTURES DIR_ASSETS "Textures" DIR_SEP
 #define DIR_SHADER_HEADER DIR_SHADERS "Header"
 #define DIR_MODELS DIR_ASSETS "Models" DIR_SEP
+//#define DIR_FONTS DIR_ASSETS "Fonts" DIR_SEP
 
 #define DIR_VERT_EXTENSION ".vs"
 #define DIR_FRAG_EXTENSION ".fs"
@@ -21,8 +22,11 @@ NAMESPACE {
   void LogCurrentDirectory();
 
   struct Asset {
-    Asset(function<void(void)> loader);
+    Asset(function<void(void)> load_func,
+	  function<void(void)> free_func);
     static Array<function<void(void)>> loaders;
+    static Array<function<void(void)>> freers;
     static void loadAll();
+    static void freeAll();
   };
 }

@@ -13,9 +13,12 @@ NAMESPACE {
   }
 
   Array<function<void(void)>> Asset::loaders;
+  Array<function<void(void)>> Asset::freers;
 
-  Asset::Asset(function<void(void)> loader) {
-    loaders.push_back(loader);
+  Asset::Asset(function<void(void)> load_func,
+	       function<void(void)> free_func) {
+    loaders.push_back(load_func);
+    freers.push_back(free_func);
   }
 
   void Asset::loadAll() {
@@ -23,6 +26,13 @@ NAMESPACE {
       loader();
     }
     Log::message("Finshed loading assets");
+  }
+
+  void Asset::freeAll() {
+    for (auto freer : freers) {
+      freer();
+    }
+    Log::message("Finshed freeing assets");
   }
 
 }

@@ -1,5 +1,5 @@
 CXX=g++-5
-CXXFLAGS= -Wall -std=c++1y -fno-rtti -rdynamic
+CXXFLAGS= -Wall -std=c++1y -fno-rtti
 INCLUDE = -Isrc/Standard -IThirdParty/include
 SOURCES=$(wildcard src/*.cpp) $(wildcard src/Standard/*.cpp)
 #OBJDIR = obj/
@@ -20,7 +20,10 @@ endif
 
 LIBS += -lGLEW -lglfw3 -lSOIL -lpthread
 
-all: $(SOURCES) $(EXECUTABLE)
+debug: CXXFLAGS += -rdynamic
+debug: $(SOURCES) $(EXECUTABLE)	
+
+all: debug
 
 depend:
 	@makedepend $(SOURCES)
@@ -76,17 +79,18 @@ src/Graphics.o: /usr/include/math.h src/Shader.hpp src/GL.hpp src/Matrix.hpp
 src/Graphics.o: src/Camera.hpp src/Quaternion.hpp src/Transform.hpp
 src/Graphics.o: src/Node.hpp src/Renderable.hpp src/VertexObjects.hpp
 src/Graphics.o: src/GUI.hpp src/Texture.hpp src/Input.hpp
-src/GUIBox.o: src/GUIBox.hpp src/GUI.hpp src/Renderable.hpp
-src/GUIBox.o: src/VertexObjects.hpp src/GL.hpp src/Shader.hpp src/Vector.hpp
-src/GUIBox.o: src/Math.hpp /usr/include/string.h /usr/include/features.h
-src/GUIBox.o: /usr/include/stdc-predef.h /usr/include/xlocale.h
-src/GUIBox.o: /usr/include/math.h src/Matrix.hpp src/Texture.hpp
 src/GUI.o: src/GUI.hpp src/Renderable.hpp src/VertexObjects.hpp src/GL.hpp
 src/GUI.o: src/Shader.hpp src/Vector.hpp src/Math.hpp /usr/include/string.h
 src/GUI.o: /usr/include/features.h /usr/include/stdc-predef.h
 src/GUI.o: /usr/include/xlocale.h /usr/include/math.h src/Matrix.hpp
 src/GUI.o: src/Texture.hpp src/BoundingObject.hpp src/BasicMesh.hpp
 src/GUI.o: src/Graphics.hpp src/Light.hpp
+src/GUIWidgets.o: src/GUIWidgets.hpp src/GUI.hpp src/Renderable.hpp
+src/GUIWidgets.o: src/VertexObjects.hpp src/GL.hpp src/Shader.hpp
+src/GUIWidgets.o: src/Vector.hpp src/Math.hpp /usr/include/string.h
+src/GUIWidgets.o: /usr/include/features.h /usr/include/stdc-predef.h
+src/GUIWidgets.o: /usr/include/xlocale.h /usr/include/math.h src/Matrix.hpp
+src/GUIWidgets.o: src/Texture.hpp
 src/Input.o: src/Input.hpp src/GL.hpp
 src/Light.o: src/Light.hpp src/Vector.hpp src/Math.hpp /usr/include/string.h
 src/Light.o: /usr/include/features.h /usr/include/stdc-predef.h
@@ -95,7 +99,7 @@ src/main.o: src/Graphics.hpp src/Light.hpp src/Vector.hpp src/Math.hpp
 src/main.o: /usr/include/string.h /usr/include/features.h
 src/main.o: /usr/include/stdc-predef.h /usr/include/xlocale.h
 src/main.o: /usr/include/math.h src/Shader.hpp src/GL.hpp src/Matrix.hpp
-src/main.o: src/GUIBox.hpp src/GUI.hpp src/Renderable.hpp
+src/main.o: src/GUIWidgets.hpp src/GUI.hpp src/Renderable.hpp
 src/main.o: src/VertexObjects.hpp src/Texture.hpp src/Input.hpp
 src/main.o: src/StaticMesh.hpp src/BasicMesh.hpp src/BoundingObject.hpp
 src/main.o: src/MeshLoader.hpp src/BonedMesh.hpp src/Quaternion.hpp
