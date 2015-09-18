@@ -1,8 +1,10 @@
 CXX=g++-5
-CXXFLAGS= -Wall -std=c++1y -fno-rtti
+EXPANDER=expander.py
+EXPANDER_EXT=poop
+CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti
 INCLUDE = -Isrc/Standard -IThirdParty/include
 SOURCES=$(wildcard src/*.cpp) $(wildcard src/Standard/*.cpp)
-#OBJDIR = obj/
+EXPANSIONS=$(SOURCES:.cpp=.$(EXPANDER_EXT))
 OBJECTS=$(SOURCES:.cpp=.o)
 OUTDIR = bin/
 EXECUTABLE= $(OUTDIR)peace
@@ -20,22 +22,31 @@ endif
 
 LIBS += -lGLEW -lglfw3 -lSOIL -lpthread
 
-debug: CXXFLAGS += -rdynamic
-debug: $(SOURCES) $(EXECUTABLE)	
+debug: CXXFLAGS += -rdynamic -ggdb
+debug: $(SOURCES) $(EXECUTABLE)
+
+release: CXXFLAGS += -O3
+release: $(SOURCES) $(EXECUTABLE)	
 
 all: debug
 
 depend:
 	@makedepend $(SOURCES)
 
-$(EXECUTABLE): $(OBJECTS) 
+$(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LIBDIR) $(LIBS) $(LIBS) $(OBJECTS) -o $@ $(LIBS) $(LIBS)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c -o $@ $<
+%.o: %.$(EXPANDER_EXT)
+	$(CXX) -x c++ $(CXXFLAGS) $(INCLUDE) -c -o $@ $<
+
+%.$(EXPANDER_EXT): %.cpp
+	$(EXPANDER) $< > $@
 
 clean:
 	@rm $(OBJECTS) $(EXECUTABLE)
+
+.SUFFIXES:
+.SECONDARY:
 # DO NOT DELETE
 
 src/Assets.o: /usr/include/unistd.h /usr/include/features.h
@@ -84,7 +95,7 @@ src/GUI.o: src/Shader.hpp src/Vector.hpp src/Math.hpp /usr/include/string.h
 src/GUI.o: /usr/include/features.h /usr/include/stdc-predef.h
 src/GUI.o: /usr/include/xlocale.h /usr/include/math.h src/Matrix.hpp
 src/GUI.o: src/Texture.hpp src/BoundingObject.hpp src/BasicMesh.hpp
-src/GUI.o: src/Graphics.hpp src/Light.hpp
+src/GUI.o: src/Graphics.hpp src/Light.hpp src/Assets.hpp
 src/GUIWidgets.o: src/GUIWidgets.hpp src/GUI.hpp src/Renderable.hpp
 src/GUIWidgets.o: src/VertexObjects.hpp src/GL.hpp src/Shader.hpp
 src/GUIWidgets.o: src/Vector.hpp src/Math.hpp /usr/include/string.h
@@ -104,7 +115,7 @@ src/main.o: src/VertexObjects.hpp src/Texture.hpp src/Input.hpp
 src/main.o: src/StaticMesh.hpp src/BasicMesh.hpp src/BoundingObject.hpp
 src/main.o: src/MeshLoader.hpp src/BonedMesh.hpp src/Quaternion.hpp
 src/main.o: src/Transform.hpp src/Node.hpp src/Camera.hpp src/Physics.hpp
-src/main.o: src/PhysicalObject.hpp src/Messageable.hpp
+src/main.o: src/PhysicalObject.hpp src/Messageable.hpp src/Assets.hpp
 src/MeshLoader.o: src/MeshLoader.hpp src/BonedMesh.hpp src/StaticMesh.hpp
 src/MeshLoader.o: src/Renderable.hpp src/VertexObjects.hpp src/GL.hpp
 src/MeshLoader.o: src/Shader.hpp src/Vector.hpp src/Math.hpp

@@ -6,17 +6,17 @@ NAMESPACE {
 
   //Node::Node(Node* node_parent) : parent(node_parent) {}
 
-  void Node::addChild(Node* child) {
-    children.push_back(child);
+  ArrayHandle Node::addChild(Node* child) {
+    return children.push_back(child);
   }
-
-  void Node::addRenderable(Renderable* renderable) {
-    /*if (renderables.size() == 0) {
-      bounding_obj = renderable->getBoundingObject();
-      physical_bounding_obj = renderable->getPhysicalBoundingObject();
-      primary_bounding_obj = renderable->getPrimaryBoundingObject();
-      }*/
-    renderables.push_back(renderable);
+  ArrayHandle Node::addRenderable(Renderable* renderable) {
+    return renderables.push_back(renderable);
+  }
+  void Node::removeChild(ArrayHandle h) {
+    children.removeAndReplace(h);
+  }
+  void Node::removeRenderable(ArrayHandle h) {
+    children.removeAndReplace(h);
   }
 
   BoundingObject Node::getBoundingObject() {

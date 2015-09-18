@@ -100,14 +100,18 @@ NAMESPACE {
   GUINode::GUINode(GUIFloatPos _float_pos, u8 _z_val)
     : float_pos(_float_pos), z_val(_z_val) {}
   
-  void GUINode::addChild(GUINode* child) {
-    children.push_back(child);
+  ArrayHandle GUINode::addChild(GUINode* child) {
+    return children.push_back(child);
   }
-  
-  void GUINode::addElem(GUIElem* elem) {
-    elems.push_back(elem);
+  ArrayHandle GUINode::addElem(GUIElem* elem) {
+    return elems.push_back(elem);
   }
-
+  void GUINode::removeChild(ArrayHandle h) {
+    children.removeAndReplace(h);
+  }
+  void GUINode::removeElem(ArrayHandle h) {
+    elems.removeAndReplace(h);
+  }
   /* |  0  1  2  3 |
      |  4  5  6  7 |
      |  8  9 10 11 |
@@ -155,7 +159,6 @@ NAMESPACE {
     for (GUINode* child : children) {
       child->render(c, transform);
     }
-    //Log::message(to_string(transform));
     Shader::UNI_MODEL.registerVal(transform);
     for (GUIElem* elem : elems) {
       elem->render(c);

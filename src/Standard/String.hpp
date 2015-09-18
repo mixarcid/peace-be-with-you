@@ -14,4 +14,9 @@ NAMESPACE {
     String vformat(const char* fmt, va_list ap);
     String format(const char* fmt, ...);
   }
+
+  template <typename T>
+    String to_string(T* p) {
+    return str::format("%p", p);
+  }
 }

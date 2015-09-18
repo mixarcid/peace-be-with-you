@@ -112,20 +112,21 @@ int main() {
 		   Vec2f(0,1)},
 	       &onion,
 	       0);
-    GUIBasicTextBox text(Vec2s(-200,0),
-			 "Q{+=}&TeStInG^%*()%!",
-			 100,
-			 0,
-			 Vec4f(1,0,0,1),
-			 GUITextProperties
-			 (GUI_TEXT_STYLE_BOLD_ITALIC,
-			  GUI_TEXT_ALIGN_RIGHT));
-    GUINode node2d(GUI_FLOAT_CENTER, 0);
-    node2d.addElem(&box);
-    GUINode node2d_3(GUI_FLOAT_CENTER, 0);
-    node2d_3.addElem(&text);
-    graphics.addGUINode(&node2d);
-    graphics.addGUINode(&node2d_3);
+    GUIBasicTextBox* text =
+      new GUIBasicTextBox(Vec2s(-200,0),
+			  "Peace Be With You",
+			  100,
+			  0,
+			  Vec4f(0.5,0.5,0,1),
+			  GUITextProperties
+			  (GUI_TEXT_STYLE_ITALIC,
+			   GUI_TEXT_ALIGN_RIGHT));
+    GUINode text_node(GUI_FLOAT_CENTER, 0);
+    ArrayHandle text_handle = text_node.addElem(text);
+    GUINode box_node(GUI_FLOAT_CENTER, 0);
+    box_node.addElem(&box);
+    graphics.addGUINode(&text_node);
+    graphics.addGUINode(&box_node);
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -152,6 +153,28 @@ int main() {
 	  
       });
 
+    Input::addCharCallback
+      ([&text,
+	&text_node,
+	&text_handle]
+       (GLFWwindow* win, u32 code) {
+	static String str;
+	str += (char) code;
+	//Log::message(str);
+	text_node.removeElem(text_handle);
+	delete text;
+	text = new GUIBasicTextBox
+	  (Vec2s(-200,0),
+	   str,
+	   50,
+	   0,
+	   Vec4f(1,0,1,1),
+	   GUITextProperties
+	   (GUI_TEXT_STYLE_BOLD,
+	    GUI_TEXT_ALIGN_RIGHT));
+	text_handle = text_node.addElem(text);
+      });
+
     Input::addKeyCallback
       ([&cam,
 	cam_speed,
@@ -163,13 +186,8 @@ int main() {
 	i32 mods) {
 
 	Mat3f coord = cam.getCoord();
-	//Log::message("\n" + to_string(coord));
 	Vec3f right = coord.col(0);
 	Vec3f dir = coord.col(1);
-	//Log::message("right: " + to_string(right));
-	//Log::message("dir: " + to_string(dir));
-	//PEACE_SWAP(right.data[2], right.data[1]);
-	//PEACE_SWAP(dir.data[2], dir.data[1]);
 	
 	switch(key) {
 	case GLFW_KEY_W:
@@ -215,13 +233,14 @@ int main() {
       start = end;
       gl::checkError();
     }
+    delete text;
   } catch(FatalError& e) {
     Log::error(e.msg +
 	       "\nStack trace for Exception: \n"
 	       + e.backtrace);
     
   }
-
+  
   Asset::freeAll();
   gl::terminate();
   Log::terminate();

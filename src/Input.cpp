@@ -2,15 +2,32 @@
 
 NAMESPACE {
 
-  InputManager::InputManager() {
-    flags = INPUT_NO_FLAGS;
-  }
-
+  struct InputManager {
+    
+    InputFlags flags;
+    HandledArray<function<void(GLFWwindow*, i32, i32, i32, i32)>>
+    key_callbacks;
+    HandledArray<function<void(GLFWwindow*, u32)>>
+    char_callbacks;
+    HandledArray<function<void(GLFWwindow*, f64, f64)>>
+    cursor_pos_callbacks;
+    HandledArray<function<void(GLFWwindow*, i32, i32)>>
+    resize_callbacks;
+    HandledArray<function<void(GLFWwindow*, i32, i32, i32)>>
+    mouse_button_callbacks;
+    
+    InputManager() {
+      flags = INPUT_NO_FLAGS;
+    }
+    
+  };
+  
   namespace Input {
 
     static GLFWwindow* window;
     static HashMap<String, InputManager> managers;
-    static InputManager* cur_manager = NULL;
+    static InputManager main_manager;
+    static InputManager* cur_manager;
 
     static InputManager* defineManager(String name) {
       InputManager man;
@@ -44,12 +61,20 @@ NAMESPACE {
 		 ->key_callbacks) {
 	    callback(win, key, code, action, mods);
 	  }
+	  for (auto callback : main_manager
+		 .key_callbacks) {
+	    callback(win, key, code, action, mods);
+	  }
 	});
     
       glfwSetWindowSizeCallback
 	(window,[](GLFWwindow* win, i32 w, i32 h) {
 	  for (auto callback : cur_manager
 		 ->resize_callbacks) {
+	    callback(win, w, h);
+	  }
+	  for (auto callback : main_manager
+		 .resize_callbacks) {
 	    callback(win, w, h);
 	  }
 	});
@@ -60,12 +85,20 @@ NAMESPACE {
 		 ->cursor_pos_callbacks) {
 	    callback(win, x, y);
 	  }
+	  for (auto callback : main_manager
+		 .cursor_pos_callbacks) {
+	    callback(win, x, y);
+	  }
 	});
 
       glfwSetCharCallback
 	(window,[](GLFWwindow* win, u32 code) {
 	  for (auto callback : cur_manager
 		 ->char_callbacks) {
+	    callback(win, code);
+	  }
+	  for (auto callback : main_manager
+		 .char_callbacks) {
 	    callback(win, code);
 	  }
 	});
@@ -79,6 +112,10 @@ NAMESPACE {
 		 ->mouse_button_callbacks) {
 	    callback(win, button, action, mods);
 	  }
+	  for (auto callback : main_manager
+		 .mouse_button_callbacks) {
+	    callback(win, button, action, mods);
+	  }
 	});
     }
 
@@ -90,91 +127,55 @@ NAMESPACE {
     ArrayHandle
     addKeyCallback(function<void(GLFWwindow*, i32,
 				 i32, i32, i32)> fun) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding callbacks");
-      return cur_manager->key_callbacks.push_back(fun);
+      return main_manager.key_callbacks.push_back(fun);
     }
     ArrayHandle
     addCharCallback(function<void(GLFWwindow*,
 				  u32)> fun) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding callbacks");
-      return cur_manager->char_callbacks.push_back(fun);
+      return main_manager.char_callbacks.push_back(fun);
     }
     ArrayHandle
     addCursorPosCallback(function<void(GLFWwindow*,
 				       f64, f64)> fun) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding callbacks");
-      return cur_manager->cursor_pos_callbacks.push_back(fun);
+      return main_manager.cursor_pos_callbacks.push_back(fun);
     }
     ArrayHandle
     addWindowResizeCallback(function<void(GLFWwindow*,
 					  i32, i32)> fun) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding callbacks");
-      return cur_manager->resize_callbacks.push_back(fun);
+      return main_manager.resize_callbacks.push_back(fun);
     }
     ArrayHandle
     addMouseButtonCallback(function<void(GLFWwindow*,
 					 i32, i32,
 					 i32)> fun) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding callbacks");
-      return cur_manager->mouse_button_callbacks.push_back(fun);
+      return main_manager.mouse_button_callbacks.push_back(fun);
     }
 
     void removeKeyCallback(ArrayHandle handle) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing callbacks");
-      cur_manager->key_callbacks.removeAndReplace(handle);
+      return main_manager.key_callbacks.removeAndReplace(handle);
     }
     void removeCharCallback(ArrayHandle handle) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing callbacks");
-      cur_manager->char_callbacks.removeAndReplace(handle);
+      return main_manager.char_callbacks.removeAndReplace(handle);
     }
     void removeCursorPosCallback(ArrayHandle handle) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing callbacks");
-      cur_manager->cursor_pos_callbacks
+      return main_manager.cursor_pos_callbacks
 	.removeAndReplace(handle);
     }
     void removeWindowResizeCallback(ArrayHandle handle) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing callbacks");
-      cur_manager->resize_callbacks.removeAndReplace(handle);
+      return main_manager.resize_callbacks.removeAndReplace(handle);
     }
     void removeMouseButtonCallback(ArrayHandle handle) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing callbacks");
-      cur_manager->mouse_button_callbacks
+      return main_manager.mouse_button_callbacks
 	.removeAndReplace(handle);
     }
 
     void addFlags(InputFlags flags) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before adding flags");
-      cur_manager->flags |= flags;
-      implimentFlags(flags);
+      main_manager.flags |= flags;
+      implimentFlags(main_manager.flags);
     }
     void removeFlags(InputFlags flags) {
-      debugAssert(cur_manager != NULL,
-		  "You must specify the current "
-		  "InputManager before removing flags");
-      cur_manager->flags &= ~flags;
-      implimentFlags(cur_manager->flags);
+      main_manager.flags &= ~flags;
+      implimentFlags(main_manager.flags);
     }
 
     ArrayHandle
@@ -242,12 +243,19 @@ NAMESPACE {
 
     void addFlags(String name,
 		  InputFlags flags) {
-      defineManager(name)->flags |= flags;
+      InputManager* man = defineManager(name);
+      man->flags |= flags;
+      if (man == cur_manager) {
+	implimentFlags(man->flags);
+      }
     }
     void removeFlags(String name,
 		     InputFlags flags) {
       InputManager* man = defineManager(name);
       man->flags &= ~flags;
+      if (man == cur_manager) {
+	implimentFlags(man->flags);
+      }
     }
 
     void getWindowSize(i32* width, i32* height) {

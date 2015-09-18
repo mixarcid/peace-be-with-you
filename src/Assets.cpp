@@ -25,14 +25,14 @@ NAMESPACE {
     for (auto loader : loaders) {
       loader();
     }
-    Log::message("Finshed loading assets");
+    Log::message("Finished loading assets");
   }
 
   void Asset::freeAll() {
     for (auto freer : freers) {
       freer();
     }
-    Log::message("Finshed freeing assets");
+    Log::message("Finished freeing assets");
   }
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GL.hpp"
-#include "Containers.hpp"
+#include "HandledArray.hpp"
 #include "Function.hpp"
 
 NAMESPACE {
@@ -9,21 +9,6 @@ NAMESPACE {
   PEACE_DEFINE_BITFLAGS(InputFlags, 8,
 			INPUT_NO_FLAGS = 0x00,
 			INPUT_CURSOR_DISABLED = 0x01);
-
-  struct InputManager {
-    InputFlags flags;
-    HandledArray<function<void(GLFWwindow*, i32, i32, i32, i32)>>
-    key_callbacks;
-    HandledArray<function<void(GLFWwindow*, u32)>>
-    char_callbacks;
-    HandledArray<function<void(GLFWwindow*, f64, f64)>>
-    cursor_pos_callbacks;
-    HandledArray<function<void(GLFWwindow*, i32, i32)>>
-    resize_callbacks;
-    HandledArray<function<void(GLFWwindow*, i32, i32, i32)>>
-    mouse_button_callbacks;
-    InputManager();
-  };
 
   namespace Input {
     

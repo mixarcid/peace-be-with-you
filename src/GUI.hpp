@@ -2,6 +2,7 @@
 
 #include "Renderable.hpp"
 #include "Texture.hpp"
+#include "HandledArray.hpp"
 
 NAMESPACE {
 
@@ -55,14 +56,16 @@ NAMESPACE {
 
   struct GUINode {
     
-    Array<GUINode*> children;
-    Array<GUIElem*> elems;
+    HandledArray<GUINode*> children;
+    HandledArray<GUIElem*> elems;
     GUIFloatPos float_pos;
     u8 z_val;
 
     GUINode(GUIFloatPos _float_pos, u8 _z_val);
-    void addChild(GUINode* child);
-    void addElem(GUIElem* elem);
+    ArrayHandle addChild(GUINode* child);
+    ArrayHandle addElem(GUIElem* elem);
+    void removeChild(ArrayHandle h);
+    void removeElem(ArrayHandle h);
     void render(RenderContext c, Mat4f model);
   };
 
