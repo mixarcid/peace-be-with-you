@@ -2,6 +2,7 @@
 
 #include "Light.hpp"
 #include "Shader.hpp"
+#include "HandledArray.hpp"
 
 NAMESPACE {
 
@@ -12,16 +13,19 @@ NAMESPACE {
   struct Graphics {
 
     f32 ambient;
-    Array<Node*> nodes;
-    Array<GUINode*> nodes_2d;
-    Array<DirLight*> dir_lights;
+    HandledArray<Node*> nodes;
+    HandledArray<GUINode*> nodes_2d;
+    HandledArray<DirLight*> dir_lights;
     Camera* cam;
     Shader shade;
 
     Graphics(String shader_name);
-    void addNode(Node* node);
-    void addGUINode(GUINode* node);
-    void addDirLight(DirLight* light);
+    ArrayHandle addNode(Node* node);
+    ArrayHandle addGUINode(GUINode* node);
+    ArrayHandle addDirLight(DirLight* light);
+    void removeNode(ArrayHandle h);
+    void removeGUINode(ArrayHandle h);
+    void removeDirLight(ArrayHandle h);
     void setAmbient(f32 ambient_light);
     void setCamera(Camera* camera);
     //void setShader(String name);

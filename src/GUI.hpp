@@ -40,6 +40,8 @@ NAMESPACE {
     virtual BoundingObject getPhysicalBoundingObject();
     virtual BoundingObject getPrimaryBoundingObject();
     virtual void render(RenderContext c);
+
+    static bool compare(GUIElem* a, GUIElem* b);
   };
 
   enum GUIFloatPos {
@@ -67,6 +69,8 @@ NAMESPACE {
     void removeChild(ArrayHandle h);
     void removeElem(ArrayHandle h);
     void render(RenderContext c, Mat4f model);
+
+    static bool compare(GUINode* a, GUINode* b);
   };
 
 }

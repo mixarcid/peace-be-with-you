@@ -97,11 +97,16 @@ NAMESPACE {
     RenderableReg::render(c);
   }
 
+  bool GUIElem::compare(GUIElem* a, GUIElem* b) {
+    return a->z_val < b->z_val;
+  }
+
   GUINode::GUINode(GUIFloatPos _float_pos, u8 _z_val)
     : float_pos(_float_pos), z_val(_z_val) {}
   
   ArrayHandle GUINode::addChild(GUINode* child) {
-    return children.push_back(child);
+    return children.insertSorted(child,
+				 GUINode::compare);
   }
   ArrayHandle GUINode::addElem(GUIElem* elem) {
     return elems.push_back(elem);
@@ -163,6 +168,10 @@ NAMESPACE {
     for (GUIElem* elem : elems) {
       elem->render(c);
     }
+  }
+
+  bool GUINode::compare(GUINode* a, GUINode* b) {
+    return a->z_val < b->z_val;
   }
 
 }

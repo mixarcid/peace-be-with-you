@@ -10,6 +10,9 @@
 #include "Macros.hpp"
 #include "Types.hpp"
 #include "String.hpp"
+#ifndef NDEBUG
+#include "Log.hpp"
+#endif
 
 NAMESPACE {
   
@@ -103,7 +106,14 @@ NAMESPACE {
     
     inline FatalError(const String message)
       : msg(message),
-	backtrace(getStackTrace()) {}
+	backtrace(getStackTrace()) {
+#ifndef NDEBUG
+      //Log::error(msg);
+      //Log::terminate();
+      printf("FatalError: %s\n", msg.c_str());
+      abort();
+#endif
+    }
     virtual const char* what() const throw ();
   };
   

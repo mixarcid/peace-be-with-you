@@ -22,20 +22,31 @@ NAMESPACE {
     window_size.data[1] = h;
   }
 
-  void Graphics::addNode(Node* node) {
-    nodes.push_back(node);
+  ArrayHandle Graphics::addNode(Node* node) {
+    return nodes.push_back(node);
   }
 
-  void Graphics::addGUINode(GUINode* node) {
-    nodes_2d.push_back(node);
+  ArrayHandle Graphics::addGUINode(GUINode* node) {
+    return nodes_2d.insertSorted(node,
+				 GUINode::compare);
   }
 
-  void Graphics::addDirLight(DirLight* light) {
+  ArrayHandle Graphics::addDirLight(DirLight* light) {
     debugAssert(dir_lights.size() <
 		Shader::MAX_DIR_LIGHTS,
 		"Trying to add too many directional "
 		"lights to scene");
-    dir_lights.push_back(light);
+    return dir_lights.push_back(light);
+  }
+
+  void Graphics::removeNode(ArrayHandle h) {
+    nodes.removeAndReplace(h);
+  }
+  void Graphics::removeGUINode(ArrayHandle h) {
+    nodes_2d.removeAndReplace(h);
+  }
+  void Graphics::removeDirLight(ArrayHandle h) {
+    dir_lights.removeAndReplace(h);
   }
 
   void Graphics::setAmbient(f32 ambient_light) {

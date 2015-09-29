@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Macros.hpp"
+#include "Containers.hpp"
 
 NAMESPACE {
 
@@ -61,6 +61,29 @@ NAMESPACE {
       elem.elem = inserted;
       elem.handle = ret;
       arr.push_back(elem);
+      return ret;
+    }
+
+    //crude implimentation, but it ain't bad for small arrays
+    ArrayHandle insertSorted(T item,
+			     function<bool(T,T)> cmp) {
+      Iterator it(arr.begin());
+      ArrayHandle ret;
+      u32 index;
+      //HandledArrayElem<T> elem;
+      //elem.elem = item;
+      for (; it != end(); ++it, ++index) {
+	if (cmp(*it, item)) {
+	  ret = new u32(index);
+	  //elem.handle = ret;
+	  //arr.insert(it, elem);
+	  break;
+	}
+      }
+      while (it != end()) {
+	++*((*it.it).handle);
+	++it;
+      }
       return ret;
     }
     

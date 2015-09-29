@@ -37,7 +37,7 @@ NAMESPACE {
     
     GUIBasicTextBox(Vec2s coord,
 		    String contents,
-		    u8 font_size,
+		    u16 font_size,
 		    u8 z_val,
 		    Vec4f _color = Vec4f(0,0,0,1),
 		    GUITextProperties properties

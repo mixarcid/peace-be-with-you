@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+$^I = "~";
+my $OBJ_EXTENSION = "\.o";
+my $EXPANSION_EXTENSION = "\.ii";
+my $should_edit = 0;
+
+while(<>) {
+    if (!$should_edit && index($_ ,"# DO NOT DELETE") != -1) {
+	$should_edit = 1;
+    } elsif ($should_edit) {
+	$_ =~ s/\.o/\.ii/g;
+    }
+    print;
+}

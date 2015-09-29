@@ -171,7 +171,7 @@ int main() {
 	   Vec4f(1,0,1,1),
 	   GUITextProperties
 	   (GUI_TEXT_STYLE_BOLD,
-	    GUI_TEXT_ALIGN_RIGHT));
+	    GUI_TEXT_ALIGN_CENTER));
 	text_handle = text_node.addElem(text);
       });
 
