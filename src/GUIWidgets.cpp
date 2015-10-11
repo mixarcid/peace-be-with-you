@@ -79,7 +79,7 @@ NAMESPACE {
 	Vec2f tex_coord
 	  ((f32)(c%GUI::FONT_TEXTURE_CHARS_PER_LINE)
 	   /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE,
-	   GUI::FONT_TEXTURE_CHAR_SIZE.y() + 
+	   GUI::FONT_TEXTURE_CHAR_SIZE.cy() + 
 	   (f32)(c/GUI::FONT_TEXTURE_CHARS_PER_LINE)
 	   /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE);
 	GUIElem::data.push_back
@@ -92,19 +92,19 @@ NAMESPACE {
 	   (Vec2s(cur_x, upper_y),
 	    Vec2f(tex_coord.x(),
 		  tex_coord.y()
-		  -GUI::FONT_TEXTURE_CHAR_SIZE.y())));
+		  -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
 	GUIElem::data.push_back
 	  (GUIElemData
 	   (Vec2s(cur_x+font_size, upper_y),
 	    Vec2f(tex_coord.x()
-		  +GUI::FONT_TEXTURE_CHAR_SIZE.x(),
+		  +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
 		  tex_coord.y()
-		  -GUI::FONT_TEXTURE_CHAR_SIZE.y())));
+		  -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
 	GUIElem::data.push_back
 	  (GUIElemData
 	   (Vec2s(cur_x+font_size, lower_y),
 	    Vec2f(tex_coord.x()
-		  +GUI::FONT_TEXTURE_CHAR_SIZE.x(),
+		  +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
 		  tex_coord.y())));
 	GUIElem::elements.push_back(cur_index);
 	GUIElem::elements.push_back(cur_index+1);

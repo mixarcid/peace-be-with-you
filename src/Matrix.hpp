@@ -26,7 +26,7 @@ NAMESPACE {
     inline Vec<T,N> row(const u8 index) const {
       Vec<T,N> ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = cols[i][index];
+	ret.data[i] = cols[i].data[index];
       }
       return ret;
     }
@@ -35,8 +35,8 @@ NAMESPACE {
       return cols[index];
     }
 
-    inline T operator()(const u8 row,
-		      const u8 col) const {
+    inline T& operator()(const u8 row,
+		      const u8 col) {
       debugAssert(row < N && col < N,
 		  "Matrix index out of bounds");
       return cols[col][row];
@@ -112,7 +112,7 @@ NAMESPACE {
       Mat ret;
       for (u8 row=0; row<N; ++row) {
         for (u8 col=0; col<N; ++col) {
-	  ret.cols[col].data[row] =
+	  ret(row,col) =
 	    Vec<T,N>::dot(a.row(row),b.col(col));
 	}
       }

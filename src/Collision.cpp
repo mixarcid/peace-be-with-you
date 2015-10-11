@@ -36,6 +36,11 @@ NAMESPACE {
     Vec3f correction = m.normal*cf;
     a->translateRel(-correction * a->mass_data.inv_mass);
     b->translateRel(correction * b->mass_data.inv_mass);
+
+    CollisionMessage a_msg(a);
+    CollisionMessage b_msg(b);
+    a->message(&b_msg);
+    b->message(&a_msg);
     
   }
 

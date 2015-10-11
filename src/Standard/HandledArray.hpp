@@ -67,24 +67,34 @@ NAMESPACE {
     //crude implimentation, but it ain't bad for small arrays
     ArrayHandle insertSorted(T item,
 			     function<bool(T,T)> cmp) {
-      Iterator it(arr.begin());
-      ArrayHandle ret;
-      u32 index;
-      //HandledArrayElem<T> elem;
-      //elem.elem = item;
-      for (; it != end(); ++it, ++index) {
-	if (cmp(*it, item)) {
-	  ret = new u32(index);
-	  //elem.handle = ret;
-	  //arr.insert(it, elem);
-	  break;
+      HandledArrayElem<T> elem;
+      elem.elem = item;
+      
+      if (arr.size() > 0) {
+	
+	ArrayHandle ret;
+	Iterator it(arr.begin());
+	u32 index;
+	
+	for (; it != end(); ++it, ++index) {
+	  if (cmp(*it, item)) {
+	    ret = new u32(index);
+	    elem.handle = ret;
+	    arr.insert(it.it, elem);
+	    break;
+	  }
 	}
+	while (it != end()) {
+	  ++*((*it.it).handle);
+	  ++it;
+	}
+	return ret;
+	
+      } else {
+	arr.push_back(elem);
+	return new u32(0);
       }
-      while (it != end()) {
-	++*((*it.it).handle);
-	++it;
-      }
-      return ret;
+      
     }
     
     inline void removeAndReplace(ArrayHandle h) {

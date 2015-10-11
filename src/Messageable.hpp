@@ -5,10 +5,10 @@
 
 NAMESPACE {
 
-  struct Message {};
+  struct Message : BaseRTTI {};
 
-  struct Messageable {
-    virtual void message(Message m) {}
+  struct Messageable : BaseRTTI {
+    virtual void message(Message* m) {}
   };
   
 }

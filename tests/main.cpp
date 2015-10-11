@@ -4,20 +4,25 @@
 
 #define st(x) #x
 
+NAMESPACE {
+
+  struct A : BaseRTTI {
+    A() {
+      $rttiConstruct("A");
+    }
+  };
+  $registerRttiStruct();
+
+  struct B : A {
+    B() {
+      $rttiConstruct("B");
+    }
+  };
+  $registerRttiStruct();
+
+}
+
 using namespace peace;
-
-
-RTTI_STRUCT(A) : BaseRTTI {
-  A() {
-    RTTI_CONSTRUCTOR(A)
-  }
-};
-
-RTTI_STRUCT(B) : A {
-  B() {
-    RTTI_CONSTRUCTOR(B)
-  }
-};
 
 i32 main() {
   printf("Testing vector libraries...\n");
@@ -53,9 +58,9 @@ i32 main() {
 
   A a;
   B b;
-  printf("a is A: %d\n", a.type_id == TYPE_ID(A));
-  printf("b is B: %d\n", b.type_id == TYPE_ID(B));
-  printf("a is b: %d\n", a.type_id == b.type_id);
+  printf("a is A: %d\n", typeId(&a) == typeId<A>());
+  printf("b is B: %d\n", typeId(&b) == typeId<B>());
+  printf("a is b: %d\n", typeId(&a) == typeId(&b));
   
   printf("\nTests complete\n");
   return 0;

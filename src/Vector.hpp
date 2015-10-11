@@ -16,7 +16,7 @@ NAMESPACE {
     inline T norm() const {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {
-	ret += sqr((*this)[i]);
+	ret += sqr((*this).data[i]);
       }
       return sqrt(ret);
     }
@@ -29,7 +29,7 @@ NAMESPACE {
       *this = (*this).normalized();
     }
 
-    inline T operator[](const u8 index) const {
+    inline T& operator[](const u8 index) {
       debugAssert(index < N,
 		  "Vec index must be less than %u", N);
       return data[index];
@@ -85,7 +85,7 @@ NAMESPACE {
     static inline Vec mul(const Vec a, const T b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = a[i]*b;
+	ret.data[i] = a.data[i]*b;
       }
       return ret;
     }
@@ -93,7 +93,7 @@ NAMESPACE {
     static inline Vec div(const Vec a, const T b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = a[i]/b;
+	ret.data[i] = a.data[i]/b;
       }
       return ret;
     }
@@ -101,7 +101,7 @@ NAMESPACE {
     static inline Vec add(const Vec a, const Vec b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = a[i] + b[i];
+	ret.data[i] = a.data[i] + b.data[i];
       }
       return ret;
     }
@@ -109,7 +109,7 @@ NAMESPACE {
     static inline Vec sub(const Vec a, const Vec b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = a[i] - b[i];
+	ret.data[i] = a.data[i] - b.data[i];
       }
       return ret;
     }
@@ -117,7 +117,7 @@ NAMESPACE {
     static inline Vec neg(const Vec a) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
-	ret.data[i] = -a[i];
+	ret.data[i] = -a.data[i];
       }
       return ret;
     }
@@ -125,7 +125,7 @@ NAMESPACE {
     static inline T dot(const Vec a, const Vec b) {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {
-	ret += a[i]*b[i];
+	ret += a.data[i]*b.data[i];
       }
       return ret;
     }
@@ -175,11 +175,20 @@ NAMESPACE {
       Vec<T,2>::data[1] = y;
     }
 
-    inline T x() const {
+    inline T& x() {
       return Vec<T,2>::data[0];
     }
     
-    inline T y() const {
+    inline T& y() {
+      return Vec<T,2>::data[1];
+    }
+
+    //smae as above, but for const Vecs
+    inline T cx() const {
+      return Vec<T,2>::data[0];
+    }
+    
+    inline T cy() const {
       return Vec<T,2>::data[1];
     }
     
@@ -202,27 +211,51 @@ NAMESPACE {
       Vec<T,3>::data[2] = z;
     }
 
-    inline T x() const {
+    inline T& x() {
       return Vec<T,3>::data[0];
     }
     
-    inline T y() const {
+    inline T& y() {
       return Vec<T,3>::data[1];
     }
     
-    inline T z() const {
+    inline T& z() {
       return Vec<T,3>::data[2];
     }
 
-    inline T r() const {
+    inline T& r() {
       return Vec<T,3>::data[0];
     }
     
-    inline T g() const {
+    inline T& g() {
       return Vec<T,3>::data[1];
     }
     
-    inline T b() const {
+    inline T& b() {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T cx() const {
+      return Vec<T,3>::data[0];
+    }
+    
+    inline T cy() const {
+      return Vec<T,3>::data[1];
+    }
+    
+    inline T cz() const {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T cr() const {
+      return Vec<T,3>::data[0];
+    }
+    
+    inline T cg() const {
+      return Vec<T,3>::data[1];
+    }
+    
+    inline T cb() const {
       return Vec<T,3>::data[2];
     }
 
@@ -252,35 +285,67 @@ NAMESPACE {
       Vec<T,4>::data[3] = w;
     }
 
-    inline T x() const {
+    inline T& x() {
       return Vec<T,4>::data[0];
     }
     
-    inline T y() const {
+    inline T& y() {
       return Vec<T,4>::data[1];
     }
     
-    inline T z() const {
+    inline T& z() {
       return Vec<T,4>::data[2];
     }
 
-    inline T w() const {
+    inline T& w() {
       return Vec<T,4>::data[3];
     }
 
-    inline T r() const {
+    inline T& r() {
       return Vec<T,4>::data[0];
     }
     
-    inline T g() const {
+    inline T& g() {
       return Vec<T,4>::data[1];
     }
     
-    inline T b() const {
+    inline T& b() {
       return Vec<T,4>::data[2];
     }
 
-    inline T a() const {
+    inline T& a() {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T cx() const {
+      return Vec<T,4>::data[0];
+    }
+    
+    inline T cy() const {
+      return Vec<T,4>::data[1];
+    }
+    
+    inline T cz() const {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T cw() const {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T cr() const {
+      return Vec<T,4>::data[0];
+    }
+    
+    inline T cg() const {
+      return Vec<T,4>::data[1];
+    }
+    
+    inline T cb() const {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T ca() const {
       return Vec<T,4>::data[3];
     }
     

@@ -1,16 +1,20 @@
 #pragma once
 
 #include "Macros.hpp"
-//#include <typeinfo>
+#include "Types.hpp"
+#include "RTTI.py"
 
-#define TYPE_ID(classname) __type_id_##classname
 
-#define RTTI_STRUCT(classname)			\
-  const TypeId TYPE_ID(classname) = __COUNTER__;	\
-  struct classname
-#define RTTI_CONSTRUCTOR(classname)		\
-  BaseRTTI::type_id = TYPE_ID(classname);
-
+/*
+  We can create an rtti class using:
+  struct RTTI_class : BaseRTTI {
+     //though it should not extend BaseRTTI if it already inherits it somehow
+     RTTI_class() {
+        $rttiConstruct("RTTI_class");
+     }
+  };
+  $registerRttiStruct();
+ */
 
 NAMESPACE {
 
@@ -19,5 +23,14 @@ NAMESPACE {
   struct BaseRTTI {
     TypeId type_id;
   };
+
+  inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
+  }
+
+  template <typename T>
+    inline TypeId typeId() {
+    return 0;
+  }
   
 }

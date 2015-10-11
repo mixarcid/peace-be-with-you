@@ -1,14 +1,14 @@
-#include <Dialogue.hpp>
+/*#include <Dialogue.hpp>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
+#include <string.h>*/
 
-static int Person_type_tag = 0;
+//static int Person_type_tag = 0;
 
 /* This might not be necessary, or it might not be enough. Don't leave
    these values unallocated: each needs to be filled with a real person. */
 
-static s7_pointer make_Person(s7_scheme* sc, s7_pointer args, Person* person) {
+/*static s7_pointer make_Person(s7_scheme* sc, s7_pointer args, Person* person) {
   Person* pip; // probs don't need this w/ above Person ponter...
   pip = (Person*)malloc(sizeof(Person));
   // CREATE ALL MEMBERS!
@@ -57,10 +57,10 @@ static s7_pointer temparament(s7_scheme* sc, s7_pointer args) {
   Person* pip;
   pip = (Person*)s7_object_value(s7_car(args));
   // do I want (if (< courage 10)) or (if (temparsment[1] < 10))? (Obv not in that syntax).
-  // s7_pointer tip;
+  // s7_pointer tip;*/
   
-  return(/* make a list with s7_make_real(sc, pip->Temparament) */);
-}
+//return (/* make a list with s7_make_real(sc, pip->Temparament) */);
+/*}
 
 // SET functions for Person struct IN C
 
@@ -77,3 +77,4 @@ static s7_pointer set_flags(s7_scheme* sc, s7_pointer args) {
   pip->flags = s7_real(s7_cadr(args));
   return(s7_cadr(args));
 }
+*/
