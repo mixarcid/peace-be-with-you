@@ -14,13 +14,16 @@ NAMESPACE {
 		     ShaderUniform tex_uniform,
 		     u32 index) {
     i32 width, height;
-    const char* full_name = (DIR_TEXTURES + filename
-			     + DIR_TEXTURE_EXTENSION).c_str();
+    String full_name_str = DIR_TEXTURES + filename
+      + DIR_TEXTURE_EXTENSION;
+    const char* full_name = full_name_str.c_str();
+
+    use();
+    
     unsigned char* image =
       SOIL_load_image(full_name, &width, &height,
 		      0, SOIL_LOAD_RGBA);
 
-    //LogCurrentDirectory();
     fatalAssert(image != NULL,
 	       "Unable to load image %s", full_name);
     PEACE_GL_CHECK_ERROR;

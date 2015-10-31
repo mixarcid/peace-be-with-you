@@ -21,6 +21,7 @@ NAMESPACE {
     void registerVars(Array<ShaderVar> vars,
 		      u32 index = 0);
     ~VAO();
+    //VAO operator=(const VAO b);
     
   };
 

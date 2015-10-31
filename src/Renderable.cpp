@@ -13,9 +13,10 @@ NAMESPACE {
     Shader::setFlags(Renderable::shader_flags);
     vao.init();
     vao.use();
-    vbo.init();
     ebo.init();
+    vbo.init();
   }
+  
   void RenderableReg::render(RenderContext c) {
     vao.use();
 #ifdef PEACE_GL_USE_POINTS

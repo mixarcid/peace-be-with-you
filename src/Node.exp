@@ -37884,7 +37884,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -37987,7 +37987,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }
@@ -38255,7 +38255,7 @@ namespace peace {
 
     inline T& operator()(const u8 row,
         const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                  ;
       return cols[col][row];
     }
@@ -38662,14 +38662,14 @@ namespace peace {
     }
 
     static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                     ;
       return a*(1-h) + b*h;
     }
 
     static inline Quaternion slerp(Quaternion a, Quaternion b, T h) {
 
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion slerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion slerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                      ;
       T cos_half_angle = a.x()*b.x() + a.y()*b.y() + a.z()*b.z() + a.w()*b.w();
 
@@ -45357,6 +45357,7 @@ namespace peace {
         u32 index = 0);
     ~VAO();
 
+
   };
 
   struct VBO {
@@ -45470,7 +45471,7 @@ namespace peace {
 
     template <typename T>
     void registerVal(T val) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 61); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(61)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      sizeof(T),
@@ -45478,12 +45479,12 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 69); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(69)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 74); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(74)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      num_elems*sizeof(T),
@@ -45491,7 +45492,7 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 82); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(82)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
@@ -45552,6 +45553,8 @@ namespace peace {
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
 
+    const static Vec4f DEFAULT_COLOR;
+
     static void setFlags(ShaderFlags flags);
   };
 
@@ -45590,6 +45593,7 @@ namespace peace {
 
     using Renderable::Renderable;
     void init();
+    void updateBuffers();
     virtual void render(RenderContext c);
 
   };
@@ -45620,10 +45624,13 @@ namespace peace {
         Array<HandledArrayElem<T>>::iterator _it)
  : it(_it) {}
       void operator++() {
- it++;
+ ++it;
       }
       T operator*() const {
  return (*it).elem;
+      }
+      bool operator==(Iterator b) const {
+ return it == b.it;
       }
       bool operator!=(Iterator b) const {
  return it != b.it;
@@ -45634,6 +45641,7 @@ namespace peace {
 
     inline ~HandledArray() {
       for (HandledArrayElem<T> elem : arr) {
+
  delete elem.handle;
       }
     }
@@ -45662,8 +45670,7 @@ namespace peace {
       arr.push_back(elem);
       return ret;
     }
-
-
+# 78 "src/Standard/HandledArray.hpp"
     ArrayHandle insertSorted(T item,
         function<bool(T,T)> cmp) {
       HandledArrayElem<T> elem;
@@ -45671,33 +45678,37 @@ namespace peace {
 
       if (arr.size() > 0) {
 
- ArrayHandle ret;
  Iterator it(arr.begin());
  u32 index;
 
  for (; it != end(); ++it, ++index) {
    if (cmp(*it, item)) {
-     ret = new u32(index);
-     elem.handle = ret;
-     arr.insert(it.it, elem);
+     elem.handle = new u32(index);
+     it = arr.insert(it.it, elem);
      break;
    }
  }
- while (it != end()) {
-   ++*((*it.it).handle);
-   ++it;
+
+ if (it == end()) {
+   elem.handle = new u32(arr.size());
+   arr.push_back(elem);
+ } else {
+
+   while (it != end()) {
+     ++(*((*it.it).handle));
+     ++it;
+   }
  }
- return ret;
 
       } else {
+ elem.handle = new u32(0);
  arr.push_back(elem);
- return new u32(0);
       }
-
+      return elem.handle;
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
                               ;
       HandledArrayElem<T> back = arr.back();
@@ -45842,7 +45853,7 @@ namespace peace {
   }
 
   BoundingObject Node::getBoundingObject() {
-    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                              ;
     BoundingObject obj = renderables[0]->getBoundingObject();
     obj.transform(this);
@@ -45850,7 +45861,7 @@ namespace peace {
   }
 
   BoundingObject Node::getPhysicalBoundingObject() {
-    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                              ;
     BoundingObject obj = renderables[0]->getPhysicalBoundingObject();
 
@@ -45860,7 +45871,7 @@ namespace peace {
   }
 
   BoundingObject Node::getPrimaryBoundingObject() {
-    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(renderables.size() > 0)) { Log::__assert_print("Why haven't you attached a renderable to the node?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                              ;
     BoundingObject obj = renderables[0]->getPrimaryBoundingObject();
     obj.transform(this);

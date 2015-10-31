@@ -37,9 +37,9 @@ NAMESPACE {
       case GL_INVALID_FRAMEBUFFER_OPERATION:		\
 	error="INVALID_FRAMEBUFFER_OPERATION";  break;	\
       }							\
-      Log::error(("GL_" + error +			\
-		  " at " __FILE__ ":%u").c_str(),	\
-		 __LINE__);				\
+      throw FatalError("GL_" + error +			\
+		       " at " __FILE__ ":"		\
+		       + to_string(__LINE__));		\
       err=glGetError();					\
     }							\
   } while(0)

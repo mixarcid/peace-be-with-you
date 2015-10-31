@@ -42963,6 +42963,7 @@ namespace peace {
         u32 index = 0);
     ~VAO();
 
+
   };
 
   struct VBO {
@@ -44566,7 +44567,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -44669,7 +44670,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }
@@ -44937,7 +44938,7 @@ namespace peace {
 
     inline T& operator()(const u8 row,
         const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                  ;
       return cols[col][row];
     }
@@ -45211,7 +45212,7 @@ namespace peace {
 
     template <typename T>
     void registerVal(T val) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 61); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(61)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      sizeof(T),
@@ -45219,12 +45220,12 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 69); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(69)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 74); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(74)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      num_elems*sizeof(T),
@@ -45232,7 +45233,7 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 82); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(82)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
@@ -45293,6 +45294,8 @@ namespace peace {
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
 
+    const static Vec4f DEFAULT_COLOR;
+
     static void setFlags(ShaderFlags flags);
   };
 
@@ -45331,6 +45334,7 @@ namespace peace {
 
     using Renderable::Renderable;
     void init();
+    void updateBuffers();
     virtual void render(RenderContext c);
 
   };
@@ -45388,10 +45392,13 @@ namespace peace {
         Array<HandledArrayElem<T>>::iterator _it)
  : it(_it) {}
       void operator++() {
- it++;
+ ++it;
       }
       T operator*() const {
  return (*it).elem;
+      }
+      bool operator==(Iterator b) const {
+ return it == b.it;
       }
       bool operator!=(Iterator b) const {
  return it != b.it;
@@ -45402,6 +45409,7 @@ namespace peace {
 
     inline ~HandledArray() {
       for (HandledArrayElem<T> elem : arr) {
+
  delete elem.handle;
       }
     }
@@ -45430,8 +45438,7 @@ namespace peace {
       arr.push_back(elem);
       return ret;
     }
-
-
+# 78 "src/Standard/HandledArray.hpp"
     ArrayHandle insertSorted(T item,
         function<bool(T,T)> cmp) {
       HandledArrayElem<T> elem;
@@ -45439,33 +45446,37 @@ namespace peace {
 
       if (arr.size() > 0) {
 
- ArrayHandle ret;
  Iterator it(arr.begin());
  u32 index;
 
  for (; it != end(); ++it, ++index) {
    if (cmp(*it, item)) {
-     ret = new u32(index);
-     elem.handle = ret;
-     arr.insert(it.it, elem);
+     elem.handle = new u32(index);
+     it = arr.insert(it.it, elem);
      break;
    }
  }
- while (it != end()) {
-   ++*((*it.it).handle);
-   ++it;
+
+ if (it == end()) {
+   elem.handle = new u32(arr.size());
+   arr.push_back(elem);
+ } else {
+
+   while (it != end()) {
+     ++(*((*it.it).handle));
+     ++it;
+   }
  }
- return ret;
 
       } else {
+ elem.handle = new u32(0);
  arr.push_back(elem);
- return new u32(0);
       }
-
+      return elem.handle;
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
                               ;
       HandledArrayElem<T> back = arr.back();
@@ -45510,7 +45521,10 @@ namespace peace {
      Array<u32> _elems,
      Texture* _tex,
      u8 _z_val);
+    GUIElem() : RenderableReg(SHADER_2D) {}
+
     void init();
+    void updateBuffers();
     virtual BoundingObject getBoundingObject();
     virtual BoundingObject getPhysicalBoundingObject();
     virtual BoundingObject getPrimaryBoundingObject();
@@ -45553,10 +45567,24 @@ namespace peace {
 
 namespace peace {
 
+  struct GUIBasicBox : GUIElem {
+
+    void init(Vec2s coord,
+       Vec2s size,
+
+       Array<Vec2f> tex_coords,
+       Texture* tex,
+       u8 z_val);
+    void update(Vec2s coord,
+  Vec2s size,
+  Array<Vec2f> tex_coords,
+  Texture* tex,
+  u8 z_val);
+  };
+
   struct GUIBox : GUIElem {
     GUIBox(Vec2s coord,
     Vec2s size,
-
     Array<Vec2f> tex_coords,
     Texture* tex,
     u8 z_val);
@@ -45582,24 +45610,81 @@ namespace peace {
 
   struct GUIBasicTextBox : GUIElem {
 
+    GUITextProperties properties;
+    u16 font_size;
+    Vec2s coord;
     Vec4f color;
 
-    GUIBasicTextBox(Vec2s coord,
+    GUIBasicTextBox(Vec2s _coord,
       String contents,
-      u16 font_size,
+      u16 _font_size,
       u8 z_val,
       Vec4f _color = Vec4f(0,0,0,1),
-      GUITextProperties properties
+      GUITextProperties _properties
       = GUITextProperties
       (GUI_TEXT_STYLE_REGULAR,
-       GUI_TEXT_ALIGN_RIGHT));
+       GUI_TEXT_ALIGN_LEFT),
+      Vec2s* size = __null);
+    void setContents(String contents, Vec2s* size = __null);
     virtual void render(RenderContext c);
+  };
+
+  struct GUITextBox : GUINode {
+
+    GUIBasicTextBox text_part;
+    GUIBasicBox box_part;
+    Array<Vec2f> tex_coords;
+
+    GUITextBox(Vec2s coord,
+        String contents,
+        u16 font_size,
+        Array<Vec2f> _tex_coords,
+        Texture* tex,
+        GUIFloatPos float_pos,
+        u8 _z_val,
+        Vec4f color = Vec4f(0,0,0,1),
+        GUITextProperties properties
+        = GUITextProperties
+        (GUI_TEXT_STYLE_REGULAR,
+  GUI_TEXT_ALIGN_LEFT));
+    void setContents(String contents);
+
   };
 
 }
 # 2 "src/GUIWidgets.cpp" 2
 
 namespace peace {
+
+  void GUIBasicBox::init(Vec2s center,
+    Vec2s halves,
+    Array<Vec2f> tex_coords,
+    Texture* tex,
+    u8 z_val) {
+    RenderableReg::init();
+    update(center, halves, tex_coords, tex, z_val);
+  }
+
+  void GUIBasicBox::update(Vec2s center,
+      Vec2s halves,
+      Array<Vec2f> tex_coords,
+      Texture* tex,
+      u8 z_val) {
+
+    GUIElem::data = { GUIElemData(center - halves, tex_coords[0]),
+         GUIElemData(Vec2s(center.x() - halves.x(),
+      center.y() + halves.y()),
+       tex_coords[1]),
+         GUIElemData(center + halves, tex_coords[2]),
+         GUIElemData(Vec2s(center.x() + halves.x(),
+      center.y() - halves.y()),
+       tex_coords[3])
+    };
+    GUIElem::elements = {0,1,2,0,2,3};
+    GUIElem::tex = tex;
+    GUIElem::z_val = z_val;
+    GUIElem::updateBuffers();
+  }
 
   GUIBox::GUIBox(Vec2s center,
    Vec2s halves,
@@ -45626,21 +45711,18 @@ namespace peace {
      GUITextAlign _align)
     : style(_style), align(_align) {}
 
-  GUIBasicTextBox::GUIBasicTextBox(Vec2s coord,
+  GUIBasicTextBox::GUIBasicTextBox(Vec2s _coord,
        String contents,
-       u16 font_size,
+       u16 _font_size,
        u8 z_val,
        Vec4f _color,
-       GUITextProperties properties)
-    : GUIElem({},
-       {},
-       __null,
-       z_val),
+       GUITextProperties _properties,
+       Vec2s* size)
+    : GUIElem({}, {}, __null, z_val),
+    properties(_properties),
+    font_size(_font_size),
+    coord(_coord),
     color(_color) {
-
-      static const f32 FONT_SIZE_MULTIPLIER = 0.5;
-      u16 text_width
- = contents.length()*font_size*FONT_SIZE_MULTIPLIER;
 
       switch (properties.style) {
       case GUI_TEXT_STYLE_REGULAR:
@@ -45657,64 +45739,85 @@ namespace peace {
  break;
       }
 
-      i16 upper_y = coord.y() + font_size/2;
-      i16 lower_y = coord.y() - font_size/2;
-      i16 cur_x;
-      u16 cur_index = 0;
+      RenderableReg::init();
+      setContents(contents, size);
+    }
 
-      switch (properties.align) {
-      case GUI_TEXT_ALIGN_CENTER:
- cur_x = coord.x() - text_width/2;
- break;
-      case GUI_TEXT_ALIGN_RIGHT:
- cur_x = coord.x() - text_width;
- break;
-      case GUI_TEXT_ALIGN_LEFT:
- cur_x = coord.x();
- break;
-      }
-      for (char ch : contents) {
- char c = ch-32;
- Vec2f tex_coord
-   ((f32)(c%GUI::FONT_TEXTURE_CHARS_PER_LINE)
-    /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE,
-    GUI::FONT_TEXTURE_CHAR_SIZE.cy() +
-    (f32)(c/GUI::FONT_TEXTURE_CHARS_PER_LINE)
-    /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE);
- GUIElem::data.push_back
-   (GUIElemData
-    (Vec2s(cur_x, lower_y),
-     Vec2f(tex_coord.x(),
-    tex_coord.y())));
- GUIElem::data.push_back
-   (GUIElemData
-    (Vec2s(cur_x, upper_y),
-     Vec2f(tex_coord.x(),
-    tex_coord.y()
-    -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
- GUIElem::data.push_back
-   (GUIElemData
-    (Vec2s(cur_x+font_size, upper_y),
-     Vec2f(tex_coord.x()
-    +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
-    tex_coord.y()
-    -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
- GUIElem::data.push_back
-   (GUIElemData
-    (Vec2s(cur_x+font_size, lower_y),
-     Vec2f(tex_coord.x()
-    +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
-    tex_coord.y())));
- GUIElem::elements.push_back(cur_index);
- GUIElem::elements.push_back(cur_index+1);
- GUIElem::elements.push_back(cur_index+2);
- GUIElem::elements.push_back(cur_index);
- GUIElem::elements.push_back(cur_index+2);
- GUIElem::elements.push_back(cur_index+3);
- cur_index += 4;
- cur_x += font_size*FONT_SIZE_MULTIPLIER;
-      }
-      GUIElem::init();
+  void GUIBasicTextBox::setContents(String contents,
+        Vec2s* size) {
+
+    static const f32 FONT_SIZE_MULTIPLIER = 0.5;
+    u16 text_width
+      = contents.length()*font_size*FONT_SIZE_MULTIPLIER;
+
+    i16 upper_y = coord.y() + font_size/2;
+    i16 lower_y = coord.y() - font_size/2;
+    i16 cur_x, start_x;
+    u16 cur_index = 0;
+
+    switch (properties.align) {
+    case GUI_TEXT_ALIGN_CENTER:
+      start_x = coord.x() - text_width/2;
+      break;
+    case GUI_TEXT_ALIGN_RIGHT:
+      start_x = coord.x() - text_width;
+      break;
+    case GUI_TEXT_ALIGN_LEFT:
+      start_x = coord.x();
+      break;
+    }
+    cur_x = start_x;
+
+    GUIElem::data.clear();
+    GUIElem::elements.clear();
+
+    for (char ch : contents) {
+      char c = ch-32;
+      Vec2f tex_coord
+ ((f32)(c%GUI::FONT_TEXTURE_CHARS_PER_LINE)
+  /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE,
+  GUI::FONT_TEXTURE_CHAR_SIZE.cy() +
+  (f32)(c/GUI::FONT_TEXTURE_CHARS_PER_LINE)
+  /(f32)GUI::FONT_TEXTURE_CHARS_PER_LINE);
+      GUIElem::data.push_back
+ (GUIElemData
+  (Vec2s(cur_x, lower_y),
+   Vec2f(tex_coord.x(),
+  tex_coord.y())));
+      GUIElem::data.push_back
+ (GUIElemData
+  (Vec2s(cur_x, upper_y),
+   Vec2f(tex_coord.x(),
+  tex_coord.y()
+  -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
+      GUIElem::data.push_back
+ (GUIElemData
+  (Vec2s(cur_x+font_size, upper_y),
+   Vec2f(tex_coord.x()
+  +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
+  tex_coord.y()
+  -GUI::FONT_TEXTURE_CHAR_SIZE.cy())));
+      GUIElem::data.push_back
+ (GUIElemData
+  (Vec2s(cur_x+font_size, lower_y),
+   Vec2f(tex_coord.x()
+  +GUI::FONT_TEXTURE_CHAR_SIZE.cx(),
+  tex_coord.y())));
+      GUIElem::elements.push_back(cur_index);
+      GUIElem::elements.push_back(cur_index+1);
+      GUIElem::elements.push_back(cur_index+2);
+      GUIElem::elements.push_back(cur_index);
+      GUIElem::elements.push_back(cur_index+2);
+      GUIElem::elements.push_back(cur_index+3);
+      cur_index += 4;
+      cur_x += font_size*FONT_SIZE_MULTIPLIER;
+    }
+
+    if (size) {
+      *size = Vec2s(cur_x - start_x, font_size);
+    }
+
+    updateBuffers();
   }
 
   void GUIBasicTextBox::render(RenderContext c) {
@@ -45722,7 +45825,61 @@ namespace peace {
     Shader::UNI_COLOR.registerVal(color);
     tex->use();
     RenderableReg::render(c);
-    Shader::UNI_COLOR.registerVal(Vec4f(1,1,1,1));
+    Shader::UNI_COLOR.registerVal(Shader::DEFAULT_COLOR);
+  }
+
+  GUITextBox::GUITextBox(Vec2s coord,
+    String contents,
+    u16 font_size,
+    Array<Vec2f> _tex_coords,
+    Texture* tex,
+    GUIFloatPos float_pos,
+    u8 z_val,
+    Vec4f color,
+    GUITextProperties properties)
+    : GUINode(float_pos, z_val),
+    text_part(coord, "", font_size, 1, color, properties),
+    tex_coords(_tex_coords) {
+
+    Vec2s size;
+    text_part.setContents(contents, &size);
+
+    switch (properties.align) {
+    case GUI_TEXT_ALIGN_CENTER:
+      box_part.init(coord, size, tex_coords, tex, 0);
+      break;
+    case GUI_TEXT_ALIGN_RIGHT:
+      box_part.init(Vec2s(coord.x() - size.x()/2, coord.y()),
+      size, tex_coords, tex, 0);
+      break;
+    case GUI_TEXT_ALIGN_LEFT:
+      box_part.init(Vec2s(coord.x() + size.x()/2, coord.y()),
+      size, tex_coords, tex, 0);
+      break;
+    }
+
+    addElem(&box_part);
+    addElem(&text_part);
+  }
+
+  void GUITextBox::setContents(String contents) {
+    Vec2s size;
+    text_part.setContents(contents, &size);
+    switch (text_part.properties.align) {
+    case GUI_TEXT_ALIGN_CENTER:
+      box_part.update(text_part.coord, size, tex_coords, text_part.tex, 0);
+      break;
+    case GUI_TEXT_ALIGN_RIGHT:
+      box_part.update(Vec2s(text_part.coord.x() - size.x()/2,
+       text_part.coord.y()),
+        size, tex_coords, text_part.tex, 0);
+      break;
+    case GUI_TEXT_ALIGN_LEFT:
+      box_part.update(Vec2s(text_part.coord.x() + size.x()/2,
+       text_part.coord.y()),
+        size, tex_coords, text_part.tex, 0);
+      break;
+    }
   }
 
 }

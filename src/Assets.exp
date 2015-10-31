@@ -37678,7 +37678,7 @@ namespace peace {
 }
 # 5 "src/Standard/Standard.hpp" 2
 # 4 "src/Assets.hpp" 2
-# 20 "src/Assets.hpp"
+# 31 "src/Assets.hpp"
 namespace peace {
 
   void LogCurrentDirectory();
@@ -37700,7 +37700,7 @@ namespace peace {
 
   void LogCurrentDirectory() {
     char cwd[MAX_DIR_STRING_SIZE];
-    do { if (!(getcwd(cwd, sizeof(cwd)) != __null)) { Log::__assert_print("Error getting the current directory"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(getcwd(cwd, sizeof(cwd)) != __null)) { Log::__assert_print("Error getting the current directory"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
     Log::message("Current directory: %s", cwd);
   }

@@ -12,7 +12,7 @@
       Log::__assert_print(__VA_ARGS__);		\
       fprintf(stderr, "Stack trace: %s",	\
 	      getStackTrace().c_str());		\
-      exit(EXIT_FAILURE);			\
+      abort();					\
     }						\
   } while (0)
 

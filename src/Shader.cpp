@@ -34,6 +34,8 @@ NAMESPACE {
 
   const u8 Shader::MAX_BONES;
   const u8 Shader::MAX_BONES_PER_VERTEX;
+
+  const Vec4f Shader::DEFAULT_COLOR(1,1,1,1);
   
   const static char* SHADER_HEADER_VERT = DIR_SHADER_HEADER ".vs";
   const static char* SHADER_HEADER_FRAG = DIR_SHADER_HEADER ".fs";
@@ -97,10 +99,12 @@ NAMESPACE {
 
   void ShaderUniform::initBuffer(u32 shader_id,
 				 String name) {
-    const char* c_name = ("_" + name).c_str();
+    String comb_name = "_" + name;
+    char* c_name = new char[comb_name.length() + 1];
+    strcpy(c_name, comb_name.c_str());
     block_id = glGetUniformBlockIndex(shader_id,
 				      c_name);
-    //Log::message(name);
+    delete[] c_name;
     debugAssert(block_id != GL_INVALID_INDEX,
 		"The uniform block %s does not "
 		"exist in the shader", c_name);
@@ -125,31 +129,7 @@ NAMESPACE {
 
   void ShaderUniform::keepBuffer(u32 shader_id,
 				 String name) {
-    PEACE_GL_CHECK_ERROR;
-    const char* c_name = ("_" + name).c_str();
-    block_id = glGetUniformBlockIndex(shader_id,
-      c_name);
-    //Log::message(name);
-    debugAssert(block_id != GL_INVALID_INDEX,
-		"The uniform block %s does not "
-		"exist in the shader", c_name);
-    glUniformBlockBinding(shader_id,
-			  block_id,
-			  id);
-    glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
-
-    /*i32 block_size;
-    glGetActiveUniformBlockiv(shader_id, block_id,
-			      GL_UNIFORM_BLOCK_DATA_SIZE,
-			      &block_size);
-    Log::message(name);
-    Log::message("name: %s, size: %d\n"
-		 "block id: %d, buffer id: %u",
-		 c_name,
-		 block_size,
-		 block_id,
-		 buffer_id);*/
-    PEACE_GL_CHECK_ERROR;
+    initBuffer(shader_id, name);
   }
 
   void ShaderUniform::registerInt(i32 i) const {

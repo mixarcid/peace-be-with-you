@@ -36,6 +36,7 @@ NAMESPACE {
 
     using Renderable::Renderable;
     void init();
+    void updateBuffers();
     virtual void render(RenderContext c);
     
   };

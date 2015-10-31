@@ -37883,7 +37883,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -37986,7 +37986,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }
@@ -38254,7 +38254,7 @@ namespace peace {
 
     inline T& operator()(const u8 row,
         const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                  ;
       return cols[col][row];
     }
@@ -38819,9 +38819,9 @@ namespace peace {
 
 
     Vec3f norm;
-    do { if (!(axis < 15)) { Log::__assert_print("OBB vs OBB axis should be less than 15"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(axis < 15)) { Log::__assert_print("OBB vs OBB axis should be less than 15"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                            ;
-    do { if (!(face_axis < 6)) { Log::__assert_print("OBB vs OBB face axis should be less than 6"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(face_axis < 6)) { Log::__assert_print("OBB vs OBB face axis should be less than 6"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                ;
     switch (axis) {
     case 0: case 1: case 2:

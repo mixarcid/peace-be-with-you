@@ -87,10 +87,6 @@ int main() {
     cube1.rotateAbs(Quaternionf(degreesToRadians(0),
 				degreesToRadians(10),
 				degreesToRadians(0)));
-    /*cube2.rotateAbs(Quaternionf(degreesToRadians(10),
-				degreesToRadians(45),
-				degreesToRadians(10)));*/
-
     graphics.addNode(&cube1);
     phys.addStaticObject(&cube1);
     graphics.addNode(&cube2);
@@ -101,32 +97,21 @@ int main() {
     graphics.addNode(&sub);
     phys.addStaticObject(&sub);
 
-    Texture onion;
-    onion.use();
-    onion.load("onion-man", Shader::UNI_TEXTURE);
-    GUIBox box(Vec2s(200,200),
-	       Vec2s(50,50),
-	       {Vec2f(1,1),
-		   Vec2f(1,0),
-		   Vec2f(0,0),
-		   Vec2f(0,1)},
-	       &onion,
-	       0);
-    GUIBasicTextBox* text =
-      new GUIBasicTextBox(Vec2s(-200,0),
-			  "Peace Be With You",
-			  100,
-			  0,
-			  Vec4f(0.5,0.5,0,1),
-			  GUITextProperties
-			  (GUI_TEXT_STYLE_ITALIC,
-			   GUI_TEXT_ALIGN_RIGHT));
-    GUINode text_node(GUI_FLOAT_CENTER, 0);
-    ArrayHandle text_handle = text_node.addElem(text);
-    GUINode box_node(GUI_FLOAT_CENTER, 0);
-    box_node.addElem(&box);
-    graphics.addGUINode(&text_node);
-    graphics.addGUINode(&box_node);
+    Texture button_tex;
+    //button_tex.use();
+    button_tex.load("DefaultButton", Shader::UNI_TEXTURE);
+    GUITextBox text(Vec2s(0,0),
+		    "Peace Be With You",
+		    100,
+		    {Vec2f(0,0), Vec2f(0,1), Vec2f(1,1), Vec2f(1,0)},
+		    &button_tex,
+		    GUI_FLOAT_CENTER,
+		    0,
+		    Vec4f(0.5,0.5,0,1),
+		    GUITextProperties
+		    (GUI_TEXT_STYLE_ITALIC,
+		     GUI_TEXT_ALIGN_CENTER));
+    graphics.addGUINode(&text);
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -154,25 +139,11 @@ int main() {
       });
 
     Input::addCharCallback
-      ([&text,
-	&text_node,
-	&text_handle]
+      ([&text]
        (GLFWwindow* win, u32 code) {
 	static String str;
 	str += (char) code;
-	//Log::message(str);
-	text_node.removeElem(text_handle);
-	delete text;
-	text = new GUIBasicTextBox
-	  (Vec2s(-200,0),
-	   str,
-	   50,
-	   0,
-	   Vec4f(1,0,1,1),
-	   GUITextProperties
-	   (GUI_TEXT_STYLE_BOLD,
-	    GUI_TEXT_ALIGN_CENTER));
-	text_handle = text_node.addElem(text);
+	text.setContents(str);
       });
 
     Input::addKeyCallback
@@ -233,8 +204,8 @@ int main() {
       start = end;
       gl::checkError();
     }
-    delete text;
-  } catch(FatalError& e) {
+    //delete text;
+  } catch (FatalError& e) {
     Log::error(e.msg +
 	       "\nStack trace for Exception: \n"
 	       + e.backtrace);

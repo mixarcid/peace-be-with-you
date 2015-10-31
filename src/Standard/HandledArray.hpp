@@ -21,10 +21,13 @@ NAMESPACE {
 	       Array<HandledArrayElem<T>>::iterator _it)
 	: it(_it) {}
       void operator++() {
-	it++;
+	++it;
       }
       T operator*() const {
 	return (*it).elem;
+      }
+      bool operator==(Iterator b) const {
+	return it == b.it;
       }
       bool operator!=(Iterator b) const {
 	return it != b.it;
@@ -35,6 +38,7 @@ NAMESPACE {
 
     inline ~HandledArray() {
       for (HandledArrayElem<T> elem : arr) {
+	//printf("handle: %p\n", elem.handle);
 	delete elem.handle;
       }
     }
@@ -64,7 +68,13 @@ NAMESPACE {
       return ret;
     }
 
-    //crude implimentation, but it ain't bad for small arrays
+    /*
+      crude implimentation, but it ain't bad for
+      small arrays
+
+      cmp returns true if we want the second element to
+      go behind the first, false otherwise
+    */
     ArrayHandle insertSorted(T item,
 			     function<bool(T,T)> cmp) {
       HandledArrayElem<T> elem;
@@ -72,29 +82,33 @@ NAMESPACE {
       
       if (arr.size() > 0) {
 	
-	ArrayHandle ret;
 	Iterator it(arr.begin());
 	u32 index;
 	
 	for (; it != end(); ++it, ++index) {
 	  if (cmp(*it, item)) {
-	    ret = new u32(index);
-	    elem.handle = ret;
-	    arr.insert(it.it, elem);
+	    elem.handle = new u32(index);
+	    it = arr.insert(it.it, elem);
 	    break;
 	  }
 	}
-	while (it != end()) {
-	  ++*((*it.it).handle);
-	  ++it;
+	
+	if (it == end()) { //we haven't inserted it
+	  elem.handle = new u32(arr.size());
+	  arr.push_back(elem);
+	} else {
+	  //re-assign all subsequent handles
+	  while (it != end()) {
+	    ++(*((*it.it).handle));
+	    ++it;
+	  }
 	}
-	return ret;
 	
       } else {
+	elem.handle = new u32(0);
 	arr.push_back(elem);
-	return new u32(0);
       }
-      
+      return elem.handle;
     }
     
     inline void removeAndReplace(ArrayHandle h) {

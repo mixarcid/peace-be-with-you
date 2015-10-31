@@ -27,8 +27,12 @@ NAMESPACE {
   }
 
   ArrayHandle Graphics::addGUINode(GUINode* node) {
-    return nodes_2d.insertSorted(node,
-				 GUINode::compare);
+    ArrayHandle ret = nodes_2d.insertSorted(node,
+					    GUINode::compare);
+    /*for (GUINode* node : nodes_2d) {
+      Log::message("z: %d", node->z_val);
+      }*/
+    return ret;
   }
 
   ArrayHandle Graphics::addDirLight(DirLight* light) {

@@ -11,7 +11,9 @@ NAMESPACE {
 
   void VAO::use(u32 index) {
     debugAssert(index < length, "VAO index out of bounds");
+    //PEACE_GL_CHECK_ERROR;
     glBindVertexArray(ids[index]);
+    //PEACE_GL_CHECK_ERROR;
   }
 
   void VAO::registerVars(Array<ShaderVar> vars, u32 index) {
@@ -45,8 +47,14 @@ NAMESPACE {
 
   VAO::~VAO() {
     glDeleteVertexArrays(length, ids);
-    delete ids;
+    delete[] ids;
   }
+
+  /*VAO VAO::operator=(const VAO b) {
+    glDeleteVertexArrays(length, ids);
+    delete[] ids;
+    
+    }*/
 
   void VBO::init(u32 num_vbos) {
     length = num_vbos;
@@ -58,10 +66,10 @@ NAMESPACE {
   VBO::~VBO() {
     if (ids != NULL) {
       glDeleteBuffers(length, ids);
-      delete ids;
+      delete[] ids;
     }
     if (lengths != NULL) {
-      delete lengths;
+      delete[] lengths;
     }
   }
 
@@ -115,10 +123,10 @@ NAMESPACE {
     //Log::message("del lengths: %p", lengths);
     if (ids != NULL) {
       glDeleteBuffers(length, ids);
-      delete ids;
+      delete[] ids;
     }
     if (lengths != NULL) {
-      delete lengths;
+      delete[] lengths;
     }
   }
 

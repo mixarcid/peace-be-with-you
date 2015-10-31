@@ -37880,7 +37880,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -37983,7 +37983,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }

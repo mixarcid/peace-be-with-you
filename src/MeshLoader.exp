@@ -42963,6 +42963,7 @@ namespace peace {
         u32 index = 0);
     ~VAO();
 
+
   };
 
   struct VBO {
@@ -44566,7 +44567,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -44669,7 +44670,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }
@@ -44937,7 +44938,7 @@ namespace peace {
 
     inline T& operator()(const u8 row,
         const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                  ;
       return cols[col][row];
     }
@@ -45211,7 +45212,7 @@ namespace peace {
 
     template <typename T>
     void registerVal(T val) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 61); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(61)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      sizeof(T),
@@ -45219,12 +45220,12 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 69); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(69)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 74); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(74)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      num_elems*sizeof(T),
@@ -45232,7 +45233,7 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 82); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(82)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
@@ -45293,6 +45294,8 @@ namespace peace {
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
 
+    const static Vec4f DEFAULT_COLOR;
+
     static void setFlags(ShaderFlags flags);
   };
 
@@ -45331,6 +45334,7 @@ namespace peace {
 
     using Renderable::Renderable;
     void init();
+    void updateBuffers();
     virtual void render(RenderContext c);
 
   };
@@ -45661,14 +45665,14 @@ namespace peace {
     }
 
     static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                     ;
       return a*(1-h) + b*h;
     }
 
     static inline Quaternion slerp(Quaternion a, Quaternion b, T h) {
 
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion slerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion slerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                      ;
       T cos_half_angle = a.x()*b.x() + a.y()*b.y() + a.z()*b.z() + a.w()*b.w();
 
@@ -45880,7 +45884,7 @@ namespace peace {
     T readLittleEndian(FILE* file) {
 
       T data;
-      do { if (!(fread(&data, sizeof(T), 1, file) != 0)) { Log::__assert_print("Unexpected EOF while reading. Or possibly" " another file I/O error"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+      do { if (!(fread(&data, sizeof(T), 1, file) != 0)) { Log::__assert_print("Unexpected EOF while reading. Or possibly" " another file I/O error"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                               ;
 
@@ -45901,7 +45905,7 @@ namespace peace {
 
 # 1 "src/Standard/Standard.hpp" 1
 # 4 "src/Assets.hpp" 2
-# 20 "src/Assets.hpp"
+# 31 "src/Assets.hpp"
 namespace peace {
 
   void LogCurrentDirectory();
@@ -45953,7 +45957,7 @@ namespace peace {
 
 
     u32 num_verts = fio::readLittleEndian<u32>(file);
-    do { if (!(num_verts > 0)) { Log::__assert_print("Why are you loading a mesh with no vertices?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_verts > 0)) { Log::__assert_print("Why are you loading a mesh with no vertices?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                  ;
     Array<BasicMeshData> data;
     data.reserve(num_verts);
@@ -45973,7 +45977,7 @@ namespace peace {
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
     Array<u32> elems;
     elems.reserve(num_elems);
-    do { if (!(num_elems > 0)) { Log::__assert_print("Why are you loading a mesh with no faces?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_elems > 0)) { Log::__assert_print("Why are you loading a mesh with no faces?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                               ;
 
 
@@ -45990,7 +45994,7 @@ namespace peace {
 
   BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
     u32 num_verts = fio::readLittleEndian<u32>(file);
-    do { if (!(num_verts > 0)) { Log::__assert_print("Why are you loading a mesh with no vertices?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_verts > 0)) { Log::__assert_print("Why are you loading a mesh with no vertices?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                  ;
     Array<BasicMeshData> data;
     data.reserve(num_verts);
@@ -46012,7 +46016,7 @@ namespace peace {
       u8 vert_num_bones = fio::readLittleEndian<u8>(file);
       BonedMeshData d;
 
-      do { if (!(vert_num_bones <= Shader::MAX_BONES_PER_VERTEX)) { Log::__assert_print("Too many bones per vertex!"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+      do { if (!(vert_num_bones <= Shader::MAX_BONES_PER_VERTEX)) { Log::__assert_print("Too many bones per vertex!"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                                  ;
 
       for (u32 i = 0; i < vert_num_bones; ++i) {
@@ -46027,7 +46031,7 @@ namespace peace {
     }
 
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
-    do { if (!(num_elems > 0)) { Log::__assert_print("Why are you loading a mesh with no faces?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_elems > 0)) { Log::__assert_print("Why are you loading a mesh with no faces?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                               ;
     Array<u32> elems;
     elems.reserve(num_elems);
@@ -46098,24 +46102,24 @@ namespace peace {
    + ".pmf");
 
     FILE* file = fopen(full_name.c_str(), "rb");
-    do { if (!(file != __null)) { Log::__assert_print("Unable to open model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(file != __null)) { Log::__assert_print("Unable to open model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                                                ;
 
     char sig[3];
     fread(sig, sizeof(char), 3, file);
-    do { if (!(sig[0] == 'P' && sig[1] == 'M' && sig[2] == 'F')) { Log::__assert_print("Incorrect signature for model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(sig[0] == 'P' && sig[1] == 'M' && sig[2] == 'F')) { Log::__assert_print("Incorrect signature for model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                     ;
 
     char ver;
     fread(&ver, sizeof(char), 1, file);
-    do { if (!(ver == PMF_VERSION)) { Log::__assert_print("Incorrect PMF version for model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(ver == PMF_VERSION)) { Log::__assert_print("Incorrect PMF version for model %s", full_name.c_str()); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                     ;
 
     u32 num_meshes = fio::readLittleEndian<u32>(file);
 
-    do { if (!(num_meshes > 0)) { Log::__assert_print("Why are you loading a model with no meshes?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_meshes > 0)) { Log::__assert_print("Why are you loading a model with no meshes?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                 ;
 
     Shader::setFlags(SHADER_NO_FLAGS);
@@ -46162,7 +46166,7 @@ namespace peace {
 
   StaticMesh* MeshLoader::getStaticMesh(String name) {
     StaticMesh* ret = static_meshes[name];
-    do { if (!(ret != __null)) { Log::__assert_print("The static mesh \"" + name + "\" does not exist in this model"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(ret != __null)) { Log::__assert_print("The static mesh \"" + name + "\" does not exist in this model"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                                     ;
     return ret;
@@ -46170,7 +46174,7 @@ namespace peace {
 
   BonedMesh MeshLoader::getBonedMesh(String name) {
     BonedMeshBase* base = boned_meshes[name];
-    do { if (!(base != __null)) { Log::__assert_print("The boned mesh \"" + name + "\" does not exist in this model"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(base != __null)) { Log::__assert_print("The boned mesh \"" + name + "\" does not exist in this model"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                                     ;
     return BonedMesh(base);

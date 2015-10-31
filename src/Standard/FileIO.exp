@@ -36371,7 +36371,7 @@ namespace peace {
     T readLittleEndian(FILE* file) {
 
       T data;
-      do { if (!(fread(&data, sizeof(T), 1, file) != 0)) { Log::__assert_print("Unexpected EOF while reading. Or possibly" " another file I/O error"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+      do { if (!(fread(&data, sizeof(T), 1, file) != 0)) { Log::__assert_print("Unexpected EOF while reading. Or possibly" " another file I/O error"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
 
                               ;
 

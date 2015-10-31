@@ -44470,7 +44470,7 @@ namespace peace {
     }
 
     inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                         ;
       return data[index];
     }
@@ -44573,7 +44573,7 @@ namespace peace {
     static inline Vec lerp(const Vec a,
       const Vec b,
       const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                              ;
       return a*(1-h) + b*h;
     }
@@ -44841,7 +44841,7 @@ namespace peace {
 
     inline T& operator()(const u8 row,
         const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                  ;
       return cols[col][row];
     }
@@ -45115,7 +45115,7 @@ namespace peace {
 
     template <typename T>
     void registerVal(T val) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 61); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(61)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      sizeof(T),
@@ -45123,12 +45123,12 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 69); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(69)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 74); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(74)); err=glGetError(); } } while(0);
       __glewBindBuffer(0x8A11, buffer_id);
       __glewBufferData(0x8A11,
      num_elems*sizeof(T),
@@ -45136,7 +45136,7 @@ namespace peace {
      0x88E8);
       __glewBindBufferBase(0x8A11,
          id, buffer_id);
-      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.hpp" ":%u").c_str(), 82); err=glGetError(); } } while(0);
+      do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.hpp" ":" + to_string(82)); err=glGetError(); } } while(0);
     }
 
     template <typename T>
@@ -45197,6 +45197,8 @@ namespace peace {
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
 
+    const static Vec4f DEFAULT_COLOR;
+
     static void setFlags(ShaderFlags flags);
   };
 
@@ -45237,7 +45239,7 @@ namespace peace {
 
 # 1 "src/Standard/Standard.hpp" 1
 # 4 "src/Assets.hpp" 2
-# 20 "src/Assets.hpp"
+# 31 "src/Assets.hpp"
 namespace peace {
 
   void LogCurrentDirectory();
@@ -45286,6 +45288,8 @@ namespace peace {
   const u8 Shader::MAX_BONES;
   const u8 Shader::MAX_BONES_PER_VERTEX;
 
+  const Vec4f Shader::DEFAULT_COLOR(1,1,1,1);
+
   const static char* SHADER_HEADER_VERT = "Assets" "/" "Shaders" "/" "Header" ".vs";
   const static char* SHADER_HEADER_FRAG = "Assets" "/" "Shaders" "/" "Header" ".fs";
   const static i32 MAX_CHARS_IN_FILE = 5000;
@@ -45295,24 +45299,24 @@ namespace peace {
   static String frag_header;
 
   enum FirstLoadFLags : u8 { FIRST_SHADER_LOAD = 0x01, FIRST_COLOR_LOAD = 0x02, FIRST_TEXTURE_LOAD = 0x04, FIRST_SKELETAL_LOAD = 0x08, FIRST_3D_LOAD = 0x10, FIRST_2D_LOAD = 0x20, FIRST_LOAD_ALL = 0xff }; inline FirstLoadFLags operator~(const FirstLoadFLags a) { return (FirstLoadFLags) ~ (u8) a; } inline FirstLoadFLags operator|(const FirstLoadFLags a, const FirstLoadFLags b) { return (FirstLoadFLags) ((u8) a | (u8) b); } inline FirstLoadFLags operator&(const FirstLoadFLags a, const FirstLoadFLags b) { return (FirstLoadFLags) ((u8) a & (u8) b); } inline void operator|=(FirstLoadFLags& a, const FirstLoadFLags b) { a = a | b; } inline void operator&=(FirstLoadFLags& a, const FirstLoadFLags b) { a = a & b; }
-# 55 "src/Shader.cpp"
+# 57 "src/Shader.cpp"
   FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
 
   static String getFileContents(const char* filename) {
 
     char contents[MAX_CHARS_IN_FILE];
     FILE* file = fopen(filename, "r");
-    do { if (!(file != __null)) { Log::__assert_print("Error opening %s", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(file != __null)) { Log::__assert_print("Error opening %s", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                                      ;
     i32 line_num = -1;
 
     while (!feof(file)) {
-      do { if (!(line_num < MAX_CHARS_IN_FILE)) { Log::__assert_print("File %s is too long", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+      do { if (!(line_num < MAX_CHARS_IN_FILE)) { Log::__assert_print("File %s is too long", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                                    ;
       contents[++line_num] = fgetc(file);
     }
     contents[line_num] = '\0';
-    do { if (!(contents != __null)) { Log::__assert_print("Error reading %s", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(contents != __null)) { Log::__assert_print("Error reading %s", filename); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                                      ;
 
     fclose(file);
@@ -45322,7 +45326,7 @@ namespace peace {
 
   ShaderTypeInfo::ShaderTypeInfo(GLenum type_elem, i32 num_elem,
      size_t total_size) {
-    do { if (!(num_elem < 5)) { Log::__assert_print("ShaderTypeInfo elem_num must be less then 5"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(num_elem < 5)) { Log::__assert_print("ShaderTypeInfo elem_num must be less then 5"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                 ;
     elem_type = type_elem;
     elem_num = num_elem;
@@ -45331,7 +45335,7 @@ namespace peace {
 
   ShaderVar::ShaderVar(i32 var_id, ShaderTypeName var_type) {
     id = var_id;
-    do { if (!(var_type < TYPE_LAST)) { Log::__assert_print("ShaderVarType index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(var_type < TYPE_LAST)) { Log::__assert_print("ShaderVarType index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                       ;
     info = &SHADER_TYPES[var_type];
   }
@@ -45341,11 +45345,13 @@ namespace peace {
 
   void ShaderUniform::initBuffer(u32 shader_id,
      String name) {
-    const char* c_name = ("_" + name).c_str();
+    String comb_name = "_" + name;
+    char* c_name = new char[comb_name.length() + 1];
+    strcpy(c_name, comb_name.c_str());
     block_id = __glewGetUniformBlockIndex(shader_id,
           c_name);
-
-    do { if (!(block_id != 0xFFFFFFFF)) { Log::__assert_print("The uniform block %s does not " "exist in the shader", c_name); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    delete[] c_name;
+    do { if (!(block_id != 0xFFFFFFFF)) { Log::__assert_print("The uniform block %s does not " "exist in the shader", c_name); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
                                 ;
     __glewUniformBlockBinding(shader_id,
@@ -45353,25 +45359,12 @@ namespace peace {
      id);
     __glewGenBuffers(1, &buffer_id);
     __glewBindBuffer(0x8A11, buffer_id);
-# 124 "src/Shader.cpp"
+# 128 "src/Shader.cpp"
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id,
      String name) {
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 128); err=glGetError(); } } while(0);
-    const char* c_name = ("_" + name).c_str();
-    block_id = __glewGetUniformBlockIndex(shader_id,
-      c_name);
-
-    do { if (!(block_id != 0xFFFFFFFF)) { Log::__assert_print("The uniform block %s does not " "exist in the shader", c_name); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
-
-                                ;
-    __glewUniformBlockBinding(shader_id,
-     block_id,
-     id);
-    __glewBindBuffer(0x8A11, buffer_id);
-# 152 "src/Shader.cpp"
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 152); err=glGetError(); } } while(0);
+    initBuffer(shader_id, name);
   }
 
   void ShaderUniform::registerInt(i32 i) const {
@@ -45408,7 +45401,7 @@ namespace peace {
   }
 
   void Shader::localSetFlags(ShaderFlags shade_flags) {
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 189); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(169)); err=glGetError(); } } while(0);
 
 
 
@@ -45419,14 +45412,14 @@ namespace peace {
       return;
     }
 
-    do { if (!(flags < SHADER_FLAG_LAST)) { Log::__assert_print("Shader::setFlags called with invalid flags"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(flags < SHADER_FLAG_LAST)) { Log::__assert_print("Shader::setFlags called with invalid flags"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                ;
     i32 flag_id = flag_ids[shade_flags];
     if (flag_id != -1) {
       id = flag_id;
       flags = shade_flags;
       if (cur_shader == this) {
- do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 207); err=glGetError(); } } while(0);
+ do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(187)); err=glGetError(); } } while(0);
  __use_no_check();
       }
       return;
@@ -45462,11 +45455,11 @@ namespace peace {
     char c_shader_log[MAX_LOG_SIZE];
     __glewGetShaderInfoLog(vert_id, MAX_LOG_SIZE, __null, c_shader_log);
     String shader_log = c_shader_log;
-    do { if (!(shader_log.length() == 0)) { Log::__assert_print("%s", c_shader_log); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(shader_log.length() == 0)) { Log::__assert_print("%s", c_shader_log); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                      ;
     __glewGetShaderInfoLog(frag_id, MAX_LOG_SIZE, __null, c_shader_log);
     shader_log = c_shader_log;
-    do { if (!(shader_log.length() == 0)) { Log::__assert_print("%s", c_shader_log); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0);
+    do { if (!(shader_log.length() == 0)) { Log::__assert_print("%s", c_shader_log); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
                            ;
 
     id = __glewCreateProgram();
@@ -45498,15 +45491,15 @@ namespace peace {
 
     flags = shade_flags;
     flag_ids[flags] = id;
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 279); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(259)); err=glGetError(); } } while(0);
     if (cur_shader == this) {
       __use_no_check();
     }
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 283); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(263)); err=glGetError(); } } while(0);
   }
 
   void Shader::__use_no_check() {
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 287); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(267)); err=glGetError(); } } while(0);
     __glewUseProgram(id);
     if (!(flags & SHADER_USE_COLOR)) {
       UNI_TEXTURE.id =
@@ -45520,7 +45513,7 @@ namespace peace {
       UNI_MODEL.keepBuffer(id, "uniModel");
       UNI_VIEW_PROJ.keepBuffer(id, "uniViewProj");
     }
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 301); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(281)); err=glGetError(); } } while(0);
     if (flags & SHADER_2D) {
       if (first_load_flags & FIRST_2D_LOAD) {
  UNI_COLOR.initBuffer(id, "uniColor");
@@ -45540,7 +45533,7 @@ namespace peace {
  UNI_AMBIENT.keepBuffer(id, "uniAmbient");
       }
     }
-    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } Log::error(("GL_" + error + " at " "src/Shader.cpp" ":%u").c_str(), 321); err=glGetError(); } } while(0);
+    do { GLenum err(glGetError()); while(err!=0) { String error; switch(err) { case 0x0502: error="INVALID_OPERATION"; break; case 0x0500: error="INVALID_ENUM"; break; case 0x0501: error="INVALID_VALUE"; break; case 0x0505: error="OUT_OF_MEMORY"; break; case 0x0506: error="INVALID_FRAMEBUFFER_OPERATION"; break; } throw FatalError("GL_" + error + " at " "src/Shader.cpp" ":" + to_string(301)); err=glGetError(); } } while(0);
     if (flags & SHADER_SKELETAL) {
 
       if (first_load_flags & FIRST_SKELETAL_LOAD) {
@@ -45558,13 +45551,13 @@ namespace peace {
       __use_no_check();
     }
   }
-# 352 "src/Shader.cpp"
+# 332 "src/Shader.cpp"
   Shader::~Shader() {
     __glewDeleteProgram(id);
   }
 
   void Shader::setFlags(ShaderFlags flags) {
-    do { if (!(cur_shader != __null)) { Log::__assert_print("You must use a shader before setting flags"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); exit(1); } } while (0)
+    do { if (!(cur_shader != __null)) { Log::__assert_print("You must use a shader before setting flags"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                ;
     cur_shader->localSetFlags(flags);
   }

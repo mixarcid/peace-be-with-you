@@ -35,7 +35,10 @@ NAMESPACE {
 	    Array<u32> _elems,
 	    Texture* _tex,
 	    u8 _z_val);
+    GUIElem() : RenderableReg(SHADER_2D) {}
+    
     void init();
+    void updateBuffers();
     virtual BoundingObject getBoundingObject();
     virtual BoundingObject getPhysicalBoundingObject();
     virtual BoundingObject getPrimaryBoundingObject();

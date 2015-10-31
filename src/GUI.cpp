@@ -17,38 +17,39 @@ NAMESPACE {
     (1/((f32)FONT_TEXTURE_CHARS_PER_LINE),
      1/((f32)FONT_TEXTURE_NUM_LINES));
 
-  static const Asset FONT_TEXTURE_LOADER
-    ([]() {
-      GUI::FONT_TEXTURE_REGULAR = new Texture();
-      GUI::FONT_TEXTURE_REGULAR->use();
-      GUI::FONT_TEXTURE_REGULAR->load
-	(GUI::FONT_NAME + "-Regular",
-	 Shader::UNI_TEXTURE);
+  CONSTRUCT_ASSET(FONT_TEXTURE_LOADER);
+  GUI::FONT_TEXTURE_REGULAR = new Texture();
+  GUI::FONT_TEXTURE_REGULAR->use();
+  GUI::FONT_TEXTURE_REGULAR->load
+    (GUI::FONT_NAME + "-Regular",
+     Shader::UNI_TEXTURE);
 
-      GUI::FONT_TEXTURE_BOLD = new Texture();
-      GUI::FONT_TEXTURE_BOLD->use();
-      GUI::FONT_TEXTURE_BOLD->load
-	(GUI::FONT_NAME + "-Bold",
-	 Shader::UNI_TEXTURE);
+  GUI::FONT_TEXTURE_BOLD = new Texture();
+  GUI::FONT_TEXTURE_BOLD->use();
+  GUI::FONT_TEXTURE_BOLD->load
+    (GUI::FONT_NAME + "-Bold",
+     Shader::UNI_TEXTURE);
 
-      GUI::FONT_TEXTURE_ITALIC = new Texture();
-      GUI::FONT_TEXTURE_ITALIC->use();
-      GUI::FONT_TEXTURE_ITALIC->load
-	(GUI::FONT_NAME + "-Italic",
-	 Shader::UNI_TEXTURE);
+  GUI::FONT_TEXTURE_ITALIC = new Texture();
+  GUI::FONT_TEXTURE_ITALIC->use();
+  GUI::FONT_TEXTURE_ITALIC->load
+    (GUI::FONT_NAME + "-Italic",
+     Shader::UNI_TEXTURE);
 
-      GUI::FONT_TEXTURE_BOLD_ITALIC = new Texture();
-      GUI::FONT_TEXTURE_BOLD_ITALIC->use();
-      GUI::FONT_TEXTURE_BOLD_ITALIC->load
-	(GUI::FONT_NAME + "-BoldItalic",
-	 Shader::UNI_TEXTURE);
-    },
-      []() {
-	delete GUI::FONT_TEXTURE_REGULAR;
-	delete GUI::FONT_TEXTURE_BOLD;
-	delete GUI::FONT_TEXTURE_ITALIC;
-	delete GUI::FONT_TEXTURE_BOLD_ITALIC;
-      });
+  GUI::FONT_TEXTURE_BOLD_ITALIC = new Texture();
+  GUI::FONT_TEXTURE_BOLD_ITALIC->use();
+  GUI::FONT_TEXTURE_BOLD_ITALIC->load
+    (GUI::FONT_NAME + "-BoldItalic",
+     Shader::UNI_TEXTURE);
+
+  DELETE_ASSET;
+  
+  delete GUI::FONT_TEXTURE_REGULAR;
+  delete GUI::FONT_TEXTURE_BOLD;
+  delete GUI::FONT_TEXTURE_ITALIC;
+  delete GUI::FONT_TEXTURE_BOLD_ITALIC;
+  
+  END_ASSET;
 
   GUIElemData::GUIElemData(Vec2s _pos, Vec2f _tex_coord)
     : pos(_pos), tex_coord(_tex_coord) {}
@@ -64,15 +65,13 @@ NAMESPACE {
     z_val(_z_val) {}
 
   void GUIElem::init() {
-    /*Log::message("GUIElem data and elements:");
-    for (GUIElemData d : data) {
-      Log::message("   " + to_string(d.tex_coord) + ","
-		   + to_string(d.pos));
-    }
-    for (u32 elem : elements) {
-      Log::message("   %u", elem);
-      }*/
     RenderableReg::init();
+    updateBuffers();
+  }
+
+  void GUIElem::updateBuffers() {
+    Shader::setFlags(Renderable::shader_flags);
+    RenderableReg::vao.use();
     RenderableReg::vbo.bindArray(data, false);
     RenderableReg::ebo.bindArray(elements, false);
     RenderableReg::vao.registerVars({Shader::POSITION_2D_SHORT,
@@ -98,7 +97,7 @@ NAMESPACE {
   }
 
   bool GUIElem::compare(GUIElem* a, GUIElem* b) {
-    return a->z_val < b->z_val;
+    return a->z_val > b->z_val;
   }
 
   GUINode::GUINode(GUIFloatPos _float_pos, u8 _z_val)
@@ -109,7 +108,8 @@ NAMESPACE {
 				 GUINode::compare);
   }
   ArrayHandle GUINode::addElem(GUIElem* elem) {
-    return elems.push_back(elem);
+    return elems.insertSorted(elem,
+			      GUIElem::compare);
   }
   void GUINode::removeChild(ArrayHandle h) {
     children.removeAndReplace(h);

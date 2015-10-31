@@ -17,6 +17,17 @@
 #define DIR_MODEL_EXTENSION ".pmf"
 #define DIR_TEXTURE_EXTENSION ".png"
 
+/*
+  dangerous yet convenient macros for creating assets.
+  Simply put the initialization code between the CONSTRUCT_ASSET 
+  and DELETE_ASSET and the deletion between the DELETE_ASSET and
+  END_ASSET, and bam! you've got yourself an Asset!
+*/
+
+#define CONSTRUCT_ASSET(name) const static Asset name([]() {
+#define DELETE_ASSET }, []() {
+#define END_ASSET })
+
 NAMESPACE {
   
   void LogCurrentDirectory();

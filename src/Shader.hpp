@@ -139,6 +139,8 @@ NAMESPACE {
     const static u8 MAX_BONES = 50;
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
+
+    const static Vec4f DEFAULT_COLOR;
     
     static void setFlags(ShaderFlags flags);
   };
