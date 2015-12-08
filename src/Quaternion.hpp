@@ -182,7 +182,7 @@ NAMESPACE {
     }
 
     static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      debugAssert(h > 0.0 && h < 1.0,
+      debugAssert(h >= 0.0 && h <= 1.0,
 		  "H must be between 0 and 1 for Quaternion lerp");
       return a*(1-h) + b*h;
     }

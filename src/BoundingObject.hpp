@@ -22,6 +22,8 @@ NAMESPACE {
     BoundingSphere(Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
   };
 
@@ -35,6 +37,8 @@ NAMESPACE {
     f32 getVolume();
     f32 getInertia(f32 mass);
     Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
     
   };
@@ -52,6 +56,13 @@ NAMESPACE {
 		   Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+    
+    //checks if object is partially contained within
+    //box with center at center and with half length halves
+    bool someInBox(Vec3f center, Vec3f halves);
+    //check if object is fully within the same sort of box
+    bool allInBox(Vec3f center, Vec3f halves);
+    
     void transform(Node* t);
   };
 

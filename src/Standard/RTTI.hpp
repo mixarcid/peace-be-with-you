@@ -22,6 +22,7 @@ NAMESPACE {
   
   struct BaseRTTI {
     TypeId type_id;
+    virtual ~BaseRTTI() {}
   };
 
   inline TypeId typeId(BaseRTTI* object) {

@@ -8,6 +8,8 @@
 #include "Time.hpp"
 #include "Physics.hpp"
 #include "Assets.hpp"
+#include "MonkeyHead.hpp"
+#include <random>
 
 using namespace peace;
 
@@ -73,45 +75,81 @@ int main() {
     graphics.setCamera(&cam);
     f32 cam_speed = 0.1;
     f32 cam_rot_speed = 0.001;
-    Physics phys;
+    Physics phys(Vec3f(0,0,0),
+		 Vec3f(5000,5000,5000));
 
     MeshLoader loader("WoodenBox");
-    MeshLoader loader2("Monkey");    
     StaticMesh* cube = loader.getStaticMesh("Cube");
-    StaticMesh* monk = loader2.getStaticMesh("Suzanne");
-    StaticObject cube1(cube, Vec3f(0,7,-2));
-    PhysicalObject cube2(monk,
-			 Material(1, 0.5),
-			 Vec3f(0.5,7,2),
-			 Vec3f(0,0,0));
-    cube1.rotateAbs(Quaternionf(degreesToRadians(0),
-				degreesToRadians(10),
-				degreesToRadians(0)));
-    graphics.addNode(&cube1);
-    phys.addStaticObject(&cube1);
-    graphics.addNode(&cube2);
-    phys.addDynamicObject(&cube2);
+
+    Array<StaticObject*> cubes;
+    //cubes.resize(1000);
+
+    for (u16 i=0; i<50; ++i) {
+      for (u16 j=0; j<50; ++j) {
+	cubes.push_back(new StaticObject(cube, Vec3f(2*i-50, 2*j-50, -2)));
+	graphics.addNode(cubes[cubes.size()-1]);
+	phys.addStaticObject(cubes[cubes.size()-1]);
+      }
+    }
+
+    /*for (u16 i=0; i<cubes.size(); ++i) {
+      //Log::message("%u", i);
+      cubes[i] = new StaticObject(cube,Vec3f((rand()%200) - 100,(rand()%200) - 100, (rand()%4)-2));
+      graphics.addNode(cubes[i]);
+      phys.addStaticObject(cubes[i]);
+      }*/
+    
     MeshLoader loader3("SubjectB");
     BonedMesh subject = loader3.getBonedMesh("Subject");
-    StaticObject sub(&subject, Vec3f(0,10,0));
+    StaticObject sub(&subject, Vec3f(2,10,0));
     graphics.addNode(&sub);
     phys.addStaticObject(&sub);
 
-    Texture button_tex;
+    Array<MonkeyHead*> heads;
+
+    /*Texture button_tex;
     //button_tex.use();
     button_tex.load("DefaultButton", Shader::UNI_TEXTURE);
-    GUITextBox text(Vec2s(0,0),
+    GUITextBox text(Vec2s(0,400),
 		    "Peace Be With You",
 		    100,
 		    {Vec2f(0,0), Vec2f(0,1), Vec2f(1,1), Vec2f(1,0)},
 		    &button_tex,
 		    GUI_FLOAT_CENTER,
 		    0,
-		    Vec4f(0.5,0.5,0,1),
+		    Vec4f(1,1,0.2,1),
 		    GUITextProperties
 		    (GUI_TEXT_STYLE_ITALIC,
 		     GUI_TEXT_ALIGN_CENTER));
     graphics.addGUINode(&text);
+
+    GUITextBox btn1(Vec2s(-400,-400),
+		    "button",
+		    50,
+		    {Vec2f(0,0), Vec2f(0,1), Vec2f(1,1), Vec2f(1,0)},
+		    &button_tex,
+		    GUI_FLOAT_CENTER,
+		    0,
+		    Vec4f(1,1,1,1),
+		    GUITextProperties
+		    (GUI_TEXT_STYLE_BOLD,
+		     GUI_TEXT_ALIGN_CENTER));
+    graphics.addGUINode(&btn1);
+
+    GUITextBox btn2(Vec2s(400,-400),
+		    "button",
+		    50,
+		    {Vec2f(0,0), Vec2f(0,1), Vec2f(1,1), Vec2f(1,0)},
+		    &button_tex,
+		    GUI_FLOAT_CENTER,
+		    0,
+		    Vec4f(1,1,1,1),
+		    GUITextProperties
+		    (GUI_TEXT_STYLE_BOLD,
+		     GUI_TEXT_ALIGN_CENTER));
+    graphics.addGUINode(&btn2);*/
+
+    
 
     Input::addCursorPosCallback
       ([&cam, cam_rot_speed]
@@ -138,18 +176,21 @@ int main() {
 	  
       });
 
-    Input::addCharCallback
+    /*Input::addCharCallback
       ([&text]
        (GLFWwindow* win, u32 code) {
 	static String str;
 	str += (char) code;
 	text.setContents(str);
-      });
+	});*/
 
     Input::addKeyCallback
       ([&cam,
 	cam_speed,
-	&subject]
+	&subject,
+	&phys,
+	&graphics,
+	&heads]
        (GLFWwindow* win,
 	i32 key,
 	i32 code,
@@ -174,7 +215,13 @@ int main() {
 	  cam.translateRel(right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
-	  subject.startAnimation("Walk");
+	  if (act == GLFW_PRESS) {
+	    //subject.startAnimation("Walk");
+	    heads.push_back(new MonkeyHead(cam.trans,
+					   dir*10,
+					   &phys,
+					   &graphics));
+	  }
 	  break;
 	}
       });
@@ -192,7 +239,7 @@ int main() {
       //sword_node.rotateRel(Quaternionf(0,0,dt));
 
       phys.update(dt);
-      light.dir = Quaternionf(0.02,0,0)*light.dir;
+      light.dir = Quaternionf(0.02,0.02,0)*light.dir;
       light.dir.normalize();
 
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -204,7 +251,15 @@ int main() {
       start = end;
       gl::checkError();
     }
-    //delete text;
+
+    for (MonkeyHead* head : heads) {
+      delete head;
+    }
+
+    for (u8 i=0; i<cubes.size(); ++i) {
+      delete cubes[i];
+    }
+    
   } catch (FatalError& e) {
     Log::error(e.msg +
 	       "\nStack trace for Exception: \n"

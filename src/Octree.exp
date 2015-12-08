@@ -1,14 +1,11 @@
-# 1 "src/Physics.cpp"
+# 1 "src/Octree.cpp"
 # 1 "/home/boris/Repos/peace-be-with-you//"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "src/Physics.cpp"
-# 1 "src/Physics.hpp" 1
-       
-
-# 1 "src/PhysicalObject.hpp" 1
+# 1 "src/Octree.cpp"
+# 1 "src/Octree.hpp" 1
        
 
 # 1 "src/Node.hpp" 1
@@ -45761,144 +45758,7 @@ namespace peace {
   };
 
 }
-# 4 "src/PhysicalObject.hpp" 2
-# 1 "src/Messageable.hpp" 1
-       
-
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Messageable.hpp" 2
-# 1 "src/Standard/RTTI.hpp" 1
-       
-
-
-
-# 1 "src/Standard/RTTI.py" 1
-# 1 "src/Standard/RTTI.py"
-$py(
-id_list_filename = makefile_dir + "/ClassIdList.txt"
-def uniqueId(classname):
-
-    id_list = open(id_list_filename, "r+")
-    max_id = 0
-
-    for line in id_list:
-        name, value_str = line.split()
-        value = int(value_str)
-        if name == classname:
-            return value
-        max_id = value if value > max_id else max_id
-
-    class_id = max_id + 1
-    id_list.write("%s %d\n" % (classname, class_id))
-    return class_id
-
-cur_class_name = ""
-cur_class_id = 0;
-
-def rttiConstruct(classname):
-    global cur_class_name
-    global cur_class_id
-    cur_class_name = classname
-    cur_class_id = uniqueId(classname)
-    return "BaseRTTI::type_id = %d" % cur_class_id
-
-def registerRttiStruct():
-    global cur_class_name
-    global cur_class_id
-    classname = cur_class_name
-    class_id = cur_class_id
-    cur_class_name = ""
-    cur_class_id = 0;
-    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
-)
-
-$extend(rttiConstruct)
-$extend(registerRttiStruct)
-# 6 "src/Standard/RTTI.hpp" 2
-# 19 "src/Standard/RTTI.hpp"
-namespace peace {
-
-  typedef u32 TypeId;
-
-  struct BaseRTTI {
-    TypeId type_id;
-    virtual ~BaseRTTI() {}
-  };
-
-  inline TypeId typeId(BaseRTTI* object) {
-    return object->type_id;
-  }
-
-  template <typename T>
-    inline TypeId typeId() {
-    return 0;
-  }
-
-}
-# 5 "src/Messageable.hpp" 2
-
-namespace peace {
-
-  struct Message : BaseRTTI {};
-
-  struct Messageable : BaseRTTI {
-    virtual void message(Message* m) {}
-  };
-
-}
-# 5 "src/PhysicalObject.hpp" 2
-
-
-namespace peace {
-
-  struct MassData {
-
-    f32 mass;
-    f32 inv_mass;
-    f32 inertia;
-    f32 inv_inertia;
-
-    MassData(f32 m, f32 i);
-  };
-
-  struct Material {
-
-    f32 density;
-    f32 cor;
-
-    Material(f32 mat_density, f32 mat_restitution);
-
-    const static Material STATIC;
-  };
-
-  struct PhysicalObject : Node, Messageable {
-
-    Material material;
-    MassData mass_data;
-
-    Vec3f veloc;
-    Vec3f force;
-
-    Quaternionf spin;
-
-    PhysicalObject(Renderable* rend, Material mat,
-    Vec3f xi, Vec3f vi = Vec3f(0,0,0));
-    void update(f32 dt);
-    void applyForce(Vec3f force);
-
-  };
-
-  struct StaticObject : PhysicalObject {
-    StaticObject(Renderable* rend, Vec3f xi, Vec3f vi = Vec3f(0,0,0));
-  };
-
-}
-# 4 "src/Physics.hpp" 2
-
-# 1 "src/Octree.hpp" 1
-       
-
-
+# 4 "src/Octree.hpp" 2
 
 
 namespace peace {
@@ -45919,84 +45779,169 @@ namespace peace {
   };
 
 }
-# 6 "src/Physics.hpp" 2
-
-
-namespace peace {
-
-  struct Physics {
-
-    Octree static_objects;
-    Array<PhysicalObject*> dynamic_objects;
-
-    Vec3f gravity;
-
-    Physics(Vec3f center, Vec3f halves);
-    void update(f32 dt);
-    void addStaticObject(StaticObject* obj);
-    u32 addDynamicObject(PhysicalObject* obj);
-
-
-  };
-
-}
-# 2 "src/Physics.cpp" 2
-# 1 "src/Collision.hpp" 1
+# 2 "src/Octree.cpp" 2
+# 1 "src/BoundingObject.hpp" 1
        
 
 
 
+# 1 "src/BasicMesh.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/BasicMesh.hpp" 2
+
 namespace peace {
 
-  struct CollisionMessage : Message {
+  struct BasicMeshData {
 
+    Vec3f pos;
+    Vec3f norm;
+    Vec2f tex_coord;
 
-    PhysicalObject* object;
+    BasicMeshData(Vec3f position, Vec3f normal,
+    Vec2f texture_coord)
+      : pos(position), norm(normal), tex_coord(texture_coord) {}
 
-    CollisionMessage(PhysicalObject* _object)
-      : object(_object) {
-      $rttiConstruct("CollisionMessage");
-    }
   };
-  $registerRttiStruct();
-
-  void resolveCollision(PhysicalObject* a, PhysicalObject* b);
 
 }
-# 3 "src/Physics.cpp" 2
+# 6 "src/BoundingObject.hpp" 2
 
 namespace peace {
 
-  Physics::Physics(Vec3f center, Vec3f halves)
-    : static_objects(center, halves), gravity(0,0,-9.8067) {}
+  struct Node;
 
-  void Physics::update(f32 dt) {
-    for (PhysicalObject* a : dynamic_objects) {
-      a->force = gravity*a->mass_data.mass;
-      a->update(dt);
+  enum BoundingObjectType {
+    BOUNDING_SPHERE,
+    BOUNDING_OBB,
+    BOUNDING_NONE
+  };
+
+  struct BoundingSphere {
+
+    Vec3f center;
+    f32 radius;
+
+    BoundingSphere(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+  struct BoundingOBB {
+
+    Vec3f center;
+    Vec3f halves;
+    Mat3f coord;
+
+    BoundingOBB(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
+  struct BoundingObject {
+
+    BoundingObjectType type;
+    union {
+      BoundingSphere sphere;
+      BoundingOBB obb;
+    };
+
+    BoundingObject();
+    BoundingObject(BoundingObjectType obj_type,
+     Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+
+
+
+    bool someInBox(Vec3f center, Vec3f halves);
+
+    bool allInBox(Vec3f center, Vec3f halves);
+
+    void transform(Node* t);
+  };
+
+}
+# 3 "src/Octree.cpp" 2
+
+namespace peace {
+# 13 "src/Octree.cpp"
+  Octree::Octree(Vec3f _center, Vec3f _halves)
+    : center(_center), halves(_halves) {
+    for (u8 n=0; n<8; ++n) {
+      children[n] = __null;
     }
-    u32 n = 0;
-    for (PhysicalObject* a : dynamic_objects) {
-      static_objects.traverse(a, [&n](Node* a, Node* b) {
-   ++n;
-   resolveCollision((PhysicalObject*) a,
-      (PhysicalObject*) b);
- });
-      for (PhysicalObject* b : dynamic_objects) {
- ++n;
- resolveCollision(a,b);
+  }
+
+  Octree::~Octree() {
+    for (u8 n=0; n<8; ++n) {
+      if (children[n]) {
+ delete children[n];
       }
     }
-    Log::message("%u", n);
   }
 
-  void Physics::addStaticObject(StaticObject* obj) {
-    static_objects.insert(obj);
+  void Octree::insert(Node* node) {
+
+    if (nodes.size() == 0) {
+      nodes.push_back(node);
+      return;
+    }
+
+    Vec3f child_halves = halves/2;
+    BoundingObject bound = node->getPrimaryBoundingObject();
+
+
+    for (u8 n=0; n<8; ++n) {
+
+      Vec3f child_center =
+ Vec3f(center.x() + ((n % 2 < 1) ? child_halves.x() : -child_halves.x()),
+       center.y() + ((n % 4 < 2) ? child_halves.y() : -child_halves.y()),
+       center.z() + ((n < 4) ? child_halves.z() : -child_halves.z()));
+
+
+
+
+
+      if (bound.allInBox(child_center, child_halves)) {
+
+ if (children[n] == __null) {
+   children[n] = new Octree(child_center, child_halves);
+ }
+ children[n]->insert(node);
+        return;
+      }
+    }
+    nodes.push_back(node);
   }
 
-  u32 Physics::addDynamicObject(PhysicalObject* obj) {
-    dynamic_objects.push_back(obj);
-    return dynamic_objects.size() - 1;
+  void Octree::traverse(Node* node,
+   function<void(Node*,Node*)> callback) {
+
+    for (Node* n : nodes) {
+      callback(node, n);
+    }
+
+    BoundingObject bound = node->getPhysicalBoundingObject();
+
+    for (u8 n=0; n<8; ++n) {
+      if (children[n]) {
+ if (bound.someInBox(children[n]->center,
+      children[n]->halves)) {
+   children[n]->traverse(node, callback);
+ } else {
+ }
+      }
+    }
   }
 
 }

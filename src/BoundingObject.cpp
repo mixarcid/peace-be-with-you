@@ -58,6 +58,38 @@ NAMESPACE {
     return (2/5)*mass*sqr(radius);
   }
 
+  //thanks, nerdinand from StackOverFlow
+  bool BoundingSphere::someInBox(Vec3f center, Vec3f halves) {
+    
+    Vec3f box_min = center - halves;
+    Vec3f box_max = center + halves;
+    f32 min_dist = 0;
+
+    if (this->center.x() < box_min.x()) {
+      min_dist += sqr(this->center.x() - box_min.x());
+    } else if (this->center.x() > box_max.x()) {
+      min_dist += sqr(this->center.x() + box_max.x());
+    }
+
+    if (this->center.y() < box_min.y()) {
+      min_dist += sqr(this->center.y() - box_min.y());
+    } else if (this->center.y() > box_max.y()) {
+      min_dist += sqr(this->center.y() + box_max.y());
+    }
+
+    if (this->center.z() < box_min.z()) {
+      min_dist += sqr(this->center.z() - box_min.z());
+    } else if (this->center.z() > box_max.z()) {
+      min_dist += sqr(this->center.z() + box_max.z());
+    }
+
+    return min_dist < sqr(radius);
+  }
+
+  bool BoundingSphere::allInBox(Vec3f center, Vec3f halves) {
+    PEACE_UNIMPLIMENTED(BoundingSphere::allInBox);
+  }
+
   void BoundingSphere::transform(Node* t) {
     //Log::message(center.toString());
     center += t->trans;
@@ -116,6 +148,35 @@ NAMESPACE {
     return ret;
   }
 
+  bool BoundingOBB::someInBox(Vec3f center, Vec3f halves) {
+    PEACE_UNIMPLIMENTED(BoundingOBB::someInBox);
+  }
+
+  bool BoundingOBB::allInBox(Vec3f center, Vec3f halves) {
+
+    //Log::message("----");
+    //Log::message("center: " + to_string(center));
+    for (u8 x=0; x<2; ++x) {
+      for (u8 y=0; x<2; ++x) {
+	for (u8 z=0; x<2; ++x) {
+	  
+	  Vec3f unoriented_vert(x ? this->halves.x() : -this->halves.x(),
+				y ? this->halves.y() : -this->halves.y(),
+				z ? this->halves.z() : -this->halves.z());
+	  Vec3f vert = this->center + (coord*unoriented_vert);
+	  //Log::message("vert: " + to_string(vert));
+	  Vec3f rel_center = center - vert;
+	  
+	  if (abs(rel_center.x()) > halves.x() ||
+	      abs(rel_center.y()) > halves.y() ||
+	      abs(rel_center.z()) > halves.z()) return false;
+	  
+	}
+      }
+    }
+    return true;
+  }
+
   BoundingObject::BoundingObject() : type(BOUNDING_NONE) {}
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
@@ -155,6 +216,30 @@ NAMESPACE {
       return 0;
     }
     return 0;
+  }
+  
+  bool BoundingObject::someInBox(Vec3f center, Vec3f halves) {
+    switch(type) {
+    case BOUNDING_SPHERE:
+      return sphere.someInBox(center, halves);
+    case BOUNDING_OBB:
+      return obb.someInBox(center, halves);
+    case BOUNDING_NONE:
+      return false;
+    }
+    return false;
+  }
+  
+  bool BoundingObject::allInBox(Vec3f center, Vec3f halves) {
+    switch(type) {
+    case BOUNDING_SPHERE:
+      return sphere.allInBox(center, halves);
+    case BOUNDING_OBB:
+      return obb.allInBox(center, halves);
+    case BOUNDING_NONE:
+      return false;
+    }
+    return false;
   }
 
   void BoundingObject::transform(Node* t) {

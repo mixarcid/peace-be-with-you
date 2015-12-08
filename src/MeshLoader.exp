@@ -44680,9 +44680,9 @@ namespace peace {
     inline String to_string(const Vec<T,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += to_string(v[i]) + ", ";
+      ret += to_string(v.data[i]) + ", ";
     }
-    ret += to_string(v[N-1]) + ">";
+    ret += to_string(v.data[N-1]) + ">";
     return ret;
   }
 
@@ -44690,9 +44690,9 @@ namespace peace {
     inline String to_string(const Vec<f32,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += str::format("%1.3f, ", v[i]);
+      ret += str::format("%1.3f, ", v.data[i]);
     }
-    ret += str::format("%1.3f>", v[N-1]);
+    ret += str::format("%1.3f>", v.data[N-1]);
     return ret;
   }
 
@@ -45318,8 +45318,12 @@ namespace peace {
 
     Renderable(ShaderFlags _shader_flags);
 
+
+
     virtual BoundingObject getBoundingObject() = 0;
+
     virtual BoundingObject getPhysicalBoundingObject() = 0;
+
     virtual BoundingObject getPrimaryBoundingObject() = 0;
     virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}
@@ -45418,6 +45422,8 @@ namespace peace {
     BoundingSphere(Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
   };
 
@@ -45431,6 +45437,8 @@ namespace peace {
     f32 getVolume();
     f32 getInertia(f32 mass);
     Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
 
   };
@@ -45448,6 +45456,13 @@ namespace peace {
      Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+
+
+
+    bool someInBox(Vec3f center, Vec3f halves);
+
+    bool allInBox(Vec3f center, Vec3f halves);
+
     void transform(Node* t);
   };
 
@@ -45665,7 +45680,7 @@ namespace peace {
     }
 
     static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                     ;
       return a*(1-h) + b*h;
     }
@@ -45925,10 +45940,14 @@ namespace peace {
 
 namespace peace {
 
+
   const char PMF_VERSION = 0x04;
-  const char PMF_TYPE_STATIC_NO_TEXTURE = 0;
-  const char PMF_TYPE_STATIC_TEXTURE = 1;
-  const char PMF_TYPE_BONED_TEXTURE = 2;
+
+  enum PMFMeshType : char {
+    PMF_TYPE_STATIC_NO_TEXTURE = 0,
+    PMF_TYPE_STATIC_TEXTURE = 1,
+    PMF_TYPE_BONED_TEXTURE = 2
+  };
 
   Vec3f readVec3f(FILE* file) {
     f32 x = fio::readLittleEndian<f32>(file);
@@ -45953,15 +45972,11 @@ namespace peace {
 
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
-
-
-
     u32 num_verts = fio::readLittleEndian<u32>(file);
     do { if (!(num_verts > 0)) { Log::__assert_print("Why are you loading a mesh with no vertices?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                  ;
     Array<BasicMeshData> data;
     data.reserve(num_verts);
-
 
     for (u32 index = 0; index < num_verts; ++index) {
 
@@ -45969,7 +45984,6 @@ namespace peace {
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
       tex_coord.data[1] = 1 - tex_coord.data[1];
-
       data.push_back(BasicMeshData(pos, norm, tex_coord));
 
     }

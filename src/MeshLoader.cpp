@@ -7,10 +7,14 @@
 
 NAMESPACE {
 
+  //PMF header stuff
   const char PMF_VERSION = 0x04;
-  const char PMF_TYPE_STATIC_NO_TEXTURE = 0;
-  const char PMF_TYPE_STATIC_TEXTURE = 1;
-  const char PMF_TYPE_BONED_TEXTURE = 2;
+  
+  enum PMFMeshType : char {
+    PMF_TYPE_STATIC_NO_TEXTURE = 0,
+    PMF_TYPE_STATIC_TEXTURE = 1,
+    PMF_TYPE_BONED_TEXTURE = 2
+  };
 
   Vec3f readVec3f(FILE* file) {
     f32 x = fio::readLittleEndian<f32>(file);
@@ -35,23 +39,18 @@ NAMESPACE {
     
   StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
 
-    //String tex_name = fio::readString(file);
-    //Log::message("Texture name: " + tex_name);
-
     u32 num_verts = fio::readLittleEndian<u32>(file);
     debugAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
     Array<BasicMeshData> data;
     data.reserve(num_verts);
 
-    //Log::message("#Verts: %u", num_verts);
     for (u32 index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
       tex_coord.data[1] = 1 - tex_coord.data[1];
-      //Log::message("Position: " + pos.toString() + " UV: " + tex_coord.toString());
       data.push_back(BasicMeshData(pos, norm, tex_coord));
       
     }

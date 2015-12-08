@@ -44674,9 +44674,9 @@ namespace peace {
     inline String to_string(const Vec<T,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += to_string(v[i]) + ", ";
+      ret += to_string(v.data[i]) + ", ";
     }
-    ret += to_string(v[N-1]) + ">";
+    ret += to_string(v.data[N-1]) + ">";
     return ret;
   }
 
@@ -44684,9 +44684,9 @@ namespace peace {
     inline String to_string(const Vec<f32,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += str::format("%1.3f, ", v[i]);
+      ret += str::format("%1.3f, ", v.data[i]);
     }
-    ret += str::format("%1.3f>", v[N-1]);
+    ret += str::format("%1.3f>", v.data[N-1]);
     return ret;
   }
 
@@ -45312,8 +45312,12 @@ namespace peace {
 
     Renderable(ShaderFlags _shader_flags);
 
+
+
     virtual BoundingObject getBoundingObject() = 0;
+
     virtual BoundingObject getPhysicalBoundingObject() = 0;
+
     virtual BoundingObject getPrimaryBoundingObject() = 0;
     virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}

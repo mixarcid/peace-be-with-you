@@ -7,9 +7,11 @@ NAMESPACE {
   //Node::Node(Node* node_parent) : parent(node_parent) {}
 
   ArrayHandle Node::addChild(Node* child) {
+    debugAssert(child, "Why are you passing to NULL pointer to addChild?");
     return children.push_back(child);
   }
   ArrayHandle Node::addRenderable(Renderable* renderable) {
+    debugAssert(renderable, "Why are you passing to NULL pointer to addRenderable?");
     return renderables.push_back(renderable);
   }
   void Node::removeChild(ArrayHandle h) {

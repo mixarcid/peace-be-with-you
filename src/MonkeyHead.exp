@@ -1,10 +1,13 @@
-# 1 "src/Physics.cpp"
+# 1 "src/MonkeyHead.cpp"
 # 1 "/home/boris/Repos/peace-be-with-you//"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "src/Physics.cpp"
+# 1 "src/MonkeyHead.cpp"
+# 1 "src/MonkeyHead.hpp" 1
+       
+
 # 1 "src/Physics.hpp" 1
        
 
@@ -45940,63 +45943,389 @@ namespace peace {
   };
 
 }
-# 2 "src/Physics.cpp" 2
-# 1 "src/Collision.hpp" 1
+# 4 "src/MonkeyHead.hpp" 2
+# 1 "src/Graphics.hpp" 1
+       
+
+# 1 "src/Light.hpp" 1
        
 
 
 
 namespace peace {
 
-  struct CollisionMessage : Message {
+struct DirLight {
+  Vec3f dir;
+  f32 pad0[1];
+  Vec3f color;
 
+  DirLight(Vec3f _dir = Vec3f(0,0,0),
+    Vec3f _color = Vec3f(0,0,0));
+};
 
-    PhysicalObject* object;
-
-    CollisionMessage(PhysicalObject* _object)
-      : object(_object) {
-      $rttiConstruct("CollisionMessage");
-    }
-  };
-  $registerRttiStruct();
-
-  void resolveCollision(PhysicalObject* a, PhysicalObject* b);
 
 }
-# 3 "src/Physics.cpp" 2
+# 4 "src/Graphics.hpp" 2
+
+
 
 namespace peace {
 
-  Physics::Physics(Vec3f center, Vec3f halves)
-    : static_objects(center, halves), gravity(0,0,-9.8067) {}
+  struct Camera;
+  struct Node;
+  struct GUINode;
 
-  void Physics::update(f32 dt) {
-    for (PhysicalObject* a : dynamic_objects) {
-      a->force = gravity*a->mass_data.mass;
-      a->update(dt);
-    }
-    u32 n = 0;
-    for (PhysicalObject* a : dynamic_objects) {
-      static_objects.traverse(a, [&n](Node* a, Node* b) {
-   ++n;
-   resolveCollision((PhysicalObject*) a,
-      (PhysicalObject*) b);
- });
-      for (PhysicalObject* b : dynamic_objects) {
- ++n;
- resolveCollision(a,b);
-      }
-    }
-    Log::message("%u", n);
+  struct Graphics {
+
+    f32 ambient;
+    HandledArray<Node*> nodes;
+    HandledArray<GUINode*> nodes_2d;
+    HandledArray<DirLight*> dir_lights;
+    Camera* cam;
+    Shader shade;
+
+    Graphics(String shader_name);
+    ArrayHandle addNode(Node* node);
+    ArrayHandle addGUINode(GUINode* node);
+    ArrayHandle addDirLight(DirLight* light);
+    void removeNode(ArrayHandle h);
+    void removeGUINode(ArrayHandle h);
+    void removeDirLight(ArrayHandle h);
+    void setAmbient(f32 ambient_light);
+    void setCamera(Camera* camera);
+
+    void render(GLFWwindow* window, f32 dt);
+
+    static Vec2f window_size;
+  };
+
+}
+# 5 "src/MonkeyHead.hpp" 2
+# 1 "src/MeshLoader.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/MeshLoader.hpp" 2
+
+
+# 1 "src/BonedMesh.hpp" 1
+       
+
+# 1 "src/StaticMesh.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/StaticMesh.hpp" 2
+
+
+
+
+# 1 "src/Texture.hpp" 1
+       
+
+
+# 1 "src/Standard/Standard.hpp" 1
+# 5 "src/Texture.hpp" 2
+
+
+
+namespace peace {
+
+  struct Texture {
+
+    u32 length;
+    u32* ids;
+
+    Texture(u32 num_textures = 1);
+
+
+    void load(String filename, ShaderUniform tex_uniform,
+       u32 index = 0);
+    void use(u32 index = 0);
+    ~Texture();
+  };
+
+}
+# 9 "src/StaticMesh.hpp" 2
+# 1 "src/BasicMesh.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/BasicMesh.hpp" 2
+
+namespace peace {
+
+  struct BasicMeshData {
+
+    Vec3f pos;
+    Vec3f norm;
+    Vec2f tex_coord;
+
+    BasicMeshData(Vec3f position, Vec3f normal,
+    Vec2f texture_coord)
+      : pos(position), norm(normal), tex_coord(texture_coord) {}
+
+  };
+
+}
+# 10 "src/StaticMesh.hpp" 2
+# 1 "src/BoundingObject.hpp" 1
+       
+
+
+
+
+
+namespace peace {
+
+  struct Node;
+
+  enum BoundingObjectType {
+    BOUNDING_SPHERE,
+    BOUNDING_OBB,
+    BOUNDING_NONE
+  };
+
+  struct BoundingSphere {
+
+    Vec3f center;
+    f32 radius;
+
+    BoundingSphere(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+  struct BoundingOBB {
+
+    Vec3f center;
+    Vec3f halves;
+    Mat3f coord;
+
+    BoundingOBB(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
+  struct BoundingObject {
+
+    BoundingObjectType type;
+    union {
+      BoundingSphere sphere;
+      BoundingOBB obb;
+    };
+
+    BoundingObject();
+    BoundingObject(BoundingObjectType obj_type,
+     Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+
+
+
+    bool someInBox(Vec3f center, Vec3f halves);
+
+    bool allInBox(Vec3f center, Vec3f halves);
+
+    void transform(Node* t);
+  };
+
+}
+# 11 "src/StaticMesh.hpp" 2
+
+namespace peace {
+
+  struct StaticMesh : RenderableReg {
+
+    Array<BasicMeshData> data;
+    Array<u32> elements;
+    Texture* tex;
+    BoundingObject b_sphere;
+    BoundingObject b_obb;
+
+    StaticMesh(Array<BasicMeshData> mesh_data,
+        Array<u32> mesh_elems,
+        Texture* texture,
+        ShaderFlags _shader_flags
+        = SHADER_NO_FLAGS);
+
+    void init();
+    virtual BoundingObject getBoundingObject();
+    virtual BoundingObject getPhysicalBoundingObject();
+    virtual BoundingObject getPrimaryBoundingObject();
+    virtual void render(RenderContext c);
+
+  };
+
+}
+# 4 "src/BonedMesh.hpp" 2
+
+
+
+namespace peace {
+
+  struct Bone : Transform {
+    using Transform::Transform;
+    void operator=(const Transform b);
+  };
+
+  struct BonedMeshData {
+    u32 indexes[Shader::MAX_BONES_PER_VERTEX];
+    f32 weights[Shader::MAX_BONES_PER_VERTEX];
+
+    BonedMeshData();
+  };
+
+  struct KeyFrame {
+
+    f32 time;
+    Array<Bone> bones;
+
+    KeyFrame(f32 frame_time, u32 num_bones);
+
+  };
+
+  struct BonedAnimationBase {
+    Array<KeyFrame> keyframes;
+    BonedAnimationBase(Array<KeyFrame>
+         anim_keyframes = {});
+  };
+
+  struct BonedAnimation {
+
+    bool playing;
+    float cur_time;
+    u32 cur_keyframe;
+    Array<KeyFrame> keyframes;
+
+    BonedAnimation(Array<KeyFrame> anim_keyframes);
+    BonedAnimation();
+
+    void step(Array<Bone>* bones, float dt);
+
+  };
+
+  struct BonedMeshBase : StaticMesh {
+
+    VBO b_vbo;
+    Array<BonedMeshData> b_data;
+    Array<Bone> bones;
+    HashMap<String, BonedAnimationBase> animations;
+
+    BonedMeshBase(Array<BasicMeshData> static_data,
+    Array<u32> elems,
+    Texture* tex,
+    Array<BonedMeshData> bone_data,
+    Array<Bone> default_bones,
+    HashMap<String,
+    BonedAnimationBase> mesh_animations);
+    void init();
+    BonedAnimation getAnimation(String name);
+  };
+
+  struct BonedMesh : Renderable {
+
+    BonedMeshBase* base;
+    Array<Bone> bones;
+    BonedAnimation cur_animation;
+
+    BonedMesh(BonedMeshBase* base_mesh);
+    void startAnimation(String name);
+    virtual void render(RenderContext c);
+    virtual BoundingObject getBoundingObject();
+    virtual BoundingObject getPrimaryBoundingObject();
+    virtual BoundingObject getPhysicalBoundingObject();
+
+  };
+}
+# 7 "src/MeshLoader.hpp" 2
+
+namespace peace {
+
+  struct MeshLoader {
+
+    HashMap<String, StaticMesh*> static_meshes;
+    HashMap<String, BonedMeshBase*> boned_meshes;
+    Array<Texture*> textures;
+
+    MeshLoader(String filename);
+    StaticMesh* getStaticMesh(String mesh_name);
+    BonedMesh getBonedMesh(String mesh_name);
+    ~MeshLoader();
+  };
+
+}
+# 6 "src/MonkeyHead.hpp" 2
+
+namespace peace {
+
+  struct MonkeyHead : PhysicalObject {
+
+    MonkeyHead(Vec3f pos,
+        Vec3f veloc,
+        Physics* phys,
+        Graphics* graphics);
+    virtual ~MonkeyHead();
+    static StaticMesh* mesh;
+
+  };
+
+}
+# 2 "src/MonkeyHead.cpp" 2
+# 1 "src/Assets.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Assets.hpp" 2
+# 31 "src/Assets.hpp"
+namespace peace {
+
+  void LogCurrentDirectory();
+
+  struct Asset {
+    Asset(function<void(void)> load_func,
+   function<void(void)> free_func);
+    static Array<function<void(void)>> loaders;
+    static Array<function<void(void)>> freers;
+    static void loadAll();
+    static void freeAll();
+  };
+}
+# 3 "src/MonkeyHead.cpp" 2
+
+namespace peace {
+
+  StaticMesh* MonkeyHead::mesh = __null;
+  static MeshLoader* loader;
+
+  const static Asset MONKEY_LOADER([]() {;
+
+  loader = new MeshLoader("Monkey");
+  MonkeyHead::mesh = loader->getStaticMesh("Suzanne");
+
+  }, []() {;
+
+  delete loader;
+
+  });
+
+  MonkeyHead::MonkeyHead(Vec3f pos,
+    Vec3f veloc,
+    Physics* phys,
+    Graphics* graphics)
+    : PhysicalObject(mesh, Material(1, 0.5), pos, veloc) {
+    graphics->addNode(this);
+    phys->addDynamicObject(this);
   }
 
-  void Physics::addStaticObject(StaticObject* obj) {
-    static_objects.insert(obj);
-  }
-
-  u32 Physics::addDynamicObject(PhysicalObject* obj) {
-    dynamic_objects.push_back(obj);
-    return dynamic_objects.size() - 1;
-  }
+  MonkeyHead::~MonkeyHead() {}
 
 }

@@ -37997,9 +37997,9 @@ namespace peace {
     inline String to_string(const Vec<T,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += to_string(v[i]) + ", ";
+      ret += to_string(v.data[i]) + ", ";
     }
-    ret += to_string(v[N-1]) + ">";
+    ret += to_string(v.data[N-1]) + ">";
     return ret;
   }
 
@@ -38007,9 +38007,9 @@ namespace peace {
     inline String to_string(const Vec<f32,N> v) {
     String ret = "<";
     for (u8 i=0; i<N-1; ++i) {
-      ret += str::format("%1.3f, ", v[i]);
+      ret += str::format("%1.3f, ", v.data[i]);
     }
-    ret += str::format("%1.3f>", v[N-1]);
+    ret += str::format("%1.3f>", v.data[N-1]);
     return ret;
   }
 
@@ -38662,7 +38662,7 @@ namespace peace {
     }
 
     static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
                                                     ;
       return a*(1-h) + b*h;
     }
@@ -45577,8 +45577,12 @@ namespace peace {
 
     Renderable(ShaderFlags _shader_flags);
 
+
+
     virtual BoundingObject getBoundingObject() = 0;
+
     virtual BoundingObject getPhysicalBoundingObject() = 0;
+
     virtual BoundingObject getPrimaryBoundingObject() = 0;
     virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}
@@ -45798,6 +45802,8 @@ namespace peace {
     BoundingSphere(Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
   };
 
@@ -45811,6 +45817,8 @@ namespace peace {
     f32 getVolume();
     f32 getInertia(f32 mass);
     Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
     void transform(Node* t);
 
   };
@@ -45828,6 +45836,13 @@ namespace peace {
      Array<BasicMeshData> data);
     f32 getVolume();
     f32 getInertia(f32 mass);
+
+
+
+    bool someInBox(Vec3f center, Vec3f halves);
+
+    bool allInBox(Vec3f center, Vec3f halves);
+
     void transform(Node* t);
   };
 
@@ -45840,9 +45855,11 @@ namespace peace {
 
 
   ArrayHandle Node::addChild(Node* child) {
+    do { if (!(child)) { Log::__assert_print("Why are you passing to NULL pointer to addChild?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
     return children.push_back(child);
   }
   ArrayHandle Node::addRenderable(Renderable* renderable) {
+    do { if (!(renderable)) { Log::__assert_print("Why are you passing to NULL pointer to addRenderable?"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0);
     return renderables.push_back(renderable);
   }
   void Node::removeChild(ArrayHandle h) {
@@ -45877,7 +45894,7 @@ namespace peace {
     obj.transform(this);
     return obj;
   }
-# 56 "src/Node.cpp"
+# 58 "src/Node.cpp"
   void Node::render(RenderContext c, Mat4f model) {
     Mat4f comb = model*Transform::getMat();
 
