@@ -35516,9 +35516,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38117,6 +38119,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -45326,14 +45332,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45718,50 +45725,21 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
 }
 # 7 "src/Node.hpp" 2
-
-namespace peace {
-
-  struct BoundingObject;
-
-  struct Node : Transform {
-
-
-
-
-
-    HandledArray<Node*> children;
-    HandledArray<Renderable*> renderables;
-
-
-    using Transform::Transform;
-
-    ArrayHandle addChild(Node* child);
-    ArrayHandle addRenderable(Renderable* renderable);
-    void removeChild(ArrayHandle h);
-    void removeRenderable(ArrayHandle h);
-    BoundingObject getBoundingObject();
-    BoundingObject getPhysicalBoundingObject();
-    BoundingObject getPrimaryBoundingObject();
-
-    void render(RenderContext c, Mat4f model);
-
-  };
-
-}
-# 4 "src/PhysicalObject.hpp" 2
 # 1 "src/Messageable.hpp" 1
        
 
@@ -45846,10 +45824,45 @@ namespace peace {
   };
 
 }
-# 5 "src/PhysicalObject.hpp" 2
+# 8 "src/Node.hpp" 2
+
+namespace peace {
+
+  struct BoundingObject;
+
+  struct Node : Transform, Messageable {
+
+
+
+
+
+    HandledArray<Node*> children;
+    HandledArray<Renderable*> renderables;
+
+
+    using Transform::Transform;
+
+    ArrayHandle addChild(Node* child);
+    ArrayHandle addRenderable(Renderable* renderable);
+    void removeChild(ArrayHandle h);
+    void removeRenderable(ArrayHandle h);
+    BoundingObject getBoundingObject();
+    BoundingObject getPhysicalBoundingObject();
+    BoundingObject getPrimaryBoundingObject();
+
+    void render(RenderContext c, Mat4f model);
+
+  };
+
+}
+# 4 "src/PhysicalObject.hpp" 2
 
 
 namespace peace {
+
+  enum PhysicalObjectFlags : u8 { PHYSICS_NO_FLAGS = 0x00, PHYSICS_STATIC = 0x01 }; inline PhysicalObjectFlags operator~(const PhysicalObjectFlags a) { return (PhysicalObjectFlags) ~ (u8) a; } inline PhysicalObjectFlags operator|(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a | (u8) b); } inline PhysicalObjectFlags operator&(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a & (u8) b); } inline void operator|=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a | b; } inline void operator&=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a & b; }
+
+                         ;
 
   struct MassData {
 
@@ -45871,7 +45884,7 @@ namespace peace {
     const static Material STATIC;
   };
 
-  struct PhysicalObject : Node, Messageable {
+  struct PhysicalObject : Node {
 
     Material material;
     MassData mass_data;
@@ -45881,15 +45894,19 @@ namespace peace {
 
     Quaternionf spin;
 
-    PhysicalObject(Renderable* rend, Material mat,
-    Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    PhysicalObjectFlags physics_flags;
+
+    PhysicalObject(Renderable* rend,
+     Material mat,
+     Vec3f xi,
+     Vec3f vi = Vec3f(0,0,0),
+     PhysicalObjectFlags _flags = PHYSICS_NO_FLAGS);
     void update(f32 dt);
     void applyForce(Vec3f force);
-
   };
 
   struct StaticObject : PhysicalObject {
-    StaticObject(Renderable* rend, Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    StaticObject(Renderable* rend, Vec3f xi);
   };
 
 }
@@ -45903,6 +45920,13 @@ namespace peace {
 
 namespace peace {
 
+  struct OctreeOutOfBoundsMessage : Message {
+    OctreeOutOfBoundsMessage() {
+      $rttiConstruct("OctreeOutOfBoundsMessage");
+    }
+  };
+  $registerRttiStruct();
+
   struct Octree {
 
     Vec3f center;
@@ -45912,7 +45936,7 @@ namespace peace {
 
     Octree(Vec3f _center, Vec3f _halves);
     ~Octree();
-    void insert(Node* node);
+    void insert(Node* node, u32 level=0);
     void traverse(Node* node,
     function<void(Node*,Node*)> callback);
 
@@ -45927,15 +45951,17 @@ namespace peace {
   struct Physics {
 
     Octree static_objects;
-    Array<PhysicalObject*> dynamic_objects;
+    HandledArray<PhysicalObject*> dynamic_objects;
 
     Vec3f gravity;
 
     Physics(Vec3f center, Vec3f halves);
     void update(f32 dt);
     void addStaticObject(StaticObject* obj);
-    u32 addDynamicObject(PhysicalObject* obj);
-
+    ArrayHandle addDynamicObject(PhysicalObject* obj);
+    void removeDynamicObject(ArrayHandle h);
+    ArrayHandle addObject(PhysicalObject* obj);
+    void removeObject(ArrayHandle h);
 
   };
 
@@ -45968,13 +45994,15 @@ namespace peace {
 namespace peace {
 
   Physics::Physics(Vec3f center, Vec3f halves)
-    : static_objects(center, halves), gravity(0,0,-9.8067) {}
+    : static_objects(center, halves), gravity(0,0,0 ) {}
 
   void Physics::update(f32 dt) {
+
     for (PhysicalObject* a : dynamic_objects) {
       a->force = gravity*a->mass_data.mass;
       a->update(dt);
     }
+
     u32 n = 0;
     for (PhysicalObject* a : dynamic_objects) {
       static_objects.traverse(a, [&n](Node* a, Node* b) {
@@ -45982,21 +46010,41 @@ namespace peace {
    resolveCollision((PhysicalObject*) a,
       (PhysicalObject*) b);
  });
+
+
+
       for (PhysicalObject* b : dynamic_objects) {
  ++n;
  resolveCollision(a,b);
       }
     }
-    Log::message("%u", n);
+
   }
 
   void Physics::addStaticObject(StaticObject* obj) {
     static_objects.insert(obj);
   }
 
-  u32 Physics::addDynamicObject(PhysicalObject* obj) {
-    dynamic_objects.push_back(obj);
-    return dynamic_objects.size() - 1;
+  ArrayHandle Physics::addDynamicObject(PhysicalObject* obj) {
+    return dynamic_objects.push_back(obj);
   }
 
+  void Physics::removeDynamicObject(ArrayHandle h) {
+    dynamic_objects.removeAndReplace(h);
+  }
+
+  ArrayHandle Physics::addObject(PhysicalObject* obj) {
+    if (obj->physics_flags & PHYSICS_STATIC) {
+      addStaticObject((StaticObject*)obj);
+      return __null;
+    } else {
+      return addDynamicObject(obj);
+    }
+  }
+
+  void Physics::removeObject(ArrayHandle h) {
+    if (h) {
+      dynamic_objects.removeAndReplace(h);
+    }
+  }
 }

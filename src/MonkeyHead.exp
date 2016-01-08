@@ -8,7 +8,7 @@
 # 1 "src/MonkeyHead.hpp" 1
        
 
-# 1 "src/Physics.hpp" 1
+# 1 "src/GameObject.hpp" 1
        
 
 # 1 "src/PhysicalObject.hpp" 1
@@ -35519,9 +35519,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38120,6 +38122,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -45329,14 +45335,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45721,50 +45728,21 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
 }
 # 7 "src/Node.hpp" 2
-
-namespace peace {
-
-  struct BoundingObject;
-
-  struct Node : Transform {
-
-
-
-
-
-    HandledArray<Node*> children;
-    HandledArray<Renderable*> renderables;
-
-
-    using Transform::Transform;
-
-    ArrayHandle addChild(Node* child);
-    ArrayHandle addRenderable(Renderable* renderable);
-    void removeChild(ArrayHandle h);
-    void removeRenderable(ArrayHandle h);
-    BoundingObject getBoundingObject();
-    BoundingObject getPhysicalBoundingObject();
-    BoundingObject getPrimaryBoundingObject();
-
-    void render(RenderContext c, Mat4f model);
-
-  };
-
-}
-# 4 "src/PhysicalObject.hpp" 2
 # 1 "src/Messageable.hpp" 1
        
 
@@ -45849,10 +45827,45 @@ namespace peace {
   };
 
 }
-# 5 "src/PhysicalObject.hpp" 2
+# 8 "src/Node.hpp" 2
+
+namespace peace {
+
+  struct BoundingObject;
+
+  struct Node : Transform, Messageable {
+
+
+
+
+
+    HandledArray<Node*> children;
+    HandledArray<Renderable*> renderables;
+
+
+    using Transform::Transform;
+
+    ArrayHandle addChild(Node* child);
+    ArrayHandle addRenderable(Renderable* renderable);
+    void removeChild(ArrayHandle h);
+    void removeRenderable(ArrayHandle h);
+    BoundingObject getBoundingObject();
+    BoundingObject getPhysicalBoundingObject();
+    BoundingObject getPrimaryBoundingObject();
+
+    void render(RenderContext c, Mat4f model);
+
+  };
+
+}
+# 4 "src/PhysicalObject.hpp" 2
 
 
 namespace peace {
+
+  enum PhysicalObjectFlags : u8 { PHYSICS_NO_FLAGS = 0x00, PHYSICS_STATIC = 0x01 }; inline PhysicalObjectFlags operator~(const PhysicalObjectFlags a) { return (PhysicalObjectFlags) ~ (u8) a; } inline PhysicalObjectFlags operator|(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a | (u8) b); } inline PhysicalObjectFlags operator&(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a & (u8) b); } inline void operator|=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a | b; } inline void operator&=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a & b; }
+
+                         ;
 
   struct MassData {
 
@@ -45874,7 +45887,7 @@ namespace peace {
     const static Material STATIC;
   };
 
-  struct PhysicalObject : Node, Messageable {
+  struct PhysicalObject : Node {
 
     Material material;
     MassData mass_data;
@@ -45884,123 +45897,79 @@ namespace peace {
 
     Quaternionf spin;
 
-    PhysicalObject(Renderable* rend, Material mat,
-    Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    PhysicalObjectFlags physics_flags;
+
+    PhysicalObject(Renderable* rend,
+     Material mat,
+     Vec3f xi,
+     Vec3f vi = Vec3f(0,0,0),
+     PhysicalObjectFlags _flags = PHYSICS_NO_FLAGS);
     void update(f32 dt);
     void applyForce(Vec3f force);
-
   };
 
   struct StaticObject : PhysicalObject {
-    StaticObject(Renderable* rend, Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    StaticObject(Renderable* rend, Vec3f xi);
   };
 
 }
-# 4 "src/Physics.hpp" 2
-
-# 1 "src/Octree.hpp" 1
-       
-
-
-
+# 4 "src/GameObject.hpp" 2
 
 namespace peace {
 
-  struct Octree {
 
-    Vec3f center;
-    Vec3f halves;
-    Array<Node*> nodes;
-    Octree* children[8];
 
-    Octree(Vec3f _center, Vec3f _halves);
-    ~Octree();
-    void insert(Node* node);
-    void traverse(Node* node,
-    function<void(Node*,Node*)> callback);
 
+
+  struct Engine;
+
+  enum GameObjectFlags : u8 { OBJECT_NO_FLAGS = 0x00, OBJECT_UPDATE = 0x01, OBJECT_NAMED = 0x02, OBJECT_SAVEABLE = 0x04, OBJECT_DELETE_ONCE_SAVED = 0x08 }; inline GameObjectFlags operator~(const GameObjectFlags a) { return (GameObjectFlags) ~ (u8) a; } inline GameObjectFlags operator|(const GameObjectFlags a, const GameObjectFlags b) { return (GameObjectFlags) ((u8) a | (u8) b); } inline GameObjectFlags operator&(const GameObjectFlags a, const GameObjectFlags b) { return (GameObjectFlags) ((u8) a & (u8) b); } inline void operator|=(GameObjectFlags& a, const GameObjectFlags b) { a = a | b; } inline void operator&=(GameObjectFlags& a, const GameObjectFlags b) { a = a & b; }
+
+
+
+
+                                   ;
+
+  struct GameObjectHandle {
+    GameObjectFlags flags;
+    ArrayHandle physics_handle;
+    ArrayHandle graphics_handle;
+    ArrayHandle update_handle;
+    String object_name;
   };
 
-}
-# 6 "src/Physics.hpp" 2
+  struct GameObject : PhysicalObject {
 
+    const GameObjectFlags object_flags;
+    Engine* engine;
+    GameObjectHandle handle;
 
-namespace peace {
+    GameObject(Renderable* rend,
+        Material mat,
+        Vec3f xi,
+        Vec3f vi = Vec3f(0,0,0),
+        PhysicalObjectFlags physics_flags = PHYSICS_NO_FLAGS,
+        GameObjectFlags flags = OBJECT_NO_FLAGS);
 
-  struct Physics {
+    void init(Engine* engine);
+    virtual void update() {}
+    virtual ~GameObject();
+  };
 
-    Octree static_objects;
-    Array<PhysicalObject*> dynamic_objects;
+  struct NamedObject : GameObject {
 
-    Vec3f gravity;
-
-    Physics(Vec3f center, Vec3f halves);
-    void update(f32 dt);
-    void addStaticObject(StaticObject* obj);
-    u32 addDynamicObject(PhysicalObject* obj);
-
-
+    const String name;
+    NamedObject(String _name,
+  Renderable* rend,
+  Material mat,
+  Vec3f xi,
+  Vec3f vi = Vec3f(0,0,0),
+  PhysicalObjectFlags physics_flags = PHYSICS_NO_FLAGS,
+  GameObjectFlags flags = OBJECT_NO_FLAGS);
   };
 
 }
 # 4 "src/MonkeyHead.hpp" 2
-# 1 "src/Graphics.hpp" 1
-       
-
-# 1 "src/Light.hpp" 1
-       
-
-
-
-namespace peace {
-
-struct DirLight {
-  Vec3f dir;
-  f32 pad0[1];
-  Vec3f color;
-
-  DirLight(Vec3f _dir = Vec3f(0,0,0),
-    Vec3f _color = Vec3f(0,0,0));
-};
-
-
-}
-# 4 "src/Graphics.hpp" 2
-
-
-
-namespace peace {
-
-  struct Camera;
-  struct Node;
-  struct GUINode;
-
-  struct Graphics {
-
-    f32 ambient;
-    HandledArray<Node*> nodes;
-    HandledArray<GUINode*> nodes_2d;
-    HandledArray<DirLight*> dir_lights;
-    Camera* cam;
-    Shader shade;
-
-    Graphics(String shader_name);
-    ArrayHandle addNode(Node* node);
-    ArrayHandle addGUINode(GUINode* node);
-    ArrayHandle addDirLight(DirLight* light);
-    void removeNode(ArrayHandle h);
-    void removeGUINode(ArrayHandle h);
-    void removeDirLight(ArrayHandle h);
-    void setAmbient(f32 ambient_light);
-    void setCamera(Camera* camera);
-
-    void render(GLFWwindow* window, f32 dt);
-
-    static Vec2f window_size;
-  };
-
-}
-# 5 "src/MonkeyHead.hpp" 2
 # 1 "src/MeshLoader.hpp" 1
        
 
@@ -46050,8 +46019,7 @@ namespace peace {
 # 1 "src/BasicMesh.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/BasicMesh.hpp" 2
+
 
 namespace peace {
 
@@ -46083,6 +46051,7 @@ namespace peace {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -46115,17 +46084,48 @@ namespace peace {
 
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+
+
+
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
   struct BoundingObject {
 
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
 
@@ -46237,6 +46237,7 @@ namespace peace {
     Array<Bone> bones;
     BonedAnimation cur_animation;
 
+    BonedMesh();
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
     virtual void render(RenderContext c);
@@ -46263,21 +46264,25 @@ namespace peace {
   };
 
 }
-# 6 "src/MonkeyHead.hpp" 2
+# 5 "src/MonkeyHead.hpp" 2
 
 namespace peace {
 
-  struct MonkeyHead : PhysicalObject {
+  struct MonkeyHead : GameObject {
 
     MonkeyHead(Vec3f pos,
         Vec3f veloc,
-        Physics* phys,
-        Graphics* graphics);
-    virtual ~MonkeyHead();
+        Engine* engine)
+      : GameObject(mesh, Material(1, 0.5), pos, veloc) {
+
+      $rttiConstruct("MonkeyHead");
+      GameObject::init(engine);
+    }
+
     static StaticMesh* mesh;
 
   };
-
+  $registerRttiStruct();
 }
 # 2 "src/MonkeyHead.cpp" 2
 # 1 "src/Assets.hpp" 1
@@ -46316,16 +46321,5 @@ namespace peace {
   delete loader;
 
   });
-
-  MonkeyHead::MonkeyHead(Vec3f pos,
-    Vec3f veloc,
-    Physics* phys,
-    Graphics* graphics)
-    : PhysicalObject(mesh, Material(1, 0.5), pos, veloc) {
-    graphics->addNode(this);
-    phys->addDynamicObject(this);
-  }
-
-  MonkeyHead::~MonkeyHead() {}
 
 }

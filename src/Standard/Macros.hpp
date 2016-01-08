@@ -39,9 +39,9 @@
 
 #define PEACE_STRING(x) #x
 
-#define PEACE_UNIMPLIMENTED(func_name)			\
-  Log::fatalError("unimplimented function " #func_name);	\
-  return 0;
+#define PEACE_UNIMPLIMENTED(ret)				\
+  Log::fatalError("unimplimented function %s", __func__);	\
+  return ret;
 
 #define PEACE_DEFINE_BITFLAGS(name, size, ...)	\
   enum name : u##size {				\

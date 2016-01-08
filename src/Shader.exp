@@ -35510,9 +35510,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -42911,21 +42913,6 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
-
-namespace peace {
-
-  namespace gl {
-
-    void init();
-    void checkError();
-    void ignoreError(GLenum code);
-    void terminate();
-
-  }
-}
-# 7 "src/Shader.hpp" 2
 # 1 "src/Vector.hpp" 1
        
 
@@ -44699,6 +44686,10 @@ namespace peace {
       return Vec<T,3>::data[2];
     }
 
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
+    }
+
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
       return Vec3((v1.y()*v2.z()) - (v1.z()*v2.y()),
     (v1.z()*v2.x()) - (v1.x()*v2.z()),
@@ -44800,7 +44791,23 @@ namespace peace {
   typedef Vec4<i16> Vec4s;
 
 }
-# 8 "src/Shader.hpp" 2
+# 10 "src/GL.hpp" 2
+
+
+namespace peace {
+
+  namespace gl {
+
+    void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
+    void checkError();
+    void ignoreError(GLenum code);
+    void terminate();
+
+  }
+}
+# 7 "src/Shader.hpp" 2
+
 # 1 "src/Matrix.hpp" 1
        
 

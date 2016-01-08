@@ -36995,9 +36995,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38110,6 +38112,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -44810,14 +44816,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45337,14 +45344,16 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
@@ -45365,8 +45374,10 @@ namespace peace {
     HandledArray<DirLight*> dir_lights;
     Camera* cam;
     Shader shade;
+    Vec4f background_color;
 
-    Graphics(String shader_name);
+    Graphics(String shader_name,
+      Vec4f _background_color = Vec4f(0,0,0,1));
     ArrayHandle addNode(Node* node);
     ArrayHandle addGUINode(GUINode* node);
     ArrayHandle addDirLight(DirLight* light);
@@ -45818,12 +45829,97 @@ namespace peace {
 }
 # 6 "src/Node.hpp" 2
 
+# 1 "src/Messageable.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Messageable.hpp" 2
+# 1 "src/Standard/RTTI.hpp" 1
+       
+
+
+
+# 1 "src/Standard/RTTI.py" 1
+# 1 "src/Standard/RTTI.py"
+$py(
+id_list_filename = makefile_dir + "/ClassIdList.txt"
+def uniqueId(classname):
+
+    id_list = open(id_list_filename, "r+")
+    max_id = 0
+
+    for line in id_list:
+        name, value_str = line.split()
+        value = int(value_str)
+        if name == classname:
+            return value
+        max_id = value if value > max_id else max_id
+
+    class_id = max_id + 1
+    id_list.write("%s %d\n" % (classname, class_id))
+    return class_id
+
+cur_class_name = ""
+cur_class_id = 0;
+
+def rttiConstruct(classname):
+    global cur_class_name
+    global cur_class_id
+    cur_class_name = classname
+    cur_class_id = uniqueId(classname)
+    return "BaseRTTI::type_id = %d" % cur_class_id
+
+def registerRttiStruct():
+    global cur_class_name
+    global cur_class_id
+    classname = cur_class_name
+    class_id = cur_class_id
+    cur_class_name = ""
+    cur_class_id = 0;
+    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
+)
+
+$extend(rttiConstruct)
+$extend(registerRttiStruct)
+# 6 "src/Standard/RTTI.hpp" 2
+# 19 "src/Standard/RTTI.hpp"
+namespace peace {
+
+  typedef u32 TypeId;
+
+  struct BaseRTTI {
+    TypeId type_id;
+    virtual ~BaseRTTI() {}
+  };
+
+  inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
+  }
+
+  template <typename T>
+    inline TypeId typeId() {
+    return 0;
+  }
+
+}
+# 5 "src/Messageable.hpp" 2
+
+namespace peace {
+
+  struct Message : BaseRTTI {};
+
+  struct Messageable : BaseRTTI {
+    virtual void message(Message* m) {}
+  };
+
+}
+# 8 "src/Node.hpp" 2
 
 namespace peace {
 
   struct BoundingObject;
 
-  struct Node : Transform {
+  struct Node : Transform, Messageable {
 
 
 
@@ -46061,7 +46157,11 @@ namespace peace {
 
   Vec2f Graphics::window_size;
 
-  Graphics::Graphics(String shader_name) : shade(shader_name) {
+  Graphics::Graphics(String shader_name,
+       Vec4f _background_color)
+    : shade(shader_name),
+    background_color(_background_color) {
+
     shade.use();
     glEnable(0x0BE2);
     glBlendFunc (0x0302, 0x0303);
@@ -46080,12 +46180,8 @@ namespace peace {
   }
 
   ArrayHandle Graphics::addGUINode(GUINode* node) {
-    ArrayHandle ret = nodes_2d.insertSorted(node,
-         GUINode::compare);
-
-
-
-    return ret;
+   return nodes_2d.insertSorted(node,
+    GUINode::compare);
   }
 
   ArrayHandle Graphics::addDirLight(DirLight* light) {
@@ -46130,6 +46226,10 @@ namespace peace {
 
   void Graphics::render(GLFWwindow* window,f32 dt) {
 
+    glClearColor(background_color.x(),
+   background_color.y(),
+   background_color.z(),
+   background_color.w());
     glClear(0x00004000 | 0x00000100);
 
     do { if (!(cam != __null)) { Log::__assert_print("You need to give Graphics" "a Camera before rendering"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
@@ -46169,6 +46269,9 @@ namespace peace {
     for (GUINode* node : nodes_2d) {
       node->render(c, model);
     }
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 
   }
 }

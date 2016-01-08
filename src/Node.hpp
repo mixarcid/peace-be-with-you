@@ -4,12 +4,13 @@
 #include "Transform.hpp"
 #include "Renderable.hpp"
 #include "HandledArray.hpp"
+#include "Messageable.hpp"
 
 NAMESPACE {
 
   struct BoundingObject;
 
-  struct Node : Transform {
+  struct Node : Transform, Messageable {
 
     //Node* parent;
     /*BoundingObject* bounding_obj;

@@ -18,8 +18,10 @@ NAMESPACE {
     HandledArray<DirLight*> dir_lights;
     Camera* cam;
     Shader shade;
+    Vec4f background_color;
 
-    Graphics(String shader_name);
+    Graphics(String shader_name,
+	     Vec4f _background_color = Vec4f(0,0,0,1));
     ArrayHandle addNode(Node* node);
     ArrayHandle addGUINode(GUINode* node);
     ArrayHandle addDirLight(DirLight* light);

@@ -1,11 +1,17 @@
-# 1 "src/Transform.cpp"
+# 1 "src/GameObject.cpp"
 # 1 "/home/boris/Repos/peace-be-with-you//"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "src/Transform.cpp"
-# 1 "src/Transform.hpp" 1
+# 1 "src/GameObject.cpp"
+# 1 "src/GameObject.hpp" 1
+       
+
+# 1 "src/PhysicalObject.hpp" 1
+       
+
+# 1 "src/Node.hpp" 1
        
 
 # 1 "src/Standard/Standard.hpp" 1
@@ -36336,6 +36342,11 @@ namespace peace {
 
 }
 # 5 "src/Standard/Standard.hpp" 2
+# 4 "src/Node.hpp" 2
+# 1 "src/Transform.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
 # 4 "src/Transform.hpp" 2
 # 1 "src/Vector.hpp" 1
        
@@ -38739,13 +38750,13 @@ namespace peace {
   };
 
 }
-# 2 "src/Transform.cpp" 2
-# 1 "src/Shader.hpp" 1
+# 5 "src/Node.hpp" 2
+# 1 "src/Renderable.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Shader.hpp" 2
 
+# 1 "src/VertexObjects.hpp" 1
+       
 
 # 1 "src/GL.hpp" 1
        
@@ -45336,7 +45347,89 @@ namespace peace {
 
   }
 }
-# 7 "src/Shader.hpp" 2
+# 4 "src/VertexObjects.hpp" 2
+# 1 "src/Standard/Standard.hpp" 1
+# 5 "src/VertexObjects.hpp" 2
+
+
+namespace peace {
+
+  struct ShaderVar;
+
+  struct VAO {
+
+    u32 length;
+    u32* ids;
+
+    void init(u32 num_vaos = 1);
+    void use(u32 index = 0);
+
+
+
+    void registerVars(Array<ShaderVar> vars,
+        u32 index = 0);
+    ~VAO();
+
+
+  };
+
+  struct VBO {
+
+    u32 length;
+    u32* ids;
+    u32* lengths;
+
+    void init(u32 num_vbos = 1);
+    template <typename T>
+    void bindArray(Array<T> arr, bool dynamic,
+     u32 index = 0) {
+      lengths[index] = arr.size()*sizeof(T);
+
+      __glewBindBuffer(0x8892, ids[index]);
+      __glewBufferData(0x8892, lengths[index], &arr[0],
+           dynamic ? 0x88E8 : 0x88E4);
+    }
+
+    template <typename T>
+    void rebindArray(Array<T> arr, bool dynamic,
+     u32 index = 0) {
+      __glewBufferData(0x8892, lengths[index], &arr[0],
+     dynamic ? 0x88E8 : 0x88E4);
+    }
+    void draw(GLenum mode, u32 index = 0);
+    ~VBO();
+
+
+  };
+
+  struct EBO {
+
+    u32 length;
+    u32* ids;
+    u32* lengths;
+
+    void init(u32 num_ebos = 1);
+    void bindArray(Array<u32> arr, bool dynamic,
+     u32 index = 0);
+
+
+
+    void draw(GLenum mode, u32 index = 0);
+    ~EBO();
+
+
+  };
+
+}
+# 5 "src/Renderable.hpp" 2
+# 1 "src/Shader.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Shader.hpp" 2
+
+
+
 
 
 
@@ -45479,47 +45572,762 @@ namespace peace {
   };
 
 }
-# 3 "src/Transform.cpp" 2
+# 6 "src/Renderable.hpp" 2
 
 namespace peace {
 
-  Transform::Transform(Vec3f translation, Quaternionf rotation)
-    : trans(translation),
+  struct ShaderVar;
+  struct BoundingObject;
 
-    rot(rotation) {}
+  struct RenderContext {
+    f32 dt;
+    RenderContext(f32 delta_time);
+  };
 
-  void Transform::translateAbs(Vec3f trans_v) {
-    trans = trans_v;
+  struct Renderable {
+
+    ShaderFlags shader_flags;
+
+    Renderable(ShaderFlags _shader_flags);
+
+
+
+    virtual BoundingObject getBoundingObject() = 0;
+
+    virtual BoundingObject getPhysicalBoundingObject() = 0;
+
+    virtual BoundingObject getPrimaryBoundingObject() = 0;
+    virtual void render(RenderContext c) = 0;
+    virtual ~Renderable() {}
+
+  };
+
+  struct RenderableReg : Renderable {
+
+    VBO vbo;
+    VAO vao;
+    EBO ebo;
+
+    using Renderable::Renderable;
+    void init();
+    void updateBuffers();
+    virtual void render(RenderContext c);
+
+  };
+
+}
+# 6 "src/Node.hpp" 2
+# 1 "src/Standard/HandledArray.hpp" 1
+       
+
+
+
+namespace peace {
+
+  typedef u32* ArrayHandle;
+
+  template <typename T>
+    struct HandledArrayElem {
+    T elem;
+    ArrayHandle handle;
+  };
+
+  template <typename T>
+    struct HandledArray {
+
+    struct Iterator {
+      typename Array<HandledArrayElem<T>>::iterator it;
+      Iterator(typename
+        Array<HandledArrayElem<T>>::iterator _it)
+ : it(_it) {}
+      void operator++() {
+ ++it;
+      }
+      T operator*() const {
+ return (*it).elem;
+      }
+      bool operator==(Iterator b) const {
+ return it == b.it;
+      }
+      bool operator!=(Iterator b) const {
+ return it != b.it;
+      }
+    };
+
+    Array<HandledArrayElem<T>> arr;
+
+    inline ~HandledArray() {
+      for (HandledArrayElem<T> elem : arr) {
+
+ delete elem.handle;
+      }
+    }
+
+    inline T operator[](u32 index) {
+      return arr[index].elem;
+    }
+
+    inline Iterator begin() {
+      return Iterator(arr.begin());
+    }
+
+    inline Iterator end() {
+      return Iterator(arr.end());
+    }
+
+    inline u32 size() {
+      return arr.size();
+    }
+
+    inline ArrayHandle push_back(T inserted) {
+      HandledArrayElem<T> elem;
+      ArrayHandle ret = new u32(arr.size());
+      elem.elem = inserted;
+      elem.handle = ret;
+      arr.push_back(elem);
+      return ret;
+    }
+# 78 "src/Standard/HandledArray.hpp"
+    ArrayHandle insertSorted(T item,
+        function<bool(T,T)> cmp) {
+      HandledArrayElem<T> elem;
+      elem.elem = item;
+
+      if (arr.size() > 0) {
+
+ Iterator it(arr.begin());
+ u32 index;
+
+ for (; it != end(); ++it, ++index) {
+   if (cmp(*it, item)) {
+     elem.handle = new u32(index);
+     it = arr.insert(it.it, elem);
+     break;
+   }
+ }
+
+ if (it == end()) {
+   elem.handle = new u32(arr.size());
+   arr.push_back(elem);
+ } else {
+
+   while (it != end()) {
+     ++(*((*it.it).handle));
+     ++it;
+   }
+ }
+
+      } else {
+ elem.handle = new u32(0);
+ arr.push_back(elem);
+      }
+      return elem.handle;
+    }
+
+    inline void removeAndReplace(ArrayHandle h) {
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
+    }
+  };
+
+}
+# 7 "src/Node.hpp" 2
+# 1 "src/Messageable.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Messageable.hpp" 2
+# 1 "src/Standard/RTTI.hpp" 1
+       
+
+
+
+# 1 "src/Standard/RTTI.py" 1
+# 1 "src/Standard/RTTI.py"
+$py(
+id_list_filename = makefile_dir + "/ClassIdList.txt"
+def uniqueId(classname):
+
+    id_list = open(id_list_filename, "r+")
+    max_id = 0
+
+    for line in id_list:
+        name, value_str = line.split()
+        value = int(value_str)
+        if name == classname:
+            return value
+        max_id = value if value > max_id else max_id
+
+    class_id = max_id + 1
+    id_list.write("%s %d\n" % (classname, class_id))
+    return class_id
+
+cur_class_name = ""
+cur_class_id = 0;
+
+def rttiConstruct(classname):
+    global cur_class_name
+    global cur_class_id
+    cur_class_name = classname
+    cur_class_id = uniqueId(classname)
+    return "BaseRTTI::type_id = %d" % cur_class_id
+
+def registerRttiStruct():
+    global cur_class_name
+    global cur_class_id
+    classname = cur_class_name
+    class_id = cur_class_id
+    cur_class_name = ""
+    cur_class_id = 0;
+    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
+)
+
+$extend(rttiConstruct)
+$extend(registerRttiStruct)
+# 6 "src/Standard/RTTI.hpp" 2
+# 19 "src/Standard/RTTI.hpp"
+namespace peace {
+
+  typedef u32 TypeId;
+
+  struct BaseRTTI {
+    TypeId type_id;
+    virtual ~BaseRTTI() {}
+  };
+
+  inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
   }
-  void Transform::translateRel(Vec3f trans_v) {
-    trans += trans_v;
+
+  template <typename T>
+    inline TypeId typeId() {
+    return 0;
   }
 
-  void Transform::rotateAbs(Quaternionf q) {
-    rot = q.normalized();
-  }
-  void Transform::rotateRel(Quaternionf q) {
-    rot *= q;
+}
+# 5 "src/Messageable.hpp" 2
 
-    rot.normalize();
-  }
-# 34 "src/Transform.cpp"
-  Mat4f Transform::getMat() {
-    Mat4f ret =
-      Mat4f::translate(trans)*rot.mat4();
+namespace peace {
+
+  struct Message : BaseRTTI {};
+
+  struct Messageable : BaseRTTI {
+    virtual void message(Message* m) {}
+  };
+
+}
+# 8 "src/Node.hpp" 2
+
+namespace peace {
+
+  struct BoundingObject;
+
+  struct Node : Transform, Messageable {
 
 
-    return ret;
+
+
+
+    HandledArray<Node*> children;
+    HandledArray<Renderable*> renderables;
+
+
+    using Transform::Transform;
+
+    ArrayHandle addChild(Node* child);
+    ArrayHandle addRenderable(Renderable* renderable);
+    void removeChild(ArrayHandle h);
+    void removeRenderable(ArrayHandle h);
+    BoundingObject getBoundingObject();
+    BoundingObject getPhysicalBoundingObject();
+    BoundingObject getPrimaryBoundingObject();
+
+    void render(RenderContext c, Mat4f model);
+
+  };
+
+}
+# 4 "src/PhysicalObject.hpp" 2
+
+
+namespace peace {
+
+  enum PhysicalObjectFlags : u8 { PHYSICS_NO_FLAGS = 0x00, PHYSICS_STATIC = 0x01 }; inline PhysicalObjectFlags operator~(const PhysicalObjectFlags a) { return (PhysicalObjectFlags) ~ (u8) a; } inline PhysicalObjectFlags operator|(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a | (u8) b); } inline PhysicalObjectFlags operator&(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a & (u8) b); } inline void operator|=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a | b; } inline void operator&=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a & b; }
+
+                         ;
+
+  struct MassData {
+
+    f32 mass;
+    f32 inv_mass;
+    f32 inertia;
+    f32 inv_inertia;
+
+    MassData(f32 m, f32 i);
+  };
+
+  struct Material {
+
+    f32 density;
+    f32 cor;
+
+    Material(f32 mat_density, f32 mat_restitution);
+
+    const static Material STATIC;
+  };
+
+  struct PhysicalObject : Node {
+
+    Material material;
+    MassData mass_data;
+
+    Vec3f veloc;
+    Vec3f force;
+
+    Quaternionf spin;
+
+    PhysicalObjectFlags physics_flags;
+
+    PhysicalObject(Renderable* rend,
+     Material mat,
+     Vec3f xi,
+     Vec3f vi = Vec3f(0,0,0),
+     PhysicalObjectFlags _flags = PHYSICS_NO_FLAGS);
+    void update(f32 dt);
+    void applyForce(Vec3f force);
+  };
+
+  struct StaticObject : PhysicalObject {
+    StaticObject(Renderable* rend, Vec3f xi);
+  };
+
+}
+# 4 "src/GameObject.hpp" 2
+
+namespace peace {
+
+
+
+
+
+  struct Engine;
+
+  enum GameObjectFlags : u8 { OBJECT_NO_FLAGS = 0x00, OBJECT_UPDATE = 0x01, OBJECT_NAMED = 0x02, OBJECT_SAVEABLE = 0x04, OBJECT_DELETE_ONCE_SAVED = 0x08 }; inline GameObjectFlags operator~(const GameObjectFlags a) { return (GameObjectFlags) ~ (u8) a; } inline GameObjectFlags operator|(const GameObjectFlags a, const GameObjectFlags b) { return (GameObjectFlags) ((u8) a | (u8) b); } inline GameObjectFlags operator&(const GameObjectFlags a, const GameObjectFlags b) { return (GameObjectFlags) ((u8) a & (u8) b); } inline void operator|=(GameObjectFlags& a, const GameObjectFlags b) { a = a | b; } inline void operator&=(GameObjectFlags& a, const GameObjectFlags b) { a = a & b; }
+
+
+
+
+                                   ;
+
+  struct GameObjectHandle {
+    GameObjectFlags flags;
+    ArrayHandle physics_handle;
+    ArrayHandle graphics_handle;
+    ArrayHandle update_handle;
+    String object_name;
+  };
+
+  struct GameObject : PhysicalObject {
+
+    const GameObjectFlags object_flags;
+    Engine* engine;
+    GameObjectHandle handle;
+
+    GameObject(Renderable* rend,
+        Material mat,
+        Vec3f xi,
+        Vec3f vi = Vec3f(0,0,0),
+        PhysicalObjectFlags physics_flags = PHYSICS_NO_FLAGS,
+        GameObjectFlags flags = OBJECT_NO_FLAGS);
+
+    void init(Engine* engine);
+    virtual void update() {}
+    virtual ~GameObject();
+  };
+
+  struct NamedObject : GameObject {
+
+    const String name;
+    NamedObject(String _name,
+  Renderable* rend,
+  Material mat,
+  Vec3f xi,
+  Vec3f vi = Vec3f(0,0,0),
+  PhysicalObjectFlags physics_flags = PHYSICS_NO_FLAGS,
+  GameObjectFlags flags = OBJECT_NO_FLAGS);
+  };
+
+}
+# 2 "src/GameObject.cpp" 2
+# 1 "src/Engine.hpp" 1
+       
+
+# 1 "src/Graphics.hpp" 1
+       
+
+# 1 "src/Light.hpp" 1
+       
+
+
+
+namespace peace {
+
+struct DirLight {
+  Vec3f dir;
+  f32 pad0[1];
+  Vec3f color;
+
+  DirLight(Vec3f _dir = Vec3f(0,0,0),
+    Vec3f _color = Vec3f(0,0,0));
+};
+
+
+}
+# 4 "src/Graphics.hpp" 2
+
+
+
+namespace peace {
+
+  struct Camera;
+  struct Node;
+  struct GUINode;
+
+  struct Graphics {
+
+    f32 ambient;
+    HandledArray<Node*> nodes;
+    HandledArray<GUINode*> nodes_2d;
+    HandledArray<DirLight*> dir_lights;
+    Camera* cam;
+    Shader shade;
+    Vec4f background_color;
+
+    Graphics(String shader_name,
+      Vec4f _background_color = Vec4f(0,0,0,1));
+    ArrayHandle addNode(Node* node);
+    ArrayHandle addGUINode(GUINode* node);
+    ArrayHandle addDirLight(DirLight* light);
+    void removeNode(ArrayHandle h);
+    void removeGUINode(ArrayHandle h);
+    void removeDirLight(ArrayHandle h);
+    void setAmbient(f32 ambient_light);
+    void setCamera(Camera* camera);
+
+    void render(GLFWwindow* window, f32 dt);
+
+    static Vec2f window_size;
+  };
+
+}
+# 4 "src/Engine.hpp" 2
+# 1 "src/Input.hpp" 1
+       
+
+
+
+
+
+namespace peace {
+
+  enum InputFlags : u8 { INPUT_NO_FLAGS = 0x00, INPUT_CURSOR_DISABLED = 0x01 }; inline InputFlags operator~(const InputFlags a) { return (InputFlags) ~ (u8) a; } inline InputFlags operator|(const InputFlags a, const InputFlags b) { return (InputFlags) ((u8) a | (u8) b); } inline InputFlags operator&(const InputFlags a, const InputFlags b) { return (InputFlags) ((u8) a & (u8) b); } inline void operator|=(InputFlags& a, const InputFlags b) { a = a | b; } inline void operator&=(InputFlags& a, const InputFlags b) { a = a & b; }
+
+                                ;
+
+  namespace Input {
+
+    void init(GLFWwindow* win);
+    void setManager(String name);
+
+    ArrayHandle
+    addKeyCallback(function<void(GLFWwindow*,
+     i32,
+     i32,
+     i32,
+     i32)> fun);
+    ArrayHandle
+    addCharCallback(function<void(GLFWwindow*,
+      u32)> fun);
+    ArrayHandle
+    addCursorPosCallback(function<void(GLFWwindow*,
+           f64,
+           f64)> fun);
+    ArrayHandle
+    addWindowResizeCallback(function<void(GLFWwindow*,
+       i32,
+       i32)> fun);
+    ArrayHandle
+    addMouseButtonCallback(function<void(GLFWwindow*,
+      i32,
+      i32,
+      i32)> fun);
+
+    void removeKeyCallback(ArrayHandle handle);
+    void removeCharCallback(ArrayHandle handle);
+    void removeCursorPosCallback(ArrayHandle handle);
+    void removeWindowResizeCallback(ArrayHandle handle);
+    void removeMouseButtonCallback(ArrayHandle handle);
+
+    void addFlags(InputFlags flags);
+    void removeFlags(InputFlags flags);
+
+    ArrayHandle
+    addKeyCallback(String name,
+     function<void(GLFWwindow*,
+     i32,
+     i32,
+     i32,
+     i32)> fun);
+    ArrayHandle
+    addCharCallback(String name,
+     function<void(GLFWwindow*,
+      u32)> fun);
+    ArrayHandle
+    addCursorPosCallback(String name,
+    function<void(GLFWwindow*,
+           f64,
+           f64)> fun);
+    ArrayHandle
+    addWindowResizeCallback(String name,
+       function<void(GLFWwindow*,
+       i32,
+       i32)> fun);
+    ArrayHandle
+    addMouseButtonCallback(String name,
+      function<void(GLFWwindow*,
+      i32,
+      i32,
+      i32)> fun);
+
+    void removeKeyCallback(String name,
+      ArrayHandle handle);
+    void removeCharCallback(String name,
+       ArrayHandle handle);
+    void removeCursorPosCallback(String name,
+     ArrayHandle handle);
+    void removeWindowResizeCallback(String name,
+        ArrayHandle handle);
+    void removeMouseButtonCallback(String name,
+       ArrayHandle handle);
+
+    void addFlags(String name,
+    InputFlags flags);
+    void removeFlags(String name,
+       InputFlags flags);
+
+    void getWindowSize(i32* width, i32* height);
+
+  };
+
+}
+# 5 "src/Engine.hpp" 2
+# 1 "src/Standard/Time.hpp" 1
+       
+
+# 1 "/usr/include/x86_64-linux-gnu/sys/timeb.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/sys/timeb.h" 3 4
+extern "C" {
+
+
+
+struct timeb
+  {
+    time_t time;
+    unsigned short int millitm;
+    short int timezone;
+    short int dstflag;
+  };
+
+
+
+extern int ftime (struct timeb *__timebuf);
+
+}
+# 4 "src/Standard/Time.hpp" 2
+
+
+namespace peace {
+
+  struct Time {
+
+    struct timeb time;
+
+    void operator=(Time b) {
+      time.time = b.time.time;
+      time.millitm = b.time.millitm;
+    }
+
+    void makeCurrent() {
+      ftime(&time);
+    }
+
+    unsigned long getMilliseconds() {
+      return (1000 * time.time) + time.millitm;
+    }
+
+  };
+
+}
+# 6 "src/Engine.hpp" 2
+# 1 "src/Physics.hpp" 1
+       
+
+
+
+# 1 "src/Octree.hpp" 1
+       
+
+
+
+
+namespace peace {
+
+  struct OctreeOutOfBoundsMessage : Message {
+    OctreeOutOfBoundsMessage() {
+      $rttiConstruct("OctreeOutOfBoundsMessage");
+    }
+  };
+  $registerRttiStruct();
+
+  struct Octree {
+
+    Vec3f center;
+    Vec3f halves;
+    Array<Node*> nodes;
+    Octree* children[8];
+
+    Octree(Vec3f _center, Vec3f _halves);
+    ~Octree();
+    void insert(Node* node, u32 level=0);
+    void traverse(Node* node,
+    function<void(Node*,Node*)> callback);
+
+  };
+
+}
+# 6 "src/Physics.hpp" 2
+
+
+namespace peace {
+
+  struct Physics {
+
+    Octree static_objects;
+    HandledArray<PhysicalObject*> dynamic_objects;
+
+    Vec3f gravity;
+
+    Physics(Vec3f center, Vec3f halves);
+    void update(f32 dt);
+    void addStaticObject(StaticObject* obj);
+    ArrayHandle addDynamicObject(PhysicalObject* obj);
+    void removeDynamicObject(ArrayHandle h);
+    ArrayHandle addObject(PhysicalObject* obj);
+    void removeObject(ArrayHandle h);
+
+  };
+
+}
+# 7 "src/Engine.hpp" 2
+# 1 "src/Assets.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Assets.hpp" 2
+# 31 "src/Assets.hpp"
+namespace peace {
+
+  void LogCurrentDirectory();
+
+  struct Asset {
+    Asset(function<void(void)> load_func,
+   function<void(void)> free_func);
+    static Array<function<void(void)>> loaders;
+    static Array<function<void(void)>> freers;
+    static void loadAll();
+    static void freeAll();
+  };
+}
+# 8 "src/Engine.hpp" 2
+
+
+namespace peace {
+
+  enum EngineFlags : u8 { ENGINE_RUNNING = 0x01, ENGINE_GRAPHICS_INIT = 0x02, ENGINE_ASSETS_LOADED = 0x04 }; inline EngineFlags operator~(const EngineFlags a) { return (EngineFlags) ~ (u8) a; } inline EngineFlags operator|(const EngineFlags a, const EngineFlags b) { return (EngineFlags) ((u8) a | (u8) b); } inline EngineFlags operator&(const EngineFlags a, const EngineFlags b) { return (EngineFlags) ((u8) a & (u8) b); } inline void operator|=(EngineFlags& a, const EngineFlags b) { a = a | b; } inline void operator&=(EngineFlags& a, const EngineFlags b) { a = a & b; }
+
+
+                               ;
+
+  struct Engine {
+
+    EngineFlags flags;
+    SystemManager system_manager;
+    GLFWwindow* window;
+    Graphics* graphics;
+    Physics* physics;
+    HandledArray<GameObject*> update_objects;
+    HashMap<String, GameObject*> named_objects;
+
+    Time cur_time, prev_time;
+    f32 dt;
+
+    Engine();
+    GameObjectHandle addGameObject(GameObject* object);
+    void removeGameObject(GameObjectHandle h);
+    void loop();
+    void begin();
+    ~Engine();
+
+  };
+
+}
+# 3 "src/GameObject.cpp" 2
+
+namespace peace {
+
+  GameObject::GameObject(Renderable* rend,
+    Material mat,
+    Vec3f xi,
+    Vec3f vi,
+    PhysicalObjectFlags physics_flags,
+    GameObjectFlags flags)
+    : PhysicalObject(rend,
+       mat,
+       xi,
+       vi,
+       physics_flags),
+    object_flags(flags) {}
+
+  void GameObject::init(Engine* engine) {
+    this->engine = engine;
+    this->handle = engine->addGameObject(this);
+  };
+
+  GameObject::~GameObject() {
+    engine->removeGameObject(handle);
   }
 
-  Transform Transform::combine(Transform a, Transform b) {
-    Transform ret(a.trans + (a.rot * b.trans),
-    b.rot*a.rot);
-    return ret;
-  }
+  NamedObject::NamedObject(String _name,
+      Renderable* rend,
+      Material mat,
+      Vec3f xi,
+      Vec3f vi,
+      PhysicalObjectFlags physics_flags,
+      GameObjectFlags flags)
+    : GameObject(rend,
+   mat,
+   xi,
+   vi,
+   physics_flags,
+   flags | OBJECT_NAMED),
+    name(_name) {}
 
-  Transform Transform::interp(Transform a, Transform b, f32 h) {
-    return Transform(Vec3f::lerp(a.trans, b.trans, h),
-       Quaternionf::lerp(a.rot, b.rot, h));
-  }
 }

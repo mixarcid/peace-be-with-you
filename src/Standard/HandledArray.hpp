@@ -112,14 +112,16 @@ NAMESPACE {
     }
     
     inline void removeAndReplace(ArrayHandle h) {
-      debugAssert(*h < arr.size(),
-		  "You must provide a valid ArrayHandle to HandledArray's"
-		  "removeAndReplace method");
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+      if (h) {
+	debugAssert(*h < arr.size(),
+		    "You must provide a valid ArrayHandle to HandledArray's"
+		    "removeAndReplace method");
+	HandledArrayElem<T> back = arr.back();
+	*back.handle = *h;
+	arr[*h] = back;
+	arr.pop_back();
+	delete h;
+      }
     }
   };
 

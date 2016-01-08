@@ -26,6 +26,8 @@ NAMESPACE {
   bool OBBVsOBB(BoundingOBB a, BoundingOBB b);
   bool OBBVsOBB(BoundingOBB a, BoundingOBB b, Manifold* man);*/
 
+  
+
   bool testIntersection(BoundingObject a,
 			BoundingObject b);
   bool testIntersection(BoundingObject a,

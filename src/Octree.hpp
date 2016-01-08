@@ -5,6 +5,13 @@
 
 NAMESPACE {
 
+  struct OctreeOutOfBoundsMessage : Message {
+    OctreeOutOfBoundsMessage() {
+      $rttiConstruct("OctreeOutOfBoundsMessage");
+    }
+  };
+  $registerRttiStruct();
+
   struct Octree {
 
     Vec3f center;
@@ -14,7 +21,7 @@ NAMESPACE {
 
     Octree(Vec3f _center, Vec3f _halves);
     ~Octree();
-    void insert(Node* node);
+    void insert(Node* node, u32 level=0);
     void traverse(Node* node,
 		  function<void(Node*,Node*)> callback);
 

@@ -109,6 +109,10 @@ NAMESPACE {
     return BonedAnimation(animations[name].keyframes);
   }
 
+  BonedMesh::BonedMesh()
+    : Renderable(SHADER_NO_FLAGS) {}
+
+
   BonedMesh::BonedMesh(BonedMeshBase* base_mesh)
     : Renderable(base_mesh->shader_flags),
     base(base_mesh),

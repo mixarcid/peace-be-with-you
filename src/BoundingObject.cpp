@@ -15,17 +15,13 @@ NAMESPACE {
     f32 test_dist = 0;
 
     for (BasicMeshData d : data) {
-      //Log::message(d.pos.toString());
       test_dist = (d.pos -x).norm();
       if (test_dist > dist) {
 	dist = test_dist;
 	y = d.pos;
       }
     }
-    //Log::message("D: %f", dist);
-    //Log::message("X: " + x.toString());
-    //Log::message("Y: " + y.toString());
-
+    
     dist = 0;
     test_dist = 0;
     for (BasicMeshData d : data) {
@@ -35,7 +31,6 @@ NAMESPACE {
 	z = d.pos;
       }
     }
-    //Log::message("Z: " + z.toString());
 
     radius = dist/2;
     center = (z + y)/2;
@@ -46,8 +41,6 @@ NAMESPACE {
       radius = r_test > radius ? r_test : radius;
     }
 
-    /*Log::message("Center: " + center.toString()
-      + "\nRadius: " + to_string(radius));*/
   }
 
   f32 BoundingSphere::getVolume() {
@@ -87,11 +80,10 @@ NAMESPACE {
   }
 
   bool BoundingSphere::allInBox(Vec3f center, Vec3f halves) {
-    PEACE_UNIMPLIMENTED(BoundingSphere::allInBox);
+    PEACE_UNIMPLIMENTED(false);
   }
 
   void BoundingSphere::transform(Node* t) {
-    //Log::message(center.toString());
     center += t->trans;
   }
 
@@ -149,7 +141,7 @@ NAMESPACE {
   }
 
   bool BoundingOBB::someInBox(Vec3f center, Vec3f halves) {
-    PEACE_UNIMPLIMENTED(BoundingOBB::someInBox);
+    PEACE_UNIMPLIMENTED(false);
   }
 
   bool BoundingOBB::allInBox(Vec3f center, Vec3f halves) {
@@ -177,7 +169,63 @@ NAMESPACE {
     return true;
   }
 
-  BoundingObject::BoundingObject() : type(BOUNDING_NONE) {}
+  f32 BoundingAABB::getVolume() {
+    return halves.x()*halves.y()*halves.z()*8;
+  }
+  
+  f32 BoundingAABB::getInertia(f32 mass) {
+    f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
+    return (mass*sqr(size))/6;
+  }
+  
+  bool BoundingAABB::someInBox(Vec3f center, Vec3f halves) {
+    
+    if (abs(this->center.x() - center.x())
+	> (this->halves.x() + halves.x())) return false;
+    if (abs(this->center.y() - center.y())
+	> (this->halves.y() + halves.y())) return false;
+    if (abs(this->center.z() - center.z())
+	> (this->halves.z() + halves.z())) return false;
+
+    return true;
+  }
+  
+  bool BoundingAABB::allInBox(Vec3f center, Vec3f halves) {
+    
+    return ((abs(this->center.x() - center.x())
+	     < (this->halves.x() + halves.x())) &&
+	    (abs(this->center.y() - center.y())
+	     < (this->halves.y() + halves.y())) &&
+	    (abs(this->center.z() - center.z())
+	     < (this->halves.z() + halves.z())));
+  }
+  
+  void BoundingAABB::transform(Node* t) {
+    PEACE_UNIMPLIMENTED();
+  }
+
+  f32 BoundingGround::getVolume() {
+    PEACE_UNIMPLIMENTED(0);
+  }
+  
+  f32 BoundingGround::getInertia(f32 mass) {
+    PEACE_UNIMPLIMENTED(0);
+  }
+  
+  bool BoundingGround::someInBox(Vec3f center, Vec3f halves) {
+    return true;
+  }
+  
+  bool BoundingGround::allInBox(Vec3f center, Vec3f halves) {
+    return false;
+
+  }
+
+  void BoundingGround::transform(Node* t) {
+    PEACE_UNIMPLIMENTED();
+  }
+
+  BoundingObject::BoundingObject(BoundingObjectType _type) : type(_type) {}
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
 				 Array<BasicMeshData> data)
@@ -189,8 +237,30 @@ NAMESPACE {
     case BOUNDING_OBB:
       obb = BoundingOBB(data);
       break;
+    case BOUNDING_GROUND:
+      Log::fatalError("Cannot call the BoundingObject constuctor with"
+		      " type BOUNDING_GROUND");
+      break;
     case BOUNDING_NONE:
       return;
+    }
+  }
+
+  BoundingObject::BoundingObject(const BoundingObject& obj)
+    : type(obj.type) {
+    
+    switch (type) {
+    case BOUNDING_SPHERE:
+      sphere = obj.sphere;
+      break;
+    case BOUNDING_OBB:
+      obb = obj.obb;
+      break;
+    case BOUNDING_GROUND:
+      ground = obj.ground;
+      break;
+    case BOUNDING_NONE:
+      break;
     }
   }
 
@@ -200,6 +270,8 @@ NAMESPACE {
       return sphere.getVolume();
     case BOUNDING_OBB:
       return obb.getVolume();
+    case BOUNDING_GROUND:
+      return ground.getVolume();
     case BOUNDING_NONE:
       return 0;
     }
@@ -212,6 +284,8 @@ NAMESPACE {
       return sphere.getInertia(mass);
     case BOUNDING_OBB:
       return obb.getInertia(mass);
+    case BOUNDING_GROUND:
+      return ground.getInertia(mass);
     case BOUNDING_NONE:
       return 0;
     }
@@ -224,6 +298,8 @@ NAMESPACE {
       return sphere.someInBox(center, halves);
     case BOUNDING_OBB:
       return obb.someInBox(center, halves);
+    case BOUNDING_GROUND:
+      return ground.someInBox(center, halves);
     case BOUNDING_NONE:
       return false;
     }
@@ -236,6 +312,8 @@ NAMESPACE {
       return sphere.allInBox(center, halves);
     case BOUNDING_OBB:
       return obb.allInBox(center, halves);
+    case BOUNDING_GROUND:
+      return ground.allInBox(center, halves);
     case BOUNDING_NONE:
       return false;
     }
@@ -249,6 +327,9 @@ NAMESPACE {
       break;
     case BOUNDING_OBB:
       obb.transform(t);
+      break;
+    case BOUNDING_GROUND:
+      ground.transform(t);
       break;
     case BOUNDING_NONE:
       ;

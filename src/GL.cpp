@@ -13,6 +13,30 @@ NAMESPACE {
       Log::message("Initialized graphics libraries");
     }
 
+    GLFWwindow* createWindow(Vec2s size, String name) {
+      
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+      
+      GLFWwindow* window = glfwCreateWindow(size.x(), size.y(),
+					    name.c_str(), NULL, NULL);
+      if (!window) {
+	Log::fatalError("Failed to create GLFWwindow");
+      }
+
+      //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+      glfwMakeContextCurrent(window);
+      
+      // Initialize GLEW
+      glewExperimental = GL_TRUE;
+      glewInit();
+      gl::ignoreError(GL_INVALID_ENUM);
+
+      return window;
+    };
+
     void checkError()  {
       
       GLenum err(glGetError());

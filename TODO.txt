@@ -1,0 +1,5 @@
+1. Finish rudimentary terrain generation
+2. Create GameObjectContainer class to unite Physics and Graphics structures
+3. Add Scheme scripting
+4. Begin AI code
+5. Dyanmic resource management

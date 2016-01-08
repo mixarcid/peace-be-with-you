@@ -71,6 +71,7 @@ NAMESPACE {
     Array<Bone> bones;
     BonedAnimation cur_animation;
 
+    BonedMesh();
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
     virtual void render(RenderContext c);

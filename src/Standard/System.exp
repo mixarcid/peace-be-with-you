@@ -35463,9 +35463,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -35482,6 +35484,7 @@ namespace peace {
     thread = Thread([this]() {
  bool running = true;
  while(running) {
+   system_mutex.lock();
    state_mutex.lock();
    SystemManagerState s = state;
    state_mutex.unlock();
@@ -35497,8 +35500,15 @@ namespace peace {
      }
      break;
    }
+   system_mutex.unlock();
  }
       });
+  }
+
+  void SystemManager::addSystem(System* sys) {
+    system_mutex.lock();
+    systems.push_back(sys);
+    system_mutex.unlock();
   }
 
   void SystemManager::start() {

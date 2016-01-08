@@ -36992,9 +36992,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38109,6 +38111,10 @@ namespace peace {
       return Vec<T,3>::data[2];
     }
 
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
+    }
+
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
       return Vec3((v1.y()*v2.z()) - (v1.z()*v2.y()),
     (v1.z()*v2.x()) - (v1.x()*v2.z()),
@@ -38476,8 +38482,7 @@ namespace peace {
 # 1 "src/BasicMesh.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/BasicMesh.hpp" 2
+
 
 namespace peace {
 
@@ -38503,6 +38508,7 @@ namespace peace {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -38535,17 +38541,48 @@ namespace peace {
 
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+
+
+
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
   struct BoundingObject {
 
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
 
@@ -45415,14 +45452,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45807,25 +45845,112 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
 }
 # 7 "src/Node.hpp" 2
+# 1 "src/Messageable.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Messageable.hpp" 2
+# 1 "src/Standard/RTTI.hpp" 1
+       
+
+
+
+# 1 "src/Standard/RTTI.py" 1
+# 1 "src/Standard/RTTI.py"
+$py(
+id_list_filename = makefile_dir + "/ClassIdList.txt"
+def uniqueId(classname):
+
+    id_list = open(id_list_filename, "r+")
+    max_id = 0
+
+    for line in id_list:
+        name, value_str = line.split()
+        value = int(value_str)
+        if name == classname:
+            return value
+        max_id = value if value > max_id else max_id
+
+    class_id = max_id + 1
+    id_list.write("%s %d\n" % (classname, class_id))
+    return class_id
+
+cur_class_name = ""
+cur_class_id = 0;
+
+def rttiConstruct(classname):
+    global cur_class_name
+    global cur_class_id
+    cur_class_name = classname
+    cur_class_id = uniqueId(classname)
+    return "BaseRTTI::type_id = %d" % cur_class_id
+
+def registerRttiStruct():
+    global cur_class_name
+    global cur_class_id
+    classname = cur_class_name
+    class_id = cur_class_id
+    cur_class_name = ""
+    cur_class_id = 0;
+    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
+)
+
+$extend(rttiConstruct)
+$extend(registerRttiStruct)
+# 6 "src/Standard/RTTI.hpp" 2
+# 19 "src/Standard/RTTI.hpp"
+namespace peace {
+
+  typedef u32 TypeId;
+
+  struct BaseRTTI {
+    TypeId type_id;
+    virtual ~BaseRTTI() {}
+  };
+
+  inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
+  }
+
+  template <typename T>
+    inline TypeId typeId() {
+    return 0;
+  }
+
+}
+# 5 "src/Messageable.hpp" 2
+
+namespace peace {
+
+  struct Message : BaseRTTI {};
+
+  struct Messageable : BaseRTTI {
+    virtual void message(Message* m) {}
+  };
+
+}
+# 8 "src/Node.hpp" 2
 
 namespace peace {
 
   struct BoundingObject;
 
-  struct Node : Transform {
+  struct Node : Transform, Messageable {
 
 
 
@@ -45866,16 +45991,12 @@ namespace peace {
     f32 test_dist = 0;
 
     for (BasicMeshData d : data) {
-
       test_dist = (d.pos -x).norm();
       if (test_dist > dist) {
  dist = test_dist;
  y = d.pos;
       }
     }
-
-
-
 
     dist = 0;
     test_dist = 0;
@@ -45887,7 +46008,6 @@ namespace peace {
       }
     }
 
-
     radius = dist/2;
     center = (z + y)/2;
 
@@ -45896,8 +46016,6 @@ namespace peace {
       r_test = (d.pos - center).norm();
       radius = r_test > radius ? r_test : radius;
     }
-
-
 
   }
 
@@ -45938,11 +46056,10 @@ namespace peace {
   }
 
   bool BoundingSphere::allInBox(Vec3f center, Vec3f halves) {
-    Log::fatalError("unimplimented function " "BoundingSphere::allInBox"); return 0;;
+    Log::fatalError("unimplimented function %s", __func__); return false;;
   }
 
   void BoundingSphere::transform(Node* t) {
-
     center += t->trans;
   }
 
@@ -46000,7 +46117,7 @@ namespace peace {
   }
 
   bool BoundingOBB::someInBox(Vec3f center, Vec3f halves) {
-    Log::fatalError("unimplimented function " "BoundingOBB::someInBox"); return 0;;
+    Log::fatalError("unimplimented function %s", __func__); return false;;
   }
 
   bool BoundingOBB::allInBox(Vec3f center, Vec3f halves) {
@@ -46028,7 +46145,63 @@ namespace peace {
     return true;
   }
 
-  BoundingObject::BoundingObject() : type(BOUNDING_NONE) {}
+  f32 BoundingAABB::getVolume() {
+    return halves.x()*halves.y()*halves.z()*8;
+  }
+
+  f32 BoundingAABB::getInertia(f32 mass) {
+    f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
+    return (mass*sqr(size))/6;
+  }
+
+  bool BoundingAABB::someInBox(Vec3f center, Vec3f halves) {
+
+    if (abs(this->center.x() - center.x())
+ > (this->halves.x() + halves.x())) return false;
+    if (abs(this->center.y() - center.y())
+ > (this->halves.y() + halves.y())) return false;
+    if (abs(this->center.z() - center.z())
+ > (this->halves.z() + halves.z())) return false;
+
+    return true;
+  }
+
+  bool BoundingAABB::allInBox(Vec3f center, Vec3f halves) {
+
+    return ((abs(this->center.x() - center.x())
+      < (this->halves.x() + halves.x())) &&
+     (abs(this->center.y() - center.y())
+      < (this->halves.y() + halves.y())) &&
+     (abs(this->center.z() - center.z())
+      < (this->halves.z() + halves.z())));
+  }
+
+  void BoundingAABB::transform(Node* t) {
+    Log::fatalError("unimplimented function %s", __func__); return ;;
+  }
+
+  f32 BoundingGround::getVolume() {
+    Log::fatalError("unimplimented function %s", __func__); return 0;;
+  }
+
+  f32 BoundingGround::getInertia(f32 mass) {
+    Log::fatalError("unimplimented function %s", __func__); return 0;;
+  }
+
+  bool BoundingGround::someInBox(Vec3f center, Vec3f halves) {
+    return true;
+  }
+
+  bool BoundingGround::allInBox(Vec3f center, Vec3f halves) {
+    return false;
+
+  }
+
+  void BoundingGround::transform(Node* t) {
+    Log::fatalError("unimplimented function %s", __func__); return ;;
+  }
+
+  BoundingObject::BoundingObject(BoundingObjectType _type) : type(_type) {}
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data)
@@ -46040,8 +46213,30 @@ namespace peace {
     case BOUNDING_OBB:
       obb = BoundingOBB(data);
       break;
+    case BOUNDING_GROUND:
+      Log::fatalError("Cannot call the BoundingObject constuctor with"
+        " type BOUNDING_GROUND");
+      break;
     case BOUNDING_NONE:
       return;
+    }
+  }
+
+  BoundingObject::BoundingObject(const BoundingObject& obj)
+    : type(obj.type) {
+
+    switch (type) {
+    case BOUNDING_SPHERE:
+      sphere = obj.sphere;
+      break;
+    case BOUNDING_OBB:
+      obb = obj.obb;
+      break;
+    case BOUNDING_GROUND:
+      ground = obj.ground;
+      break;
+    case BOUNDING_NONE:
+      break;
     }
   }
 
@@ -46051,6 +46246,8 @@ namespace peace {
       return sphere.getVolume();
     case BOUNDING_OBB:
       return obb.getVolume();
+    case BOUNDING_GROUND:
+      return ground.getVolume();
     case BOUNDING_NONE:
       return 0;
     }
@@ -46063,6 +46260,8 @@ namespace peace {
       return sphere.getInertia(mass);
     case BOUNDING_OBB:
       return obb.getInertia(mass);
+    case BOUNDING_GROUND:
+      return ground.getInertia(mass);
     case BOUNDING_NONE:
       return 0;
     }
@@ -46075,6 +46274,8 @@ namespace peace {
       return sphere.someInBox(center, halves);
     case BOUNDING_OBB:
       return obb.someInBox(center, halves);
+    case BOUNDING_GROUND:
+      return ground.someInBox(center, halves);
     case BOUNDING_NONE:
       return false;
     }
@@ -46087,6 +46288,8 @@ namespace peace {
       return sphere.allInBox(center, halves);
     case BOUNDING_OBB:
       return obb.allInBox(center, halves);
+    case BOUNDING_GROUND:
+      return ground.allInBox(center, halves);
     case BOUNDING_NONE:
       return false;
     }
@@ -46100,6 +46303,9 @@ namespace peace {
       break;
     case BOUNDING_OBB:
       obb.transform(t);
+      break;
+    case BOUNDING_GROUND:
+      ground.transform(t);
       break;
     case BOUNDING_NONE:
       ;

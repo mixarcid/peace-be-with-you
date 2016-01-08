@@ -11,6 +11,7 @@ NAMESPACE {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -43,17 +44,48 @@ NAMESPACE {
     
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+  //only for terrain
+  struct BoundingGround {
+    /*returns the height at the Vec2f xy point
+      also changes the second, Vec3f argument
+      to the normal at the point (if not NULL)
+    */
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+    
+  };
+
   struct BoundingObject {
     
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
 		   Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
     

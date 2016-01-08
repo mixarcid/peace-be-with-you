@@ -35513,9 +35513,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38114,6 +38116,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -45323,14 +45329,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45715,25 +45722,112 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
 }
 # 7 "src/Node.hpp" 2
+# 1 "src/Messageable.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Messageable.hpp" 2
+# 1 "src/Standard/RTTI.hpp" 1
+       
+
+
+
+# 1 "src/Standard/RTTI.py" 1
+# 1 "src/Standard/RTTI.py"
+$py(
+id_list_filename = makefile_dir + "/ClassIdList.txt"
+def uniqueId(classname):
+
+    id_list = open(id_list_filename, "r+")
+    max_id = 0
+
+    for line in id_list:
+        name, value_str = line.split()
+        value = int(value_str)
+        if name == classname:
+            return value
+        max_id = value if value > max_id else max_id
+
+    class_id = max_id + 1
+    id_list.write("%s %d\n" % (classname, class_id))
+    return class_id
+
+cur_class_name = ""
+cur_class_id = 0;
+
+def rttiConstruct(classname):
+    global cur_class_name
+    global cur_class_id
+    cur_class_name = classname
+    cur_class_id = uniqueId(classname)
+    return "BaseRTTI::type_id = %d" % cur_class_id
+
+def registerRttiStruct():
+    global cur_class_name
+    global cur_class_id
+    classname = cur_class_name
+    class_id = cur_class_id
+    cur_class_name = ""
+    cur_class_id = 0;
+    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
+)
+
+$extend(rttiConstruct)
+$extend(registerRttiStruct)
+# 6 "src/Standard/RTTI.hpp" 2
+# 19 "src/Standard/RTTI.hpp"
+namespace peace {
+
+  typedef u32 TypeId;
+
+  struct BaseRTTI {
+    TypeId type_id;
+    virtual ~BaseRTTI() {}
+  };
+
+  inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
+  }
+
+  template <typename T>
+    inline TypeId typeId() {
+    return 0;
+  }
+
+}
+# 5 "src/Messageable.hpp" 2
+
+namespace peace {
+
+  struct Message : BaseRTTI {};
+
+  struct Messageable : BaseRTTI {
+    virtual void message(Message* m) {}
+  };
+
+}
+# 8 "src/Node.hpp" 2
 
 namespace peace {
 
   struct BoundingObject;
 
-  struct Node : Transform {
+  struct Node : Transform, Messageable {
 
 
 
@@ -45763,6 +45857,13 @@ namespace peace {
 
 namespace peace {
 
+  struct OctreeOutOfBoundsMessage : Message {
+    OctreeOutOfBoundsMessage() {
+      $rttiConstruct("OctreeOutOfBoundsMessage");
+    }
+  };
+  $registerRttiStruct();
+
   struct Octree {
 
     Vec3f center;
@@ -45772,7 +45873,7 @@ namespace peace {
 
     Octree(Vec3f _center, Vec3f _halves);
     ~Octree();
-    void insert(Node* node);
+    void insert(Node* node, u32 level=0);
     void traverse(Node* node,
     function<void(Node*,Node*)> callback);
 
@@ -45788,8 +45889,7 @@ namespace peace {
 # 1 "src/BasicMesh.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/BasicMesh.hpp" 2
+
 
 namespace peace {
 
@@ -45815,6 +45915,7 @@ namespace peace {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -45847,17 +45948,48 @@ namespace peace {
 
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+
+
+
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
   struct BoundingObject {
 
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
 
@@ -45890,7 +46022,15 @@ namespace peace {
     }
   }
 
-  void Octree::insert(Node* node) {
+  void Octree::insert(Node* node, u32 level) {
+
+    BoundingObject bound = node->getPrimaryBoundingObject();
+
+    if (!bound.allInBox(center, halves)) {
+      OctreeOutOfBoundsMessage m;
+      node->message(&m);
+      return;
+    }
 
     if (nodes.size() == 0) {
       nodes.push_back(node);
@@ -45898,7 +46038,6 @@ namespace peace {
     }
 
     Vec3f child_halves = halves/2;
-    BoundingObject bound = node->getPrimaryBoundingObject();
 
 
     for (u8 n=0; n<8; ++n) {
@@ -45917,7 +46056,7 @@ namespace peace {
  if (children[n] == __null) {
    children[n] = new Octree(child_center, child_halves);
  }
- children[n]->insert(node);
+ children[n]->insert(node, level+1);
         return;
       }
     }

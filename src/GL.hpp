@@ -6,13 +6,15 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Standard.hpp"
+#include "Vector.hpp"
+#include "String.hpp"
 
 NAMESPACE {
   
   namespace gl {
     
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();

@@ -36992,9 +36992,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38107,6 +38109,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -45343,14 +45349,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();

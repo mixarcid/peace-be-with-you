@@ -17,15 +17,4 @@ NAMESPACE {
   
   END_ASSET;
 
-  MonkeyHead::MonkeyHead(Vec3f pos,
-			 Vec3f veloc,
-			 Physics* phys,
-			 Graphics* graphics)
-    : PhysicalObject(mesh, Material(1, 0.5), pos, veloc) {
-    graphics->addNode(this);
-    phys->addDynamicObject(this);
-  }
-
-  MonkeyHead::~MonkeyHead() {}
-
 }

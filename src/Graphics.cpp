@@ -8,7 +8,11 @@ NAMESPACE {
 
   Vec2f Graphics::window_size;
 
-  Graphics::Graphics(String shader_name) : shade(shader_name) {
+  Graphics::Graphics(String shader_name,
+		     Vec4f _background_color)
+    : shade(shader_name),
+    background_color(_background_color) {
+      
     shade.use();
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -27,12 +31,8 @@ NAMESPACE {
   }
 
   ArrayHandle Graphics::addGUINode(GUINode* node) {
-    ArrayHandle ret = nodes_2d.insertSorted(node,
-					    GUINode::compare);
-    /*for (GUINode* node : nodes_2d) {
-      Log::message("z: %d", node->z_val);
-      }*/
-    return ret;
+   return nodes_2d.insertSorted(node,
+				GUINode::compare);
   }
 
   ArrayHandle Graphics::addDirLight(DirLight* light) {
@@ -77,6 +77,10 @@ NAMESPACE {
 
   void Graphics::render(GLFWwindow* window,f32 dt) {
 
+    glClearColor(background_color.x(),
+		 background_color.y(),
+		 background_color.z(),
+		 background_color.w());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     debugAssert(cam != NULL,
@@ -116,6 +120,9 @@ NAMESPACE {
     for (GUINode* node : nodes_2d) {
       node->render(c, model);
     }
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
     
   }
 }

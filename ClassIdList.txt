@@ -1,3 +1,6 @@
 A 1
 B 2
 CollisionMessage 3
+MonkeyHead 4
+Player 5
+OctreeOutOfBoundsMessage 6

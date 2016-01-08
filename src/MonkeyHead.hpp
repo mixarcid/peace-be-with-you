@@ -1,20 +1,23 @@
 #pragma once
 
-#include "Physics.hpp"
-#include "Graphics.hpp"
+#include "GameObject.hpp"
 #include "MeshLoader.hpp"
 
 NAMESPACE {
 
-  struct MonkeyHead : PhysicalObject {
+  struct MonkeyHead : GameObject {
 
     MonkeyHead(Vec3f pos,
 	       Vec3f veloc,
-	       Physics* phys,
-	       Graphics* graphics);
-    virtual ~MonkeyHead();
+	       Engine* engine)
+      : GameObject(mesh, Material(1, 0.5), pos, veloc) {
+
+      $rttiConstruct("MonkeyHead");
+      GameObject::init(engine);
+    }
+    
     static StaticMesh* mesh;
 
   };
-
+  $registerRttiStruct();
 }

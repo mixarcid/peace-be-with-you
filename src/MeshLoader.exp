@@ -35510,9 +35510,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -42926,103 +42928,6 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
-
-namespace peace {
-
-  namespace gl {
-
-    void init();
-    void checkError();
-    void ignoreError(GLenum code);
-    void terminate();
-
-  }
-}
-# 4 "src/VertexObjects.hpp" 2
-# 1 "src/Standard/Standard.hpp" 1
-# 5 "src/VertexObjects.hpp" 2
-
-
-namespace peace {
-
-  struct ShaderVar;
-
-  struct VAO {
-
-    u32 length;
-    u32* ids;
-
-    void init(u32 num_vaos = 1);
-    void use(u32 index = 0);
-
-
-
-    void registerVars(Array<ShaderVar> vars,
-        u32 index = 0);
-    ~VAO();
-
-
-  };
-
-  struct VBO {
-
-    u32 length;
-    u32* ids;
-    u32* lengths;
-
-    void init(u32 num_vbos = 1);
-    template <typename T>
-    void bindArray(Array<T> arr, bool dynamic,
-     u32 index = 0) {
-      lengths[index] = arr.size()*sizeof(T);
-
-      __glewBindBuffer(0x8892, ids[index]);
-      __glewBufferData(0x8892, lengths[index], &arr[0],
-           dynamic ? 0x88E8 : 0x88E4);
-    }
-
-    template <typename T>
-    void rebindArray(Array<T> arr, bool dynamic,
-     u32 index = 0) {
-      __glewBufferData(0x8892, lengths[index], &arr[0],
-     dynamic ? 0x88E8 : 0x88E4);
-    }
-    void draw(GLenum mode, u32 index = 0);
-    ~VBO();
-
-
-  };
-
-  struct EBO {
-
-    u32 length;
-    u32* ids;
-    u32* lengths;
-
-    void init(u32 num_ebos = 1);
-    void bindArray(Array<u32> arr, bool dynamic,
-     u32 index = 0);
-
-
-
-    void draw(GLenum mode, u32 index = 0);
-    ~EBO();
-
-
-  };
-
-}
-# 5 "src/Renderable.hpp" 2
-# 1 "src/Shader.hpp" 1
-       
-
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Shader.hpp" 2
-
-
-
 # 1 "src/Vector.hpp" 1
        
 
@@ -44796,6 +44701,10 @@ namespace peace {
       return Vec<T,3>::data[2];
     }
 
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
+    }
+
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
       return Vec3((v1.y()*v2.z()) - (v1.z()*v2.y()),
     (v1.z()*v2.x()) - (v1.x()*v2.z()),
@@ -44897,7 +44806,105 @@ namespace peace {
   typedef Vec4<i16> Vec4s;
 
 }
-# 8 "src/Shader.hpp" 2
+# 10 "src/GL.hpp" 2
+
+
+namespace peace {
+
+  namespace gl {
+
+    void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
+    void checkError();
+    void ignoreError(GLenum code);
+    void terminate();
+
+  }
+}
+# 4 "src/VertexObjects.hpp" 2
+# 1 "src/Standard/Standard.hpp" 1
+# 5 "src/VertexObjects.hpp" 2
+
+
+namespace peace {
+
+  struct ShaderVar;
+
+  struct VAO {
+
+    u32 length;
+    u32* ids;
+
+    void init(u32 num_vaos = 1);
+    void use(u32 index = 0);
+
+
+
+    void registerVars(Array<ShaderVar> vars,
+        u32 index = 0);
+    ~VAO();
+
+
+  };
+
+  struct VBO {
+
+    u32 length;
+    u32* ids;
+    u32* lengths;
+
+    void init(u32 num_vbos = 1);
+    template <typename T>
+    void bindArray(Array<T> arr, bool dynamic,
+     u32 index = 0) {
+      lengths[index] = arr.size()*sizeof(T);
+
+      __glewBindBuffer(0x8892, ids[index]);
+      __glewBufferData(0x8892, lengths[index], &arr[0],
+           dynamic ? 0x88E8 : 0x88E4);
+    }
+
+    template <typename T>
+    void rebindArray(Array<T> arr, bool dynamic,
+     u32 index = 0) {
+      __glewBufferData(0x8892, lengths[index], &arr[0],
+     dynamic ? 0x88E8 : 0x88E4);
+    }
+    void draw(GLenum mode, u32 index = 0);
+    ~VBO();
+
+
+  };
+
+  struct EBO {
+
+    u32 length;
+    u32* ids;
+    u32* lengths;
+
+    void init(u32 num_ebos = 1);
+    void bindArray(Array<u32> arr, bool dynamic,
+     u32 index = 0);
+
+
+
+    void draw(GLenum mode, u32 index = 0);
+    ~EBO();
+
+
+  };
+
+}
+# 5 "src/Renderable.hpp" 2
+# 1 "src/Shader.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Shader.hpp" 2
+
+
+
+
 # 1 "src/Matrix.hpp" 1
        
 
@@ -45378,8 +45385,7 @@ namespace peace {
 # 1 "src/BasicMesh.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/BasicMesh.hpp" 2
+
 
 namespace peace {
 
@@ -45411,6 +45417,7 @@ namespace peace {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -45443,17 +45450,48 @@ namespace peace {
 
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+
+
+
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
   struct BoundingObject {
 
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
 
@@ -45833,6 +45871,7 @@ namespace peace {
     Array<Bone> bones;
     BonedAnimation cur_animation;
 
+    BonedMesh();
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
     virtual void render(RenderContext c);

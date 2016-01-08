@@ -25,7 +25,15 @@ NAMESPACE {
     }
   }
   
-  void Octree::insert(Node* node) {
+  void Octree::insert(Node* node, u32 level) {
+
+    BoundingObject bound = node->getPrimaryBoundingObject();
+
+    if (!bound.allInBox(center, halves)) {
+      OctreeOutOfBoundsMessage m;
+      node->message(&m);
+      return;
+    }
     
     if (nodes.size() == 0) {
       nodes.push_back(node);
@@ -33,7 +41,6 @@ NAMESPACE {
     }
 
     Vec3f child_halves = halves/2;
-    BoundingObject bound = node->getPrimaryBoundingObject();
 
     //Log::message("-----");
     for (u8 n=0; n<8; ++n) {
@@ -52,7 +59,7 @@ NAMESPACE {
 	if (children[n] == NULL) {
 	  children[n] = new Octree(child_center, child_halves);
 	}
-	children[n]->insert(node);
+	children[n]->insert(node, level+1);
         return;
       }
     }

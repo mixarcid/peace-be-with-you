@@ -35516,9 +35516,11 @@ namespace peace {
     Thread thread;
     Array<System*> systems;
     Mutex state_mutex;
+    Mutex system_mutex;
     SystemManagerState state;
 
     SystemManager(Array<System*> managed_systems);
+    void addSystem(System* sys);
     void start();
     void pause();
     ~SystemManager();
@@ -38117,6 +38119,10 @@ namespace peace {
 
     inline T cb() const {
       return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
     }
 
     static inline Vec3 cross(Vec3 v1, Vec3 v2) {
@@ -45326,14 +45332,15 @@ typedef struct GLFWimage
 }
 # 8 "src/GL.hpp" 2
 
-# 1 "src/Standard/Standard.hpp" 1
-# 10 "src/GL.hpp" 2
+
+
 
 namespace peace {
 
   namespace gl {
 
     void init();
+    GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
     void terminate();
@@ -45718,50 +45725,21 @@ namespace peace {
     }
 
     inline void removeAndReplace(ArrayHandle h) {
-      do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+      if (h) {
+ do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
-                              ;
-      HandledArrayElem<T> back = arr.back();
-      *back.handle = *h;
-      arr[*h] = back;
-      arr.pop_back();
-      delete h;
+                                ;
+ HandledArrayElem<T> back = arr.back();
+ *back.handle = *h;
+ arr[*h] = back;
+ arr.pop_back();
+ delete h;
+      }
     }
   };
 
 }
 # 7 "src/Node.hpp" 2
-
-namespace peace {
-
-  struct BoundingObject;
-
-  struct Node : Transform {
-
-
-
-
-
-    HandledArray<Node*> children;
-    HandledArray<Renderable*> renderables;
-
-
-    using Transform::Transform;
-
-    ArrayHandle addChild(Node* child);
-    ArrayHandle addRenderable(Renderable* renderable);
-    void removeChild(ArrayHandle h);
-    void removeRenderable(ArrayHandle h);
-    BoundingObject getBoundingObject();
-    BoundingObject getPhysicalBoundingObject();
-    BoundingObject getPrimaryBoundingObject();
-
-    void render(RenderContext c, Mat4f model);
-
-  };
-
-}
-# 4 "src/PhysicalObject.hpp" 2
 # 1 "src/Messageable.hpp" 1
        
 
@@ -45846,10 +45824,45 @@ namespace peace {
   };
 
 }
-# 5 "src/PhysicalObject.hpp" 2
+# 8 "src/Node.hpp" 2
+
+namespace peace {
+
+  struct BoundingObject;
+
+  struct Node : Transform, Messageable {
+
+
+
+
+
+    HandledArray<Node*> children;
+    HandledArray<Renderable*> renderables;
+
+
+    using Transform::Transform;
+
+    ArrayHandle addChild(Node* child);
+    ArrayHandle addRenderable(Renderable* renderable);
+    void removeChild(ArrayHandle h);
+    void removeRenderable(ArrayHandle h);
+    BoundingObject getBoundingObject();
+    BoundingObject getPhysicalBoundingObject();
+    BoundingObject getPrimaryBoundingObject();
+
+    void render(RenderContext c, Mat4f model);
+
+  };
+
+}
+# 4 "src/PhysicalObject.hpp" 2
 
 
 namespace peace {
+
+  enum PhysicalObjectFlags : u8 { PHYSICS_NO_FLAGS = 0x00, PHYSICS_STATIC = 0x01 }; inline PhysicalObjectFlags operator~(const PhysicalObjectFlags a) { return (PhysicalObjectFlags) ~ (u8) a; } inline PhysicalObjectFlags operator|(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a | (u8) b); } inline PhysicalObjectFlags operator&(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a & (u8) b); } inline void operator|=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a | b; } inline void operator&=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a & b; }
+
+                         ;
 
   struct MassData {
 
@@ -45871,7 +45884,7 @@ namespace peace {
     const static Material STATIC;
   };
 
-  struct PhysicalObject : Node, Messageable {
+  struct PhysicalObject : Node {
 
     Material material;
     MassData mass_data;
@@ -45881,15 +45894,19 @@ namespace peace {
 
     Quaternionf spin;
 
-    PhysicalObject(Renderable* rend, Material mat,
-    Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    PhysicalObjectFlags physics_flags;
+
+    PhysicalObject(Renderable* rend,
+     Material mat,
+     Vec3f xi,
+     Vec3f vi = Vec3f(0,0,0),
+     PhysicalObjectFlags _flags = PHYSICS_NO_FLAGS);
     void update(f32 dt);
     void applyForce(Vec3f force);
-
   };
 
   struct StaticObject : PhysicalObject {
-    StaticObject(Renderable* rend, Vec3f xi, Vec3f vi = Vec3f(0,0,0));
+    StaticObject(Renderable* rend, Vec3f xi);
   };
 
 }
@@ -45924,8 +45941,7 @@ namespace peace {
 # 1 "src/BasicMesh.hpp" 1
        
 
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/BasicMesh.hpp" 2
+
 
 namespace peace {
 
@@ -45951,6 +45967,7 @@ namespace peace {
   enum BoundingObjectType {
     BOUNDING_SPHERE,
     BOUNDING_OBB,
+    BOUNDING_GROUND,
     BOUNDING_NONE
   };
 
@@ -45983,17 +46000,48 @@ namespace peace {
 
   };
 
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+
+
+
+    function<f32(Vec2f,Vec3f*)> dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
   struct BoundingObject {
 
     BoundingObjectType type;
     union {
       BoundingSphere sphere;
       BoundingOBB obb;
+      BoundingGround ground;
     };
 
-    BoundingObject();
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
     BoundingObject(BoundingObjectType obj_type,
      Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
     f32 getVolume();
     f32 getInertia(f32 mass);
 
@@ -46019,20 +46067,7 @@ namespace peace {
     Vec3f contacts[8];
 
   };
-
-
-  bool SphereVsSphere(BoundingSphere a, BoundingSphere b);
-  bool SphereVsSphere(BoundingSphere a, BoundingSphere b, Manifold* man);
-
-  bool SphereVsOBB(BoundingSphere a, BoundingOBB b);
-  bool SphereVsOBB(BoundingSphere a, BoundingOBB b, Manifold* man);
-
-  bool OBBVsSphere(BoundingOBB a, BoundingSphere b);
-  bool OBBVsSphere(BoundingOBB a, BoundingSphere b, Manifold* man);
-
-  bool OBBVsOBB(BoundingOBB a, BoundingOBB b);
-  bool OBBVsOBB(BoundingOBB a, BoundingOBB b, Manifold* man);
-
+# 29 "src/Contact.hpp"
   bool testIntersection(BoundingObject a,
    BoundingObject b);
   bool testIntersection(BoundingObject a,
