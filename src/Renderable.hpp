@@ -2,12 +2,12 @@
 
 #include "Containers.hpp"
 #include "VertexObjects.hpp"
+#include "BoundingObject.hpp"
 #include "Shader.hpp"
 
 NAMESPACE {
 
   struct ShaderVar;
-  struct BoundingObject;
 
   struct RenderContext {
     f32 dt;
@@ -20,13 +20,8 @@ NAMESPACE {
 
     Renderable(ShaderFlags _shader_flags);
 
-    //Yeah, weird naming convention...
-    //bounding box used by graphics:
-    virtual BoundingObject getBoundingObject() = 0;
-    //bounding box used by physics for initial collision test:
-    virtual BoundingObject getPhysicalBoundingObject() = 0;
-    //bounding box used by physics for final collision test:
-    virtual BoundingObject getPrimaryBoundingObject() = 0;
+    virtual BoundingObject getTightBoundingObject();
+    virtual BoundingObject getLooseBoundingObject();
     virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}
     

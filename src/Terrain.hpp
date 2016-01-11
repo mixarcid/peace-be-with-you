@@ -1,21 +1,20 @@
 #pragma once
 
 #include "Engine.hpp"
-#include "StaticMesh.hpp"
+#include "TerrainMesh.hpp"
 
 NAMESPACE {
 
   struct TerrainChunk : GameObject {
 
-    StaticMesh mesh;
+    TerrainMesh mesh;
 
+    BoundingObject getTightBoundingObject();
+    BoundingObject getLooseBoundingObject();
+    
     //pos: the back-left corner of the chunk. The z-value will always be 0.
-    TerrainChunk(Vec3f pos, Engine* engine);
-    virtual BoundingObject getBoundingObject();
-    virtual BoundingObject getPhysicalBoundingObject();
-    virtual BoundingObject getPrimaryBoundingObject();
-
-    static Array<u32> mesh_elems;
+    TerrainChunk(Vec3f pos);
+    void init(Engine* engine);
     
   };
 
@@ -26,9 +25,11 @@ NAMESPACE {
 
     Terrain(Engine* _engine);
     //size in chunks
-    void generate(Vec2<u32> size);
+    void generate(Vec2u size);
 
     static Texture* TEXTURE;
+    static Array<u32> MESH_ELEMS;
+    static EBO ELEM_BUFFER;
   };
 
 }

@@ -38752,7 +38752,6 @@ namespace peace {
 
 
 
-
 # 1 "ThirdParty/include/GL/glew.h" 1
 # 221 "ThirdParty/include/GL/glew.h"
 # 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h" 1 3 4
@@ -45033,7 +45032,7 @@ extern const GLubyte * glewGetString (GLenum name);
 
 
 }
-# 7 "src/GL.hpp" 2
+# 6 "src/GL.hpp" 2
 # 1 "ThirdParty/include/GLFW/glfw3.h" 1
 # 33 "ThirdParty/include/GLFW/glfw3.h"
 extern "C" {
@@ -45319,7 +45318,7 @@ typedef struct GLFWimage
  GLFWglproc glfwGetProcAddress(const char* procname);
 # 3336 "ThirdParty/include/GLFW/glfw3.h"
 }
-# 8 "src/GL.hpp" 2
+# 7 "src/GL.hpp" 2
 
 
 
@@ -45332,6 +45331,8 @@ namespace peace {
     GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
+    void setDrawMode(GLenum mode);
+    GLenum getDrawMode();
     void terminate();
 
   }

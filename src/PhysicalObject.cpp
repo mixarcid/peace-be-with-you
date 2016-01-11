@@ -42,9 +42,9 @@ NAMESPACE {
       if (rend) {
 	this->addRenderable(rend);
 	if (!(physics_flags & PHYSICS_STATIC)) {
-	  f32 mass = this->getPrimaryBoundingObject().getVolume()
+	  f32 mass = this->getTightBoundingObject().getVolume()
 	    * mat.density;
-	  f32 inertia = this->getPrimaryBoundingObject().getInertia(mass);
+	  f32 inertia = this->getTightBoundingObject().getInertia(mass);
 	  mass_data = MassData(mass, inertia);
 	}
       } else {

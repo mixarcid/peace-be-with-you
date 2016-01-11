@@ -8,11 +8,11 @@ NAMESPACE {
   void resolveCollision(PhysicalObject* a, PhysicalObject* b) {
 
     if (b == a) return;
-    if (!testIntersection(a->getPhysicalBoundingObject(),
-			  b->getPhysicalBoundingObject())) return;
+    if (!testIntersection(a->getLooseBoundingObject(),
+			  b->getLooseBoundingObject())) return;
     Manifold m;
-    if (!testIntersection(a->getPrimaryBoundingObject(),
-			  b->getPrimaryBoundingObject(), &m)) return;
+    if (!testIntersection(a->getTightBoundingObject(),
+			  b->getTightBoundingObject(), &m)) return;
 
     //Log::message(to_string(m.normal));
     

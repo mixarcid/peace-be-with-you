@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PhysicalObject.hpp"
+#include "GameObjectContainer.hpp"
 
 NAMESPACE {
 
@@ -15,19 +16,12 @@ NAMESPACE {
 		        OBJECT_UPDATE = 0x01,
 			OBJECT_NAMED = 0x02,
 			OBJECT_SAVEABLE = 0x04,
-			OBJECT_DELETE_ONCE_SAVED = 0x08);
-
-  struct GameObjectHandle {
-    GameObjectFlags flags;
-    ArrayHandle physics_handle;
-    ArrayHandle graphics_handle;
-    ArrayHandle update_handle;
-    String object_name;
-  };
+			OBJECT_PHYSICS = 0x08,
+			OBJECT_GRAPHICS = 0x10);
   
   struct GameObject : PhysicalObject {
 
-    const GameObjectFlags object_flags;
+    GameObjectFlags object_flags;
     Engine* engine;
     GameObjectHandle handle;
     

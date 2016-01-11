@@ -13,7 +13,6 @@
 
 
 
-
 # 1 "ThirdParty/include/GL/glew.h" 1
 # 221 "ThirdParty/include/GL/glew.h"
 # 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h" 1 3 4
@@ -6399,7 +6398,7 @@ extern const GLubyte * glewGetString (GLenum name);
 
 
 }
-# 7 "src/GL.hpp" 2
+# 6 "src/GL.hpp" 2
 # 1 "ThirdParty/include/GLFW/glfw3.h" 1
 # 33 "ThirdParty/include/GLFW/glfw3.h"
 extern "C" {
@@ -6685,7 +6684,7 @@ typedef struct GLFWimage
  GLFWglproc glfwGetProcAddress(const char* procname);
 # 3336 "ThirdParty/include/GLFW/glfw3.h"
 }
-# 8 "src/GL.hpp" 2
+# 7 "src/GL.hpp" 2
 
 # 1 "src/Vector.hpp" 1
        
@@ -44797,7 +44796,7 @@ namespace peace {
   typedef Vec4<i16> Vec4s;
 
 }
-# 10 "src/GL.hpp" 2
+# 9 "src/GL.hpp" 2
 
 
 namespace peace {
@@ -44808,6 +44807,8 @@ namespace peace {
     GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
+    void setDrawMode(GLenum mode);
+    GLenum getDrawMode();
     void terminate();
 
   }
@@ -44879,7 +44880,7 @@ namespace peace {
 
 
 
-    void draw(GLenum mode, u32 index = 0);
+    void draw(GLenum mode = gl::getDrawMode(), u32 index = 0);
     ~EBO();
 
 
@@ -45382,10 +45383,8 @@ namespace peace {
     ids = new u32[length];
     lengths = new u32[length];
     __glewGenBuffers(length, ids);
-
-
   }
-# 99 "src/VertexObjects.cpp"
+# 97 "src/VertexObjects.cpp"
   void EBO::bindArray(Array<u32> arr, bool dynamic, u32 index) {
     lengths[index] = arr.size();
 
@@ -45394,9 +45393,8 @@ namespace peace {
    lengths[index]*sizeof(u32), &arr[0],
    dynamic ? 0x88E8 : 0x88E4);
   }
-# 115 "src/VertexObjects.cpp"
+# 113 "src/VertexObjects.cpp"
   void EBO::draw(GLenum mode, u32 index) {
-
     __glewBindBuffer(0x8893, ids[index]);
     glDrawElements(mode, lengths[index], 0x1405, __null);
   }

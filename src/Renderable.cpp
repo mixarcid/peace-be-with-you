@@ -9,6 +9,14 @@ NAMESPACE {
   Renderable::Renderable(ShaderFlags _shader_flags)
     : shader_flags(_shader_flags) {}
 
+  BoundingObject Renderable::getTightBoundingObject() {
+    return BoundingObject();
+  }
+  
+  BoundingObject Renderable::getLooseBoundingObject() {
+    return BoundingObject();
+  }
+
   void RenderableReg::init() {
     Shader::setFlags(Renderable::shader_flags);
     vao.init();
@@ -19,11 +27,7 @@ NAMESPACE {
   
   void RenderableReg::render(RenderContext c) {
     vao.use();
-#ifdef PEACE_GL_USE_POINTS
-    ebo.draw(GL_POINTS);
-#else
-    ebo.draw(GL_TRIANGLES);
-#endif
+    ebo.draw();
   }
 
 }

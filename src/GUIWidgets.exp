@@ -28290,7 +28290,6 @@ namespace peace {
 
 
 
-
 # 1 "ThirdParty/include/GL/glew.h" 1
 # 221 "ThirdParty/include/GL/glew.h"
 # 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h" 1 3 4
@@ -34585,7 +34584,7 @@ extern const GLubyte * glewGetString (GLenum name);
 
 
 }
-# 7 "src/GL.hpp" 2
+# 6 "src/GL.hpp" 2
 # 1 "ThirdParty/include/GLFW/glfw3.h" 1
 # 33 "ThirdParty/include/GLFW/glfw3.h"
 extern "C" {
@@ -34871,7 +34870,7 @@ typedef struct GLFWimage
  GLFWglproc glfwGetProcAddress(const char* procname);
 # 3336 "ThirdParty/include/GLFW/glfw3.h"
 }
-# 8 "src/GL.hpp" 2
+# 7 "src/GL.hpp" 2
 
 # 1 "src/Vector.hpp" 1
        
@@ -44806,7 +44805,7 @@ namespace peace {
   typedef Vec4<i16> Vec4s;
 
 }
-# 10 "src/GL.hpp" 2
+# 9 "src/GL.hpp" 2
 
 
 namespace peace {
@@ -44817,6 +44816,8 @@ namespace peace {
     GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
+    void setDrawMode(GLenum mode);
+    GLenum getDrawMode();
     void terminate();
 
   }
@@ -44888,7 +44889,7 @@ namespace peace {
 
 
 
-    void draw(GLenum mode, u32 index = 0);
+    void draw(GLenum mode = gl::getDrawMode(), u32 index = 0);
     ~EBO();
 
 
@@ -44896,13 +44897,8 @@ namespace peace {
 
 }
 # 5 "src/Renderable.hpp" 2
-# 1 "src/Shader.hpp" 1
+# 1 "src/BoundingObject.hpp" 1
        
-
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Shader.hpp" 2
-
-
 
 
 # 1 "src/Matrix.hpp" 1
@@ -45166,7 +45162,22 @@ namespace peace {
   typedef Mat4<f32> Mat4f;
 
 }
-# 9 "src/Shader.hpp" 2
+# 5 "src/BoundingObject.hpp" 2
+# 1 "src/BasicMesh.hpp" 1
+       
+
+
+
+# 1 "src/Shader.hpp" 1
+       
+
+# 1 "src/Standard/Standard.hpp" 1
+# 4 "src/Shader.hpp" 2
+
+
+
+
+
 
 namespace peace {
 
@@ -45307,12 +45318,132 @@ namespace peace {
   };
 
 }
+# 6 "src/BasicMesh.hpp" 2
+
+namespace peace {
+
+  struct BasicMeshData {
+
+    Vec3f pos;
+    Vec3f norm;
+    Vec2f tex_coord;
+
+    BasicMeshData(Vec3f position,
+    Vec3f normal,
+    Vec2f texture_coord)
+      : pos(position),
+ norm(normal),
+ tex_coord(texture_coord) {}
+
+  };
+
+}
+# 6 "src/BoundingObject.hpp" 2
+
+namespace peace {
+
+  struct Node;
+
+  enum BoundingObjectType {
+    BOUNDING_SPHERE,
+    BOUNDING_OBB,
+    BOUNDING_GROUND,
+    BOUNDING_NONE
+  };
+
+  struct BoundingSphere {
+
+    Vec3f center;
+    f32 radius;
+
+    BoundingSphere(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+  struct BoundingOBB {
+
+    Vec3f center;
+    Vec3f halves;
+    Mat3f coord;
+
+    BoundingOBB(Array<BasicMeshData> data);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    Vec3f getClosestPoint(Vec3f point);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
+  struct BoundingAABB {
+
+    Vec3f center;
+    Vec3f halves;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+  };
+
+
+  struct BoundingGround {
+
+    typedef f32 (*GroundDataFunc) (Vec2f, Vec3f*);
+
+
+
+
+
+    GroundDataFunc dataAtPoint;
+
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    bool someInBox(Vec3f center, Vec3f halves);
+    bool allInBox(Vec3f center, Vec3f halves);
+    void transform(Node* t);
+
+  };
+
+  struct BoundingObject {
+
+    BoundingObjectType type;
+    union {
+      BoundingSphere sphere;
+      BoundingOBB obb;
+      BoundingGround ground;
+    };
+
+    BoundingObject(BoundingObjectType _type = BOUNDING_OBB);
+    BoundingObject(BoundingObjectType obj_type,
+     Array<BasicMeshData> data);
+    BoundingObject(const BoundingObject& obj);
+    ~BoundingObject() {}
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+
+
+
+    bool someInBox(Vec3f center, Vec3f halves);
+
+    bool allInBox(Vec3f center, Vec3f halves);
+
+    void transform(Node* t);
+  };
+
+}
 # 6 "src/Renderable.hpp" 2
+
 
 namespace peace {
 
   struct ShaderVar;
-  struct BoundingObject;
 
   struct RenderContext {
     f32 dt;
@@ -45325,13 +45456,8 @@ namespace peace {
 
     Renderable(ShaderFlags _shader_flags);
 
-
-
-    virtual BoundingObject getBoundingObject() = 0;
-
-    virtual BoundingObject getPhysicalBoundingObject() = 0;
-
-    virtual BoundingObject getPrimaryBoundingObject() = 0;
+    virtual BoundingObject getTightBoundingObject();
+    virtual BoundingObject getLooseBoundingObject();
     virtual void render(RenderContext c) = 0;
     virtual ~Renderable() {}
 

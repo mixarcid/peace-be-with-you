@@ -128,16 +128,12 @@ NAMESPACE {
     base->render(c);
   }
 
-  BoundingObject BonedMesh::getBoundingObject() {
-    return base->getBoundingObject();
+  BoundingObject BonedMesh::getTightBoundingObject() {
+    return base->getTightBoundingObject();
   }
   
-  BoundingObject BonedMesh::getPrimaryBoundingObject() {
-    return base->getPrimaryBoundingObject();
-  }
-  
-  BoundingObject BonedMesh::getPhysicalBoundingObject() {
-    return base->getPhysicalBoundingObject();
+  BoundingObject BonedMesh::getLooseBoundingObject() {
+    return base->getLooseBoundingObject();
   }
 
 }

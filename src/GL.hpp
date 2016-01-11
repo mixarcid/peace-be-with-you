@@ -1,7 +1,6 @@
 #pragma once
 
 #define GLEW_STATIC
-//#define PEACE_GL_USE_POINTS
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -17,6 +16,8 @@ NAMESPACE {
     GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
+    void setDrawMode(GLenum mode);
+    GLenum getDrawMode();
     void terminate();
     
   }

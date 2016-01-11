@@ -21,8 +21,6 @@ NAMESPACE {
     GLFWwindow* window;
     Graphics* graphics;
     Physics* physics;
-    HandledArray<GameObject*> update_objects;
-    HashMap<String, GameObject*> named_objects;
 
     Time cur_time, prev_time;
     f32 dt;

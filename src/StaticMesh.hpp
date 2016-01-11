@@ -26,9 +26,8 @@ NAMESPACE {
 	       = SHADER_NO_FLAGS);
     
     void init();
-    virtual BoundingObject getBoundingObject();
-    virtual BoundingObject getPhysicalBoundingObject();
-    virtual BoundingObject getPrimaryBoundingObject();
+    virtual BoundingObject getTightBoundingObject();
+    virtual BoundingObject getLooseBoundingObject();
     virtual void render(RenderContext c);
     
   };

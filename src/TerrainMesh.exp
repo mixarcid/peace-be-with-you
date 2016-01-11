@@ -1,17 +1,11 @@
-# 1 "src/Physics.cpp"
+# 1 "src/TerrainMesh.cpp"
 # 1 "/home/boris/Repos/peace-be-with-you//"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "src/Physics.cpp"
-# 1 "src/Physics.hpp" 1
-       
-
-# 1 "src/PhysicalObject.hpp" 1
-       
-
-# 1 "src/Node.hpp" 1
+# 1 "src/TerrainMesh.cpp"
+# 1 "src/TerrainMesh.hpp" 1
        
 
 # 1 "src/Standard/Standard.hpp" 1
@@ -36342,2415 +36336,7 @@ namespace peace {
 
 }
 # 5 "src/Standard/Standard.hpp" 2
-# 4 "src/Node.hpp" 2
-# 1 "src/Transform.hpp" 1
-       
-
-# 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Transform.hpp" 2
-# 1 "src/Vector.hpp" 1
-       
-
-# 1 "src/Math.hpp" 1
-# 1 "/usr/include/string.h" 1 3 4
-# 27 "/usr/include/string.h" 3 4
-extern "C" {
-
-
-
-
-# 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h" 1 3 4
-# 33 "/usr/include/string.h" 2 3 4
-# 44 "/usr/include/string.h" 3 4
-
-
-extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
-       size_t __n) throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern void *memmove (void *__dest, const void *__src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-
-
-extern void *memccpy (void *__restrict __dest, const void *__restrict __src,
-        int __c, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-
-extern void *memset (void *__s, int __c, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
-
-
-extern int memcmp (const void *__s1, const void *__s2, size_t __n)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-extern "C++"
-{
-extern void *memchr (void *__s, int __c, size_t __n)
-      throw () __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern const void *memchr (const void *__s, int __c, size_t __n)
-      throw () __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-# 94 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-
-
-
-
-extern "C++" void *rawmemchr (void *__s, int __c)
-     throw () __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern "C++" const void *rawmemchr (const void *__s, int __c)
-     throw () __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-
-
-extern "C++" void *memrchr (void *__s, int __c, size_t __n)
-      throw () __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern "C++" const void *memrchr (const void *__s, int __c, size_t __n)
-      throw () __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-
-
-
-
-extern char *strcpy (char *__restrict __dest, const char *__restrict __src)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-extern char *strncpy (char *__restrict __dest,
-        const char *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern char *strcat (char *__restrict __dest, const char *__restrict __src)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-extern char *strncat (char *__restrict __dest, const char *__restrict __src,
-        size_t __n) throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern int strcmp (const char *__s1, const char *__s2)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-extern int strncmp (const char *__s1, const char *__s2, size_t __n)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern int strcoll (const char *__s1, const char *__s2)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-extern size_t strxfrm (char *__restrict __dest,
-         const char *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (2)));
-
-# 166 "/usr/include/string.h" 3 4
-extern int strcoll_l (const char *__s1, const char *__s2, __locale_t __l)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
-
-extern size_t strxfrm_l (char *__dest, const char *__src, size_t __n,
-    __locale_t __l) throw () __attribute__ ((__nonnull__ (2, 4)));
-
-
-
-
-
-extern char *strdup (const char *__s)
-     throw () __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-
-extern char *strndup (const char *__string, size_t __n)
-     throw () __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
-# 211 "/usr/include/string.h" 3 4
-
-
-
-extern "C++"
-{
-extern char *strchr (char *__s, int __c)
-     throw () __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern const char *strchr (const char *__s, int __c)
-     throw () __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-# 234 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-extern "C++"
-{
-extern char *strrchr (char *__s, int __c)
-     throw () __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern const char *strrchr (const char *__s, int __c)
-     throw () __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-# 261 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-
-
-
-
-extern "C++" char *strchrnul (char *__s, int __c)
-     throw () __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern "C++" const char *strchrnul (const char *__s, int __c)
-     throw () __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-
-
-
-
-extern size_t strcspn (const char *__s, const char *__reject)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern size_t strspn (const char *__s, const char *__accept)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern "C++"
-{
-extern char *strpbrk (char *__s, const char *__accept)
-     throw () __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-extern const char *strpbrk (const char *__s, const char *__accept)
-     throw () __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-# 313 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-extern "C++"
-{
-extern char *strstr (char *__haystack, const char *__needle)
-     throw () __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-extern const char *strstr (const char *__haystack, const char *__needle)
-     throw () __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-# 340 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-
-extern char *strtok (char *__restrict __s, const char *__restrict __delim)
-     throw () __attribute__ ((__nonnull__ (2)));
-
-
-
-
-extern char *__strtok_r (char *__restrict __s,
-    const char *__restrict __delim,
-    char **__restrict __save_ptr)
-     throw () __attribute__ ((__nonnull__ (2, 3)));
-
-extern char *strtok_r (char *__restrict __s, const char *__restrict __delim,
-         char **__restrict __save_ptr)
-     throw () __attribute__ ((__nonnull__ (2, 3)));
-
-
-
-
-
-extern "C++" char *strcasestr (char *__haystack, const char *__needle)
-     throw () __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-extern "C++" const char *strcasestr (const char *__haystack,
-         const char *__needle)
-     throw () __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-# 382 "/usr/include/string.h" 3 4
-extern void *memmem (const void *__haystack, size_t __haystacklen,
-       const void *__needle, size_t __needlelen)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 3)));
-
-
-
-extern void *__mempcpy (void *__restrict __dest,
-   const void *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-extern void *mempcpy (void *__restrict __dest,
-        const void *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-
-extern size_t strlen (const char *__s)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-extern size_t strnlen (const char *__string, size_t __maxlen)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-extern char *strerror (int __errnum) throw ();
-
-# 438 "/usr/include/string.h" 3 4
-extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
-     throw () __attribute__ ((__nonnull__ (2))) ;
-
-
-
-
-
-extern char *strerror_l (int __errnum, __locale_t __l) throw ();
-
-
-
-
-
-extern void __bzero (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
-
-
-
-extern void bcopy (const void *__src, void *__dest, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern void bzero (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
-
-
-extern int bcmp (const void *__s1, const void *__s2, size_t __n)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-extern "C++"
-{
-extern char *index (char *__s, int __c)
-     throw () __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern const char *index (const char *__s, int __c)
-     throw () __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-# 487 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-
-extern "C++"
-{
-extern char *rindex (char *__s, int __c)
-     throw () __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-extern const char *rindex (const char *__s, int __c)
-     throw () __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
-# 515 "/usr/include/string.h" 3 4
-}
-
-
-
-
-
-
-
-extern int ffs (int __i) throw () __attribute__ ((__const__));
-
-
-
-
-extern int ffsl (long int __l) throw () __attribute__ ((__const__));
-__extension__ extern int ffsll (long long int __ll)
-     throw () __attribute__ ((__const__));
-
-
-
-extern int strcasecmp (const char *__s1, const char *__s2)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern int strncasecmp (const char *__s1, const char *__s2, size_t __n)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-
-extern int strcasecmp_l (const char *__s1, const char *__s2,
-    __locale_t __loc)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
-
-extern int strncasecmp_l (const char *__s1, const char *__s2,
-     size_t __n, __locale_t __loc)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 4)));
-
-
-
-
-
-extern char *strsep (char **__restrict __stringp,
-       const char *__restrict __delim)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-extern char *strsignal (int __sig) throw ();
-
-
-extern char *__stpcpy (char *__restrict __dest, const char *__restrict __src)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-extern char *stpcpy (char *__restrict __dest, const char *__restrict __src)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-extern char *__stpncpy (char *__restrict __dest,
-   const char *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-extern char *stpncpy (char *__restrict __dest,
-        const char *__restrict __src, size_t __n)
-     throw () __attribute__ ((__nonnull__ (1, 2)));
-
-
-
-
-extern int strverscmp (const char *__s1, const char *__s2)
-     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
-
-
-extern char *strfry (char *__string) throw () __attribute__ ((__nonnull__ (1)));
-
-
-extern void *memfrob (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
-
-
-
-
-
-
-
-extern "C++" char *basename (char *__filename)
-     throw () __asm ("basename") __attribute__ ((__nonnull__ (1)));
-extern "C++" const char *basename (const char *__filename)
-     throw () __asm ("basename") __attribute__ ((__nonnull__ (1)));
-# 644 "/usr/include/string.h" 3 4
-}
-# 2 "src/Math.hpp" 2
-# 1 "/usr/include/math.h" 1 3 4
-# 28 "/usr/include/math.h" 3 4
-extern "C" {
-
-
-
-# 1 "/usr/include/x86_64-linux-gnu/bits/huge_val.h" 1 3 4
-# 33 "/usr/include/math.h" 2 3 4
-
-# 1 "/usr/include/x86_64-linux-gnu/bits/huge_valf.h" 1 3 4
-# 35 "/usr/include/math.h" 2 3 4
-# 1 "/usr/include/x86_64-linux-gnu/bits/huge_vall.h" 1 3 4
-# 36 "/usr/include/math.h" 2 3 4
-
-
-# 1 "/usr/include/x86_64-linux-gnu/bits/inf.h" 1 3 4
-# 39 "/usr/include/math.h" 2 3 4
-
-
-# 1 "/usr/include/x86_64-linux-gnu/bits/nan.h" 1 3 4
-# 42 "/usr/include/math.h" 2 3 4
-
-
-
-# 1 "/usr/include/x86_64-linux-gnu/bits/mathdef.h" 1 3 4
-# 28 "/usr/include/x86_64-linux-gnu/bits/mathdef.h" 3 4
-typedef float float_t;
-typedef double double_t;
-# 46 "/usr/include/math.h" 2 3 4
-# 69 "/usr/include/math.h" 3 4
-# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
-# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
-
-
-extern double acos (double __x) throw (); extern double __acos (double __x) throw ();
-
-extern double asin (double __x) throw (); extern double __asin (double __x) throw ();
-
-extern double atan (double __x) throw (); extern double __atan (double __x) throw ();
-
-extern double atan2 (double __y, double __x) throw (); extern double __atan2 (double __y, double __x) throw ();
-
-
-extern double cos (double __x) throw (); extern double __cos (double __x) throw ();
-
-extern double sin (double __x) throw (); extern double __sin (double __x) throw ();
-
-extern double tan (double __x) throw (); extern double __tan (double __x) throw ();
-
-
-
-
-extern double cosh (double __x) throw (); extern double __cosh (double __x) throw ();
-
-extern double sinh (double __x) throw (); extern double __sinh (double __x) throw ();
-
-extern double tanh (double __x) throw (); extern double __tanh (double __x) throw ();
-
-
-
-
-extern void sincos (double __x, double *__sinx, double *__cosx) throw (); extern void __sincos (double __x, double *__sinx, double *__cosx) throw ()
-                                                           ;
-
-
-
-
-
-extern double acosh (double __x) throw (); extern double __acosh (double __x) throw ();
-
-extern double asinh (double __x) throw (); extern double __asinh (double __x) throw ();
-
-extern double atanh (double __x) throw (); extern double __atanh (double __x) throw ();
-
-
-
-
-
-
-
-extern double exp (double __x) throw (); extern double __exp (double __x) throw ();
-
-
-extern double frexp (double __x, int *__exponent) throw (); extern double __frexp (double __x, int *__exponent) throw ();
-
-
-extern double ldexp (double __x, int __exponent) throw (); extern double __ldexp (double __x, int __exponent) throw ();
-
-
-extern double log (double __x) throw (); extern double __log (double __x) throw ();
-
-
-extern double log10 (double __x) throw (); extern double __log10 (double __x) throw ();
-
-
-extern double modf (double __x, double *__iptr) throw (); extern double __modf (double __x, double *__iptr) throw () __attribute__ ((__nonnull__ (2)));
-
-
-
-
-extern double exp10 (double __x) throw (); extern double __exp10 (double __x) throw ();
-
-extern double pow10 (double __x) throw (); extern double __pow10 (double __x) throw ();
-
-
-
-
-
-extern double expm1 (double __x) throw (); extern double __expm1 (double __x) throw ();
-
-
-extern double log1p (double __x) throw (); extern double __log1p (double __x) throw ();
-
-
-extern double logb (double __x) throw (); extern double __logb (double __x) throw ();
-
-
-
-
-
-
-extern double exp2 (double __x) throw (); extern double __exp2 (double __x) throw ();
-
-
-extern double log2 (double __x) throw (); extern double __log2 (double __x) throw ();
-
-
-
-
-
-
-
-
-extern double pow (double __x, double __y) throw (); extern double __pow (double __x, double __y) throw ();
-
-
-extern double sqrt (double __x) throw (); extern double __sqrt (double __x) throw ();
-
-
-
-
-
-extern double hypot (double __x, double __y) throw (); extern double __hypot (double __x, double __y) throw ();
-
-
-
-
-
-
-extern double cbrt (double __x) throw (); extern double __cbrt (double __x) throw ();
-
-
-
-
-
-
-
-
-extern double ceil (double __x) throw () __attribute__ ((__const__)); extern double __ceil (double __x) throw () __attribute__ ((__const__));
-
-
-extern double fabs (double __x) throw () __attribute__ ((__const__)); extern double __fabs (double __x) throw () __attribute__ ((__const__));
-
-
-extern double floor (double __x) throw () __attribute__ ((__const__)); extern double __floor (double __x) throw () __attribute__ ((__const__));
-
-
-extern double fmod (double __x, double __y) throw (); extern double __fmod (double __x, double __y) throw ();
-
-
-
-
-extern int __isinf (double __value) throw () __attribute__ ((__const__));
-
-
-extern int __finite (double __value) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int isinf (double __value) throw () __attribute__ ((__const__));
-
-
-extern int finite (double __value) throw () __attribute__ ((__const__));
-
-
-extern double drem (double __x, double __y) throw (); extern double __drem (double __x, double __y) throw ();
-
-
-
-extern double significand (double __x) throw (); extern double __significand (double __x) throw ();
-
-
-
-
-
-extern double copysign (double __x, double __y) throw () __attribute__ ((__const__)); extern double __copysign (double __x, double __y) throw () __attribute__ ((__const__));
-
-
-
-
-
-
-extern double nan (const char *__tagb) throw () __attribute__ ((__const__)); extern double __nan (const char *__tagb) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int __isnan (double __value) throw () __attribute__ ((__const__));
-
-
-
-extern int isnan (double __value) throw () __attribute__ ((__const__));
-
-
-extern double j0 (double) throw (); extern double __j0 (double) throw ();
-extern double j1 (double) throw (); extern double __j1 (double) throw ();
-extern double jn (int, double) throw (); extern double __jn (int, double) throw ();
-extern double y0 (double) throw (); extern double __y0 (double) throw ();
-extern double y1 (double) throw (); extern double __y1 (double) throw ();
-extern double yn (int, double) throw (); extern double __yn (int, double) throw ();
-
-
-
-
-
-
-extern double erf (double) throw (); extern double __erf (double) throw ();
-extern double erfc (double) throw (); extern double __erfc (double) throw ();
-extern double lgamma (double) throw (); extern double __lgamma (double) throw ();
-
-
-
-
-
-
-extern double tgamma (double) throw (); extern double __tgamma (double) throw ();
-
-
-
-
-
-extern double gamma (double) throw (); extern double __gamma (double) throw ();
-
-
-
-
-
-
-extern double lgamma_r (double, int *__signgamp) throw (); extern double __lgamma_r (double, int *__signgamp) throw ();
-
-
-
-
-
-
-
-extern double rint (double __x) throw (); extern double __rint (double __x) throw ();
-
-
-extern double nextafter (double __x, double __y) throw () __attribute__ ((__const__)); extern double __nextafter (double __x, double __y) throw () __attribute__ ((__const__));
-
-extern double nexttoward (double __x, long double __y) throw () __attribute__ ((__const__)); extern double __nexttoward (double __x, long double __y) throw () __attribute__ ((__const__));
-
-
-
-extern double remainder (double __x, double __y) throw (); extern double __remainder (double __x, double __y) throw ();
-
-
-
-extern double scalbn (double __x, int __n) throw (); extern double __scalbn (double __x, int __n) throw ();
-
-
-
-extern int ilogb (double __x) throw (); extern int __ilogb (double __x) throw ();
-
-
-
-
-extern double scalbln (double __x, long int __n) throw (); extern double __scalbln (double __x, long int __n) throw ();
-
-
-
-extern double nearbyint (double __x) throw (); extern double __nearbyint (double __x) throw ();
-
-
-
-extern double round (double __x) throw () __attribute__ ((__const__)); extern double __round (double __x) throw () __attribute__ ((__const__));
-
-
-
-extern double trunc (double __x) throw () __attribute__ ((__const__)); extern double __trunc (double __x) throw () __attribute__ ((__const__));
-
-
-
-
-extern double remquo (double __x, double __y, int *__quo) throw (); extern double __remquo (double __x, double __y, int *__quo) throw ();
-
-
-
-
-
-
-extern long int lrint (double __x) throw (); extern long int __lrint (double __x) throw ();
-__extension__
-extern long long int llrint (double __x) throw (); extern long long int __llrint (double __x) throw ();
-
-
-
-extern long int lround (double __x) throw (); extern long int __lround (double __x) throw ();
-__extension__
-extern long long int llround (double __x) throw (); extern long long int __llround (double __x) throw ();
-
-
-
-extern double fdim (double __x, double __y) throw (); extern double __fdim (double __x, double __y) throw ();
-
-
-extern double fmax (double __x, double __y) throw () __attribute__ ((__const__)); extern double __fmax (double __x, double __y) throw () __attribute__ ((__const__));
-
-
-extern double fmin (double __x, double __y) throw () __attribute__ ((__const__)); extern double __fmin (double __x, double __y) throw () __attribute__ ((__const__));
-
-
-
-extern int __fpclassify (double __value) throw ()
-     __attribute__ ((__const__));
-
-
-extern int __signbit (double __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-extern double fma (double __x, double __y, double __z) throw (); extern double __fma (double __x, double __y, double __z) throw ();
-
-
-
-
-
-
-
-
-extern int __issignaling (double __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-
-extern double scalb (double __x, double __n) throw (); extern double __scalb (double __x, double __n) throw ();
-# 70 "/usr/include/math.h" 2 3 4
-# 88 "/usr/include/math.h" 3 4
-# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
-# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
-
-
-extern float acosf (float __x) throw (); extern float __acosf (float __x) throw ();
-
-extern float asinf (float __x) throw (); extern float __asinf (float __x) throw ();
-
-extern float atanf (float __x) throw (); extern float __atanf (float __x) throw ();
-
-extern float atan2f (float __y, float __x) throw (); extern float __atan2f (float __y, float __x) throw ();
-
-
-extern float cosf (float __x) throw (); extern float __cosf (float __x) throw ();
-
-extern float sinf (float __x) throw (); extern float __sinf (float __x) throw ();
-
-extern float tanf (float __x) throw (); extern float __tanf (float __x) throw ();
-
-
-
-
-extern float coshf (float __x) throw (); extern float __coshf (float __x) throw ();
-
-extern float sinhf (float __x) throw (); extern float __sinhf (float __x) throw ();
-
-extern float tanhf (float __x) throw (); extern float __tanhf (float __x) throw ();
-
-
-
-
-extern void sincosf (float __x, float *__sinx, float *__cosx) throw (); extern void __sincosf (float __x, float *__sinx, float *__cosx) throw ()
-                                                           ;
-
-
-
-
-
-extern float acoshf (float __x) throw (); extern float __acoshf (float __x) throw ();
-
-extern float asinhf (float __x) throw (); extern float __asinhf (float __x) throw ();
-
-extern float atanhf (float __x) throw (); extern float __atanhf (float __x) throw ();
-
-
-
-
-
-
-
-extern float expf (float __x) throw (); extern float __expf (float __x) throw ();
-
-
-extern float frexpf (float __x, int *__exponent) throw (); extern float __frexpf (float __x, int *__exponent) throw ();
-
-
-extern float ldexpf (float __x, int __exponent) throw (); extern float __ldexpf (float __x, int __exponent) throw ();
-
-
-extern float logf (float __x) throw (); extern float __logf (float __x) throw ();
-
-
-extern float log10f (float __x) throw (); extern float __log10f (float __x) throw ();
-
-
-extern float modff (float __x, float *__iptr) throw (); extern float __modff (float __x, float *__iptr) throw () __attribute__ ((__nonnull__ (2)));
-
-
-
-
-extern float exp10f (float __x) throw (); extern float __exp10f (float __x) throw ();
-
-extern float pow10f (float __x) throw (); extern float __pow10f (float __x) throw ();
-
-
-
-
-
-extern float expm1f (float __x) throw (); extern float __expm1f (float __x) throw ();
-
-
-extern float log1pf (float __x) throw (); extern float __log1pf (float __x) throw ();
-
-
-extern float logbf (float __x) throw (); extern float __logbf (float __x) throw ();
-
-
-
-
-
-
-extern float exp2f (float __x) throw (); extern float __exp2f (float __x) throw ();
-
-
-extern float log2f (float __x) throw (); extern float __log2f (float __x) throw ();
-
-
-
-
-
-
-
-
-extern float powf (float __x, float __y) throw (); extern float __powf (float __x, float __y) throw ();
-
-
-extern float sqrtf (float __x) throw (); extern float __sqrtf (float __x) throw ();
-
-
-
-
-
-extern float hypotf (float __x, float __y) throw (); extern float __hypotf (float __x, float __y) throw ();
-
-
-
-
-
-
-extern float cbrtf (float __x) throw (); extern float __cbrtf (float __x) throw ();
-
-
-
-
-
-
-
-
-extern float ceilf (float __x) throw () __attribute__ ((__const__)); extern float __ceilf (float __x) throw () __attribute__ ((__const__));
-
-
-extern float fabsf (float __x) throw () __attribute__ ((__const__)); extern float __fabsf (float __x) throw () __attribute__ ((__const__));
-
-
-extern float floorf (float __x) throw () __attribute__ ((__const__)); extern float __floorf (float __x) throw () __attribute__ ((__const__));
-
-
-extern float fmodf (float __x, float __y) throw (); extern float __fmodf (float __x, float __y) throw ();
-
-
-
-
-extern int __isinff (float __value) throw () __attribute__ ((__const__));
-
-
-extern int __finitef (float __value) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int isinff (float __value) throw () __attribute__ ((__const__));
-
-
-extern int finitef (float __value) throw () __attribute__ ((__const__));
-
-
-extern float dremf (float __x, float __y) throw (); extern float __dremf (float __x, float __y) throw ();
-
-
-
-extern float significandf (float __x) throw (); extern float __significandf (float __x) throw ();
-
-
-
-
-
-extern float copysignf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __copysignf (float __x, float __y) throw () __attribute__ ((__const__));
-
-
-
-
-
-
-extern float nanf (const char *__tagb) throw () __attribute__ ((__const__)); extern float __nanf (const char *__tagb) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int __isnanf (float __value) throw () __attribute__ ((__const__));
-
-
-
-extern int isnanf (float __value) throw () __attribute__ ((__const__));
-
-
-extern float j0f (float) throw (); extern float __j0f (float) throw ();
-extern float j1f (float) throw (); extern float __j1f (float) throw ();
-extern float jnf (int, float) throw (); extern float __jnf (int, float) throw ();
-extern float y0f (float) throw (); extern float __y0f (float) throw ();
-extern float y1f (float) throw (); extern float __y1f (float) throw ();
-extern float ynf (int, float) throw (); extern float __ynf (int, float) throw ();
-
-
-
-
-
-
-extern float erff (float) throw (); extern float __erff (float) throw ();
-extern float erfcf (float) throw (); extern float __erfcf (float) throw ();
-extern float lgammaf (float) throw (); extern float __lgammaf (float) throw ();
-
-
-
-
-
-
-extern float tgammaf (float) throw (); extern float __tgammaf (float) throw ();
-
-
-
-
-
-extern float gammaf (float) throw (); extern float __gammaf (float) throw ();
-
-
-
-
-
-
-extern float lgammaf_r (float, int *__signgamp) throw (); extern float __lgammaf_r (float, int *__signgamp) throw ();
-
-
-
-
-
-
-
-extern float rintf (float __x) throw (); extern float __rintf (float __x) throw ();
-
-
-extern float nextafterf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __nextafterf (float __x, float __y) throw () __attribute__ ((__const__));
-
-extern float nexttowardf (float __x, long double __y) throw () __attribute__ ((__const__)); extern float __nexttowardf (float __x, long double __y) throw () __attribute__ ((__const__));
-
-
-
-extern float remainderf (float __x, float __y) throw (); extern float __remainderf (float __x, float __y) throw ();
-
-
-
-extern float scalbnf (float __x, int __n) throw (); extern float __scalbnf (float __x, int __n) throw ();
-
-
-
-extern int ilogbf (float __x) throw (); extern int __ilogbf (float __x) throw ();
-
-
-
-
-extern float scalblnf (float __x, long int __n) throw (); extern float __scalblnf (float __x, long int __n) throw ();
-
-
-
-extern float nearbyintf (float __x) throw (); extern float __nearbyintf (float __x) throw ();
-
-
-
-extern float roundf (float __x) throw () __attribute__ ((__const__)); extern float __roundf (float __x) throw () __attribute__ ((__const__));
-
-
-
-extern float truncf (float __x) throw () __attribute__ ((__const__)); extern float __truncf (float __x) throw () __attribute__ ((__const__));
-
-
-
-
-extern float remquof (float __x, float __y, int *__quo) throw (); extern float __remquof (float __x, float __y, int *__quo) throw ();
-
-
-
-
-
-
-extern long int lrintf (float __x) throw (); extern long int __lrintf (float __x) throw ();
-__extension__
-extern long long int llrintf (float __x) throw (); extern long long int __llrintf (float __x) throw ();
-
-
-
-extern long int lroundf (float __x) throw (); extern long int __lroundf (float __x) throw ();
-__extension__
-extern long long int llroundf (float __x) throw (); extern long long int __llroundf (float __x) throw ();
-
-
-
-extern float fdimf (float __x, float __y) throw (); extern float __fdimf (float __x, float __y) throw ();
-
-
-extern float fmaxf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __fmaxf (float __x, float __y) throw () __attribute__ ((__const__));
-
-
-extern float fminf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __fminf (float __x, float __y) throw () __attribute__ ((__const__));
-
-
-
-extern int __fpclassifyf (float __value) throw ()
-     __attribute__ ((__const__));
-
-
-extern int __signbitf (float __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-extern float fmaf (float __x, float __y, float __z) throw (); extern float __fmaf (float __x, float __y, float __z) throw ();
-
-
-
-
-
-
-
-
-extern int __issignalingf (float __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-
-extern float scalbf (float __x, float __n) throw (); extern float __scalbf (float __x, float __n) throw ();
-# 89 "/usr/include/math.h" 2 3 4
-# 132 "/usr/include/math.h" 3 4
-# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
-# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
-
-
-extern long double acosl (long double __x) throw (); extern long double __acosl (long double __x) throw ();
-
-extern long double asinl (long double __x) throw (); extern long double __asinl (long double __x) throw ();
-
-extern long double atanl (long double __x) throw (); extern long double __atanl (long double __x) throw ();
-
-extern long double atan2l (long double __y, long double __x) throw (); extern long double __atan2l (long double __y, long double __x) throw ();
-
-
-extern long double cosl (long double __x) throw (); extern long double __cosl (long double __x) throw ();
-
-extern long double sinl (long double __x) throw (); extern long double __sinl (long double __x) throw ();
-
-extern long double tanl (long double __x) throw (); extern long double __tanl (long double __x) throw ();
-
-
-
-
-extern long double coshl (long double __x) throw (); extern long double __coshl (long double __x) throw ();
-
-extern long double sinhl (long double __x) throw (); extern long double __sinhl (long double __x) throw ();
-
-extern long double tanhl (long double __x) throw (); extern long double __tanhl (long double __x) throw ();
-
-
-
-
-extern void sincosl (long double __x, long double *__sinx, long double *__cosx) throw (); extern void __sincosl (long double __x, long double *__sinx, long double *__cosx) throw ()
-                                                           ;
-
-
-
-
-
-extern long double acoshl (long double __x) throw (); extern long double __acoshl (long double __x) throw ();
-
-extern long double asinhl (long double __x) throw (); extern long double __asinhl (long double __x) throw ();
-
-extern long double atanhl (long double __x) throw (); extern long double __atanhl (long double __x) throw ();
-
-
-
-
-
-
-
-extern long double expl (long double __x) throw (); extern long double __expl (long double __x) throw ();
-
-
-extern long double frexpl (long double __x, int *__exponent) throw (); extern long double __frexpl (long double __x, int *__exponent) throw ();
-
-
-extern long double ldexpl (long double __x, int __exponent) throw (); extern long double __ldexpl (long double __x, int __exponent) throw ();
-
-
-extern long double logl (long double __x) throw (); extern long double __logl (long double __x) throw ();
-
-
-extern long double log10l (long double __x) throw (); extern long double __log10l (long double __x) throw ();
-
-
-extern long double modfl (long double __x, long double *__iptr) throw (); extern long double __modfl (long double __x, long double *__iptr) throw () __attribute__ ((__nonnull__ (2)));
-
-
-
-
-extern long double exp10l (long double __x) throw (); extern long double __exp10l (long double __x) throw ();
-
-extern long double pow10l (long double __x) throw (); extern long double __pow10l (long double __x) throw ();
-
-
-
-
-
-extern long double expm1l (long double __x) throw (); extern long double __expm1l (long double __x) throw ();
-
-
-extern long double log1pl (long double __x) throw (); extern long double __log1pl (long double __x) throw ();
-
-
-extern long double logbl (long double __x) throw (); extern long double __logbl (long double __x) throw ();
-
-
-
-
-
-
-extern long double exp2l (long double __x) throw (); extern long double __exp2l (long double __x) throw ();
-
-
-extern long double log2l (long double __x) throw (); extern long double __log2l (long double __x) throw ();
-
-
-
-
-
-
-
-
-extern long double powl (long double __x, long double __y) throw (); extern long double __powl (long double __x, long double __y) throw ();
-
-
-extern long double sqrtl (long double __x) throw (); extern long double __sqrtl (long double __x) throw ();
-
-
-
-
-
-extern long double hypotl (long double __x, long double __y) throw (); extern long double __hypotl (long double __x, long double __y) throw ();
-
-
-
-
-
-
-extern long double cbrtl (long double __x) throw (); extern long double __cbrtl (long double __x) throw ();
-
-
-
-
-
-
-
-
-extern long double ceill (long double __x) throw () __attribute__ ((__const__)); extern long double __ceill (long double __x) throw () __attribute__ ((__const__));
-
-
-extern long double fabsl (long double __x) throw () __attribute__ ((__const__)); extern long double __fabsl (long double __x) throw () __attribute__ ((__const__));
-
-
-extern long double floorl (long double __x) throw () __attribute__ ((__const__)); extern long double __floorl (long double __x) throw () __attribute__ ((__const__));
-
-
-extern long double fmodl (long double __x, long double __y) throw (); extern long double __fmodl (long double __x, long double __y) throw ();
-
-
-
-
-extern int __isinfl (long double __value) throw () __attribute__ ((__const__));
-
-
-extern int __finitel (long double __value) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int isinfl (long double __value) throw () __attribute__ ((__const__));
-
-
-extern int finitel (long double __value) throw () __attribute__ ((__const__));
-
-
-extern long double dreml (long double __x, long double __y) throw (); extern long double __dreml (long double __x, long double __y) throw ();
-
-
-
-extern long double significandl (long double __x) throw (); extern long double __significandl (long double __x) throw ();
-
-
-
-
-
-extern long double copysignl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __copysignl (long double __x, long double __y) throw () __attribute__ ((__const__));
-
-
-
-
-
-
-extern long double nanl (const char *__tagb) throw () __attribute__ ((__const__)); extern long double __nanl (const char *__tagb) throw () __attribute__ ((__const__));
-
-
-
-
-
-extern int __isnanl (long double __value) throw () __attribute__ ((__const__));
-
-
-
-extern int isnanl (long double __value) throw () __attribute__ ((__const__));
-
-
-extern long double j0l (long double) throw (); extern long double __j0l (long double) throw ();
-extern long double j1l (long double) throw (); extern long double __j1l (long double) throw ();
-extern long double jnl (int, long double) throw (); extern long double __jnl (int, long double) throw ();
-extern long double y0l (long double) throw (); extern long double __y0l (long double) throw ();
-extern long double y1l (long double) throw (); extern long double __y1l (long double) throw ();
-extern long double ynl (int, long double) throw (); extern long double __ynl (int, long double) throw ();
-
-
-
-
-
-
-extern long double erfl (long double) throw (); extern long double __erfl (long double) throw ();
-extern long double erfcl (long double) throw (); extern long double __erfcl (long double) throw ();
-extern long double lgammal (long double) throw (); extern long double __lgammal (long double) throw ();
-
-
-
-
-
-
-extern long double tgammal (long double) throw (); extern long double __tgammal (long double) throw ();
-
-
-
-
-
-extern long double gammal (long double) throw (); extern long double __gammal (long double) throw ();
-
-
-
-
-
-
-extern long double lgammal_r (long double, int *__signgamp) throw (); extern long double __lgammal_r (long double, int *__signgamp) throw ();
-
-
-
-
-
-
-
-extern long double rintl (long double __x) throw (); extern long double __rintl (long double __x) throw ();
-
-
-extern long double nextafterl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __nextafterl (long double __x, long double __y) throw () __attribute__ ((__const__));
-
-extern long double nexttowardl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __nexttowardl (long double __x, long double __y) throw () __attribute__ ((__const__));
-
-
-
-extern long double remainderl (long double __x, long double __y) throw (); extern long double __remainderl (long double __x, long double __y) throw ();
-
-
-
-extern long double scalbnl (long double __x, int __n) throw (); extern long double __scalbnl (long double __x, int __n) throw ();
-
-
-
-extern int ilogbl (long double __x) throw (); extern int __ilogbl (long double __x) throw ();
-
-
-
-
-extern long double scalblnl (long double __x, long int __n) throw (); extern long double __scalblnl (long double __x, long int __n) throw ();
-
-
-
-extern long double nearbyintl (long double __x) throw (); extern long double __nearbyintl (long double __x) throw ();
-
-
-
-extern long double roundl (long double __x) throw () __attribute__ ((__const__)); extern long double __roundl (long double __x) throw () __attribute__ ((__const__));
-
-
-
-extern long double truncl (long double __x) throw () __attribute__ ((__const__)); extern long double __truncl (long double __x) throw () __attribute__ ((__const__));
-
-
-
-
-extern long double remquol (long double __x, long double __y, int *__quo) throw (); extern long double __remquol (long double __x, long double __y, int *__quo) throw ();
-
-
-
-
-
-
-extern long int lrintl (long double __x) throw (); extern long int __lrintl (long double __x) throw ();
-__extension__
-extern long long int llrintl (long double __x) throw (); extern long long int __llrintl (long double __x) throw ();
-
-
-
-extern long int lroundl (long double __x) throw (); extern long int __lroundl (long double __x) throw ();
-__extension__
-extern long long int llroundl (long double __x) throw (); extern long long int __llroundl (long double __x) throw ();
-
-
-
-extern long double fdiml (long double __x, long double __y) throw (); extern long double __fdiml (long double __x, long double __y) throw ();
-
-
-extern long double fmaxl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __fmaxl (long double __x, long double __y) throw () __attribute__ ((__const__));
-
-
-extern long double fminl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __fminl (long double __x, long double __y) throw () __attribute__ ((__const__));
-
-
-
-extern int __fpclassifyl (long double __value) throw ()
-     __attribute__ ((__const__));
-
-
-extern int __signbitl (long double __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-extern long double fmal (long double __x, long double __y, long double __z) throw (); extern long double __fmal (long double __x, long double __y, long double __z) throw ();
-
-
-
-
-
-
-
-
-extern int __issignalingl (long double __value) throw ()
-     __attribute__ ((__const__));
-
-
-
-
-extern long double scalbl (long double __x, long double __n) throw (); extern long double __scalbl (long double __x, long double __n) throw ();
-# 133 "/usr/include/math.h" 2 3 4
-# 148 "/usr/include/math.h" 3 4
-extern int signgam;
-# 189 "/usr/include/math.h" 3 4
-enum
-  {
-    FP_NAN =
-
-      0,
-    FP_INFINITE =
-
-      1,
-    FP_ZERO =
-
-      2,
-    FP_SUBNORMAL =
-
-      3,
-    FP_NORMAL =
-
-      4
-  };
-# 301 "/usr/include/math.h" 3 4
-typedef enum
-{
-  _IEEE_ = -1,
-  _SVID_,
-  _XOPEN_,
-  _POSIX_,
-  _ISOC_
-} _LIB_VERSION_TYPE;
-
-
-
-
-extern _LIB_VERSION_TYPE _LIB_VERSION;
-# 324 "/usr/include/math.h" 3 4
-struct __exception
-
-
-
-  {
-    int type;
-    char *name;
-    double arg1;
-    double arg2;
-    double retval;
-  };
-
-
-extern int matherr (struct __exception *__exc) throw ();
-# 488 "/usr/include/math.h" 3 4
-}
-# 3 "src/Math.hpp" 2
-# 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/float.h" 1 3 4
-# 4 "src/Math.hpp" 2
-# 1 "src/Standard/Standard.hpp" 1
-# 5 "src/Math.hpp" 2
-
-namespace peace {
-
-  constexpr f64 degreesToRadians(f64 deg) {
-    return deg*(3.14159265358979323846/(f64)180);
-  }
-
-  template<typename T>
-    inline T sqr(T x) {
-    return x*x;
-  }
-
-  template<typename T>
-    inline T min(T a, T b) {
-    return a > b ? b : a;
-  }
-
-  template<typename T>
-    inline T max(T a, T b) {
-    return a > b ? a : b;
-  }
-
-  template<typename T>
-    inline T abs(T num) {
-    return num > 0 ? num : -num;
-  }
-
-  template <typename T>
-    inline bool floatEqual(T a, T b) {
-    return abs(a - b) < T(0.000001);
-  }
-
-}
-# 4 "src/Vector.hpp" 2
-
-namespace peace {
-
-  template <typename T, const u8 N>
-    struct Vec {
-
-    T data[N];
-
-    inline Vec() {
-      memset(this, 0, sizeof(Vec));
-    }
-
-    inline T norm() const {
-      T ret = 0;
-      for (u8 i=0; i<N; ++i) {
- ret += sqr((*this).data[i]);
-      }
-      return sqrt(ret);
-    }
-
-    inline Vec normalized() const {
-      return (*this)/norm();
-    }
-
-    inline void normalize() {
-      *this = (*this).normalized();
-    }
-
-    inline T& operator[](const u8 index) {
-      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-                                        ;
-      return data[index];
-    }
-
-    inline void operator=(const Vec b) {
-      memcpy(this, &b, sizeof(Vec));
-    }
-
-    inline Vec operator+(const Vec b) const {
-      return add(*this, b);
-    }
-
-    inline Vec operator-(const Vec b) const {
-      return sub(*this, b);
-    }
-
-    inline Vec operator-() const {
-      return neg(*this);
-    }
-
-    inline void operator+=(const Vec b) {
-      *this = add(*this, b);
-    }
-
-    inline void operator-=(const Vec b) {
-      *this = sub(*this, b);
-    }
-
-    inline Vec operator*(const T b) const {
-      return mul(*this, b);
-    }
-
-    inline Vec operator/(const T b) const {
-      return div(*this, b);
-    }
-
-    inline void operator*=(const T b) {
-      *this = mul(*this, b);
-    }
-
-    inline void operator/=(const T b) {
-      *this = div(*this, b);
-    }
-
-    inline bool is_zero() const {
-      for (u8 i=0; i<N; ++i) {
- if (!(floatEqual(data[i],T(0)))) return false;
-      }
-      return true;
-    }
-
-    static inline Vec mul(const Vec a, const T b) {
-      Vec ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = a.data[i]*b;
-      }
-      return ret;
-    }
-
-    static inline Vec div(const Vec a, const T b) {
-      Vec ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = a.data[i]/b;
-      }
-      return ret;
-    }
-
-    static inline Vec add(const Vec a, const Vec b) {
-      Vec ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = a.data[i] + b.data[i];
-      }
-      return ret;
-    }
-
-    static inline Vec sub(const Vec a, const Vec b) {
-      Vec ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = a.data[i] - b.data[i];
-      }
-      return ret;
-    }
-
-    static inline Vec neg(const Vec a) {
-      Vec ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = -a.data[i];
-      }
-      return ret;
-    }
-
-    static inline T dot(const Vec a, const Vec b) {
-      T ret = 0;
-      for (u8 i=0; i<N; ++i) {
- ret += a.data[i]*b.data[i];
-      }
-      return ret;
-    }
-
-    static inline Vec lerp(const Vec a,
-      const Vec b,
-      const T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-                                             ;
-      return a*(1-h) + b*h;
-    }
-  };
-
-  template <typename T, const u8 N>
-    inline String to_string(const Vec<T,N> v) {
-    String ret = "<";
-    for (u8 i=0; i<N-1; ++i) {
-      ret += to_string(v.data[i]) + ", ";
-    }
-    ret += to_string(v.data[N-1]) + ">";
-    return ret;
-  }
-
-  template <const u8 N>
-    inline String to_string(const Vec<f32,N> v) {
-    String ret = "<";
-    for (u8 i=0; i<N-1; ++i) {
-      ret += str::format("%1.3f, ", v.data[i]);
-    }
-    ret += str::format("%1.3f>", v.data[N-1]);
-    return ret;
-  }
-
-  template <typename T>
-    struct Vec2 : Vec<T,2> {
-
-    using Vec<T,2>::Vec;
-
-    inline Vec2(Vec<T,2> init) {
-      memcpy(this, &init, sizeof(Vec2));
-    }
-
-    inline Vec2() : Vec<T,2>::Vec() {}
-
-    inline Vec2(T x, T y) {
-      Vec<T,2>::data[0] = x;
-      Vec<T,2>::data[1] = y;
-    }
-
-    inline T& x() {
-      return Vec<T,2>::data[0];
-    }
-
-    inline T& y() {
-      return Vec<T,2>::data[1];
-    }
-
-
-    inline T cx() const {
-      return Vec<T,2>::data[0];
-    }
-
-    inline T cy() const {
-      return Vec<T,2>::data[1];
-    }
-
-  };
-
-  template <typename T>
-    struct Vec3 : Vec<T,3> {
-
-    using Vec<T,3>::Vec;
-
-    inline Vec3(Vec<T,3> init) {
-      memcpy(this, &init, sizeof(Vec3));
-    }
-
-    inline Vec3() : Vec<T,3>::Vec() {}
-
-    inline Vec3(T x, T y, T z) {
-      Vec<T,3>::data[0] = x;
-      Vec<T,3>::data[1] = y;
-      Vec<T,3>::data[2] = z;
-    }
-
-    inline T& x() {
-      return Vec<T,3>::data[0];
-    }
-
-    inline T& y() {
-      return Vec<T,3>::data[1];
-    }
-
-    inline T& z() {
-      return Vec<T,3>::data[2];
-    }
-
-    inline T& r() {
-      return Vec<T,3>::data[0];
-    }
-
-    inline T& g() {
-      return Vec<T,3>::data[1];
-    }
-
-    inline T& b() {
-      return Vec<T,3>::data[2];
-    }
-
-    inline T cx() const {
-      return Vec<T,3>::data[0];
-    }
-
-    inline T cy() const {
-      return Vec<T,3>::data[1];
-    }
-
-    inline T cz() const {
-      return Vec<T,3>::data[2];
-    }
-
-    inline T cr() const {
-      return Vec<T,3>::data[0];
-    }
-
-    inline T cg() const {
-      return Vec<T,3>::data[1];
-    }
-
-    inline T cb() const {
-      return Vec<T,3>::data[2];
-    }
-
-    inline Vec2<T> xy() const {
-      return Vec2<T>(cx(),cy());
-    }
-
-    static inline Vec3 cross(Vec3 v1, Vec3 v2) {
-      return Vec3((v1.y()*v2.z()) - (v1.z()*v2.y()),
-    (v1.z()*v2.x()) - (v1.x()*v2.z()),
-    (v1.x()*v2.y()) - (v1.y()*v2.x()));
-    }
-
-  };
-
-  template <typename T>
-    struct Vec4 : Vec<T,4> {
-
-    using Vec<T,4>::Vec;
-
-    inline Vec4(Vec<T,4> init) {
-      memcpy(this, &init, sizeof(Vec4));
-    }
-
-    inline Vec4() : Vec<T,4>::Vec() {}
-
-    inline Vec4(T x, T y, T z, T w) {
-      Vec<T,4>::data[0] = x;
-      Vec<T,4>::data[1] = y;
-      Vec<T,4>::data[2] = z;
-      Vec<T,4>::data[3] = w;
-    }
-
-    inline T& x() {
-      return Vec<T,4>::data[0];
-    }
-
-    inline T& y() {
-      return Vec<T,4>::data[1];
-    }
-
-    inline T& z() {
-      return Vec<T,4>::data[2];
-    }
-
-    inline T& w() {
-      return Vec<T,4>::data[3];
-    }
-
-    inline T& r() {
-      return Vec<T,4>::data[0];
-    }
-
-    inline T& g() {
-      return Vec<T,4>::data[1];
-    }
-
-    inline T& b() {
-      return Vec<T,4>::data[2];
-    }
-
-    inline T& a() {
-      return Vec<T,4>::data[3];
-    }
-
-    inline T cx() const {
-      return Vec<T,4>::data[0];
-    }
-
-    inline T cy() const {
-      return Vec<T,4>::data[1];
-    }
-
-    inline T cz() const {
-      return Vec<T,4>::data[2];
-    }
-
-    inline T cw() const {
-      return Vec<T,4>::data[3];
-    }
-
-    inline T cr() const {
-      return Vec<T,4>::data[0];
-    }
-
-    inline T cg() const {
-      return Vec<T,4>::data[1];
-    }
-
-    inline T cb() const {
-      return Vec<T,4>::data[2];
-    }
-
-    inline T ca() const {
-      return Vec<T,4>::data[3];
-    }
-
-  };
-
-
-  typedef Vec2<f32> Vec2f;
-  typedef Vec3<f32> Vec3f;
-  typedef Vec4<f32> Vec4f;
-  typedef Vec2<i16> Vec2s;
-  typedef Vec3<i16> Vec3s;
-  typedef Vec4<i16> Vec4s;
-
-}
-# 5 "src/Transform.hpp" 2
-# 1 "src/Matrix.hpp" 1
-       
-
-
-
-namespace peace {
-
-  template <typename T, const u8 N>
-    struct Mat {
-
-    union {
-      T data[N*N];
-      Vec<T,N> cols[N];
-    };
-
-    inline Mat() {
-      memset(this, 0, sizeof(Mat));
-      for (u8 i=0; i<N; ++i) {
- cols[i].data[i] = 1;
-      }
-    }
-
-    inline Mat(const T* initial_data) {
-      memcpy(this, initial_data, sizeof(Mat));
-    }
-
-    inline Vec<T,N> row(const u8 index) const {
-      Vec<T,N> ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = cols[i].data[index];
-      }
-      return ret;
-    }
-
-    inline Vec<T,N> col(const u8 index) const {
-      return cols[index];
-    }
-
-    inline T& operator()(const u8 row,
-        const u8 col) {
-      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-                                 ;
-      return cols[col][row];
-    }
-
-    inline void operator=(Mat b) {
-      memcpy(this, &b, sizeof(Mat));
-    }
-
-    inline Mat operator+(const Mat b) const {
-      return Mat::add(*this, b);
-    }
-
-    inline Mat operator*(const T b) const {
-      return Mat::mul(*this, b);
-    }
-
-    inline Vec<T,N> operator*(const Vec<T,N> b) const {
-      return Mat::mul(*this, b);
-    }
-
-    inline Mat operator*(const Mat b) const {
-      return Mat::mul(*this, b);
-    }
-
-    inline void operator*=(const Mat b) {
-      *this = Mat::mul(*this, b);
-    }
-
-    static inline Mat add(const Mat a, const Mat b) {
-      Mat ret;
-      for (u8 i=0; i<N; ++i) {
- ret.cols[i] = a.cols[i] + b.cols[i];
-      }
-      return ret;
-    }
-
-    static inline Mat mul(const Mat m, const T s) {
-      Mat ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = m.data[i]*s;
-      }
-      return ret;
-    }
-
-    static inline Mat div(const Mat m, const T s) {
-      Mat ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = m.data[i]/s;
-      }
-      return ret;
-    }
-
-    static inline Vec<T,N> mul(const Mat m,
-          const Vec<T,N> v) {
-      Vec<T,N> ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = Vec<T,N>::dot(v, m.row(i));
-      }
-      return ret;
-    }
-
-    static inline Vec<T,N> mulT(const Mat m,
-    const Vec<T,N> v) {
-      Vec<T,N> ret;
-      for (u8 i=0; i<N; ++i) {
- ret.data[i] = Vec<T,N>::dot(v, m.col(i));
-      }
-      return ret;
-    }
-
-    static inline Mat mul(const Mat a, const Mat b) {
-      Mat ret;
-      for (u8 row=0; row<N; ++row) {
-        for (u8 col=0; col<N; ++col) {
-   ret(row,col) =
-     Vec<T,N>::dot(a.row(row),b.col(col));
- }
-      }
-      return ret;
-    }
-
-
-    static inline Mat mulT1(const Mat a, const Mat b) {
-      Mat ret;
-      for (u8 row=0; row<N; ++row) {
-        for (u8 col=0; col<N; ++col) {
-   ret.cols[col].data[row] =
-     Vec<T,N>::dot(a.col(row),b.col(col));
- }
-      }
-      return ret;
-    }
-
-
-    static inline Mat mulT2(const Mat a, const Mat b) {
-      Mat ret;
-      for (u8 row=0; row<N; ++row) {
-        for (u8 col=0; col<N; ++col) {
-   ret.cols[col].data[row] =
-     Vec<T,N>::dot(a.row(row),b.row(col));
- }
-      }
-      return ret;
-    }
-
-
-  };
-
-  template <typename T, const u8 N>
-    inline String to_string(const Mat<T,N> m) {
-    String ret = "\n";
-    for (u8 row=0; row<N; ++row) {
-      ret += "| ";
-      for (u8 col=0; col<N; ++col) {
- ret += to_string(m(row,col)) + " ";
-      }
-      ret += "|\n";
-    }
-    return ret;
-  }
-
-  template <const u8 N>
-    inline String to_string(const Mat<f32,N> m) {
-    String ret = "\n";
-    for (u8 row=0; row<N; ++row) {
-      ret += "| ";
-      for (u8 col=0; col<N; ++col) {
- ret += str::format("%7.3f ", m(row,col));
-      }
-      ret += "|\n";
-    }
-    return ret;
-  }
-
-  template <typename T>
-    struct Mat3 : Mat<T,3> {
-
-    using Mat<T,3>::Mat;
-    inline Mat3() : Mat<T,3>::Mat() {}
-    inline Mat3(Mat<T,3> init) {
-      memcpy(this, &init, sizeof(Mat3));
-    }
-
-  };
-
-  template <typename T>
-    struct Mat4 : Mat<T,4> {
-
-    using Mat<T,4>::Mat;
-    inline Mat4() : Mat<T,4>::Mat() {}
-    inline Mat4(Mat<T,4> init) {
-      memcpy(this, &init, sizeof(Mat4));
-    }
-
-    inline Mat4(Mat3<T> m) {
-      T d[16] = {m.data[0], m.data[1], m.data[2], 0,
-   m.data[3], m.data[4], m.data[5], 0,
-   m.data[6], m.data[7], m.data[8], 0,
-   0, 0, 0, 1};
-      memcpy(this, d, sizeof(Mat4<T>));
-    }
-
-    static inline Mat4 scale(Vec3<T> scal) {
-      T d[16] = {scal.x(), 0, 0, 0,
-      0, scal.y(), 0, 0,
-      0, 0, scal.z(), 0,
-      0, 0, 0, 1};
-      return Mat4(d);
-    }
-
-    static inline Mat4 translate(Vec3<T> trans) {
-      T d[16] = {1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      trans.x(), trans.y(), trans.z(), 1};
-      return Mat4(d);
-    }
-
-    static inline Mat4 scaleTrans(Vec3<T> scal,
-      Vec3<T> trans) {
-      T d[16] = {scal.x(), 0, 0, 0,
-   0, scal.y(), 0, 0,
-   0, 0, scal.z(), 0,
-   trans.x(), trans.y(), trans.z(), 1};
-      return Mat4(d);
-    }
-
-    static Mat4 perspective(T fovy, T aspect, T z_near, T z_far) {
-      T sub = z_near - z_far;
-      T f = 1/tan(fovy/(T)2);
-      T data[16] = {
- f/aspect, 0, 0, 0,
- 0, f, 0, 0,
- 0, 0, (z_far + z_near)/sub, -1,
- 0, 0, (2*z_near*z_far)/sub, 0
-      };
-
-      return Mat4(data);
-    }
-
-    static Mat4 lookAt(Vec3<T> eye, Vec3<T> center, Vec3<T> up) {
-      Vec3<T> f = (center - eye).normalized();
-      Vec3<T> s = (Vec3<T>::cross(f, up)).normalized();
-      Vec3<T> u = Vec3<T>::cross(s, f);
-      T data[16] = {
- s.x(), u.x(), -f.x(), 0,
- s.y(), u.y(), -f.y(), 0,
- s.z(), u.z(), -f.z(), 0,
- -Vec3<T>::dot(s, eye), -Vec3<T>::dot(u, eye),
- Vec3<T>::dot(f, eye), 1
-      };
-      return Mat4(data);
-    }
-
-  };
-
-  typedef Mat3<f32> Mat3f;
-  typedef Mat4<f32> Mat4f;
-
-}
-# 6 "src/Transform.hpp" 2
-# 1 "src/Quaternion.hpp" 1
-       
-
-
-
-
-namespace peace {
-
-  template <typename T>
-    struct Quaternion {
-
-    T data[4];
-
-    inline Quaternion(T qx, T qy, T qz, T qw) {
-      data[0] = qx;
-      data[1] = qy;
-      data[2] = qz;
-      data[3] = qw;
-    }
-
-    inline Quaternion() {
-      data[0] = 0;
-      data[1] = 0;
-      data[2] = 0;
-      data[3] = 1;
-    }
-
-
-    inline Quaternion(Vec3<T> axis, T angle) {
-      T half = angle/2;
-      T s = sin(half);
-      data[0] = axis.x * s;
-      data[1] = axis.y * s;
-      data[2] = axis.z * s;
-      data[3] = cos(half);
-    }
-
-    inline Quaternion(T euler_x, T euler_y, T euler_z) {
-      T c1 = cos(euler_z * 0.5);
-      T c2 = cos(euler_y * 0.5);
-      T c3 = cos(euler_x * 0.5);
-      T s1 = sin(euler_z * 0.5);
-      T s2 = sin(euler_y * 0.5);
-      T s3 = sin(euler_x * 0.5);
-
-      data[0] = c1*c2*s3 - s1*s2*c3;
-      data[1] = c1*s2*c3 + s1*c2*s3;
-      data[2] = s1*c2*c3 - c1*s2*s3;
-      data[3] = c1*c2*c3 + s1*s2*s3;
-    }
-
-    inline T x() const {
-      return data[0];
-    }
-
-    inline T y() const {
-      return data[1];
-    }
-
-    inline T z() const {
-      return data[2];
-    }
-
-    inline T w() const {
-      return data[3];
-    }
-
-    inline T norm() const {
-      return sqrt(sqr(x()) + sqr(y()) + sqr(z()) + sqr(w()));
-    }
-
-    inline void normalize() {
-      *this /= norm();
-    }
-
-    inline Quaternion normalized() const {
-      return *this / norm();
-    }
-
-    inline Quaternion conjugate() const {
-      return Quaternion(-x(), -y(), -z(), w());
-    }
-
-    inline Mat3<T> mat3() const {
-
-      f32 x2 = x() * x();
-      f32 y2 = y() * y();
-      f32 z2 = z() * z();
-      f32 xy = x() * y();
-      f32 xz = x() * z();
-      f32 yz = y() * z();
-      f32 wx = w() * x();
-      f32 wy = w() * y();
-      f32 wz = w() * z();
-
-      T data[16] = {
- 1 - 2 * (y2 + z2), 2 * (xy + wz), 2 * (xz - wy),
- 2 * (xy - wz), 1 - 2 * (x2 + z2), 2 * (yz + wx),
- 2 * (xz + wy), 2 * (yz - wx), 1 - 2 * (x2 + y2)
-      };
-      return Mat3<T>(data);
-    }
-
-    inline Mat4<T> mat4() const {
-      return Mat4<T>(mat3());
-    }
-
-    inline T operator[](const u8 index) {
-      return data[index];
-    }
-
-    inline void operator=(const Quaternion b) {
-      memcpy(this, &b, sizeof(Quaternion<T>));
-    }
-
-    inline Quaternion operator+(const Quaternion b) {
-      return add(*this, b);
-    }
-    inline Quaternion operator-(const Quaternion b) {
-      return sub(*this, b);
-    }
-    inline Quaternion operator*(const T scal) const {
-      return mul(*this, scal);
-    }
-    inline Quaternion operator/(const T scal) const {
-      return div(*this, scal);
-    }
-    inline void operator *=(const T scal) {
-      *this = *this * scal;
-    }
-    inline void operator /=(const T scal) {
-      *this = *this / scal;
-    }
-
-    inline Quaternion operator*(const Quaternion rq) const {
-      return mul(*this, rq);
-    }
-    inline void operator *=(const Quaternion rq) {
-      *this = rq * *this;
-    }
-
-    inline Vec3<T> operator*(const Vec3<T> vec) const {
-      return rotate(*this, vec);
-    }
-
-    static inline Quaternion add(const Quaternion a, const Quaternion b) {
-      return Quaternion(a.x() + b.x(),
-   a.y() + b.y(),
-   a.z() + b.z(),
-   a.w() + b.w());
-    }
-
-    static inline Quaternion sub(const Quaternion a, const Quaternion b) {
-      return Quaternion(a.x() - b.x(),
-   a.y() - b.y(),
-   a.z() - b.z(),
-   a.w() - b.w());
-    }
-
-    static inline Quaternion mul(const Quaternion a, const T scal) {
-      return Quaternion(a.x()*scal, a.y()*scal, a.z()*scal, a.w()*scal);
-    }
-
-    static inline Quaternion div(const Quaternion a, const T scal) {
-      return Quaternion(a.x()/scal, a.y()/scal, a.z()/scal, a.w()/scal);
-    }
-
-    static inline Quaternion mul(const Quaternion a, const Quaternion b) {
-      return Quaternion(a.w()*b.x() + a.x()*b.w() + a.y()*b.z() - a.z()*b.y(),
-   a.w()*b.y() + a.y()*b.w() + a.z()*b.x() - a.x()*b.z(),
-   a.w()*b.z() + a.z()*b.w() + a.x()*b.y() - a.y()*b.x(),
-   a.w()*b.w() - a.x()*b.x() - a.y()*b.y() - a.z()*b.z());
-    }
-
-    static inline Vec3<T> rotate(const Quaternion q, const Vec3<T> vec) {
-
-      Vec3<T> vn = vec.normalized();
-      Quaternion vec_q(vn.x(), vn.y(), vn.z(), 0);
-      Quaternion res = vec_q * q.conjugate();
-      res *= q;
-      return Vec3<T>(res.x(), res.y(), res.z());
-
-    }
-
-    static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
-      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-                                                    ;
-      return a*(1-h) + b*h;
-    }
-
-    static inline Quaternion slerp(Quaternion a, Quaternion b, T h) {
-
-      do { if (!(h > 0.0 && h < 1.0)) { Log::__assert_print("H must be between 0 and 1 for Quaternion slerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-                                                     ;
-      T cos_half_angle = a.x()*b.x() + a.y()*b.y() + a.z()*b.z() + a.w()*b.w();
-
-      if (abs(cos_half_angle) >= 1.0f) {
- return a;
-      }
-
-      T half_angle = acos(cos_half_angle);
-      T sin_half_angle = sqrt(1 - sqr(cos_half_angle));
-      T r1 = sin((1 - h) * half_angle)/sin_half_angle;
-      T r2 = sin(h * half_angle)/sin_half_angle;
-
-      return Quaternion(a.x()*r1 + b.x()*r2,
-   a.y()*r1 + b.y()*r2,
-   a.z()*r1 + b.z()*r2,
-   a.w()*r1 + b.w()*r2);
-    }
-
-  };
-
-  template <typename T>
-    inline String to_string(Quaternion<T> q) {
-    return to_string(q.w()) + " + "
-      + to_string(q.x()) + "i + "
-      + to_string(q.y()) + "j + "
-      + to_string(q.z()) + "k";
-  }
-
-  template <>
-    inline String to_string(Quaternion<f32> q) {
-    return str::format("%1.3f + %1.3fi + %1.3fj + %1.3fk", q.w(),q.x(),q.y(),q.z());
-  }
-
-
-  typedef Quaternion<f32> Quaternionf;
-
-}
-# 7 "src/Transform.hpp" 2
-
-namespace peace {
-
-  struct Transform {
-
-    Vec3f trans;
-    f32 pad[1];
-
-    Quaternionf rot;
-
-    Transform(Vec3f translation = Vec3f(0,0,0),
-       Quaternionf rotation = Quaternionf(0,0,0,1));
-
-    void translateAbs(Vec3f trans_v);
-    void translateRel(Vec3f trans_v);
-
-    void rotateAbs(Quaternionf q);
-    void rotateRel(Quaternionf q);
-
-
-
-
-    Mat4f getMat();
-
-    static Transform combine(Transform a, Transform b);
-    static Transform interp(Transform a, Transform b, f32 h);
-
-  };
-
-}
-# 5 "src/Node.hpp" 2
+# 4 "src/TerrainMesh.hpp" 2
 # 1 "src/Renderable.hpp" 1
        
 
@@ -45331,7 +42917,1885 @@ typedef struct GLFWimage
 }
 # 7 "src/GL.hpp" 2
 
+# 1 "src/Vector.hpp" 1
+       
 
+# 1 "src/Math.hpp" 1
+# 1 "/usr/include/string.h" 1 3 4
+# 27 "/usr/include/string.h" 3 4
+extern "C" {
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h" 1 3 4
+# 33 "/usr/include/string.h" 2 3 4
+# 44 "/usr/include/string.h" 3 4
+
+
+extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+       size_t __n) throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void *memmove (void *__dest, const void *__src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+
+extern void *memccpy (void *__restrict __dest, const void *__restrict __src,
+        int __c, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern void *memset (void *__s, int __c, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
+
+
+extern int memcmp (const void *__s1, const void *__s2, size_t __n)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern "C++"
+{
+extern void *memchr (void *__s, int __c, size_t __n)
+      throw () __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const void *memchr (const void *__s, int __c, size_t __n)
+      throw () __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 94 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+
+
+
+extern "C++" void *rawmemchr (void *__s, int __c)
+     throw () __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern "C++" const void *rawmemchr (const void *__s, int __c)
+     throw () __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+extern "C++" void *memrchr (void *__s, int __c, size_t __n)
+      throw () __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern "C++" const void *memrchr (const void *__s, int __c, size_t __n)
+      throw () __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+
+
+extern char *strcpy (char *__restrict __dest, const char *__restrict __src)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncat (char *__restrict __dest, const char *__restrict __src,
+        size_t __n) throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcmp (const char *__s1, const char *__s2)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int strncmp (const char *__s1, const char *__s2, size_t __n)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcoll (const char *__s1, const char *__s2)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern size_t strxfrm (char *__restrict __dest,
+         const char *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (2)));
+
+# 166 "/usr/include/string.h" 3 4
+extern int strcoll_l (const char *__s1, const char *__s2, __locale_t __l)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+extern size_t strxfrm_l (char *__dest, const char *__src, size_t __n,
+    __locale_t __l) throw () __attribute__ ((__nonnull__ (2, 4)));
+
+
+
+
+
+extern char *strdup (const char *__s)
+     throw () __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern char *strndup (const char *__string, size_t __n)
+     throw () __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+# 211 "/usr/include/string.h" 3 4
+
+
+
+extern "C++"
+{
+extern char *strchr (char *__s, int __c)
+     throw () __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *strchr (const char *__s, int __c)
+     throw () __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 234 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+extern "C++"
+{
+extern char *strrchr (char *__s, int __c)
+     throw () __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *strrchr (const char *__s, int __c)
+     throw () __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 261 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+
+
+
+extern "C++" char *strchrnul (char *__s, int __c)
+     throw () __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern "C++" const char *strchrnul (const char *__s, int __c)
+     throw () __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+
+
+extern size_t strcspn (const char *__s, const char *__reject)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern size_t strspn (const char *__s, const char *__accept)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern "C++"
+{
+extern char *strpbrk (char *__s, const char *__accept)
+     throw () __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern const char *strpbrk (const char *__s, const char *__accept)
+     throw () __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 313 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+extern "C++"
+{
+extern char *strstr (char *__haystack, const char *__needle)
+     throw () __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern const char *strstr (const char *__haystack, const char *__needle)
+     throw () __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 340 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+extern char *strtok (char *__restrict __s, const char *__restrict __delim)
+     throw () __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern char *__strtok_r (char *__restrict __s,
+    const char *__restrict __delim,
+    char **__restrict __save_ptr)
+     throw () __attribute__ ((__nonnull__ (2, 3)));
+
+extern char *strtok_r (char *__restrict __s, const char *__restrict __delim,
+         char **__restrict __save_ptr)
+     throw () __attribute__ ((__nonnull__ (2, 3)));
+
+
+
+
+
+extern "C++" char *strcasestr (char *__haystack, const char *__needle)
+     throw () __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern "C++" const char *strcasestr (const char *__haystack,
+         const char *__needle)
+     throw () __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 382 "/usr/include/string.h" 3 4
+extern void *memmem (const void *__haystack, size_t __haystacklen,
+       const void *__needle, size_t __needlelen)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern void *__mempcpy (void *__restrict __dest,
+   const void *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+extern void *mempcpy (void *__restrict __dest,
+        const void *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern size_t strlen (const char *__s)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern size_t strnlen (const char *__string, size_t __maxlen)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern char *strerror (int __errnum) throw ();
+
+# 438 "/usr/include/string.h" 3 4
+extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
+     throw () __attribute__ ((__nonnull__ (2))) ;
+
+
+
+
+
+extern char *strerror_l (int __errnum, __locale_t __l) throw ();
+
+
+
+
+
+extern void __bzero (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
+
+
+
+extern void bcopy (const void *__src, void *__dest, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void bzero (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
+
+
+extern int bcmp (const void *__s1, const void *__s2, size_t __n)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern "C++"
+{
+extern char *index (char *__s, int __c)
+     throw () __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *index (const char *__s, int __c)
+     throw () __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 487 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+extern "C++"
+{
+extern char *rindex (char *__s, int __c)
+     throw () __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *rindex (const char *__s, int __c)
+     throw () __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 515 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+extern int ffs (int __i) throw () __attribute__ ((__const__));
+
+
+
+
+extern int ffsl (long int __l) throw () __attribute__ ((__const__));
+__extension__ extern int ffsll (long long int __ll)
+     throw () __attribute__ ((__const__));
+
+
+
+extern int strcasecmp (const char *__s1, const char *__s2)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strncasecmp (const char *__s1, const char *__s2, size_t __n)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern int strcasecmp_l (const char *__s1, const char *__s2,
+    __locale_t __loc)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+extern int strncasecmp_l (const char *__s1, const char *__s2,
+     size_t __n, __locale_t __loc)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 4)));
+
+
+
+
+
+extern char *strsep (char **__restrict __stringp,
+       const char *__restrict __delim)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern char *strsignal (int __sig) throw ();
+
+
+extern char *__stpcpy (char *__restrict __dest, const char *__restrict __src)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpcpy (char *__restrict __dest, const char *__restrict __src)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern char *__stpncpy (char *__restrict __dest,
+   const char *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     throw () __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int strverscmp (const char *__s1, const char *__s2)
+     throw () __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strfry (char *__string) throw () __attribute__ ((__nonnull__ (1)));
+
+
+extern void *memfrob (void *__s, size_t __n) throw () __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+extern "C++" char *basename (char *__filename)
+     throw () __asm ("basename") __attribute__ ((__nonnull__ (1)));
+extern "C++" const char *basename (const char *__filename)
+     throw () __asm ("basename") __attribute__ ((__nonnull__ (1)));
+# 644 "/usr/include/string.h" 3 4
+}
+# 2 "src/Math.hpp" 2
+# 1 "/usr/include/math.h" 1 3 4
+# 28 "/usr/include/math.h" 3 4
+extern "C" {
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/huge_val.h" 1 3 4
+# 33 "/usr/include/math.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/huge_valf.h" 1 3 4
+# 35 "/usr/include/math.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/huge_vall.h" 1 3 4
+# 36 "/usr/include/math.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/inf.h" 1 3 4
+# 39 "/usr/include/math.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/nan.h" 1 3 4
+# 42 "/usr/include/math.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/mathdef.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/mathdef.h" 3 4
+typedef float float_t;
+typedef double double_t;
+# 46 "/usr/include/math.h" 2 3 4
+# 69 "/usr/include/math.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
+# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
+
+
+extern double acos (double __x) throw (); extern double __acos (double __x) throw ();
+
+extern double asin (double __x) throw (); extern double __asin (double __x) throw ();
+
+extern double atan (double __x) throw (); extern double __atan (double __x) throw ();
+
+extern double atan2 (double __y, double __x) throw (); extern double __atan2 (double __y, double __x) throw ();
+
+
+extern double cos (double __x) throw (); extern double __cos (double __x) throw ();
+
+extern double sin (double __x) throw (); extern double __sin (double __x) throw ();
+
+extern double tan (double __x) throw (); extern double __tan (double __x) throw ();
+
+
+
+
+extern double cosh (double __x) throw (); extern double __cosh (double __x) throw ();
+
+extern double sinh (double __x) throw (); extern double __sinh (double __x) throw ();
+
+extern double tanh (double __x) throw (); extern double __tanh (double __x) throw ();
+
+
+
+
+extern void sincos (double __x, double *__sinx, double *__cosx) throw (); extern void __sincos (double __x, double *__sinx, double *__cosx) throw ()
+                                                           ;
+
+
+
+
+
+extern double acosh (double __x) throw (); extern double __acosh (double __x) throw ();
+
+extern double asinh (double __x) throw (); extern double __asinh (double __x) throw ();
+
+extern double atanh (double __x) throw (); extern double __atanh (double __x) throw ();
+
+
+
+
+
+
+
+extern double exp (double __x) throw (); extern double __exp (double __x) throw ();
+
+
+extern double frexp (double __x, int *__exponent) throw (); extern double __frexp (double __x, int *__exponent) throw ();
+
+
+extern double ldexp (double __x, int __exponent) throw (); extern double __ldexp (double __x, int __exponent) throw ();
+
+
+extern double log (double __x) throw (); extern double __log (double __x) throw ();
+
+
+extern double log10 (double __x) throw (); extern double __log10 (double __x) throw ();
+
+
+extern double modf (double __x, double *__iptr) throw (); extern double __modf (double __x, double *__iptr) throw () __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern double exp10 (double __x) throw (); extern double __exp10 (double __x) throw ();
+
+extern double pow10 (double __x) throw (); extern double __pow10 (double __x) throw ();
+
+
+
+
+
+extern double expm1 (double __x) throw (); extern double __expm1 (double __x) throw ();
+
+
+extern double log1p (double __x) throw (); extern double __log1p (double __x) throw ();
+
+
+extern double logb (double __x) throw (); extern double __logb (double __x) throw ();
+
+
+
+
+
+
+extern double exp2 (double __x) throw (); extern double __exp2 (double __x) throw ();
+
+
+extern double log2 (double __x) throw (); extern double __log2 (double __x) throw ();
+
+
+
+
+
+
+
+
+extern double pow (double __x, double __y) throw (); extern double __pow (double __x, double __y) throw ();
+
+
+extern double sqrt (double __x) throw (); extern double __sqrt (double __x) throw ();
+
+
+
+
+
+extern double hypot (double __x, double __y) throw (); extern double __hypot (double __x, double __y) throw ();
+
+
+
+
+
+
+extern double cbrt (double __x) throw (); extern double __cbrt (double __x) throw ();
+
+
+
+
+
+
+
+
+extern double ceil (double __x) throw () __attribute__ ((__const__)); extern double __ceil (double __x) throw () __attribute__ ((__const__));
+
+
+extern double fabs (double __x) throw () __attribute__ ((__const__)); extern double __fabs (double __x) throw () __attribute__ ((__const__));
+
+
+extern double floor (double __x) throw () __attribute__ ((__const__)); extern double __floor (double __x) throw () __attribute__ ((__const__));
+
+
+extern double fmod (double __x, double __y) throw (); extern double __fmod (double __x, double __y) throw ();
+
+
+
+
+extern int __isinf (double __value) throw () __attribute__ ((__const__));
+
+
+extern int __finite (double __value) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int isinf (double __value) throw () __attribute__ ((__const__));
+
+
+extern int finite (double __value) throw () __attribute__ ((__const__));
+
+
+extern double drem (double __x, double __y) throw (); extern double __drem (double __x, double __y) throw ();
+
+
+
+extern double significand (double __x) throw (); extern double __significand (double __x) throw ();
+
+
+
+
+
+extern double copysign (double __x, double __y) throw () __attribute__ ((__const__)); extern double __copysign (double __x, double __y) throw () __attribute__ ((__const__));
+
+
+
+
+
+
+extern double nan (const char *__tagb) throw () __attribute__ ((__const__)); extern double __nan (const char *__tagb) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int __isnan (double __value) throw () __attribute__ ((__const__));
+
+
+
+extern int isnan (double __value) throw () __attribute__ ((__const__));
+
+
+extern double j0 (double) throw (); extern double __j0 (double) throw ();
+extern double j1 (double) throw (); extern double __j1 (double) throw ();
+extern double jn (int, double) throw (); extern double __jn (int, double) throw ();
+extern double y0 (double) throw (); extern double __y0 (double) throw ();
+extern double y1 (double) throw (); extern double __y1 (double) throw ();
+extern double yn (int, double) throw (); extern double __yn (int, double) throw ();
+
+
+
+
+
+
+extern double erf (double) throw (); extern double __erf (double) throw ();
+extern double erfc (double) throw (); extern double __erfc (double) throw ();
+extern double lgamma (double) throw (); extern double __lgamma (double) throw ();
+
+
+
+
+
+
+extern double tgamma (double) throw (); extern double __tgamma (double) throw ();
+
+
+
+
+
+extern double gamma (double) throw (); extern double __gamma (double) throw ();
+
+
+
+
+
+
+extern double lgamma_r (double, int *__signgamp) throw (); extern double __lgamma_r (double, int *__signgamp) throw ();
+
+
+
+
+
+
+
+extern double rint (double __x) throw (); extern double __rint (double __x) throw ();
+
+
+extern double nextafter (double __x, double __y) throw () __attribute__ ((__const__)); extern double __nextafter (double __x, double __y) throw () __attribute__ ((__const__));
+
+extern double nexttoward (double __x, long double __y) throw () __attribute__ ((__const__)); extern double __nexttoward (double __x, long double __y) throw () __attribute__ ((__const__));
+
+
+
+extern double remainder (double __x, double __y) throw (); extern double __remainder (double __x, double __y) throw ();
+
+
+
+extern double scalbn (double __x, int __n) throw (); extern double __scalbn (double __x, int __n) throw ();
+
+
+
+extern int ilogb (double __x) throw (); extern int __ilogb (double __x) throw ();
+
+
+
+
+extern double scalbln (double __x, long int __n) throw (); extern double __scalbln (double __x, long int __n) throw ();
+
+
+
+extern double nearbyint (double __x) throw (); extern double __nearbyint (double __x) throw ();
+
+
+
+extern double round (double __x) throw () __attribute__ ((__const__)); extern double __round (double __x) throw () __attribute__ ((__const__));
+
+
+
+extern double trunc (double __x) throw () __attribute__ ((__const__)); extern double __trunc (double __x) throw () __attribute__ ((__const__));
+
+
+
+
+extern double remquo (double __x, double __y, int *__quo) throw (); extern double __remquo (double __x, double __y, int *__quo) throw ();
+
+
+
+
+
+
+extern long int lrint (double __x) throw (); extern long int __lrint (double __x) throw ();
+__extension__
+extern long long int llrint (double __x) throw (); extern long long int __llrint (double __x) throw ();
+
+
+
+extern long int lround (double __x) throw (); extern long int __lround (double __x) throw ();
+__extension__
+extern long long int llround (double __x) throw (); extern long long int __llround (double __x) throw ();
+
+
+
+extern double fdim (double __x, double __y) throw (); extern double __fdim (double __x, double __y) throw ();
+
+
+extern double fmax (double __x, double __y) throw () __attribute__ ((__const__)); extern double __fmax (double __x, double __y) throw () __attribute__ ((__const__));
+
+
+extern double fmin (double __x, double __y) throw () __attribute__ ((__const__)); extern double __fmin (double __x, double __y) throw () __attribute__ ((__const__));
+
+
+
+extern int __fpclassify (double __value) throw ()
+     __attribute__ ((__const__));
+
+
+extern int __signbit (double __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+extern double fma (double __x, double __y, double __z) throw (); extern double __fma (double __x, double __y, double __z) throw ();
+
+
+
+
+
+
+
+
+extern int __issignaling (double __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+
+extern double scalb (double __x, double __n) throw (); extern double __scalb (double __x, double __n) throw ();
+# 70 "/usr/include/math.h" 2 3 4
+# 88 "/usr/include/math.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
+# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
+
+
+extern float acosf (float __x) throw (); extern float __acosf (float __x) throw ();
+
+extern float asinf (float __x) throw (); extern float __asinf (float __x) throw ();
+
+extern float atanf (float __x) throw (); extern float __atanf (float __x) throw ();
+
+extern float atan2f (float __y, float __x) throw (); extern float __atan2f (float __y, float __x) throw ();
+
+
+extern float cosf (float __x) throw (); extern float __cosf (float __x) throw ();
+
+extern float sinf (float __x) throw (); extern float __sinf (float __x) throw ();
+
+extern float tanf (float __x) throw (); extern float __tanf (float __x) throw ();
+
+
+
+
+extern float coshf (float __x) throw (); extern float __coshf (float __x) throw ();
+
+extern float sinhf (float __x) throw (); extern float __sinhf (float __x) throw ();
+
+extern float tanhf (float __x) throw (); extern float __tanhf (float __x) throw ();
+
+
+
+
+extern void sincosf (float __x, float *__sinx, float *__cosx) throw (); extern void __sincosf (float __x, float *__sinx, float *__cosx) throw ()
+                                                           ;
+
+
+
+
+
+extern float acoshf (float __x) throw (); extern float __acoshf (float __x) throw ();
+
+extern float asinhf (float __x) throw (); extern float __asinhf (float __x) throw ();
+
+extern float atanhf (float __x) throw (); extern float __atanhf (float __x) throw ();
+
+
+
+
+
+
+
+extern float expf (float __x) throw (); extern float __expf (float __x) throw ();
+
+
+extern float frexpf (float __x, int *__exponent) throw (); extern float __frexpf (float __x, int *__exponent) throw ();
+
+
+extern float ldexpf (float __x, int __exponent) throw (); extern float __ldexpf (float __x, int __exponent) throw ();
+
+
+extern float logf (float __x) throw (); extern float __logf (float __x) throw ();
+
+
+extern float log10f (float __x) throw (); extern float __log10f (float __x) throw ();
+
+
+extern float modff (float __x, float *__iptr) throw (); extern float __modff (float __x, float *__iptr) throw () __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern float exp10f (float __x) throw (); extern float __exp10f (float __x) throw ();
+
+extern float pow10f (float __x) throw (); extern float __pow10f (float __x) throw ();
+
+
+
+
+
+extern float expm1f (float __x) throw (); extern float __expm1f (float __x) throw ();
+
+
+extern float log1pf (float __x) throw (); extern float __log1pf (float __x) throw ();
+
+
+extern float logbf (float __x) throw (); extern float __logbf (float __x) throw ();
+
+
+
+
+
+
+extern float exp2f (float __x) throw (); extern float __exp2f (float __x) throw ();
+
+
+extern float log2f (float __x) throw (); extern float __log2f (float __x) throw ();
+
+
+
+
+
+
+
+
+extern float powf (float __x, float __y) throw (); extern float __powf (float __x, float __y) throw ();
+
+
+extern float sqrtf (float __x) throw (); extern float __sqrtf (float __x) throw ();
+
+
+
+
+
+extern float hypotf (float __x, float __y) throw (); extern float __hypotf (float __x, float __y) throw ();
+
+
+
+
+
+
+extern float cbrtf (float __x) throw (); extern float __cbrtf (float __x) throw ();
+
+
+
+
+
+
+
+
+extern float ceilf (float __x) throw () __attribute__ ((__const__)); extern float __ceilf (float __x) throw () __attribute__ ((__const__));
+
+
+extern float fabsf (float __x) throw () __attribute__ ((__const__)); extern float __fabsf (float __x) throw () __attribute__ ((__const__));
+
+
+extern float floorf (float __x) throw () __attribute__ ((__const__)); extern float __floorf (float __x) throw () __attribute__ ((__const__));
+
+
+extern float fmodf (float __x, float __y) throw (); extern float __fmodf (float __x, float __y) throw ();
+
+
+
+
+extern int __isinff (float __value) throw () __attribute__ ((__const__));
+
+
+extern int __finitef (float __value) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int isinff (float __value) throw () __attribute__ ((__const__));
+
+
+extern int finitef (float __value) throw () __attribute__ ((__const__));
+
+
+extern float dremf (float __x, float __y) throw (); extern float __dremf (float __x, float __y) throw ();
+
+
+
+extern float significandf (float __x) throw (); extern float __significandf (float __x) throw ();
+
+
+
+
+
+extern float copysignf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __copysignf (float __x, float __y) throw () __attribute__ ((__const__));
+
+
+
+
+
+
+extern float nanf (const char *__tagb) throw () __attribute__ ((__const__)); extern float __nanf (const char *__tagb) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int __isnanf (float __value) throw () __attribute__ ((__const__));
+
+
+
+extern int isnanf (float __value) throw () __attribute__ ((__const__));
+
+
+extern float j0f (float) throw (); extern float __j0f (float) throw ();
+extern float j1f (float) throw (); extern float __j1f (float) throw ();
+extern float jnf (int, float) throw (); extern float __jnf (int, float) throw ();
+extern float y0f (float) throw (); extern float __y0f (float) throw ();
+extern float y1f (float) throw (); extern float __y1f (float) throw ();
+extern float ynf (int, float) throw (); extern float __ynf (int, float) throw ();
+
+
+
+
+
+
+extern float erff (float) throw (); extern float __erff (float) throw ();
+extern float erfcf (float) throw (); extern float __erfcf (float) throw ();
+extern float lgammaf (float) throw (); extern float __lgammaf (float) throw ();
+
+
+
+
+
+
+extern float tgammaf (float) throw (); extern float __tgammaf (float) throw ();
+
+
+
+
+
+extern float gammaf (float) throw (); extern float __gammaf (float) throw ();
+
+
+
+
+
+
+extern float lgammaf_r (float, int *__signgamp) throw (); extern float __lgammaf_r (float, int *__signgamp) throw ();
+
+
+
+
+
+
+
+extern float rintf (float __x) throw (); extern float __rintf (float __x) throw ();
+
+
+extern float nextafterf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __nextafterf (float __x, float __y) throw () __attribute__ ((__const__));
+
+extern float nexttowardf (float __x, long double __y) throw () __attribute__ ((__const__)); extern float __nexttowardf (float __x, long double __y) throw () __attribute__ ((__const__));
+
+
+
+extern float remainderf (float __x, float __y) throw (); extern float __remainderf (float __x, float __y) throw ();
+
+
+
+extern float scalbnf (float __x, int __n) throw (); extern float __scalbnf (float __x, int __n) throw ();
+
+
+
+extern int ilogbf (float __x) throw (); extern int __ilogbf (float __x) throw ();
+
+
+
+
+extern float scalblnf (float __x, long int __n) throw (); extern float __scalblnf (float __x, long int __n) throw ();
+
+
+
+extern float nearbyintf (float __x) throw (); extern float __nearbyintf (float __x) throw ();
+
+
+
+extern float roundf (float __x) throw () __attribute__ ((__const__)); extern float __roundf (float __x) throw () __attribute__ ((__const__));
+
+
+
+extern float truncf (float __x) throw () __attribute__ ((__const__)); extern float __truncf (float __x) throw () __attribute__ ((__const__));
+
+
+
+
+extern float remquof (float __x, float __y, int *__quo) throw (); extern float __remquof (float __x, float __y, int *__quo) throw ();
+
+
+
+
+
+
+extern long int lrintf (float __x) throw (); extern long int __lrintf (float __x) throw ();
+__extension__
+extern long long int llrintf (float __x) throw (); extern long long int __llrintf (float __x) throw ();
+
+
+
+extern long int lroundf (float __x) throw (); extern long int __lroundf (float __x) throw ();
+__extension__
+extern long long int llroundf (float __x) throw (); extern long long int __llroundf (float __x) throw ();
+
+
+
+extern float fdimf (float __x, float __y) throw (); extern float __fdimf (float __x, float __y) throw ();
+
+
+extern float fmaxf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __fmaxf (float __x, float __y) throw () __attribute__ ((__const__));
+
+
+extern float fminf (float __x, float __y) throw () __attribute__ ((__const__)); extern float __fminf (float __x, float __y) throw () __attribute__ ((__const__));
+
+
+
+extern int __fpclassifyf (float __value) throw ()
+     __attribute__ ((__const__));
+
+
+extern int __signbitf (float __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+extern float fmaf (float __x, float __y, float __z) throw (); extern float __fmaf (float __x, float __y, float __z) throw ();
+
+
+
+
+
+
+
+
+extern int __issignalingf (float __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+
+extern float scalbf (float __x, float __n) throw (); extern float __scalbf (float __x, float __n) throw ();
+# 89 "/usr/include/math.h" 2 3 4
+# 132 "/usr/include/math.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 1 3 4
+# 52 "/usr/include/x86_64-linux-gnu/bits/mathcalls.h" 3 4
+
+
+extern long double acosl (long double __x) throw (); extern long double __acosl (long double __x) throw ();
+
+extern long double asinl (long double __x) throw (); extern long double __asinl (long double __x) throw ();
+
+extern long double atanl (long double __x) throw (); extern long double __atanl (long double __x) throw ();
+
+extern long double atan2l (long double __y, long double __x) throw (); extern long double __atan2l (long double __y, long double __x) throw ();
+
+
+extern long double cosl (long double __x) throw (); extern long double __cosl (long double __x) throw ();
+
+extern long double sinl (long double __x) throw (); extern long double __sinl (long double __x) throw ();
+
+extern long double tanl (long double __x) throw (); extern long double __tanl (long double __x) throw ();
+
+
+
+
+extern long double coshl (long double __x) throw (); extern long double __coshl (long double __x) throw ();
+
+extern long double sinhl (long double __x) throw (); extern long double __sinhl (long double __x) throw ();
+
+extern long double tanhl (long double __x) throw (); extern long double __tanhl (long double __x) throw ();
+
+
+
+
+extern void sincosl (long double __x, long double *__sinx, long double *__cosx) throw (); extern void __sincosl (long double __x, long double *__sinx, long double *__cosx) throw ()
+                                                           ;
+
+
+
+
+
+extern long double acoshl (long double __x) throw (); extern long double __acoshl (long double __x) throw ();
+
+extern long double asinhl (long double __x) throw (); extern long double __asinhl (long double __x) throw ();
+
+extern long double atanhl (long double __x) throw (); extern long double __atanhl (long double __x) throw ();
+
+
+
+
+
+
+
+extern long double expl (long double __x) throw (); extern long double __expl (long double __x) throw ();
+
+
+extern long double frexpl (long double __x, int *__exponent) throw (); extern long double __frexpl (long double __x, int *__exponent) throw ();
+
+
+extern long double ldexpl (long double __x, int __exponent) throw (); extern long double __ldexpl (long double __x, int __exponent) throw ();
+
+
+extern long double logl (long double __x) throw (); extern long double __logl (long double __x) throw ();
+
+
+extern long double log10l (long double __x) throw (); extern long double __log10l (long double __x) throw ();
+
+
+extern long double modfl (long double __x, long double *__iptr) throw (); extern long double __modfl (long double __x, long double *__iptr) throw () __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern long double exp10l (long double __x) throw (); extern long double __exp10l (long double __x) throw ();
+
+extern long double pow10l (long double __x) throw (); extern long double __pow10l (long double __x) throw ();
+
+
+
+
+
+extern long double expm1l (long double __x) throw (); extern long double __expm1l (long double __x) throw ();
+
+
+extern long double log1pl (long double __x) throw (); extern long double __log1pl (long double __x) throw ();
+
+
+extern long double logbl (long double __x) throw (); extern long double __logbl (long double __x) throw ();
+
+
+
+
+
+
+extern long double exp2l (long double __x) throw (); extern long double __exp2l (long double __x) throw ();
+
+
+extern long double log2l (long double __x) throw (); extern long double __log2l (long double __x) throw ();
+
+
+
+
+
+
+
+
+extern long double powl (long double __x, long double __y) throw (); extern long double __powl (long double __x, long double __y) throw ();
+
+
+extern long double sqrtl (long double __x) throw (); extern long double __sqrtl (long double __x) throw ();
+
+
+
+
+
+extern long double hypotl (long double __x, long double __y) throw (); extern long double __hypotl (long double __x, long double __y) throw ();
+
+
+
+
+
+
+extern long double cbrtl (long double __x) throw (); extern long double __cbrtl (long double __x) throw ();
+
+
+
+
+
+
+
+
+extern long double ceill (long double __x) throw () __attribute__ ((__const__)); extern long double __ceill (long double __x) throw () __attribute__ ((__const__));
+
+
+extern long double fabsl (long double __x) throw () __attribute__ ((__const__)); extern long double __fabsl (long double __x) throw () __attribute__ ((__const__));
+
+
+extern long double floorl (long double __x) throw () __attribute__ ((__const__)); extern long double __floorl (long double __x) throw () __attribute__ ((__const__));
+
+
+extern long double fmodl (long double __x, long double __y) throw (); extern long double __fmodl (long double __x, long double __y) throw ();
+
+
+
+
+extern int __isinfl (long double __value) throw () __attribute__ ((__const__));
+
+
+extern int __finitel (long double __value) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int isinfl (long double __value) throw () __attribute__ ((__const__));
+
+
+extern int finitel (long double __value) throw () __attribute__ ((__const__));
+
+
+extern long double dreml (long double __x, long double __y) throw (); extern long double __dreml (long double __x, long double __y) throw ();
+
+
+
+extern long double significandl (long double __x) throw (); extern long double __significandl (long double __x) throw ();
+
+
+
+
+
+extern long double copysignl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __copysignl (long double __x, long double __y) throw () __attribute__ ((__const__));
+
+
+
+
+
+
+extern long double nanl (const char *__tagb) throw () __attribute__ ((__const__)); extern long double __nanl (const char *__tagb) throw () __attribute__ ((__const__));
+
+
+
+
+
+extern int __isnanl (long double __value) throw () __attribute__ ((__const__));
+
+
+
+extern int isnanl (long double __value) throw () __attribute__ ((__const__));
+
+
+extern long double j0l (long double) throw (); extern long double __j0l (long double) throw ();
+extern long double j1l (long double) throw (); extern long double __j1l (long double) throw ();
+extern long double jnl (int, long double) throw (); extern long double __jnl (int, long double) throw ();
+extern long double y0l (long double) throw (); extern long double __y0l (long double) throw ();
+extern long double y1l (long double) throw (); extern long double __y1l (long double) throw ();
+extern long double ynl (int, long double) throw (); extern long double __ynl (int, long double) throw ();
+
+
+
+
+
+
+extern long double erfl (long double) throw (); extern long double __erfl (long double) throw ();
+extern long double erfcl (long double) throw (); extern long double __erfcl (long double) throw ();
+extern long double lgammal (long double) throw (); extern long double __lgammal (long double) throw ();
+
+
+
+
+
+
+extern long double tgammal (long double) throw (); extern long double __tgammal (long double) throw ();
+
+
+
+
+
+extern long double gammal (long double) throw (); extern long double __gammal (long double) throw ();
+
+
+
+
+
+
+extern long double lgammal_r (long double, int *__signgamp) throw (); extern long double __lgammal_r (long double, int *__signgamp) throw ();
+
+
+
+
+
+
+
+extern long double rintl (long double __x) throw (); extern long double __rintl (long double __x) throw ();
+
+
+extern long double nextafterl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __nextafterl (long double __x, long double __y) throw () __attribute__ ((__const__));
+
+extern long double nexttowardl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __nexttowardl (long double __x, long double __y) throw () __attribute__ ((__const__));
+
+
+
+extern long double remainderl (long double __x, long double __y) throw (); extern long double __remainderl (long double __x, long double __y) throw ();
+
+
+
+extern long double scalbnl (long double __x, int __n) throw (); extern long double __scalbnl (long double __x, int __n) throw ();
+
+
+
+extern int ilogbl (long double __x) throw (); extern int __ilogbl (long double __x) throw ();
+
+
+
+
+extern long double scalblnl (long double __x, long int __n) throw (); extern long double __scalblnl (long double __x, long int __n) throw ();
+
+
+
+extern long double nearbyintl (long double __x) throw (); extern long double __nearbyintl (long double __x) throw ();
+
+
+
+extern long double roundl (long double __x) throw () __attribute__ ((__const__)); extern long double __roundl (long double __x) throw () __attribute__ ((__const__));
+
+
+
+extern long double truncl (long double __x) throw () __attribute__ ((__const__)); extern long double __truncl (long double __x) throw () __attribute__ ((__const__));
+
+
+
+
+extern long double remquol (long double __x, long double __y, int *__quo) throw (); extern long double __remquol (long double __x, long double __y, int *__quo) throw ();
+
+
+
+
+
+
+extern long int lrintl (long double __x) throw (); extern long int __lrintl (long double __x) throw ();
+__extension__
+extern long long int llrintl (long double __x) throw (); extern long long int __llrintl (long double __x) throw ();
+
+
+
+extern long int lroundl (long double __x) throw (); extern long int __lroundl (long double __x) throw ();
+__extension__
+extern long long int llroundl (long double __x) throw (); extern long long int __llroundl (long double __x) throw ();
+
+
+
+extern long double fdiml (long double __x, long double __y) throw (); extern long double __fdiml (long double __x, long double __y) throw ();
+
+
+extern long double fmaxl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __fmaxl (long double __x, long double __y) throw () __attribute__ ((__const__));
+
+
+extern long double fminl (long double __x, long double __y) throw () __attribute__ ((__const__)); extern long double __fminl (long double __x, long double __y) throw () __attribute__ ((__const__));
+
+
+
+extern int __fpclassifyl (long double __value) throw ()
+     __attribute__ ((__const__));
+
+
+extern int __signbitl (long double __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+extern long double fmal (long double __x, long double __y, long double __z) throw (); extern long double __fmal (long double __x, long double __y, long double __z) throw ();
+
+
+
+
+
+
+
+
+extern int __issignalingl (long double __value) throw ()
+     __attribute__ ((__const__));
+
+
+
+
+extern long double scalbl (long double __x, long double __n) throw (); extern long double __scalbl (long double __x, long double __n) throw ();
+# 133 "/usr/include/math.h" 2 3 4
+# 148 "/usr/include/math.h" 3 4
+extern int signgam;
+# 189 "/usr/include/math.h" 3 4
+enum
+  {
+    FP_NAN =
+
+      0,
+    FP_INFINITE =
+
+      1,
+    FP_ZERO =
+
+      2,
+    FP_SUBNORMAL =
+
+      3,
+    FP_NORMAL =
+
+      4
+  };
+# 301 "/usr/include/math.h" 3 4
+typedef enum
+{
+  _IEEE_ = -1,
+  _SVID_,
+  _XOPEN_,
+  _POSIX_,
+  _ISOC_
+} _LIB_VERSION_TYPE;
+
+
+
+
+extern _LIB_VERSION_TYPE _LIB_VERSION;
+# 324 "/usr/include/math.h" 3 4
+struct __exception
+
+
+
+  {
+    int type;
+    char *name;
+    double arg1;
+    double arg2;
+    double retval;
+  };
+
+
+extern int matherr (struct __exception *__exc) throw ();
+# 488 "/usr/include/math.h" 3 4
+}
+# 3 "src/Math.hpp" 2
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/4.8/include/float.h" 1 3 4
+# 4 "src/Math.hpp" 2
+# 1 "src/Standard/Standard.hpp" 1
+# 5 "src/Math.hpp" 2
+
+namespace peace {
+
+  constexpr f64 degreesToRadians(f64 deg) {
+    return deg*(3.14159265358979323846/(f64)180);
+  }
+
+  template<typename T>
+    inline T sqr(T x) {
+    return x*x;
+  }
+
+  template<typename T>
+    inline T min(T a, T b) {
+    return a > b ? b : a;
+  }
+
+  template<typename T>
+    inline T max(T a, T b) {
+    return a > b ? a : b;
+  }
+
+  template<typename T>
+    inline T abs(T num) {
+    return num > 0 ? num : -num;
+  }
+
+  template <typename T>
+    inline bool floatEqual(T a, T b) {
+    return abs(a - b) < T(0.000001);
+  }
+
+}
+# 4 "src/Vector.hpp" 2
+
+namespace peace {
+
+  template <typename T, const u8 N>
+    struct Vec {
+
+    T data[N];
+
+    inline Vec() {
+      memset(this, 0, sizeof(Vec));
+    }
+
+    inline T norm() const {
+      T ret = 0;
+      for (u8 i=0; i<N; ++i) {
+ ret += sqr((*this).data[i]);
+      }
+      return sqrt(ret);
+    }
+
+    inline Vec normalized() const {
+      return (*this)/norm();
+    }
+
+    inline void normalize() {
+      *this = (*this).normalized();
+    }
+
+    inline T& operator[](const u8 index) {
+      do { if (!(index < N)) { Log::__assert_print("Vec index must be less than %u", N); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+                                        ;
+      return data[index];
+    }
+
+    inline void operator=(const Vec b) {
+      memcpy(this, &b, sizeof(Vec));
+    }
+
+    inline Vec operator+(const Vec b) const {
+      return add(*this, b);
+    }
+
+    inline Vec operator-(const Vec b) const {
+      return sub(*this, b);
+    }
+
+    inline Vec operator-() const {
+      return neg(*this);
+    }
+
+    inline void operator+=(const Vec b) {
+      *this = add(*this, b);
+    }
+
+    inline void operator-=(const Vec b) {
+      *this = sub(*this, b);
+    }
+
+    inline Vec operator*(const T b) const {
+      return mul(*this, b);
+    }
+
+    inline Vec operator/(const T b) const {
+      return div(*this, b);
+    }
+
+    inline void operator*=(const T b) {
+      *this = mul(*this, b);
+    }
+
+    inline void operator/=(const T b) {
+      *this = div(*this, b);
+    }
+
+    inline bool is_zero() const {
+      for (u8 i=0; i<N; ++i) {
+ if (!(floatEqual(data[i],T(0)))) return false;
+      }
+      return true;
+    }
+
+    static inline Vec mul(const Vec a, const T b) {
+      Vec ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = a.data[i]*b;
+      }
+      return ret;
+    }
+
+    static inline Vec div(const Vec a, const T b) {
+      Vec ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = a.data[i]/b;
+      }
+      return ret;
+    }
+
+    static inline Vec add(const Vec a, const Vec b) {
+      Vec ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = a.data[i] + b.data[i];
+      }
+      return ret;
+    }
+
+    static inline Vec sub(const Vec a, const Vec b) {
+      Vec ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = a.data[i] - b.data[i];
+      }
+      return ret;
+    }
+
+    static inline Vec neg(const Vec a) {
+      Vec ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = -a.data[i];
+      }
+      return ret;
+    }
+
+    static inline T dot(const Vec a, const Vec b) {
+      T ret = 0;
+      for (u8 i=0; i<N; ++i) {
+ ret += a.data[i]*b.data[i];
+      }
+      return ret;
+    }
+
+    static inline Vec lerp(const Vec a,
+      const Vec b,
+      const T h) {
+      do { if (!(h >= 0.0 && h <= 1.0)) { Log::__assert_print("H must be between 0 and 1 for Vec lerp"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+                                             ;
+      return a*(1-h) + b*h;
+    }
+  };
+
+  template <typename T, const u8 N>
+    inline String to_string(const Vec<T,N> v) {
+    String ret = "<";
+    for (u8 i=0; i<N-1; ++i) {
+      ret += to_string(v.data[i]) + ", ";
+    }
+    ret += to_string(v.data[N-1]) + ">";
+    return ret;
+  }
+
+  template <const u8 N>
+    inline String to_string(const Vec<f32,N> v) {
+    String ret = "<";
+    for (u8 i=0; i<N-1; ++i) {
+      ret += str::format("%1.3f, ", v.data[i]);
+    }
+    ret += str::format("%1.3f>", v.data[N-1]);
+    return ret;
+  }
+
+  template <typename T>
+    struct Vec2 : Vec<T,2> {
+
+    using Vec<T,2>::Vec;
+
+    inline Vec2(Vec<T,2> init) {
+      memcpy(this, &init, sizeof(Vec2));
+    }
+
+    inline Vec2() : Vec<T,2>::Vec() {}
+
+    inline Vec2(T x, T y) {
+      Vec<T,2>::data[0] = x;
+      Vec<T,2>::data[1] = y;
+    }
+
+    inline T& x() {
+      return Vec<T,2>::data[0];
+    }
+
+    inline T& y() {
+      return Vec<T,2>::data[1];
+    }
+
+
+    inline T cx() const {
+      return Vec<T,2>::data[0];
+    }
+
+    inline T cy() const {
+      return Vec<T,2>::data[1];
+    }
+
+  };
+
+  template <typename T>
+    struct Vec3 : Vec<T,3> {
+
+    using Vec<T,3>::Vec;
+
+    inline Vec3(Vec<T,3> init) {
+      memcpy(this, &init, sizeof(Vec3));
+    }
+
+    inline Vec3() : Vec<T,3>::Vec() {}
+
+    inline Vec3(T x, T y, T z) {
+      Vec<T,3>::data[0] = x;
+      Vec<T,3>::data[1] = y;
+      Vec<T,3>::data[2] = z;
+    }
+
+    inline T& x() {
+      return Vec<T,3>::data[0];
+    }
+
+    inline T& y() {
+      return Vec<T,3>::data[1];
+    }
+
+    inline T& z() {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T& r() {
+      return Vec<T,3>::data[0];
+    }
+
+    inline T& g() {
+      return Vec<T,3>::data[1];
+    }
+
+    inline T& b() {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T cx() const {
+      return Vec<T,3>::data[0];
+    }
+
+    inline T cy() const {
+      return Vec<T,3>::data[1];
+    }
+
+    inline T cz() const {
+      return Vec<T,3>::data[2];
+    }
+
+    inline T cr() const {
+      return Vec<T,3>::data[0];
+    }
+
+    inline T cg() const {
+      return Vec<T,3>::data[1];
+    }
+
+    inline T cb() const {
+      return Vec<T,3>::data[2];
+    }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
+    }
+
+    static inline Vec3 cross(Vec3 v1, Vec3 v2) {
+      return Vec3((v1.y()*v2.z()) - (v1.z()*v2.y()),
+    (v1.z()*v2.x()) - (v1.x()*v2.z()),
+    (v1.x()*v2.y()) - (v1.y()*v2.x()));
+    }
+
+  };
+
+  template <typename T>
+    struct Vec4 : Vec<T,4> {
+
+    using Vec<T,4>::Vec;
+
+    inline Vec4(Vec<T,4> init) {
+      memcpy(this, &init, sizeof(Vec4));
+    }
+
+    inline Vec4() : Vec<T,4>::Vec() {}
+
+    inline Vec4(T x, T y, T z, T w) {
+      Vec<T,4>::data[0] = x;
+      Vec<T,4>::data[1] = y;
+      Vec<T,4>::data[2] = z;
+      Vec<T,4>::data[3] = w;
+    }
+
+    inline T& x() {
+      return Vec<T,4>::data[0];
+    }
+
+    inline T& y() {
+      return Vec<T,4>::data[1];
+    }
+
+    inline T& z() {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T& w() {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T& r() {
+      return Vec<T,4>::data[0];
+    }
+
+    inline T& g() {
+      return Vec<T,4>::data[1];
+    }
+
+    inline T& b() {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T& a() {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T cx() const {
+      return Vec<T,4>::data[0];
+    }
+
+    inline T cy() const {
+      return Vec<T,4>::data[1];
+    }
+
+    inline T cz() const {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T cw() const {
+      return Vec<T,4>::data[3];
+    }
+
+    inline T cr() const {
+      return Vec<T,4>::data[0];
+    }
+
+    inline T cg() const {
+      return Vec<T,4>::data[1];
+    }
+
+    inline T cb() const {
+      return Vec<T,4>::data[2];
+    }
+
+    inline T ca() const {
+      return Vec<T,4>::data[3];
+    }
+
+  };
+
+
+  typedef Vec2<f32> Vec2f;
+  typedef Vec3<f32> Vec3f;
+  typedef Vec4<f32> Vec4f;
+  typedef Vec2<i16> Vec2s;
+  typedef Vec3<i16> Vec3s;
+  typedef Vec4<i16> Vec4s;
+
+}
+# 9 "src/GL.hpp" 2
 
 
 namespace peace {
@@ -45427,7 +44891,268 @@ namespace peace {
        
 
 
+# 1 "src/Matrix.hpp" 1
+       
 
+
+
+namespace peace {
+
+  template <typename T, const u8 N>
+    struct Mat {
+
+    union {
+      T data[N*N];
+      Vec<T,N> cols[N];
+    };
+
+    inline Mat() {
+      memset(this, 0, sizeof(Mat));
+      for (u8 i=0; i<N; ++i) {
+ cols[i].data[i] = 1;
+      }
+    }
+
+    inline Mat(const T* initial_data) {
+      memcpy(this, initial_data, sizeof(Mat));
+    }
+
+    inline Vec<T,N> row(const u8 index) const {
+      Vec<T,N> ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = cols[i].data[index];
+      }
+      return ret;
+    }
+
+    inline Vec<T,N> col(const u8 index) const {
+      return cols[index];
+    }
+
+    inline T& operator()(const u8 row,
+        const u8 col) {
+      do { if (!(row < N && col < N)) { Log::__assert_print("Matrix index out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+                                 ;
+      return cols[col][row];
+    }
+
+    inline void operator=(Mat b) {
+      memcpy(this, &b, sizeof(Mat));
+    }
+
+    inline Mat operator+(const Mat b) const {
+      return Mat::add(*this, b);
+    }
+
+    inline Mat operator*(const T b) const {
+      return Mat::mul(*this, b);
+    }
+
+    inline Vec<T,N> operator*(const Vec<T,N> b) const {
+      return Mat::mul(*this, b);
+    }
+
+    inline Mat operator*(const Mat b) const {
+      return Mat::mul(*this, b);
+    }
+
+    inline void operator*=(const Mat b) {
+      *this = Mat::mul(*this, b);
+    }
+
+    static inline Mat add(const Mat a, const Mat b) {
+      Mat ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.cols[i] = a.cols[i] + b.cols[i];
+      }
+      return ret;
+    }
+
+    static inline Mat mul(const Mat m, const T s) {
+      Mat ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = m.data[i]*s;
+      }
+      return ret;
+    }
+
+    static inline Mat div(const Mat m, const T s) {
+      Mat ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = m.data[i]/s;
+      }
+      return ret;
+    }
+
+    static inline Vec<T,N> mul(const Mat m,
+          const Vec<T,N> v) {
+      Vec<T,N> ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = Vec<T,N>::dot(v, m.row(i));
+      }
+      return ret;
+    }
+
+    static inline Vec<T,N> mulT(const Mat m,
+    const Vec<T,N> v) {
+      Vec<T,N> ret;
+      for (u8 i=0; i<N; ++i) {
+ ret.data[i] = Vec<T,N>::dot(v, m.col(i));
+      }
+      return ret;
+    }
+
+    static inline Mat mul(const Mat a, const Mat b) {
+      Mat ret;
+      for (u8 row=0; row<N; ++row) {
+        for (u8 col=0; col<N; ++col) {
+   ret(row,col) =
+     Vec<T,N>::dot(a.row(row),b.col(col));
+ }
+      }
+      return ret;
+    }
+
+
+    static inline Mat mulT1(const Mat a, const Mat b) {
+      Mat ret;
+      for (u8 row=0; row<N; ++row) {
+        for (u8 col=0; col<N; ++col) {
+   ret.cols[col].data[row] =
+     Vec<T,N>::dot(a.col(row),b.col(col));
+ }
+      }
+      return ret;
+    }
+
+
+    static inline Mat mulT2(const Mat a, const Mat b) {
+      Mat ret;
+      for (u8 row=0; row<N; ++row) {
+        for (u8 col=0; col<N; ++col) {
+   ret.cols[col].data[row] =
+     Vec<T,N>::dot(a.row(row),b.row(col));
+ }
+      }
+      return ret;
+    }
+
+
+  };
+
+  template <typename T, const u8 N>
+    inline String to_string(const Mat<T,N> m) {
+    String ret = "\n";
+    for (u8 row=0; row<N; ++row) {
+      ret += "| ";
+      for (u8 col=0; col<N; ++col) {
+ ret += to_string(m(row,col)) + " ";
+      }
+      ret += "|\n";
+    }
+    return ret;
+  }
+
+  template <const u8 N>
+    inline String to_string(const Mat<f32,N> m) {
+    String ret = "\n";
+    for (u8 row=0; row<N; ++row) {
+      ret += "| ";
+      for (u8 col=0; col<N; ++col) {
+ ret += str::format("%7.3f ", m(row,col));
+      }
+      ret += "|\n";
+    }
+    return ret;
+  }
+
+  template <typename T>
+    struct Mat3 : Mat<T,3> {
+
+    using Mat<T,3>::Mat;
+    inline Mat3() : Mat<T,3>::Mat() {}
+    inline Mat3(Mat<T,3> init) {
+      memcpy(this, &init, sizeof(Mat3));
+    }
+
+  };
+
+  template <typename T>
+    struct Mat4 : Mat<T,4> {
+
+    using Mat<T,4>::Mat;
+    inline Mat4() : Mat<T,4>::Mat() {}
+    inline Mat4(Mat<T,4> init) {
+      memcpy(this, &init, sizeof(Mat4));
+    }
+
+    inline Mat4(Mat3<T> m) {
+      T d[16] = {m.data[0], m.data[1], m.data[2], 0,
+   m.data[3], m.data[4], m.data[5], 0,
+   m.data[6], m.data[7], m.data[8], 0,
+   0, 0, 0, 1};
+      memcpy(this, d, sizeof(Mat4<T>));
+    }
+
+    static inline Mat4 scale(Vec3<T> scal) {
+      T d[16] = {scal.x(), 0, 0, 0,
+      0, scal.y(), 0, 0,
+      0, 0, scal.z(), 0,
+      0, 0, 0, 1};
+      return Mat4(d);
+    }
+
+    static inline Mat4 translate(Vec3<T> trans) {
+      T d[16] = {1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      trans.x(), trans.y(), trans.z(), 1};
+      return Mat4(d);
+    }
+
+    static inline Mat4 scaleTrans(Vec3<T> scal,
+      Vec3<T> trans) {
+      T d[16] = {scal.x(), 0, 0, 0,
+   0, scal.y(), 0, 0,
+   0, 0, scal.z(), 0,
+   trans.x(), trans.y(), trans.z(), 1};
+      return Mat4(d);
+    }
+
+    static Mat4 perspective(T fovy, T aspect, T z_near, T z_far) {
+      T sub = z_near - z_far;
+      T f = 1/tan(fovy/(T)2);
+      T data[16] = {
+ f/aspect, 0, 0, 0,
+ 0, f, 0, 0,
+ 0, 0, (z_far + z_near)/sub, -1,
+ 0, 0, (2*z_near*z_far)/sub, 0
+      };
+
+      return Mat4(data);
+    }
+
+    static Mat4 lookAt(Vec3<T> eye, Vec3<T> center, Vec3<T> up) {
+      Vec3<T> f = (center - eye).normalized();
+      Vec3<T> s = (Vec3<T>::cross(f, up)).normalized();
+      Vec3<T> u = Vec3<T>::cross(s, f);
+      T data[16] = {
+ s.x(), u.x(), -f.x(), 0,
+ s.y(), u.y(), -f.y(), 0,
+ s.z(), u.z(), -f.z(), 0,
+ -Vec3<T>::dot(s, eye), -Vec3<T>::dot(u, eye),
+ Vec3<T>::dot(f, eye), 1
+      };
+      return Mat4(data);
+    }
+
+  };
+
+  typedef Mat3<f32> Mat3f;
+  typedef Mat4<f32> Mat4f;
+
+}
+# 5 "src/BoundingObject.hpp" 2
 # 1 "src/BasicMesh.hpp" 1
        
 
@@ -45742,435 +45467,89 @@ namespace peace {
   };
 
 }
-# 6 "src/Node.hpp" 2
-# 1 "src/Standard/HandledArray.hpp" 1
+# 5 "src/TerrainMesh.hpp" 2
+
+
+
+# 1 "src/Texture.hpp" 1
        
 
-
-
-namespace peace {
-
-  typedef u32* ArrayHandle;
-
-  template <typename T>
-    struct HandledArrayElem {
-    T elem;
-    ArrayHandle handle;
-  };
-
-  template <typename T>
-    struct HandledArray {
-
-    struct Iterator {
-      typename Array<HandledArrayElem<T>>::iterator it;
-      Iterator(typename
-        Array<HandledArrayElem<T>>::iterator _it)
- : it(_it) {}
-      void operator++() {
- ++it;
-      }
-      T operator*() const {
- return (*it).elem;
-      }
-      bool operator==(Iterator b) const {
- return it == b.it;
-      }
-      bool operator!=(Iterator b) const {
- return it != b.it;
-      }
-    };
-
-    Array<HandledArrayElem<T>> arr;
-
-    inline ~HandledArray() {
-      for (HandledArrayElem<T> elem : arr) {
-
- delete elem.handle;
-      }
-    }
-
-    inline T operator[](u32 index) {
-      return arr[index].elem;
-    }
-
-    inline Iterator begin() {
-      return Iterator(arr.begin());
-    }
-
-    inline Iterator end() {
-      return Iterator(arr.end());
-    }
-
-    inline u32 size() {
-      return arr.size();
-    }
-
-    inline ArrayHandle push_back(T inserted) {
-      HandledArrayElem<T> elem;
-      ArrayHandle ret = new u32(arr.size());
-      elem.elem = inserted;
-      elem.handle = ret;
-      arr.push_back(elem);
-      return ret;
-    }
-# 78 "src/Standard/HandledArray.hpp"
-    ArrayHandle insertSorted(T item,
-        function<bool(T,T)> cmp) {
-      HandledArrayElem<T> elem;
-      elem.elem = item;
-
-      if (arr.size() > 0) {
-
- Iterator it(arr.begin());
- u32 index;
-
- for (; it != end(); ++it, ++index) {
-   if (cmp(*it, item)) {
-     elem.handle = new u32(index);
-     it = arr.insert(it.it, elem);
-     break;
-   }
- }
-
- if (it == end()) {
-   elem.handle = new u32(arr.size());
-   arr.push_back(elem);
- } else {
-
-   while (it != end()) {
-     ++(*((*it.it).handle));
-     ++it;
-   }
- }
-
-      } else {
- elem.handle = new u32(0);
- arr.push_back(elem);
-      }
-      return elem.handle;
-    }
-
-    inline void removeAndReplace(ArrayHandle h) {
-      if (h) {
- do { if (!(*h < arr.size())) { Log::__assert_print("You must provide a valid ArrayHandle to HandledArray's" "removeAndReplace method"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
-
-                                ;
- HandledArrayElem<T> back = arr.back();
- *back.handle = *h;
- arr[*h] = back;
- arr.pop_back();
- delete h;
-      }
-    }
-  };
-
-}
-# 7 "src/Node.hpp" 2
-# 1 "src/Messageable.hpp" 1
-       
 
 # 1 "src/Standard/Standard.hpp" 1
-# 4 "src/Messageable.hpp" 2
-# 1 "src/Standard/RTTI.hpp" 1
-       
+# 5 "src/Texture.hpp" 2
 
 
-
-# 1 "src/Standard/RTTI.py" 1
-# 1 "src/Standard/RTTI.py"
-$py(
-id_list_filename = makefile_dir + "/ClassIdList.txt"
-def uniqueId(classname):
-
-    id_list = open(id_list_filename, "r+")
-    max_id = 0
-
-    for line in id_list:
-        name, value_str = line.split()
-        value = int(value_str)
-        if name == classname:
-            return value
-        max_id = value if value > max_id else max_id
-
-    class_id = max_id + 1
-    id_list.write("%s %d\n" % (classname, class_id))
-    return class_id
-
-cur_class_name = ""
-cur_class_id = 0;
-
-def rttiConstruct(classname):
-    global cur_class_name
-    global cur_class_id
-    cur_class_name = classname
-    cur_class_id = uniqueId(classname)
-    return "BaseRTTI::type_id = %d" % cur_class_id
-
-def registerRttiStruct():
-    global cur_class_name
-    global cur_class_id
-    classname = cur_class_name
-    class_id = cur_class_id
-    cur_class_name = ""
-    cur_class_id = 0;
-    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
-)
-
-$extend(rttiConstruct)
-$extend(registerRttiStruct)
-# 6 "src/Standard/RTTI.hpp" 2
-# 19 "src/Standard/RTTI.hpp"
-namespace peace {
-
-  typedef u32 TypeId;
-
-  struct BaseRTTI {
-    TypeId type_id;
-    virtual ~BaseRTTI() {}
-  };
-
-  inline TypeId typeId(BaseRTTI* object) {
-    return object->type_id;
-  }
-
-  template <typename T>
-    inline TypeId typeId() {
-    return 0;
-  }
-
-}
-# 5 "src/Messageable.hpp" 2
 
 namespace peace {
 
-  struct Message : BaseRTTI {};
+  struct Texture {
 
-  struct Messageable : BaseRTTI {
-    virtual void message(Message* m) {}
+    u32 length;
+    u32* ids;
+
+    Texture(u32 num_textures = 1);
+
+
+    void load(String filename, ShaderUniform tex_uniform,
+       u32 index = 0);
+    void use(u32 index = 0);
+    ~Texture();
   };
 
 }
-# 8 "src/Node.hpp" 2
+# 9 "src/TerrainMesh.hpp" 2
+
+
 
 namespace peace {
 
-  struct BoundingObject;
+  struct TerrainMesh : Renderable {
 
-  struct Node : Transform, Messageable {
+    VBO vbo;
+    VAO vao;
+    EBO* ebo;
+    Texture* tex;
+    Array<BasicMeshData> data;
 
+    TerrainMesh(EBO* _ebo,
+  Texture* texture);
 
+    void init();
+    virtual void render(RenderContext c);
 
-
-
-    HandledArray<Node*> children;
-    HandledArray<Renderable*> renderables;
-
-
-    using Transform::Transform;
-
-    ArrayHandle addChild(Node* child);
-    ArrayHandle addRenderable(Renderable* renderable);
-    void removeChild(ArrayHandle h);
-    void removeRenderable(ArrayHandle h);
-    virtual BoundingObject getTightBoundingObject();
-    virtual BoundingObject getLooseBoundingObject();
-
-    void render(RenderContext c, Mat4f model);
+    const static ShaderFlags FLAGS;
 
   };
 
 }
-# 4 "src/PhysicalObject.hpp" 2
-
-
-namespace peace {
-
-  enum PhysicalObjectFlags : u8 { PHYSICS_NO_FLAGS = 0x00, PHYSICS_STATIC = 0x01 }; inline PhysicalObjectFlags operator~(const PhysicalObjectFlags a) { return (PhysicalObjectFlags) ~ (u8) a; } inline PhysicalObjectFlags operator|(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a | (u8) b); } inline PhysicalObjectFlags operator&(const PhysicalObjectFlags a, const PhysicalObjectFlags b) { return (PhysicalObjectFlags) ((u8) a & (u8) b); } inline void operator|=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a | b; } inline void operator&=(PhysicalObjectFlags& a, const PhysicalObjectFlags b) { a = a & b; }
-
-                         ;
-
-  struct MassData {
-
-    f32 mass;
-    f32 inv_mass;
-    f32 inertia;
-    f32 inv_inertia;
-
-    MassData(f32 m, f32 i);
-  };
-
-  struct Material {
-
-    f32 density;
-    f32 cor;
-
-    Material(f32 mat_density, f32 mat_restitution);
-
-    const static Material STATIC;
-  };
-
-  struct PhysicalObject : Node {
-
-    Material material;
-    MassData mass_data;
-
-    Vec3f veloc;
-    Vec3f force;
-
-    Quaternionf spin;
-
-    PhysicalObjectFlags physics_flags;
-
-    PhysicalObject(Renderable* rend,
-     Material mat,
-     Vec3f xi,
-     Vec3f vi = Vec3f(0,0,0),
-     PhysicalObjectFlags _flags = PHYSICS_NO_FLAGS);
-    void update(f32 dt);
-    void applyForce(Vec3f force);
-  };
-
-  struct StaticObject : PhysicalObject {
-    StaticObject(Renderable* rend, Vec3f xi);
-  };
-
-}
-# 4 "src/Physics.hpp" 2
-
-# 1 "src/Octree.hpp" 1
-       
-
-
-
+# 2 "src/TerrainMesh.cpp" 2
 
 namespace peace {
 
-  struct OctreeOutOfBoundsMessage : Message {
-    OctreeOutOfBoundsMessage() {
-      $rttiConstruct("OctreeOutOfBoundsMessage");
-    }
-  };
-  $registerRttiStruct();
+  const ShaderFlags TerrainMesh::FLAGS = SHADER_NO_FLAGS;
 
-  struct Octree {
+  TerrainMesh::TerrainMesh(EBO* _ebo,
+      Texture* texture)
+    : Renderable(TerrainMesh::FLAGS),
+    ebo(_ebo),
+    tex(texture) {}
 
-    Vec3f center;
-    Vec3f halves;
-    Array<Node*> nodes;
-    Octree* children[8];
-
-    Octree(Vec3f _center, Vec3f _halves);
-    ~Octree();
-    void insert(Node* node, u32 level=0);
-    void traverse(Node* node,
-    function<void(Node*,Node*)> callback);
-    void traverseAll(function<void(Node*)> callback);
-
-  };
-
-}
-# 6 "src/Physics.hpp" 2
-
-
-namespace peace {
-
-  struct Physics {
-
-    Octree static_objects;
-    HandledArray<PhysicalObject*> dynamic_objects;
-
-    Vec3f gravity;
-
-    Physics(Vec3f center, Vec3f halves);
-    void update(f32 dt);
-    void addStaticObject(StaticObject* obj);
-    ArrayHandle addDynamicObject(PhysicalObject* obj);
-    void removeDynamicObject(ArrayHandle h);
-    ArrayHandle addObject(PhysicalObject* obj);
-    void removeObject(ArrayHandle h);
-
-  };
-
-}
-# 2 "src/Physics.cpp" 2
-# 1 "src/Collision.hpp" 1
-       
-
-
-
-namespace peace {
-
-  struct CollisionMessage : Message {
-
-
-    PhysicalObject* object;
-
-    CollisionMessage(PhysicalObject* _object)
-      : object(_object) {
-      $rttiConstruct("CollisionMessage");
-    }
-  };
-  $registerRttiStruct();
-
-  void resolveCollision(PhysicalObject* a, PhysicalObject* b);
-
-}
-# 3 "src/Physics.cpp" 2
-
-namespace peace {
-
-  Physics::Physics(Vec3f center, Vec3f halves)
-    : static_objects(center, halves), gravity(0,0,0 ) {}
-
-  void Physics::update(f32 dt) {
-
-    for (PhysicalObject* a : dynamic_objects) {
-      a->force = gravity*a->mass_data.mass;
-      a->update(dt);
-    }
-
-    u32 n = 0;
-    for (PhysicalObject* a : dynamic_objects) {
-      static_objects.traverse(a, [&n](Node* a, Node* b) {
-   ++n;
-   resolveCollision((PhysicalObject*) a,
-      (PhysicalObject*) b);
- });
-
-
-
-      for (PhysicalObject* b : dynamic_objects) {
- ++n;
- resolveCollision(a,b);
-      }
-    }
-
+  void TerrainMesh::init() {
+    Shader::setFlags(this->shader_flags);
+    vao.init();
+    vao.use();
+    vbo.init();
+    vbo.bindArray(data, false);
+    vao.registerVars({Shader::POSITION,
+   Shader::NORMAL,
+   Shader::TEX_COORD});
   }
 
-  void Physics::addStaticObject(StaticObject* obj) {
-    static_objects.insert(obj);
+  void TerrainMesh::render(RenderContext c) {
+    Shader::setFlags(this->shader_flags);
+    tex->use();
+    vao.use();
+    ebo->draw();
   }
 
-  ArrayHandle Physics::addDynamicObject(PhysicalObject* obj) {
-    return dynamic_objects.push_back(obj);
-  }
-
-  void Physics::removeDynamicObject(ArrayHandle h) {
-    dynamic_objects.removeAndReplace(h);
-  }
-
-  ArrayHandle Physics::addObject(PhysicalObject* obj) {
-    if (obj->physics_flags & PHYSICS_STATIC) {
-      addStaticObject((StaticObject*)obj);
-      return __null;
-    } else {
-      return addDynamicObject(obj);
-    }
-  }
-
-  void Physics::removeObject(ArrayHandle h) {
-    if (h) {
-      dynamic_objects.removeAndReplace(h);
-    }
-  }
 }

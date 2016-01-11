@@ -83,6 +83,16 @@ NAMESPACE {
 	err=glGetError();
       }
     }
+
+    static GLenum draw_mode = GL_TRIANGLES;
+    
+    void setDrawMode(GLenum mode) {
+      draw_mode = mode;
+    }
+    
+    GLenum getDrawMode() {
+      return draw_mode;
+    }
     
     void terminate() {
       glfwTerminate();

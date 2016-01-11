@@ -61,6 +61,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(PREPROCESS) -x c++ $(CXXFLAGS) $*.cpp $(INCLUDE) | tee $*.exp | $(EXPANDER) $(INCLUDE) "/dev/stdin" > $@
 
 %.d:%.cpp
+	echo $*.cpp
 #echo -n "$*.d ">$*.d
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d
 

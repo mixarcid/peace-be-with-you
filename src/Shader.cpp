@@ -1,5 +1,4 @@
 #include "Shader.hpp"
-#include "Color.hpp"
 #include "Assets.hpp"
 
 NAMESPACE {

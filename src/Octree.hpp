@@ -6,7 +6,11 @@
 NAMESPACE {
 
   struct OctreeOutOfBoundsMessage : Message {
-    OctreeOutOfBoundsMessage() {
+
+    bool should_insert;
+    
+    OctreeOutOfBoundsMessage()
+      : should_insert(false) {
       $rttiConstruct("OctreeOutOfBoundsMessage");
     }
   };
@@ -24,6 +28,7 @@ NAMESPACE {
     void insert(Node* node, u32 level=0);
     void traverse(Node* node,
 		  function<void(Node*,Node*)> callback);
+    void traverseAll(function<void(Node*)> callback);
 
   };
 

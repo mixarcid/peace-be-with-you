@@ -16,7 +16,7 @@ NAMESPACE {
     window = gl::createWindow(Vec2s(700,700), "Peace be with You");
     Input::init(window);
     Input::setManager("Main");
-    Input::addFlags(INPUT_CURSOR_DISABLED);
+    Input::addFlags("Main", INPUT_CURSOR_DISABLED);
   
     const unsigned char* version = glGetString(GL_VERSION);
     fatalAssert(version != NULL,

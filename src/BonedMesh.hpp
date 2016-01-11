@@ -75,9 +75,8 @@ NAMESPACE {
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
     virtual void render(RenderContext c);
-    virtual BoundingObject getBoundingObject();
-    virtual BoundingObject getPrimaryBoundingObject();
-    virtual BoundingObject getPhysicalBoundingObject();
+    virtual BoundingObject getTightBoundingObject();
+    virtual BoundingObject getLooseBoundingObject();
     
   };
 }

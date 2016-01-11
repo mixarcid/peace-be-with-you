@@ -21,28 +21,18 @@ NAMESPACE {
     children.removeAndReplace(h);
   }
 
-  BoundingObject Node::getBoundingObject() {
+  BoundingObject Node::getTightBoundingObject() {
     debugAssert(renderables.size() > 0,
 	       "Why haven't you attached a renderable to the node?");
-    BoundingObject obj = renderables[0]->getBoundingObject();
+    BoundingObject obj = renderables[0]->getTightBoundingObject();
     obj.transform(this);
     return obj;
   }
   
-  BoundingObject Node::getPhysicalBoundingObject() {
+  BoundingObject Node::getLooseBoundingObject() {
     debugAssert(renderables.size() > 0,
 	       "Why haven't you attached a renderable to the node?");
-    BoundingObject obj = renderables[0]->getPhysicalBoundingObject();
-    //Log::message(Transform::trans.toString());
-    obj.transform(this);
-    //Log::message(obj.sphere.center.toString() + "\n");
-    return obj;
-  }
-
-  BoundingObject Node::getPrimaryBoundingObject() {
-    debugAssert(renderables.size() > 0,
-	       "Why haven't you attached a renderable to the node?");
-    BoundingObject obj = renderables[0]->getPrimaryBoundingObject();
+    BoundingObject obj = renderables[0]->getLooseBoundingObject();
     obj.transform(this);
     return obj;
   }

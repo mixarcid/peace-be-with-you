@@ -8,7 +8,7 @@ NAMESPACE {
     n % 2 < 1 -> positive x
     n % 4 < 2 -> positive y
     n < 4 -> positive z (we don't need the modulus)
-   */
+  */
 
   Octree::Octree(Vec3f _center, Vec3f _halves)
     : center(_center), halves(_halves) {
@@ -27,7 +27,7 @@ NAMESPACE {
   
   void Octree::insert(Node* node, u32 level) {
 
-    BoundingObject bound = node->getPrimaryBoundingObject();
+    BoundingObject bound = node->getTightBoundingObject();
 
     if (!bound.allInBox(center, halves)) {
       OctreeOutOfBoundsMessage m;
@@ -73,17 +73,30 @@ NAMESPACE {
       callback(node, n);
     }
 
-    BoundingObject bound = node->getPhysicalBoundingObject();
+    BoundingObject bound = node->getLooseBoundingObject();
 
     for (u8 n=0; n<8; ++n) {
       if (children[n]) {
 	if (bound.someInBox(children[n]->center,
-			   children[n]->halves)) {
+			    children[n]->halves)) {
 	  children[n]->traverse(node, callback);
 	} else {
 	}
       }
     }
+  }
+
+  void Octree::traverseAll(function<void(Node*)> callback) {
+    for (Node* n : nodes) {
+      callback(n);
+    }
+
+    for (u8 n=0; n<8; ++n) {
+      if (children[n]) {
+	children[n]->traverseAll(callback);
+      }
+    }
+	
   }
 
 }

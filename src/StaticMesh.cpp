@@ -15,22 +15,20 @@ NAMESPACE {
 
   void StaticMesh::init() {
     RenderableReg::init();
-    RenderableReg::vbo.bindArray(data, false);
+    RenderableReg::ebo.init();
     RenderableReg::ebo.bindArray(elements, false);
+    RenderableReg::vbo.bindArray(data, false);
     RenderableReg::vao.registerVars({Shader::POSITION,
-	  Shader::NORMAL, Shader::TEX_COORD});
+	  Shader::NORMAL,
+	  Shader::TEX_COORD});
   }
 
-  BoundingObject StaticMesh::getBoundingObject() {
-    return b_sphere;
-  }
-  
-  BoundingObject StaticMesh::getPhysicalBoundingObject() {
-    return b_sphere;
-  }
-
-  BoundingObject StaticMesh::getPrimaryBoundingObject() {
+  BoundingObject StaticMesh::getTightBoundingObject() {
     return b_obb;
+  }
+    
+  BoundingObject StaticMesh::getLooseBoundingObject() {
+    return b_sphere;
   }
 
   void StaticMesh::render(RenderContext c) {

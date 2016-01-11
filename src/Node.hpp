@@ -26,9 +26,8 @@ NAMESPACE {
     ArrayHandle addRenderable(Renderable* renderable);
     void removeChild(ArrayHandle h);
     void removeRenderable(ArrayHandle h);
-    BoundingObject getBoundingObject();
-    BoundingObject getPhysicalBoundingObject();
-    BoundingObject getPrimaryBoundingObject();
+    virtual BoundingObject getTightBoundingObject();
+    virtual BoundingObject getLooseBoundingObject();
     //Mat4f getAbsMat();
     void render(RenderContext c, Mat4f model);
 

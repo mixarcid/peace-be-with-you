@@ -83,8 +83,6 @@ NAMESPACE {
     ids = new u32[length];
     lengths = new u32[length];
     glGenBuffers(length, ids);
-    //Log::message("init ids: %p", ids);
-    //Log::message("init lengths: %p", lengths);
   }
 
   /*EBO EBO::getEBO(u32 num_ebos) {
@@ -113,7 +111,6 @@ NAMESPACE {
   }*/
 
   void EBO::draw(GLenum mode, u32 index) {
-    //Log::message("%u", lengths[index]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[index]);
     glDrawElements(mode, lengths[index], GL_UNSIGNED_INT, NULL);
   }

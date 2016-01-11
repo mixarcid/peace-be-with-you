@@ -3,6 +3,44 @@
 
 NAMESPACE {
 
+  BoundingAABB::BoundingAABB(Vec3f _center, Vec3f _halves)
+    : center(_center), halves(_halves) {}
+
+    f32 BoundingAABB::getVolume() {
+    return halves.x()*halves.y()*halves.z()*8;
+  }
+  
+  f32 BoundingAABB::getInertia(f32 mass) {
+    f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
+    return (mass*sqr(size))/6;
+  }
+  
+  bool BoundingAABB::someInBox(BoundingAABB box) {
+    
+    if (abs(center.x() - box.center.x())
+	> (halves.x() + box.halves.x())) return false;
+    if (abs(center.y() - box.center.y())
+	> (halves.y() + box.halves.y())) return false;
+    if (abs(center.z() - box.center.z())
+	> (halves.z() + box.halves.z())) return false;
+
+    return true;
+  }
+  
+  bool BoundingAABB::allInBox(BoundingAABB box) {
+    
+    return ((abs(center.x() - box.center.x())
+	     < (halves.x() + box.halves.x())) &&
+	    (abs(center.y() - box.center.y())
+	     < (halves.y() + box.halves.y())) &&
+	    (abs(center.z() - box.center.z())
+	     < (halves.z() + box.halves.z())));
+  }
+  
+  void BoundingAABB::transform(Node* t) {
+    PEACE_UNIMPLIMENTED();
+  }
+
   BoundingSphere::BoundingSphere(Array<BasicMeshData> data) {
     
     //Ritter's algorithm
@@ -52,10 +90,10 @@ NAMESPACE {
   }
 
   //thanks, nerdinand from StackOverFlow
-  bool BoundingSphere::someInBox(Vec3f center, Vec3f halves) {
+  bool BoundingSphere::someInBox(BoundingAABB box) {
     
-    Vec3f box_min = center - halves;
-    Vec3f box_max = center + halves;
+    Vec3f box_min = box.center - box.halves;
+    Vec3f box_max = box.center + box.halves;
     f32 min_dist = 0;
 
     if (this->center.x() < box_min.x()) {
@@ -79,7 +117,7 @@ NAMESPACE {
     return min_dist < sqr(radius);
   }
 
-  bool BoundingSphere::allInBox(Vec3f center, Vec3f halves) {
+  bool BoundingSphere::allInBox(BoundingAABB box) {
     PEACE_UNIMPLIMENTED(false);
   }
 
@@ -140,11 +178,11 @@ NAMESPACE {
     return ret;
   }
 
-  bool BoundingOBB::someInBox(Vec3f center, Vec3f halves) {
+  bool BoundingOBB::someInBox(BoundingAABB box) {
     PEACE_UNIMPLIMENTED(false);
   }
 
-  bool BoundingOBB::allInBox(Vec3f center, Vec3f halves) {
+  bool BoundingOBB::allInBox(BoundingAABB box) {
 
     //Log::message("----");
     //Log::message("center: " + to_string(center));
@@ -157,51 +195,16 @@ NAMESPACE {
 				z ? this->halves.z() : -this->halves.z());
 	  Vec3f vert = this->center + (coord*unoriented_vert);
 	  //Log::message("vert: " + to_string(vert));
-	  Vec3f rel_center = center - vert;
+	  Vec3f rel_center = box.center - vert;
 	  
-	  if (abs(rel_center.x()) > halves.x() ||
-	      abs(rel_center.y()) > halves.y() ||
-	      abs(rel_center.z()) > halves.z()) return false;
+	  if (abs(rel_center.x()) > box.halves.x() ||
+	      abs(rel_center.y()) > box.halves.y() ||
+	      abs(rel_center.z()) > box.halves.z()) return false;
 	  
 	}
       }
     }
     return true;
-  }
-
-  f32 BoundingAABB::getVolume() {
-    return halves.x()*halves.y()*halves.z()*8;
-  }
-  
-  f32 BoundingAABB::getInertia(f32 mass) {
-    f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
-    return (mass*sqr(size))/6;
-  }
-  
-  bool BoundingAABB::someInBox(Vec3f center, Vec3f halves) {
-    
-    if (abs(this->center.x() - center.x())
-	> (this->halves.x() + halves.x())) return false;
-    if (abs(this->center.y() - center.y())
-	> (this->halves.y() + halves.y())) return false;
-    if (abs(this->center.z() - center.z())
-	> (this->halves.z() + halves.z())) return false;
-
-    return true;
-  }
-  
-  bool BoundingAABB::allInBox(Vec3f center, Vec3f halves) {
-    
-    return ((abs(this->center.x() - center.x())
-	     < (this->halves.x() + halves.x())) &&
-	    (abs(this->center.y() - center.y())
-	     < (this->halves.y() + halves.y())) &&
-	    (abs(this->center.z() - center.z())
-	     < (this->halves.z() + halves.z())));
-  }
-  
-  void BoundingAABB::transform(Node* t) {
-    PEACE_UNIMPLIMENTED();
   }
 
   f32 BoundingGround::getVolume() {
@@ -212,11 +215,11 @@ NAMESPACE {
     PEACE_UNIMPLIMENTED(0);
   }
   
-  bool BoundingGround::someInBox(Vec3f center, Vec3f halves) {
+  bool BoundingGround::someInBox(BoundingAABB box) {
     return true;
   }
   
-  bool BoundingGround::allInBox(Vec3f center, Vec3f halves) {
+  bool BoundingGround::allInBox(BoundingAABB box) {
     return false;
 
   }
@@ -292,28 +295,28 @@ NAMESPACE {
     return 0;
   }
   
-  bool BoundingObject::someInBox(Vec3f center, Vec3f halves) {
+  bool BoundingObject::someInBox(BoundingAABB box) {
     switch(type) {
     case BOUNDING_SPHERE:
-      return sphere.someInBox(center, halves);
+      return sphere.someInBox(box);
     case BOUNDING_OBB:
-      return obb.someInBox(center, halves);
+      return obb.someInBox(box);
     case BOUNDING_GROUND:
-      return ground.someInBox(center, halves);
+      return ground.someInBox(box);
     case BOUNDING_NONE:
       return false;
     }
     return false;
   }
   
-  bool BoundingObject::allInBox(Vec3f center, Vec3f halves) {
+  bool BoundingObject::allInBox(BoundingAABB box) {
     switch(type) {
     case BOUNDING_SPHERE:
-      return sphere.allInBox(center, halves);
+      return sphere.allInBox(box);
     case BOUNDING_OBB:
-      return obb.allInBox(center, halves);
+      return obb.allInBox(box);
     case BOUNDING_GROUND:
-      return ground.allInBox(center, halves);
+      return ground.allInBox(box);
     case BOUNDING_NONE:
       return false;
     }

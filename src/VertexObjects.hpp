@@ -16,7 +16,7 @@ NAMESPACE {
     void init(u32 num_vaos = 1);
     void use(u32 index  = 0);
     /*the types of the shader vars must entirely be composed of 
-      either f64s or f32s; for example Vector3f and Color4d 
+      either f64s or f32s; for example Vec3f and Vec4d 
       must not be mixed */
     void registerVars(Array<ShaderVar> vars,
 		      u32 index = 0);
@@ -66,7 +66,7 @@ NAMESPACE {
     //the new array must be the same size as before
     /*void rebindArray(Array<u32> arr, bool dynamic,
       u32 index = 0);*/
-    void draw(GLenum mode, u32 index = 0);
+    void draw(GLenum mode = gl::getDrawMode(), u32 index = 0);
     ~EBO();
 
     //static EBO getEBO(u32 num_ebos = 1);

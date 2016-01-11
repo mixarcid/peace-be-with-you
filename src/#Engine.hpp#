@@ -14,14 +14,6 @@ NAMESPACE {
 			ENGINE_GRAPHICS_INIT = 0x02,
 			ENGINE_ASSETS_LOADED = 0x04);
 
-  struct GameObjectHandle {
-    GameObjectFlags flags;
-    ArrayHandle physics_handle;
-    ArrayHandle graphics_handle;
-    ArrayHandle update_handle;
-    String object_name;
-  };
-
   struct Engine {
 
     EngineFlags flags;
@@ -29,8 +21,6 @@ NAMESPACE {
     GLFWwindow* window;
     Graphics* graphics;
     Physics* physics;
-    HandledArray<GameObject*> update_objects;
-    HashMap<String, GameObject*> named_objects;
 
     Time cur_time, prev_time;
     f32 dt;
