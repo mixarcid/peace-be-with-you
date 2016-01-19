@@ -1,397 +1,0 @@
-
-BonedMesh.cpp,16
-NAMESPACE 4,48
-
-BoundingObject.cpp,16
-NAMESPACE 4,51
-
-Camera.cpp,16
-NAMESPACE 3,23
-
-Collision.cpp,16
-NAMESPACE 4,56
-
-Assets.cpp,16
-NAMESPACE 4,47
-
-GL.cpp,180
-  namespace gl 5,32
-    void init(gl::init7,50
-    void checkError(gl::checkError16,243
-    void ignoreError(gl::ignoreError40,798
-    void terminate(gl::terminate63,1388
-
-Graphics3d.cpp,16
-NAMESPACE 6,90
-
-Graphics.cpp,158
-  namespace graphics 5,38
-    void init(graphics::init7,62
-    void checkError(graphics::checkError16,255
-    void terminate(graphics::terminate40,814
-
-main.cpp,63
-bool running 12,209
-void keyCallback(14,231
-int main(24,429
-
-MeshLoader.cpp,17
-NAMESPACE 8,142
-
-Node.cpp,16
-NAMESPACE 5,73
-
-PhysicalObject.cpp,16
-NAMESPACE 4,61
-
-Physics.cpp,16
-NAMESPACE 4,49
-
-RenderableReg.cpp,16
-NAMESPACE 4,28
-
-Shader.cpp,16
-NAMESPACE 5,70
-
-StaticMesh.cpp,16
-NAMESPACE 3,27
-
-Terrain.cpp,16
-NAMESPACE 3,24
-
-Texture.cpp,16
-NAMESPACE 5,73
-
-Transform.cpp,16
-NAMESPACE 4,48
-
-VertexObjects.cpp,16
-NAMESPACE 4,52
-
-BasicMesh.hpp,218
-  struct BasicMeshData 7,52
-    Vec3f pos;BasicMeshData::pos9,78
-    Vec3f norm;BasicMeshData::norm10,93
-    Vec2f tex_coord;BasicMeshData::tex_coord11,109
-    BasicMeshData(BasicMeshData::BasicMeshData13,131
-
-BonedMesh.hpp,1048
-  struct Bone 9,105
-    using Transform::Transform;Bone::Transform::Transform10,133
-  struct __attribute__((packed)) BonedMeshData 13,171
-    u32 num_bones;BonedMeshData::num_bones14,220
-    u32 indexes[BonedMeshData::indexes15,239
-    f32 weights[BonedMeshData::weights16,286
-  struct KeyFrame 19,339
-    float time;KeyFrame::time21,364
-    Array<Bone> bones;KeyFrame::bones22,380
-  struct BonedAnimation 26,414
-    float current_time;BonedAnimation::current_time28,445
-    u32 last_keyframe;BonedAnimation::last_keyframe29,469
-    Array<KeyFrame> keyframes;BonedAnimation::keyframes30,492
-  struct BonedMeshBase 37,631
-    VBO b_vbo;BonedMeshBase::b_vbo39,670
-    Array<BonedMeshData> b_data;BonedMeshBase::b_data40,685
-    Array<Bone> bones;BonedMeshBase::bones41,718
-    HashMap<BonedMeshBase::HashMap42,757
-    HashMap<String, BonedAnimation> animations;BonedMeshBase::animations42,757
-  struct BonedMesh 52,989
-    BonedMeshBase* base;BonedMesh::base54,1024
-    Array<Bone> bones;BonedMesh::bones55,1049
-
-BoundingObject.hpp,821
-  enum BoundingObjectType 10,95
-    BOUNDING_SPHERE,BoundingObjectType::BOUNDING_SPHERE11,123
-    BOUNDING_OBB,BoundingObjectType::BOUNDING_OBB12,144
-    BOUNDING_NONEBoundingObjectType::BOUNDING_NONE13,162
-  struct BoundingSphere 16,186
-    Vec3f center;BoundingSphere::center18,214
-    f32 radius;BoundingSphere::radius19,232
-  struct BoundingOBB 28,427
-    Vec3f center;BoundingOBB::center30,451
-    Vec3f halves;BoundingOBB::halves31,469
-    Vec3f coord[BoundingOBB::coord32,487
-  struct BoundingObject 44,770
-    BoundingObjectType type;BoundingObject::type46,801
-      BoundingSphere sphere;BoundingObject::sphere48,842
-      BoundingOBB obb;BoundingObject::obb49,871
-  struct Manifold 59,1069
-    Vec3f normal;Manifold::normal61,1090
-    f32 penetration;Manifold::penetration62,1108
-
-Camera.hpp,367
-  struct Camera 7,54
-    Vec3f pos;Camera::pos9,73
-    Vec3f dir;Camera::dir10,88
-    Vec3f up;Camera::up11,103
-    f32 fovy;Camera::fovy13,118
-    f32 near_clip;Camera::near_clip14,156
-    f32 far_clip;Camera::far_clip15,175
-    i32 win_width;Camera::win_width17,194
-    i32 win_height;Camera::win_height18,213
-    f32 aspect;Camera::aspect19,233
-
-Color.hpp,200
-    struct Color4 9,94
-    T r;Color4::r11,115
-    T g;Color4::g12,124
-    T b;Color4::b13,133
-    T a;Color4::a14,142
-    Color4(Color4::Color416,152
-  typedef Color4<f32> Color4f;25,286
-
-Assets.hpp,306
-#define DIR_SEP 5,39
-#define DIR_ASSETS 7,60
-#define DIR_SHADERS 8,96
-#define DIR_TEXTURES 9,145
-#define DIR_SHADER_HEADER 10,196
-#define DIR_MODELS 11,245
-#define DIR_VERT_EXTENSION 13,293
-#define DIR_FRAG_EXTENSION 14,326
-#define DIR_MODEL_EXTENSION 15,359
-#define DIR_TEXTURE_EXTENSION 16,394
-
-GL.hpp,48
-#define GLEW_STATIC3,14
-  namespace gl 12,121
-
-Graphics3d.hpp,159
-  struct Graphics3d 10,83
-    Array<Node*> nodes;Graphics3d::nodes12,106
-    Shader shade;Graphics3d::shade13,130
-    Camera* cam;Graphics3d::cam14,148
-
-Graphics.hpp,29
-  namespace graphics 10,100
-
-Input.hpp,380
-  struct Input 9,96
-    GLFWwindow* win;Input::win11,114
-    key_callbacks;Input::key_callbacks13,194
-    char_callbacks;Input::char_callbacks15,266
-    cursor_pos_callbacks;Input::cursor_pos_callbacks17,341
-    resize_callbacks;Input::resize_callbacks19,416
-    mouse_button_callbacks;Input::mouse_button_callbacks21,492
-    static Input input;Input::input49,1404
-
-Math.hpp,16
-NAMESPACE 5,63
-
-MeshLoader.hpp,271
-  struct MeshLoader 10,125
-    HashMap<MeshLoader::HashMap12,148
-    HashMap<String, StaticMesh*> static_meshes;MeshLoader::static_meshes12,148
-    HashMap<MeshLoader::HashMap13,196
-    HashMap<String, BonedMeshBase*> boned_meshes;MeshLoader::boned_meshes13,196
-
-Node.hpp,236
-  struct Node 12,155
-    Node* parent;Node::parent14,184
-    Array<Node*> children;Node::children18,325
-    Array<RenderableReg*> renderables;Node::renderables19,352
-    using Transform::Transform;Node::Transform::Transform22,420
-
-PhysicalObject.hpp,671
-  struct MassData 8,74
-    f32 mass;MassData::mass10,95
-    f32 inv_mass;MassData::inv_mass11,109
-    f32 inertia;MassData::inertia12,127
-    f32 inv_inertia;MassData::inv_inertia13,144
-  struct Material 18,204
-    f32 density;Material::density20,229
-    f32 cor;Material::cor21,246
-    const static Material STATIC;Material::STATIC25,350
-  struct PhysicalObject 28,390
-    Material material;PhysicalObject::material30,424
-    MassData mass_data;PhysicalObject::mass_data31,447
-    Vec3f veloc;PhysicalObject::veloc33,476
-    Vec3f force;PhysicalObject::force34,493
-    Quaternionf spin;PhysicalObject::spin36,511
-  struct StaticObject 45,695
-
-Physics.hpp,215
-  struct Physics 9,106
-    Array<StaticObject*> static_objects;Physics::static_objects11,126
-    Array<PhysicalObject*> dynamic_objects;Physics::dynamic_objects12,167
-    Vec3f gravity;Physics::gravity14,212
-
-Quaternion.hpp,1171
-    struct Quaternion 8,78
-    T x;Quaternion::x10,103
-    T y;Quaternion::y11,112
-    T z;Quaternion::z12,121
-    T w;Quaternion::w13,130
-    Quaternion(Quaternion::Quaternion15,140
-    Quaternion(Quaternion::Quaternion18,218
-    Quaternion(Quaternion::Quaternion22,304
-    Quaternion(Quaternion::Quaternion31,485
-    T getAbs(Quaternion::getAbs45,865
-    void makeUnit(Quaternion::makeUnit49,949
-    Quaternion getUnit(Quaternion::getUnit53,1007
-    Quaternion getConjugate(Quaternion::getConjugate57,1078
-    Mat4<T> getMat(Quaternion::getMat61,1163
-    String toString(Quaternion::toString88,1840
-    void operator=(Quaternion::operator=95,1978
-    Quaternion operator*(Quaternion::operator*99,2073
-    Quaternion operator/(Quaternion::operator/102,2183
-    void operator *=(Quaternion::operator *=105,2293
-    void operator /=(Quaternion::operator /=108,2364
-    Quaternion operator*(Quaternion::operator*112,2436
-    void operator *=(Quaternion::operator *=118,2719
-    Vec3<T> operator*(Quaternion::operator*122,2796
-    static Quaternion lerp(Quaternion::lerp132,3055
-  typedef Quaternion<f32> Quaternionf;140,3250
-
-Renderable.hpp,192
-  struct RenderableReg 13,177
-    VBO vbo;RenderableReg::vbo15,200
-    VAO vao;RenderableReg::vao16,213
-    EBO ebo;RenderableReg::ebo17,226
-    virtual ~RenderableReg(RenderableReg::~RenderableReg24,459
-
-Shader.hpp,1948
-  struct ShaderTypeInfo 10,120
-    GLenum elem_type;ShaderTypeInfo::elem_type12,151
-    GLint elem_num;ShaderTypeInfo::elem_num13,189
-    size_t size;ShaderTypeInfo::size14,209
-  enum ShaderTypeName 20,347
-    TYPE_F32,ShaderTypeName::TYPE_F3221,371
-    TYPE_U32,ShaderTypeName::TYPE_U3222,385
-    TYPE_VECTOR2F,ShaderTypeName::TYPE_VECTOR2F23,399
-    TYPE_VECTOR3F,ShaderTypeName::TYPE_VECTOR3F24,418
-    TYPE_VECTOR4F,ShaderTypeName::TYPE_VECTOR4F25,437
-    TYPE_VECTOR4U,ShaderTypeName::TYPE_VECTOR4U26,456
-    TYPE_LASTShaderTypeName::TYPE_LAST27,475
-  struct ShaderVar 30,497
-    GLint id;ShaderVar::id32,523
-    const ShaderTypeInfo* info;ShaderVar::info33,537
-  struct ShaderUniform 38,630
-      i32 id;ShaderUniform::id41,668
-	u32 block_id;ShaderUniform::block_id43,732
-	u32 buffer_id;ShaderUniform::buffer_id44,747
-    void registerBufferData(ShaderUniform::registerBufferData52,921
-  struct Shader 61,1193
-    u32 id;Shader::id63,1216
-    const static ShaderVar POSITION;Shader::POSITION71,1417
-    const static ShaderVar COLOR;Shader::COLOR72,1454
-    const static ShaderVar TEX_COORD;Shader::TEX_COORD73,1488
-    const static ShaderVar NORMAL;Shader::NORMAL74,1526
-    const static ShaderVar NUM_BONES;Shader::NUM_BONES75,1561
-    const static ShaderVar BONE_INDEXES0;Shader::BONE_INDEXES076,1599
-    const static ShaderVar BONE_WEIGHTS0;Shader::BONE_WEIGHTS077,1641
-    const static ShaderVar BONE_INDEXES1;Shader::BONE_INDEXES178,1683
-    const static ShaderVar BONE_WEIGHTS1;Shader::BONE_WEIGHTS179,1725
-    static ShaderUniform UNI_TEXTURE;Shader::UNI_TEXTURE81,1768
-    static ShaderUniform UNI_MODEL;Shader::UNI_MODEL82,1806
-    static ShaderUniform UNI_VIEW;Shader::UNI_VIEW83,1842
-    static ShaderUniform UNI_PROJ;Shader::UNI_PROJ84,1877
-    static ShaderUniform UNI_BONES;Shader::UNI_BONES85,1912
-    static ShaderUniform UNI_FLAGS;Shader::UNI_FLAGS86,1948
-
-StaticMesh.hpp,234
-  struct StaticMesh 14,230
-    Array<BasicMeshData> data;StaticMesh::data16,270
-    Array<u32> elements;StaticMesh::elements17,301
-    Texture* tex;StaticMesh::tex18,326
-    BoundingObject b_sphere;StaticMesh::b_sphere19,344
-
-Terrain.hpp,76
-  struct Terrain 8,80
-    Array<StaticMesh> chunks;Terrain::chunks10,100
-
-Texture.hpp,98
-  struct Texture 10,114
-    u32 length;Texture::length12,134
-    u32* ids;Texture::ids13,150
-
-Transform.hpp,145
-  struct Transform 9,104
-    Vec3f trans;Transform::trans11,126
-    f32 pad[Transform::pad12,143
-    Quaternionf rot;Transform::rot14,177
-
-VectorMath.hpp,2518
-NAMESPACE 7,77
-    struct Vec2 12,156
-    T x;Vec2::x14,175
-    T y;Vec2::y15,184
-    Vec2(Vec2::Vec217,198
-    void operator=(Vec2::operator=19,254
-    Vec2 operator+(Vec2::operator+23,337
-    Vec2 operator-(Vec2::operator-28,424
-    String toString(Vec2::toString33,507
-  typedef Vec2<f32> Vec2f;39,605
-    struct Vec3 43,662
-    T x;Vec3::x45,685
-    T y;Vec3::y46,694
-    T z;Vec3::z47,703
-    Vec3(Vec3::Vec349,713
-    void operator=(Vec3::operator=52,798
-    Vec3 operator*(Vec3::operator*56,881
-    Vec3 operator/(Vec3::operator/62,968
-    Vec3 operator+(Vec3::operator+68,1056
-    Vec3 operator-(Vec3::operator-74,1164
-    Vec3 operator-(Vec3::operator-80,1266
-    Vec3 operator+=(Vec3::operator+=84,1333
-    Vec3 operator-=(Vec3::operator-=90,1439
-    T abs(Vec3::abs102,1709
-    bool isUnit(Vec3::isUnit106,1781
-    void makeUnit(Vec3::makeUnit111,1883
-    Vec3 getUnit(Vec3::getUnit115,1943
-    String toString(Vec3::toString119,2005
-    static Vec3 cross(Vec3::cross125,2121
-    static T dot(Vec3::dot131,2279
-    static Vec3 lerp(Vec3::lerp135,2378
-  typedef Vec3<f32> Vec3f;143,2555
-    struct Mat4 146,2607
-    T data[Mat4::data148,2630
-    Mat4(Mat4::Mat4150,2647
-    Mat4(Mat4::Mat4158,2770
-    T operator()(Mat4::operator()169,2985
-    void operator=(Mat4::operator=174,3136
-    Mat4 operator+(Mat4::operator+178,3219
-    Mat4 operator*(Mat4::operator*186,3371
-    void operator*=(Mat4::operator*=199,3652
-    void makeIdentity(Mat4::makeIdentity230,4346
-    String toString(Mat4::toString234,4403
-    static Mat4 translate(Mat4::translate246,4638
-    static Mat4 rotate(Mat4::rotate252,4765
-    static Mat4 scale(Mat4::scale256,4872
-    static Mat4 makeTranslate(Mat4::makeTranslate262,4989
-    static Mat4 makeScale(Mat4::makeScale270,5161
-    static Mat4 makeRotate(Mat4::makeRotate279,5351
-    static Mat4 perspective(Mat4::perspective300,5891
-    static Mat4 lookAt(Mat4::lookAt313,6210
-  typedef Mat4<f32> Mat4f;328,6603
-    struct Mat3 331,6655
-    T data[Mat3::data333,6678
-    Mat3(Mat3::Mat3335,6694
-    Mat3(Mat3::Mat3342,6798
-    T operator()(Mat3::operator()346,6894
-    void operator=(Mat3::operator=351,7045
-    Mat3 operator+(Mat3::operator+355,7128
-    Mat3 operator*(Mat3::operator*363,7279
-    void operator*=(Mat3::operator*=376,7560
-    void makeIdentity(Mat3::makeIdentity380,7632
-    String toString(Mat3::toString384,7689
-  typedef Mat3<f32> Mat3f;398,7934
-
-VertexObjects.hpp,427
-  struct VAO 11,119
-    u32 length;VAO::length13,135
-    u32* ids;VAO::ids14,151
-  struct VBO 27,477
-    u32 length;VBO::length29,497
-    u32* ids;VBO::ids30,513
-    u32* lengths;VBO::lengths31,527
-    void bindArray(VBO::bindArray35,605
-    void rebindArray(VBO::rebindArray45,1029
-  struct EBO 56,1322
-    u32 length;EBO::length58,1342
-    u32* ids;EBO::ids59,1358
-    u32* lengths;EBO::lengths60,1372
-
-Collision.hpp,0
-
-Input.cpp,0

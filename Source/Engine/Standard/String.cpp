@@ -1,0 +1,51 @@
+#include <cstdarg>
+#include "String.hpp"
+#include "Containers.hpp"
+
+NAMESPACE {
+
+  namespace str {
+    
+    String vformat (const char *fmt, va_list ap)
+    {
+      // Allocate a buffer on the stack that's big enough for us almost
+      // all the time.  Be prepared to allocate dynamically if it doesn't fit.
+      size_t size = 1024;
+      char stackbuf[1024];
+      Array<char> dynamicbuf;
+      char *buf = &stackbuf[0];
+
+      while (1) {
+	// Try to vsnprintf into our buffer.
+	int needed = vsnprintf (buf, size, fmt, ap);
+	// NB. C99 (which modern Linux and OS X follow) says vsnprintf
+	// failure returns the length it would have needed.  But older
+	// glibc and current Windows return -1 for failure, i.e., not
+	// telling us how much was needed.
+
+	if (needed <= (int)size && needed >= 0) {
+	  // It fit fine so we're done.
+	  return String (buf, (size_t) needed);
+	}
+
+	// vsnprintf reported that it wanted to write more characters
+	// than we allotted.  So try again using a dynamic buffer.  This
+	// doesn't happen very often if we chose our initial size well.
+	size = (needed > 0) ? (needed+1) : (size*2);
+	dynamicbuf.reserve (size);
+	buf = &dynamicbuf[0];
+      }
+    }
+
+    String format (const char *fmt, ...)
+    {
+      va_list ap;
+      va_start (ap, fmt);
+      String buf = vformat (fmt, ap);
+      va_end (ap);
+      return buf;
+    }
+    
+  }
+
+}
