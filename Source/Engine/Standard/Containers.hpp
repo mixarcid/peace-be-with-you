@@ -17,13 +17,14 @@ NAMESPACE {
   template <typename T>
     using InitList = typename std::initializer_list<T>;
 
+
   //Thanks, yrp from StackOverflow!
   template <typename T>
     struct HasOnMove {
     
     /* SFINAE foo-has-correct-sig :) */
     template<typename A>
-    static std::true_type test(void(A::*)(A*)) {
+    static std::true_type test(void(A::*)()) {
       return std::true_type();
     }
 
@@ -50,8 +51,8 @@ NAMESPACE {
     /*  `eval(T const &,std::true_type)` 
 	delegates to `T::foo()` when `type` == `std::true_type`
     */
-    static void eval(T& t, T* t2, std::true_type) {
-      t.onMove(t2);
+    static void eval(T& t, std::true_type) {
+      t.onMove();
     }
     /* `eval(...)` is a no-op for otherwise unmatched arguments */
     template <typename... Args>
@@ -61,8 +62,8 @@ NAMESPACE {
        - `eval(t,type()` when `type` == `std::true_type`
        - `eval(...)` otherwise
     */  
-    static void eval(T& t, T* t2) {
-      eval(t,t2,type());
+    static void eval(T& t) {
+      eval(t,type());
     }
   };
 
@@ -70,25 +71,9 @@ NAMESPACE {
     struct Array {
 
     typedef u32 SizeType;
+    typedef T* Iterator;
 
-    struct Iterator {
-      T* ptr;
-      Iterator(T* _ptr) : ptr(_ptr) {}
-      void operator++() {
-	ptr+=sizeof(T);
-      }
-      T& operator*() const {
-	return *ptr;
-      }
-      bool operator==(Iterator b) const {
-	return ptr == b.ptr;
-      }
-      bool operator!=(Iterator b) const {
-	return ptr != b.ptr;
-      }
-    };
-
-    void* elements;
+    void*  elements;
     SizeType tot_length;
     SizeType used_length;
 
@@ -96,7 +81,6 @@ NAMESPACE {
       : elements(Alloc::malloc(_length*sizeof(T))),
 	tot_length(_length),
 	used_length(0) {
-
     }
 
     Array(InitList<T> list)
@@ -132,7 +116,15 @@ NAMESPACE {
     }
 
     Iterator end() {
-      return (T*) elements + used_length*sizeof(T);
+      return (T*) elements + used_length;
+    }
+
+    T& front() {
+      return *begin();
+    }
+
+    T& back() {
+      return *(end()-1);
     }
 
     SizeType size() {
@@ -140,29 +132,23 @@ NAMESPACE {
     }
 
     void reserve(SizeType size) {
-      void* new_elements = Alloc::malloc(size*sizeof(T));
-      for (SizeType i=0; i<used_length*sizeof(T); i+=sizeof(T)) {
-	T& item = *((T*) elements+i);
-	new ((T*) new_elements+i) T(std::move(item));
-	item.~T();
-      }
       tot_length = size;
-      free(elements);
-      elements = new_elements;
-      /*elements = Alloc::realloc(elements, tot_length*sizeof(T));
+      elements = Alloc::realloc(elements, tot_length*sizeof(T));
       for (T& elem : *this) {
 	HasOnMove<T>::eval(elem);
-	}*/
+      }
     }
 
     T* reserveElem() {
       if (used_length >= tot_length) {
 	reserve(2*tot_length);
       }
-      return (T*) elements + (used_length++)*sizeof(T);
+      SizeType offset = (used_length++);
+      T* ret = (T*) elements + offset;
+      return ret;
     }
 
-    void push_back(T& elem) {
+    void push_back(T const & elem) {
       new(reserveElem()) T(elem);
     }
   
@@ -172,14 +158,24 @@ NAMESPACE {
     }
 
     void pop_back() {
+      back().~T();
       --used_length;
-      (*end()).~T();
     }
 
     void clear() {
-      used_length = 0;
       for (T& elem : *this) {
 	elem.~T();
+      }
+      used_length = 0;
+    }
+
+    void removeAndReplace(Iterator it) {
+      if (used_length > 1) {
+	*it = std::move(this->back());
+	HasOnMove<T>::eval(&it);
+        pop_back();
+      } else {
+	clear();
       }
     }
 
@@ -187,7 +183,7 @@ NAMESPACE {
       debugAssert(index < used_length,
 		  "The Array index is"
 		  " out of bounds");
-      return *((T*) elements + index*sizeof(T));
+      return *((T*) elements + index);
     }
 
     Array<T>& operator=(const Array<T>& arr) {
@@ -197,11 +193,13 @@ NAMESPACE {
     }
 
     Array<T>& operator=(Array<T>&& arr) {
-      *this = arr;
+      elements = arr.elements;
       arr.elements = NULL;
+      used_length = arr.used_length;
+      tot_length = arr.tot_length;
+      return *this;
     }
-    
   };
-
+  
 }
 

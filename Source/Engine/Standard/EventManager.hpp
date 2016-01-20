@@ -27,14 +27,9 @@ NAMESPACE {
     
     virtual void update() {
       event_mutex.lock();
-      for (typename Array<T>::Iterator i = events.begin();
-	   i != events.end();
-	   ++i) {
-	processEvent(*i);
-      }
-      /*for (T event : events) {
+      for (T event : events) {
 	processEvent(event);
-	}*/
+      }
       events.clear();
       event_mutex.unlock();
     }

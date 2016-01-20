@@ -5,12 +5,26 @@
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
 # 1 "Tests/main.cpp"
-# 1 "Source/Engine/Math/Vector.hpp" 1
-       
 
-# 1 "Source/Engine/Math/Math.hpp" 1
-# 1 "/usr/include/string.h" 1 3 4
-# 25 "/usr/include/string.h" 3 4
+# 1 "/usr/include/c++/4.8/cstring" 1 3
+# 39 "/usr/include/c++/4.8/cstring" 3
+       
+# 40 "/usr/include/c++/4.8/cstring" 3
+
+# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 1 3
+# 184 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 3
+namespace std
+{
+  typedef long unsigned int size_t;
+  typedef long int ptrdiff_t;
+
+
+  typedef decltype(nullptr) nullptr_t;
+
+}
+# 426 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 3
+# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h" 1 3
+# 39 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h" 3
 # 1 "/usr/include/features.h" 1 3 4
 # 374 "/usr/include/features.h" 3 4
 # 1 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 1 3 4
@@ -24,8 +38,15 @@
 # 1 "/usr/include/x86_64-linux-gnu/gnu/stubs-64.h" 1 3 4
 # 11 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 2 3 4
 # 399 "/usr/include/features.h" 2 3 4
-# 26 "/usr/include/string.h" 2 3 4
+# 40 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h" 2 3
+# 427 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 2 3
 
+
+# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h" 1 3
+# 430 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 2 3
+# 42 "/usr/include/c++/4.8/cstring" 2 3
+# 1 "/usr/include/string.h" 1 3 4
+# 27 "/usr/include/string.h" 3 4
 extern "C" {
 
 
@@ -469,7 +490,43 @@ extern "C++" const char *basename (const char *__filename)
      throw () __asm ("basename") __attribute__ ((__nonnull__ (1)));
 # 644 "/usr/include/string.h" 3 4
 }
-# 2 "Source/Engine/Math/Math.hpp" 2
+# 43 "/usr/include/c++/4.8/cstring" 2 3
+# 71 "/usr/include/c++/4.8/cstring" 3
+namespace std __attribute__ ((__visibility__ ("default")))
+{
+
+
+  using ::memchr;
+  using ::memcmp;
+  using ::memcpy;
+  using ::memmove;
+  using ::memset;
+  using ::strcat;
+  using ::strcmp;
+  using ::strcoll;
+  using ::strcpy;
+  using ::strcspn;
+  using ::strerror;
+  using ::strlen;
+  using ::strncat;
+  using ::strncmp;
+  using ::strncpy;
+  using ::strspn;
+  using ::strtok;
+  using ::strxfrm;
+  using ::strchr;
+  using ::strpbrk;
+  using ::strrchr;
+  using ::strstr;
+# 120 "/usr/include/c++/4.8/cstring" 3
+
+}
+# 3 "Tests/main.cpp" 2
+# 1 "Source/Engine/Math/Vector.hpp" 1
+       
+
+# 1 "Source/Engine/Math/Math.hpp" 1
+
 # 1 "/usr/include/math.h" 1 3 4
 # 28 "/usr/include/math.h" 3 4
 extern "C" {
@@ -3676,25 +3733,7 @@ namespace peace {
        
 # 37 "/usr/include/c++/4.8/string" 3
 
-# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 1 3
-# 184 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 3
-namespace std
-{
-  typedef long unsigned int size_t;
-  typedef long int ptrdiff_t;
 
-
-  typedef decltype(nullptr) nullptr_t;
-
-}
-# 426 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 3
-# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h" 1 3
-# 427 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 2 3
-
-
-# 1 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h" 1 3
-# 430 "/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h" 2 3
-# 39 "/usr/include/c++/4.8/string" 2 3
 # 1 "/usr/include/c++/4.8/bits/stringfwd.h" 1 3
 # 37 "/usr/include/c++/4.8/bits/stringfwd.h" 3
        
@@ -27019,12 +27058,13 @@ namespace peace {
     using InitList = typename std::initializer_list<T>;
 
 
+
   template <typename T>
     struct HasOnMove {
 
 
     template<typename A>
-    static std::true_type test(void(A::*)(A*)) {
+    static std::true_type test(void(A::*)()) {
       return std::true_type();
     }
 
@@ -27051,8 +27091,8 @@ namespace peace {
 
 
 
-    static void eval(T& t, T* t2, std::true_type) {
-      t.onMove(t2);
+    static void eval(T& t, std::true_type) {
+      t.onMove();
     }
 
     template <typename... Args>
@@ -27062,8 +27102,8 @@ namespace peace {
 
 
 
-    static void eval(T& t, T* t2) {
-      eval(t,t2,type());
+    static void eval(T& t) {
+      eval(t,type());
     }
   };
 
@@ -27071,23 +27111,7 @@ namespace peace {
     struct Array {
 
     typedef u32 SizeType;
-
-    struct Iterator {
-      T* ptr;
-      Iterator(T* _ptr) : ptr(_ptr) {}
-      void operator++() {
- ptr+=sizeof(T);
-      }
-      T& operator*() const {
- return *ptr;
-      }
-      bool operator==(Iterator b) const {
- return ptr == b.ptr;
-      }
-      bool operator!=(Iterator b) const {
- return ptr != b.ptr;
-      }
-    };
+    typedef T* Iterator;
 
     void* elements;
     SizeType tot_length;
@@ -27097,7 +27121,6 @@ namespace peace {
       : elements(Alloc::malloc(_length*sizeof(T))),
  tot_length(_length),
  used_length(0) {
-
     }
 
     Array(InitList<T> list)
@@ -27133,7 +27156,15 @@ namespace peace {
     }
 
     Iterator end() {
-      return (T*) elements + used_length*sizeof(T);
+      return (T*) elements + used_length;
+    }
+
+    T& front() {
+      return *begin();
+    }
+
+    T& back() {
+      return *(end()-1);
     }
 
     SizeType size() {
@@ -27141,29 +27172,23 @@ namespace peace {
     }
 
     void reserve(SizeType size) {
-      void* new_elements = Alloc::malloc(size*sizeof(T));
-      for (SizeType i=0; i<used_length*sizeof(T); i+=sizeof(T)) {
- T& item = *((T*) elements+i);
- new ((T*) new_elements+i) T(std::move(item));
- item.~T();
-      }
       tot_length = size;
-      free(elements);
-      elements = new_elements;
-
-
-
-
+      elements = Alloc::realloc(elements, tot_length*sizeof(T));
+      for (T& elem : *this) {
+ HasOnMove<T>::eval(elem);
+      }
     }
 
     T* reserveElem() {
       if (used_length >= tot_length) {
  reserve(2*tot_length);
       }
-      return (T*) elements + (used_length++)*sizeof(T);
+      SizeType offset = (used_length++);
+      T* ret = (T*) elements + offset;
+      return ret;
     }
 
-    void push_back(T& elem) {
+    void push_back(T const & elem) {
       new(reserveElem()) T(elem);
     }
 
@@ -27173,14 +27198,24 @@ namespace peace {
     }
 
     void pop_back() {
+      back().~T();
       --used_length;
-      (*end()).~T();
     }
 
     void clear() {
-      used_length = 0;
       for (T& elem : *this) {
  elem.~T();
+      }
+      used_length = 0;
+    }
+
+    void removeAndReplace(Iterator it) {
+      if (used_length > 1) {
+ *it = std::move(this->back());
+ HasOnMove<T>::eval(&it);
+        pop_back();
+      } else {
+ clear();
       }
     }
 
@@ -27188,7 +27223,7 @@ namespace peace {
       do { if (!(index < used_length)) { _assert_print("The Array index is" " out of bounds"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
 
                      ;
-      return *((T*) elements + index*sizeof(T));
+      return *((T*) elements + index);
     }
 
     Array<T>& operator=(const Array<T>& arr) {
@@ -27198,10 +27233,12 @@ namespace peace {
     }
 
     Array<T>& operator=(Array<T>&& arr) {
-      *this = arr;
+      elements = arr.elements;
       arr.elements = __null;
+      used_length = arr.used_length;
+      tot_length = arr.tot_length;
+      return *this;
     }
-
   };
 
 }
@@ -35204,7 +35241,7 @@ namespace peace {
     Array<System*> systems;
     SystemManagerState state;
 
-    SystemManager(Array<System*> managed_systems);
+    SystemManager(Array<System*> managed_systems = {});
     void addSystem(System* sys);
     void start();
     void pause();
@@ -35238,14 +35275,9 @@ namespace peace {
 
     virtual void update() {
       event_mutex.lock();
-      for (typename Array<T>::Iterator i = events.begin();
-    i != events.end();
-    ++i) {
- processEvent(*i);
+      for (T event : events) {
+ processEvent(event);
       }
-
-
-
       events.clear();
       event_mutex.unlock();
     }
@@ -35274,6 +35306,10 @@ namespace peace {
     String message;
 
     LogMessage(LogMessageType msg_type, String msg);
+    LogMessage(LogMessage& msg);
+    LogMessage(LogMessage&& msg);
+    LogMessage& operator=(LogMessage& msg);
+    LogMessage& operator=(LogMessage&& msg);
 
   };
 
@@ -35703,7 +35739,7 @@ namespace peace {
   typedef Vec4<i16> Vec4s;
 
 }
-# 2 "Tests/main.cpp" 2
+# 4 "Tests/main.cpp" 2
 # 1 "Source/Engine/Math/Matrix.hpp" 1
        
 
@@ -35965,7 +36001,86 @@ namespace peace {
   typedef Mat4<f32> Mat4f;
 
 }
-# 3 "Tests/main.cpp" 2
+# 5 "Tests/main.cpp" 2
+# 1 "Source/Engine/Standard/Pointable.hpp" 1
+       
+
+
+
+namespace peace {
+
+  template <typename T>
+    struct Pointer;
+
+  struct Pointable {
+
+    Array<Pointer<Pointable>*> pointers;
+
+    Pointable() {}
+    Pointable(Pointable& p);
+    Pointable(Pointable&& p);
+
+    virtual ~Pointable();
+
+    void onMove();
+
+    void operator=(Pointable& p);
+    void operator=(Pointable&& p);
+
+  };
+
+  template <typename T>
+    struct Pointer {
+
+    T* data;
+    Array<Pointer<Pointable>*>::Iterator it;
+
+    Pointer(T* _data)
+      : data(_data),
+ it(data ? data->pointers.end() : __null) {
+      if (data) {
+ data->pointers.push_back((Pointer<Pointable>*)this);
+      }
+    }
+
+    ~Pointer() {
+      if (*this) {
+ data->pointers.removeAndReplace(it);
+ if (data->pointers.size() > 0) {
+   (*it)->it = it;
+ }
+      }
+    }
+
+    void operator==(T* _data) {
+      return data == _data;
+    }
+
+    bool operator!=(T* _data) {
+      return data != _data;
+    }
+
+    operator bool() {
+      return data;
+    }
+
+
+    T& operator*() {
+      do { if (!(data)) { _assert_print("You have a NULL pointer"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+                              ;
+      return *data;
+    }
+
+    T* operator->() {
+      do { if (!(data)) { _assert_print("You have a NULL pointer"); fprintf(stderr, "Stack trace: %s", getStackTrace().c_str()); abort(); } } while (0)
+                              ;
+      return data;
+    }
+
+  };
+
+}
+# 6 "Tests/main.cpp" 2
 # 1 "Source/Engine/Standard/RTTI.hpp" 1
        
 
@@ -36034,7 +36149,7 @@ namespace peace {
   }
 
 }
-# 4 "Tests/main.cpp" 2
+# 7 "Tests/main.cpp" 2
 
 
 
@@ -36056,18 +36171,27 @@ namespace peace {
   };
   $registerRttiStruct();
 
+  struct TestPointable : Pointable {
+
+    i32 data;
+
+    TestPointable(i32 _data) : data(_data) {}
+
+  };
+
 }
 
 i32 main() {
 
-
+  GameAllocator::init();
   Log::init(__null);
-  SystemManager man({&Log::logger});
+  SystemManager man;
+  man.addSystem(&Log::logger);
   man.start();
 
   Log::message("Testing vector libraries...");
 
-  Log::message("Vectors:");
+  Log::message("\nVectors:");
 
   Vec3f v1(1,2,3);
   Vec3f v2(6,2,10);
@@ -36076,7 +36200,7 @@ i32 main() {
   Log::message("v1 dot v2: %f", Vec3f::dot(v1, v2));
   Log::message("v1 cross v2: %s", to_string(Vec3f::cross(v1, v2)).c_str());
 
-  Log::message("Matrices:");
+  Log::message("\nMatrices:");
 
   Mat4f m;
   f32 m_data[9] = {1,2,3,
@@ -36094,7 +36218,7 @@ i32 main() {
   Log::message("s: %s", (to_string(s)).c_str());
   Log::message("m2*m2: %s", (to_string(m2*m2)).c_str());
 
-  Log::message("RTTI tests");
+  Log::message("\nRTTI tests");
 
   A a;
   B b;
@@ -36102,16 +36226,70 @@ i32 main() {
   Log::message("b is B: %d", typeId(&b) == typeId<B>());
   Log::message("a is b: %d", typeId(&a) == typeId(&b));
 
-  Log::message("Array tests");
-  Array<int> arr = {100,200,300,400,10000};
-  Log::message("arr values:");
-  for (int i : arr) {
-    Log::message("   %i", i);
+  Log::message("\nString tests");
+
+  String str = "Hello there";
+  String str2 = "Hello there";
+  String str3 = "Hello!";
+  Log::message("str: %s", str.c_str());
+  Log::message("str2: %s", str2.c_str());
+  Log::message("str+str2: %s", (str+str2).c_str());
+  Log::message("str == str2: %d", str == str2);
+  Log::message("str == str3: %d", str == str3);
+
+  Log::message("\nArray tests");
+
+  Array<String> arr;
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+  arr.push_back(str);
+  arr.push_back(str2);
+  arr.push_back(str3);
+
+  for (String s : arr) {
+    Log::message("array value: %s", s.c_str());
   }
-  Log::message("arr[4] = %i", arr[4]);
 
-  Log::message("Tests complete");
+  Log::message("\nPointer tests");
+
+  Array<TestPointable> points;
+  points.emplace_back(10);
+  points.emplace_back(11);
+  points.emplace_back(12);
+  points.emplace_back(13);
+  Pointer<TestPointable> ptr(&points[2]);
+  for (TestPointable p : points) {
+    Log::message("TestPointable value: %d", p.data);
+  }
+  Log::message("ptr->data: %d", ptr->data);
+  points.removeAndReplace(points.begin());
+  points.removeAndReplace(points.begin());
+  for (TestPointable p : points) {
+    Log::message("TestPointable value: %d", p.data);
+  }
+  Log::message("ptr->data: %d", ptr->data);
+
+  Log::message("\nTests complete");
   Log::terminate();
-
+  GameAllocator::terminate();
   return 0;
 }

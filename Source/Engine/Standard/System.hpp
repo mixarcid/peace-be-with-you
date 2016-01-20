@@ -26,7 +26,7 @@ NAMESPACE {
     Array<System*> systems;
     SystemManagerState state;
 
-    SystemManager(Array<System*> managed_systems);
+    SystemManager(Array<System*> managed_systems = {});
     void addSystem(System* sys);
     void start();
     void pause();

@@ -1,4 +1,4 @@
-/*#include "GameAllocator.hpp"
+#include "GameAllocator.hpp"
 #include "Log.hpp"
 
 void* operator new(size_t size) {
@@ -31,4 +31,4 @@ void* operator new[](size_t size) {
    } else {
      free(ptr);
    }
-   }*/
+ }

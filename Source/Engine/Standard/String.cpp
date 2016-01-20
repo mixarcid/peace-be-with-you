@@ -4,6 +4,149 @@
 
 NAMESPACE {
 
+  /*
+  template <typename Char,
+	    typename Alloc,
+	    u8 BuffSize>
+  struct BasicString {
+
+    typedef u32 SizeType;
+
+    SizeType length;
+    union {
+      Char buffer[BuffSize];
+      Char* contents;
+    };
+
+    BasicString()
+      : length(0),
+	contents(NULL) {}
+
+    BasicString(const Char* str)
+      : length(strlen(str)) {
+      debugAssert(str,
+		  "Why are you initializing a BasicString"
+		  " with the NULL pointer?");
+      if (length < BuffSize) {
+	strcpy(buffer, str);
+      } else {
+	contents = (Char*) Alloc::malloc((length+1)*sizeof(Char));
+	strcpy(contents, str);
+      }
+    }
+    
+    BasicString(const BasicString& str)
+      : length(str.length) {
+      if (length < BuffSize) {
+	strcpy(buffer, str.buffer);
+      } else {
+	contents = (Char*) Alloc::malloc((length+1)*sizeof(Char));
+	strcpy(contents, str.contents);
+      }
+    }
+    
+    BasicString(BasicString&& str)
+      : length(str.length) {
+      if (length < BuffSize) {
+	strcpy(buffer, str.buffer);
+      } else {
+	contents = str.contents;
+        str.length = 0;
+      }
+    }
+
+    ~BasicString() {
+      if (length >= BuffSize) {
+	Alloc::free((void*)contents);
+      }
+    }
+
+    const Char* c_str() const {
+      if (length < BuffSize) {
+	return buffer;
+      } else {
+	return contents;
+      }
+    }
+
+    BasicString& operator=(const BasicString& b) {
+      BasicString tmp(b);
+      *this = std::move(tmp);
+      return *this;
+    }
+
+    BasicString& operator=(BasicString&& b) {
+      length = b.length;
+      if (length < BuffSize) {
+	strcpy(buffer, b.buffer);
+      } else {
+	free(contents);
+	contents = b.contents;
+	b.length = 0;
+      }
+    }
+
+    BasicString& operator+=(const BasicString& b) {
+      SizeType new_len = length + b.length;
+      if (new_len < BuffSize) {
+	strcpy(buffer+length, b.buffer);
+      } else {
+	if (length < BuffSize) {
+	  contents = (Char*) Alloc::malloc((new_len+1)*sizeof(Char));
+	  strcpy(contents, buffer);
+	} else {
+	  contents = (Char*) Alloc::realloc(contents, (new_len+1)*sizeof(Char));
+	}
+	strcpy(contents+length, b.c_str());
+      }
+      length = new_len;
+      return *this;
+    }
+    
+  };
+
+template <typename Char,
+	    typename Alloc,
+	    u8 BuffSize>
+BasicString<Char,Alloc,BuffSize>
+operator+(const BasicString<Char,Alloc,BuffSize>& a,
+	  const BasicString<Char,Alloc,BuffSize>& b) {
+  BasicString<Char,Alloc,BuffSize> ret;
+  ret.length = a.length + b.length;
+  if (ret.length < BuffSize) {
+    strcpy(ret.buffer,a.buffer);
+    strcpy(ret.buffer+a.length,b.buffer);
+  } else {
+    ret.contents = (Char*) Alloc::malloc((ret.length+1)*sizeof(Char));
+    strcpy(ret.contents,a.c_str());
+    strcpy(ret.contents+a.length,b.c_str());
+  }
+  return ret;
+}
+
+template <typename Char,
+	    typename Alloc,
+	    u8 BuffSize>
+bool operator==(const BasicString<Char,Alloc,BuffSize>& a,
+		const BasicString<Char,Alloc,BuffSize>& b) {
+  if (a.length != b.length) {
+    return false;
+  } else {
+    return memcmp(a.c_str(),b.c_str(),a.length) == 0;
+  }
+}
+
+template <typename Char,
+	    typename Alloc,
+	    u8 BuffSize>
+bool operator!=(const BasicString<Char,Alloc,BuffSize>& a,
+		const BasicString<Char,Alloc,BuffSize>& b) {
+  return !(a==b);
+}
+
+typedef BasicString<char,GameAllocator,8> MyString;
+  */
+
   namespace str {
     
     String vformat (const char *fmt, va_list ap)

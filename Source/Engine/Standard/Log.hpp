@@ -24,6 +24,10 @@ NAMESPACE {
     String message;
 
     LogMessage(LogMessageType msg_type, String msg);
+    LogMessage(LogMessage& msg);
+    LogMessage(LogMessage&& msg);
+    LogMessage& operator=(LogMessage& msg);
+    LogMessage& operator=(LogMessage&& msg);
     
   };
 

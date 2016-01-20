@@ -26,6 +26,26 @@ NAMESPACE {
     : type(msg_type),
     message(msg) {}
 
+  LogMessage::LogMessage(LogMessage& msg)
+    : type(msg.type),
+    message(msg.message.c_str()) {}
+
+  LogMessage::LogMessage(LogMessage&& msg)
+    : type(msg.type),
+    message(msg.message.c_str()) {}
+
+  LogMessage& LogMessage::operator=(LogMessage& msg) {
+    type = msg.type;
+    message = msg.message.c_str();
+    return *this;
+  }
+
+  LogMessage& LogMessage::operator=(LogMessage&& msg) {
+    type = msg.type;
+    message = msg.message.c_str();
+    return *this;
+  }
+
   void Log::processEvent(LogMessage msg) {
 
     const char* c_msg = msg.message.c_str();
