@@ -7,6 +7,7 @@
 #include "Function.hpp"
 #include "GameAllocator.hpp"
 #include "Exception.hpp"
+#include "Assert.hpp"
 
 NAMESPACE {
 
@@ -77,7 +78,7 @@ NAMESPACE {
     SizeType tot_length;
     SizeType used_length;
 
-    Array(SizeType _length=2)
+    Array(SizeType _length=8)
       : elements(Alloc::malloc(_length*sizeof(T))),
 	tot_length(_length),
 	used_length(0) {
@@ -92,50 +93,59 @@ NAMESPACE {
       }
     }
 
-    Array(Array<T>& arr)
+    Array(const Array& arr)
       : elements(Alloc::malloc(arr.tot_length*sizeof(T))),
 	tot_length(arr.tot_length),
-	used_length(arr.used_length) {
-      memcpy(elements, arr.elements, tot_length*sizeof(T));
+	used_length(0) {
+      for (T& elem : arr) {
+	push_back(elem);
+      }
     }
 
-    Array(Array<T>&& arr)
+    Array(Array&& arr)
       : elements(arr.elements),
 	tot_length(arr.tot_length),
 	used_length(arr.used_length) {
       arr.elements = NULL;
+      arr.used_length = 0;
+      arr.tot_length = 0;
     }
     
     ~Array() {
       clear();
-      Alloc::free(elements);
+      if (elements) {
+	Alloc::free(elements);
+      }
     }
 
-    Iterator begin() {
+    Iterator begin() const {
       return (T*) elements;
     }
 
-    Iterator end() {
+    Iterator end() const {
       return (T*) elements + used_length;
     }
 
-    T& front() {
+    T& front() const {
       return *begin();
     }
 
-    T& back() {
+    T& back() const {
       return *(end()-1);
     }
 
-    SizeType size() {
+    SizeType size() const {
       return used_length;
     }
 
     void reserve(SizeType size) {
       tot_length = size;
+      void* old_elements = elements;
       elements = Alloc::realloc(elements, tot_length*sizeof(T));
-      for (T& elem : *this) {
-	HasOnMove<T>::eval(elem);
+      if (old_elements != elements) {
+	for (T& elem : *this) {
+	  HasOnMove<T>::eval(elem);
+	}
       }
     }
 
@@ -148,13 +158,17 @@ NAMESPACE {
       return ret;
     }
 
-    void push_back(T const & elem) {
-      new(reserveElem()) T(elem);
+    Iterator push_back(T const & elem) {
+      return new(reserveElem()) T(elem);
     }
   
-    template <typename... Args>
-    void emplace_back(Args... args) {
-      new(reserveElem()) T(args...);
+    template <typename U=T, typename... Args>
+    Iterator emplace_back(Args... args) {
+      debugAssert(sizeof(U) == sizeof(T),
+		  "Array::emplace_back only accepts"
+		  " types that have the same size as"
+		  " the Array type");
+      return new(reserveElem()) U(args...);
     }
 
     void pop_back() {
@@ -171,35 +185,99 @@ NAMESPACE {
 
     void removeAndReplace(Iterator it) {
       if (used_length > 1) {
-	*it = std::move(this->back());
-	HasOnMove<T>::eval(&it);
-        pop_back();
+	it->~T();
+	memcpy((void*)it,(void*)(end()-1),sizeof(T));
+	HasOnMove<T>::eval(*it);
+	--used_length;
       } else {
 	clear();
       }
     }
 
-    T& operator[](SizeType index) {
+    Iterator insert(Iterator pos, T& item) {
+      debugAssert(pos >= begin() && pos < end(),
+		  "Invalid Iterator passed to "
+		  "Array::insert");
+      if (used_length >= tot_length) {
+	reserve(2*tot_length);
+      }
+      ++used_length;
+      memmove((void*)(pos+1),
+	      (void*)pos,
+	      (SizeType)((char*)end()-(char*)pos));
+      for (Iterator it=pos+1; it<end(); ++it) {
+	HasOnMove<T>::eval(*it);
+      }
+      return new(pos) T(item);
+    }
+
+    template <typename U=T, typename... Args>
+    Iterator emplace(Iterator pos, Args... args) {
+      debugAssert(sizeof(U) == sizeof(T),
+		  "Array::emplace only accepts"
+		  " types that have the same size as"
+		  " the Array type");
+      debugAssert(pos >= begin() && pos < end(),
+		  "Invalid Iterator passed to "
+		  "Array::emplace");
+      if (used_length >= tot_length) {
+	reserve(2*tot_length);
+      }
+      ++used_length;
+      memmove((void*)(pos+1),
+	      (void*)pos,
+	      (SizeType)((char*)end()-(char*)pos));
+      for (Iterator it=pos+1; it<end(); ++it) {
+	HasOnMove<T>::eval(*it);
+      }
+      return new(pos) U(args...);
+    }
+
+    /*
+      crude implimentation, but it ain't bad for
+      small arrays
+
+      cmp returns true if we want the second element to
+      go behind the first, false otherwise
+    */
+    Iterator insertSorted(T item,
+			  function<bool(T&,T&)> cmp) {
+      for (Iterator it = begin(); it != end(); ++it) {
+	if (cmp(*it, item)) {
+	  return insert(it,item);
+	}
+      }
+      return push_back(item);
+    }
+
+    T& operator[](SizeType index) const {
       debugAssert(index < used_length,
 		  "The Array index is"
 		  " out of bounds");
       return *((T*) elements + index);
     }
 
-    Array<T>& operator=(const Array<T>& arr) {
+    Array& operator=(const Array& arr) {
       Array tmp(arr);
       *this = std::move(tmp);
       return *this;
     }
 
-    Array<T>& operator=(Array<T>&& arr) {
+    Array& operator=(Array&& arr) {
+      clear();
+      if (elements) {
+	Alloc::free(elements);
+      }
       elements = arr.elements;
       arr.elements = NULL;
       used_length = arr.used_length;
+      arr.used_length = 0;
       tot_length = arr.tot_length;
+      arr.tot_length = 0;
       return *this;
     }
   };
+
   
 }
 

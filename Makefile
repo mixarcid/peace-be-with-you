@@ -5,13 +5,13 @@ PREPROCESS= cpp
 EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti -Wno-unused-command-line-argument
 DEBUG_FLAGS= -rdynamic -ggdb
-INCLUDE= $(shell find Source -type d | sed 's/[^\s]*/-I&/g')
+INCLUDE= $(shell find Source -type d | sed 's/[^\s]*[^\s]/-I&/g')
 INCLUDE+= -IThirdParty/include
 SOURCES= $(call rwildcard, Source/, *.cpp)
 OUTDIR= bin/
 
 ifeq ($(MAKECMDGOALS), tests)
-SOURCES:= $(filter-out Source/Game/main.cpp, $(SOURCES))
+SOURCES:= $(filter-out Source/main.cpp, $(SOURCES))
 SOURCES+= $(wildcard Tests/*.cpp)
 INCLUDE+= -ITests
 EXECUTABLE = $(OUTDIR)test
@@ -22,12 +22,7 @@ endif
 EXPANSIONS=$(SOURCES:.cpp=.ii)
 OBJECTS=$(SOURCES:.cpp=.o)
 
-#Thanks, Jonathan Cline from StackOverflow
-#ifeq ($(MAKECMDGOALS),clean)
-#DEPENDS=
-#else
 DEPENDS=$(SOURCES:.cpp=.d)
-#endif
 
 UNAME= $(shell uname)
 
@@ -61,11 +56,11 @@ $(EXECUTABLE): $(OBJECTS)
 	$(PREPROCESS) -x c++ $(CXXFLAGS) $*.cpp $(INCLUDE) | tee $*.exp | $(EXPANDER) $(INCLUDE) "/dev/stdin" > $@
 
 %.d:%.cpp
-	echo $*.cpp
-#echo -n "$*.d ">$*.d
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d
 
+ifeq ($(MAKECMDGOALS),clean)
 -include $(DEPENDS)
+endif
 
 clean:
 	@rm -f $(OBJECTS) $(EXPANSIONS) $(EXECUTABLE) $(DEPENDS)

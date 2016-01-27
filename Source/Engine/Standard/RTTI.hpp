@@ -2,6 +2,7 @@
 
 #include "Macros.hpp"
 #include "Types.hpp"
+#include "Pointable.hpp"
 #include "RTTI.py"
 
 
@@ -26,6 +27,11 @@ NAMESPACE {
   };
 
   inline TypeId typeId(BaseRTTI* object) {
+    return object->type_id;
+  }
+
+  template <typename T>
+    inline TypeId typeId(Pointer<T> object) {
     return object->type_id;
   }
 

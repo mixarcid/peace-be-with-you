@@ -14,12 +14,18 @@ NAMESPACE {
     "]" LOG_MESSAGE_RESET " ";
 
   void _assert_print(const char* message, ...) {
+    Log::logger.update();
     va_list args;
     va_start(args, message);
     fprintf(stderr, "%s", ERROR_MSG);
     vfprintf(stderr, message, args);
     fprintf(stderr, "\n");
     va_end(args);
+  }
+
+  void _assert_print(String message) {
+    Log::logger.update();
+    fprintf(stderr, "%s%s\n", ERROR_MSG, message.c_str());
   }
   
   LogMessage::LogMessage(LogMessageType msg_type, String msg)
@@ -91,8 +97,12 @@ NAMESPACE {
   }
 
   void Log::terminate() {
-    logger.update();
+    Log::logger.update();
     fclose(Log::logger.logfile);
+  }
+
+  Log* Log::getSystem() {
+    return &Log::logger;
   }
 
   void Log::message(String message) {

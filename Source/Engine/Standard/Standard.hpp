@@ -1,6 +1,5 @@
 #include "Macros.hpp"
 #include "Log.hpp"
-#include "String.hpp"
 #include "Exception.hpp"
 #include "Types.hpp"
-#include "GameAllocator.hpp"
+#include "Assert.hpp"

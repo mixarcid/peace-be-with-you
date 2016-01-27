@@ -53,5 +53,8 @@ NAMESPACE {
     state = SYSTEM_KILLED;
     state_mutex.unlock();
     thread.join();
+    for (System* sys : systems) {
+      sys->update();
+    }
   }
 }

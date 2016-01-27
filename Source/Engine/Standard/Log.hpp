@@ -42,6 +42,8 @@ NAMESPACE {
     static void init(const char* filename, bool print_Log=false);
     static void terminate();
 
+    static Log* getSystem();
+
     static void message(const char* message, ...);
     static void error(const char* message, ...);
     static void fatalError(const char* message, ...);
