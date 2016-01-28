@@ -72,16 +72,16 @@ NAMESPACE {
       
       switch (properties.style) {
       case GUI_TEXT_STYLE_REGULAR:
-	GUIElem::tex = GUI::FONT_TEXTURE_REGULAR;
+	GUIElem::tex = GUI::FONT_TEXTURE_REGULAR.get();
 	break;
       case GUI_TEXT_STYLE_BOLD:
-	GUIElem::tex = GUI::FONT_TEXTURE_BOLD;
+	GUIElem::tex = GUI::FONT_TEXTURE_BOLD.get();
 	break;
       case GUI_TEXT_STYLE_ITALIC:
-	GUIElem::tex = GUI::FONT_TEXTURE_ITALIC;
+	GUIElem::tex = GUI::FONT_TEXTURE_ITALIC.get();
 	break;
       case GUI_TEXT_STYLE_BOLD_ITALIC:
-	GUIElem::tex = GUI::FONT_TEXTURE_BOLD_ITALIC;
+	GUIElem::tex = GUI::FONT_TEXTURE_BOLD_ITALIC.get();
 	break;
       }
 

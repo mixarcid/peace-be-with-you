@@ -2,16 +2,10 @@
 
 NAMESPACE {
 
-  StaticMesh::StaticMesh(Array<BasicMeshData> mesh_data,
-			 Array<u32> mesh_elems,
-			 Texture* texture,
+  StaticMesh::StaticMesh(Texture* texture,
 			 ShaderFlags _shader_flags)
     : RenderableReg(_shader_flags),
-    data(mesh_data),
-    elements(mesh_elems),
-    tex(texture),
-    b_sphere(BOUNDING_SPHERE, mesh_data),
-    b_obb(BOUNDING_OBB, mesh_data) {}
+    tex(texture) {}
 
   void StaticMesh::init() {
     RenderableReg::init();
@@ -21,6 +15,8 @@ NAMESPACE {
     RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL,
 	  Shader::TEX_COORD});
+    b_sphere = BoundingObject(BOUNDING_SPHERE, data);
+    b_obb = BoundingObject(BOUNDING_OBB, data);
   }
 
   BoundingObject StaticMesh::getTightBoundingObject() {

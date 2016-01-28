@@ -4,8 +4,17 @@
 
 NAMESPACE {
 
-  Texture::Texture(u32 num_textures) {
-    length = num_textures;
+  Texture::Texture(u32 num_textures)
+    : length(num_textures) {}
+
+  Texture::~Texture() {
+    if (ids) {
+      glDeleteTextures(length, ids);
+      delete[] ids;
+    }
+  }
+
+  void Texture::init() {
     ids = new u32[length];
     glGenTextures(length, ids);
   }
@@ -54,8 +63,7 @@ NAMESPACE {
 		    GL_TEXTURE_MAG_FILTER,
 		    GL_LINEAR);
     PEACE_GL_CHECK_ERROR;
-    
-    Log::message("Loaded texture %s", filename.c_str());
+
   }
 
   void Texture::use(u32 index) {
@@ -65,10 +73,22 @@ NAMESPACE {
     glActiveTexture(tex_index);
     glBindTexture(GL_TEXTURE_2D, ids[index]);
   }
+
+  DEFINE_ASSET_LOADER(Texture);
   
-  Texture::~Texture() {
-    glDeleteTextures(length, ids);
-    delete ids;
+  template<>
+    Texture* loadAsset<Texture>(String name) {
+    auto inserted = AssetLoader<Texture>::loaded_assets
+      .insert(makePair(name, Texture()));
+    debugAssert(inserted.second,
+		"There was a problem inserting Texture %s"
+		" into the HashMap", name.c_str());
+    inserted.first->second.init();
+    inserted.first->second.load(name, Shader::UNI_TEXTURE);
+#ifdef PEACE_LOG_LOADED_ASSETS
+    Log::message("Loaded Texture %s", name.c_str());
+#endif
+    return &inserted.first->second;
   }
 
 }

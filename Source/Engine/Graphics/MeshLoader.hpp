@@ -4,19 +4,17 @@
 #include "String.hpp"
 #include "Containers.hpp"
 #include "BonedMesh.hpp"
+#include "Assets.hpp"
 
 NAMESPACE {
 
-  struct MeshLoader {
-
-    HashMap<String, StaticMesh*> static_meshes;
-    HashMap<String, BonedMeshBase*> boned_meshes;
-    Array<Texture*> textures;
-    
-    MeshLoader(String filename);
-    StaticMesh* getStaticMesh(String mesh_name);
-    BonedMesh getBonedMesh(String mesh_name);
-    ~MeshLoader();
-  };
-
+  /*Both these Assets expect the name to be 
+    in the form "Filename:Meshname"
+   */
+  
+  template<>
+    StaticMesh* loadAsset<StaticMesh>(String name);
+  template<>
+    BonedMeshBase* loadAsset<BonedMeshBase>(String name);
+  
 }

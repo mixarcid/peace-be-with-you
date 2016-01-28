@@ -19,9 +19,7 @@ NAMESPACE {
     BoundingObject b_sphere;
     BoundingObject b_obb;
     
-    StaticMesh(Array<BasicMeshData> mesh_data,
-	       Array<u32> mesh_elems,
-	       Texture* texture,
+    StaticMesh(Texture* texture,
 	       ShaderFlags _shader_flags
 	       = SHADER_NO_FLAGS);
     

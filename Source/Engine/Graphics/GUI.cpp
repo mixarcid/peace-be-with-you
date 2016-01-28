@@ -1,15 +1,16 @@
 #include "GUI.hpp"
 #include "BoundingObject.hpp"
 #include "Graphics.hpp"
-#include "Assets.hpp"
 
 NAMESPACE {
 
   const String GUI::FONT_NAME = "Quicksand";
-  Texture* GUI::FONT_TEXTURE_REGULAR = NULL;
-  Texture* GUI::FONT_TEXTURE_BOLD = NULL;
-  Texture* GUI::FONT_TEXTURE_ITALIC = NULL;
-  Texture* GUI::FONT_TEXTURE_BOLD_ITALIC = NULL;
+  
+  Asset<Texture> GUI::FONT_TEXTURE_REGULAR(GUI::FONT_NAME + "-Regular");
+  Asset<Texture> GUI::FONT_TEXTURE_BOLD(GUI::FONT_NAME + "-Bold");
+  Asset<Texture> GUI::FONT_TEXTURE_ITALIC(GUI::FONT_NAME + "-Italic");
+  Asset<Texture> GUI::FONT_TEXTURE_BOLD_ITALIC(GUI::FONT_NAME + "-BoldItalic");
+  
   const Vec2f GUI::FONT_TEXTURE_SIZE(1028,1028);
   const u8 GUI::FONT_TEXTURE_CHARS_PER_LINE = 16;
   const u8 GUI::FONT_TEXTURE_NUM_LINES = 16;
@@ -17,40 +18,7 @@ NAMESPACE {
     (1/((f32)FONT_TEXTURE_CHARS_PER_LINE),
      1/((f32)FONT_TEXTURE_NUM_LINES));
 
-  CONSTRUCT_ASSET(FONT_TEXTURE_LOADER);
-  GUI::FONT_TEXTURE_REGULAR = new Texture();
-  GUI::FONT_TEXTURE_REGULAR->use();
-  GUI::FONT_TEXTURE_REGULAR->load
-    (GUI::FONT_NAME + "-Regular",
-     Shader::UNI_TEXTURE);
-
-  GUI::FONT_TEXTURE_BOLD = new Texture();
-  GUI::FONT_TEXTURE_BOLD->use();
-  GUI::FONT_TEXTURE_BOLD->load
-    (GUI::FONT_NAME + "-Bold",
-     Shader::UNI_TEXTURE);
-
-  GUI::FONT_TEXTURE_ITALIC = new Texture();
-  GUI::FONT_TEXTURE_ITALIC->use();
-  GUI::FONT_TEXTURE_ITALIC->load
-    (GUI::FONT_NAME + "-Italic",
-     Shader::UNI_TEXTURE);
-
-  GUI::FONT_TEXTURE_BOLD_ITALIC = new Texture();
-  GUI::FONT_TEXTURE_BOLD_ITALIC->use();
-  GUI::FONT_TEXTURE_BOLD_ITALIC->load
-    (GUI::FONT_NAME + "-BoldItalic",
-     Shader::UNI_TEXTURE);
-
-  DELETE_ASSET;
   
-  delete GUI::FONT_TEXTURE_REGULAR;
-  delete GUI::FONT_TEXTURE_BOLD;
-  delete GUI::FONT_TEXTURE_ITALIC;
-  delete GUI::FONT_TEXTURE_BOLD_ITALIC;
-  
-  END_ASSET;
-
   GUIElemData::GUIElemData(Vec2s _pos, Vec2f _tex_coord)
     : pos(_pos), tex_coord(_tex_coord) {}
     

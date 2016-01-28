@@ -4,32 +4,20 @@
 #include "Engine.hpp"
 
 NAMESPACE {
-  
+
+  Pointer<Player> Player::ptr;
   f32 Player::cam_speed(1);
   f32 Player::cam_rot_speed(0.001);
-  StaticMesh* Player::mesh;
-  static MeshLoader* loader;
-
-  CONSTRUCT_ASSET(PLAYER_LOADER);
- 
-  loader = new MeshLoader("Monkey");
-  Player::mesh = loader->getStaticMesh("Suzanne");
+  Asset<BonedMeshBase> Player::mesh("SubjectB:Subject");
   
-  DELETE_ASSET;
- 
-  delete loader;
-  
-  END_ASSET;
-
   void Player::init() {
 
-    addComponent(Player::mesh);
+    addComponent(new BonedMesh(Player::mesh.get()));
     
     Input::addCursorPosCallback
       ("Main",
-       [this]
-       (GLFWwindow* win,
-	f64 x, f64 y) {
+       [](GLFWwindow* win,
+	  f64 x, f64 y) {
 	
 	static f64 prev_x = x;
 	static f64 prev_y = y;
@@ -44,7 +32,7 @@ NAMESPACE {
 	Quaternionf q(-y_tot*cam_rot_speed,
 		      0,
 		      -x_tot*cam_rot_speed);
-	engine->graphics.cam.rot = q;
+	Player::ptr->engine->graphics.cam.rot = q;
 	
 	prev_x = x;
 	prev_y = y;
@@ -54,34 +42,42 @@ NAMESPACE {
       
     Input::addKeyCallback
       ("Main",
-       [this]
-       (GLFWwindow* win,
+       [](GLFWwindow* win,
 	i32 key,
 	i32 code,
 	i32 act,
 	i32 mods) {
 
-	Mat3f coord = engine->graphics.cam.getCoord();
+	Mat3f coord = Player::ptr->engine->graphics.cam.getCoord();
 	Vec3f right = coord.col(0);
 	Vec3f dir = coord.col(1);
 	
 	switch(key) {
 	case GLFW_KEY_W:
-	  setTrans(getTrans()+dir*cam_speed);
+	  Player::ptr->setTrans(Player::ptr->getTrans()+dir*cam_speed);
 	  break;
 	case GLFW_KEY_S:
-	  setTrans(getTrans()-dir*cam_speed);
+	  Player::ptr->setTrans(Player::ptr->getTrans()-dir*cam_speed);
 	  break;
 	case GLFW_KEY_A:
-	  setTrans(getTrans()-right*cam_speed);
+	  Player::ptr->setTrans(Player::ptr->getTrans()-right*cam_speed);
 	  break;
 	case GLFW_KEY_D:
-	  setTrans(getTrans()+right*cam_speed);
+	  Player::ptr->setTrans(Player::ptr->getTrans()+right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
+	  if (act == GLFW_PRESS) {
+	    BonedMesh* mesh = (Pointer<BonedMesh>)
+	      Player::ptr->getComponent<RenderableComp>();
+	    mesh->startAnimation("Walk");
+	  }
 	  break;
 	}
       });
+  }
+
+  Player::~Player() {
+    delete getComponent<RenderableComp>();
   }
 
 }

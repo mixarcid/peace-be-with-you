@@ -30,7 +30,7 @@ NAMESPACE {
     Vec3f center;
     f32 radius;
 
-    BoundingSphere(Array<BasicMeshData> data);
+    BoundingSphere(Array<BasicMeshData>& data);
     f32 getVolume();
     f32 getInertia(f32 mass);
     bool someInBox(BoundingAABB box);
@@ -44,7 +44,7 @@ NAMESPACE {
     Vec3f halves;
     Mat3f coord;
 
-    BoundingOBB(Array<BasicMeshData> data);
+    BoundingOBB(Array<BasicMeshData>& data);
     f32 getVolume();
     f32 getInertia(f32 mass);
     Vec3f getClosestPoint(Vec3f point);
@@ -84,7 +84,7 @@ NAMESPACE {
 
     BoundingObject(BoundingObjectType _type = BOUNDING_NONE);
     BoundingObject(BoundingObjectType obj_type,
-		   Array<BasicMeshData> data);
+		   Array<BasicMeshData>& data);
     
     f32 getVolume();
     f32 getInertia(f32 mass);
@@ -96,6 +96,8 @@ NAMESPACE {
     bool allInBox(BoundingAABB box);
     
     void transform(Transform t);
+    
+    BoundingObject& operator=(const BoundingObject& b);
   };
 
 }

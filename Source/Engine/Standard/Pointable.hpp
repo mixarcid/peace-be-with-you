@@ -30,7 +30,7 @@ NAMESPACE {
     T* data;
     Array<Pointer<Pointable>*>::Iterator it;
 
-    Pointer(T* _data)
+    Pointer(T* _data = NULL)
       : data(_data),
 	it(data ? ((Pointable*)data)->pointers.end() : NULL) {
       if (data) {
@@ -68,7 +68,7 @@ NAMESPACE {
     explicit Pointer(Pointer<U>&& ptr)
       : data((T*) ptr.data),
 	it(ptr.it) {
-      *it = this;
+      *it = (Pointer<Pointable>*) this;
       ptr.data = NULL;
     }
   

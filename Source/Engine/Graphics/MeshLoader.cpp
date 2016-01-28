@@ -1,11 +1,13 @@
 #include "MeshLoader.hpp"
 #include "String.hpp"
 #include "FileIO.hpp"
-#include "Assets.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
 
 NAMESPACE {
+
+  DEFINE_ASSET_LOADER(StaticMesh);
+  DEFINE_ASSET_LOADER(BonedMeshBase);
 
   //PMF header stuff
   const char PMF_VERSION = 0x04;
@@ -37,116 +39,123 @@ NAMESPACE {
     return Quaternionf(x,y,z,w);
   }
     
-  StaticMesh* loadStaticMesh(FILE* file, Texture* tex) {
+  void loadStaticMesh(String name, FILE* file, Texture* tex) {
+
+    auto inserted = AssetLoader<StaticMesh>::
+      loaded_assets.insert
+      (makePair(name, StaticMesh(tex)));
+    
+    debugAssert(inserted.second,
+		"There was a problem inserting the StaticMesh %s"
+		" into the HashMap",
+		name.c_str());
+    
+    StaticMesh& mesh = inserted.first->second;
 
     u32 num_verts = fio::readLittleEndian<u32>(file);
-    debugAssert(num_verts > 0,
+    fatalAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
-    Array<BasicMeshData> data;
-    data.reserve(num_verts);
+    mesh.data.reserve(num_verts);
 
     for (u32 index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
-      tex_coord.data[1] = 1 - tex_coord.data[1];
-      data.push_back(BasicMeshData(pos, norm, tex_coord));
+      tex_coord.y() = 1 - tex_coord.y();
+      mesh.data.push_back(BasicMeshData(pos, norm, tex_coord));
       
     }
     
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
-    Array<u32> elems;
-    elems.reserve(num_elems);
-    debugAssert(num_elems > 0,
+    mesh.elements.reserve(num_elems);
+    fatalAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
-    //Log::message("#Elements: %u", num_elems);
 
     for (u32 index = 0; index < num_elems; ++index) {
       u32 elem = fio::readLittleEndian<u32>(file);
-      //Log::message("Element: %u", elem);
-      elems.push_back(elem);
+      mesh.elements.push_back(elem);
     }
 
-    StaticMesh* ret = new StaticMesh(data, elems, tex);
-    ret->init();
-    return ret;
+    mesh.init();
+#ifdef PEACE_LOG_LOADED_ASSETS
+    Log::message("Loaded StaticMesh %s", name.c_str());
+#endif
   }
+  
+  void loadBonedMesh(String name, FILE* file, Texture* tex) {
 
-  BonedMeshBase* loadBonedMesh(FILE* file, Texture* tex) {
-    u32 num_verts = fio::readLittleEndian<u32>(file);
-    debugAssert(num_verts > 0,
-		"Why are you loading a mesh with no vertices?");
-    Array<BasicMeshData> data;
-    data.reserve(num_verts);
-    Array<BonedMeshData> bone_data;
-    bone_data.reserve(num_verts);
+    auto inserted = AssetLoader<BonedMeshBase>::
+      loaded_assets.insert
+      (makePair(name, BonedMeshBase(tex)));
     
-    //Log::message("#Verts: %u", num_verts);
+    debugAssert(inserted.second,
+		"There was a problem loading the BonedMesh %s"
+		" into the HashMap",
+		name.c_str());
+
+    BonedMeshBase& mesh = inserted.first->second;
+    
+    u32 num_verts = fio::readLittleEndian<u32>(file);
+    fatalAssert(num_verts > 0,
+		"Why are you loading a mesh with no vertices?");
+    mesh.data.reserve(num_verts);
+    mesh.bone_data.reserve(num_verts);
+    
     for (u32 index = 0; index < num_verts; ++index) {
 
       Vec3f pos = readVec3f(file);
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
-      tex_coord.data[1] = 1 - tex_coord.data[1];
-
-      /*Log::message("Pos: " + pos.toString());
-	Log::message("Norm: " + norm.toString());
-	Log::message("Tex_coord: " + tex_coord.toString());*/
-
+      tex_coord.y() = 1 - tex_coord.y();
+      
       u8 vert_num_bones = fio::readLittleEndian<u8>(file);
       BonedMeshData d;
-      //Log::message("#bones: %u", d.num_bones);
+      
       fatalAssert(vert_num_bones <= Shader::MAX_BONES_PER_VERTEX,
 		  "Too many bones per vertex!");
       
       for (u32 i = 0; i < vert_num_bones; ++i) {
-	d.indexes[i] = fio::readLittleEndian<u32>(file);\
-	//d.indexes[i] = 1u;
+	d.indexes[i] = fio::readLittleEndian<u32>(file);
 	d.weights[i] = fio::readLittleEndian<f32>(file);
       }
       
-      data.push_back(BasicMeshData(pos, norm, tex_coord));
-      bone_data.push_back(d);
+      mesh.data.push_back(BasicMeshData(pos, norm, tex_coord));
+      mesh.bone_data.push_back(d);
       
     }
     
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
-    debugAssert(num_elems > 0,
+    fatalAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
-    Array<u32> elems;
-    elems.reserve(num_elems);
-    //Log::message("#Elements: %u", num_elems);
+    mesh.elements.reserve(num_elems);
 
     for (u32 index = 0; index < num_elems; ++index) {
       u32 elem = fio::readLittleEndian<u32>(file);
-      //Log::message("Element: %u", elem);
-      elems.push_back(elem);
+      mesh.elements.push_back(elem);
     }
 
     u32 num_bones = fio::readLittleEndian<u32>(file);
-    
-    Array<Bone> bones;
-    bones.reserve(num_bones);
+    mesh.bones.reserve(num_bones);
     
     for (u32 i = 0; i < num_bones; ++i) {
       Vec3f trans = readVec3f(file);
       Quaternionf rot = readQuaternionf(file);
-      bones.push_back(Bone(trans, rot));
+      mesh.bones.push_back(Bone(trans, rot));
     }
 
     u32 num_actions = fio::readLittleEndian<u32>(file);
-    //Log::message("#actions: %u", num_actions);
-    HashMap<String, BonedAnimationBase> actions(num_actions);
+    mesh.animations.reserve(num_actions);
 
     for (u32 i = 0; i < num_actions; ++i) {
       
       String name = fio::readString(file);
+      auto inserted = mesh.animations.insert(Pair<String, BonedAnimationBase>
+					     (name, BonedAnimationBase()));
+      BonedAnimationBase& base = inserted.first->second;
+      
       u32 num_keyframes= fio::readLittleEndian<u32>(file);
-      Array<KeyFrame> keyframes;
-      keyframes.reserve(num_keyframes);
-      //Log::message(name);
-      //Log::message("#keyframes: %u", num_keyframes);
+      base.keyframes.reserve(num_keyframes);
       
       for (u32 i = 0; i < num_keyframes; ++i) {
 
@@ -159,24 +168,18 @@ NAMESPACE {
 	  frame.bones.push_back(Bone(trans,
 				     rot));
 	}
-	keyframes.push_back(frame);
+	base.keyframes.push_back(frame);
       }
-      actions.insert(Pair<String, BonedAnimationBase>
-		     (name,
-		      BonedAnimationBase(keyframes)));
     }
     
-    BonedMeshBase* ret = new BonedMeshBase(data,
-					   elems,
-					   tex,
-					   bone_data,
-					   bones,
-					   actions);
-    ret->init();
-    return ret;
+    mesh.init();
+    
+#ifdef PEACE_LOG_LOADED_ASSETS
+    Log::message("Loaded BonedMesh %s", name.c_str());
+#endif
   }
 
-  MeshLoader::MeshLoader(String filename) {
+ void loadPMF(String filename) {
 
     //gl::checkError();
     String full_name = (DIR_MODELS + filename
@@ -200,19 +203,16 @@ NAMESPACE {
 
     u32 num_meshes = fio::readLittleEndian<u32>(file);
     //Log::message("%u", num_meshes);
-    debugAssert(num_meshes > 0,
+    fatalAssert(num_meshes > 0,
 		"Why are you loading a model with no meshes?");
 
-    Shader::setFlags(SHADER_NO_FLAGS);
-    Texture* model_texture = new Texture();
-    model_texture->use();
-    model_texture->load(filename, Shader::UNI_TEXTURE);
-    textures.push_back(model_texture);
+    Texture* model_texture = AssetLoader<Texture>::getOrLoad(filename);
 
     for (u32 mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
       String mesh_name = fio::readString(file);
+      String final_name = filename + ":" + mesh_name;
 
       //Log::message("Mesh name: " + mesh_name);
       
@@ -225,12 +225,10 @@ NAMESPACE {
 			" no longer supported");
 	break;
       case PMF_TYPE_STATIC_TEXTURE:
-	static_meshes[mesh_name] =
-	  loadStaticMesh(file, model_texture);
+        loadStaticMesh(final_name, file, model_texture);
 	break;
       case PMF_TYPE_BONED_TEXTURE:
-	boned_meshes[mesh_name] = loadBonedMesh(file,
-						model_texture);
+        loadBonedMesh(final_name, file, model_texture);
 	break;
       default:
 	Log::fatalError("Unable to determine type of"
@@ -241,36 +239,38 @@ NAMESPACE {
     }
 
     fclose(file);
-    Log::message("Loaded model %s", filename.c_str());
     
-  }
+ }
 
-  StaticMesh* MeshLoader::getStaticMesh(String name) {
-    StaticMesh* ret = static_meshes[name];
-    fatalAssert(ret != NULL,
-		"The static mesh \"" + name +
-		"\" does not exist in this model");
-    return ret;
-  }
+ void loadModelFromMeshName(String mesh_name) {
+   size_t index = mesh_name.find(":");
+   debugAssert(index != -1,
+	       "Your mesh name is incorrectly formatted; "
+	       "all mesh names must have the format "
+	       "\"Filename:Meshname\"");
+   loadPMF(mesh_name.substr(0,index));
+ }
 
-  BonedMesh MeshLoader::getBonedMesh(String name) {
-    BonedMeshBase* base = boned_meshes[name];
-    fatalAssert(base,
-		"The boned mesh \"" + name +
-		"\" does not exist in this model");
-    BonedMesh ret(base);
-    return ret;
-  }
-
-  MeshLoader::~MeshLoader() {
-    for (const auto pair : static_meshes) {
-      delete pair.second; //the mesh
-    }
-    for (const auto pair : boned_meshes) {
-      delete pair.second;
-    }
-    for (Texture* tex : textures) {
-      delete tex;
-    }
-  }
+ template<>
+   StaticMesh* loadAsset<StaticMesh>(String name) {
+   loadModelFromMeshName(name);
+   auto found = AssetLoader<StaticMesh>::loaded_assets.find(name);
+   debugAssert(found != AssetLoader<StaticMesh>::loaded_assets.end(),
+	       "Something went wrong while loading the StaticMesh %s. "
+	       "Perhaps it doesn't exist?",
+	       name.c_str());
+   return &found->second;
+ }
+ 
+ template<>
+   BonedMeshBase* loadAsset<BonedMeshBase>(String name) {
+   loadModelFromMeshName(name);
+   auto found = AssetLoader<BonedMeshBase>::loaded_assets.find(name);
+   debugAssert(found != AssetLoader<BonedMeshBase>::loaded_assets.end(),
+	       "Something went wrong while loading the BonedMesh %s. "
+	       "Perhaps it doesn't exist?",
+	       name.c_str());
+   return &found->second;
+ }
+  
 }

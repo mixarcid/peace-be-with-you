@@ -29,7 +29,7 @@ NAMESPACE {
 
   struct BonedAnimationBase {
     Array<KeyFrame> keyframes;
-    BonedAnimationBase(Array<KeyFrame> anim_keyframes = {});
+    BonedAnimationBase() {}
   };
 
   struct BonedAnimation {
@@ -47,19 +47,14 @@ NAMESPACE {
   struct BonedMeshBase : StaticMesh {
 
     VBO b_vbo;
-    Array<BonedMeshData> b_data;
+    Array<BonedMeshData> bone_data;
     Array<Bone> bones; //default pose
     HashMap<String, BonedAnimationBase> animations;
 
-    BonedMeshBase(Array<BasicMeshData> static_data,
-		  Array<u32> elems,
-		  Texture* tex,
-		  Array<BonedMeshData> bone_data,
-		  Array<Bone> default_bones,
-		  HashMap<String,
-		  BonedAnimationBase> mesh_animations);
+    BonedMeshBase(Texture* tex);
     void init();
     BonedAnimation getAnimation(String name);
+    
   };
 
   struct BonedMesh : RenderableComp {

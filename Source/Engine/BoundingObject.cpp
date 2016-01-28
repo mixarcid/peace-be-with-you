@@ -40,7 +40,7 @@ NAMESPACE {
     PEACE_UNIMPLIMENTED();
   }
 
-  BoundingSphere::BoundingSphere(Array<BasicMeshData> data) {
+  BoundingSphere::BoundingSphere(Array<BasicMeshData>& data) {
     
     //Ritter's algorithm
     debugAssert(data.size() > 0,
@@ -124,7 +124,7 @@ NAMESPACE {
     center += t.trans;
   }
 
-  BoundingOBB::BoundingOBB(Array<BasicMeshData> data) {
+  BoundingOBB::BoundingOBB(Array<BasicMeshData>& data) {
     
     //just computes the AABB, currently
     debugAssert(data.size() > 0,
@@ -227,7 +227,7 @@ NAMESPACE {
   BoundingObject::BoundingObject(BoundingObjectType _type) : type(_type) {}
 
   BoundingObject::BoundingObject(BoundingObjectType obj_type,
-				 Array<BasicMeshData> data)
+				 Array<BasicMeshData>& data)
     : type(obj_type) {
     switch(type) {
     case BOUNDING_SPHERE:
@@ -316,4 +316,10 @@ NAMESPACE {
       ;
     }
   }
+  
+  BoundingObject& BoundingObject::operator=(const BoundingObject& b) {
+    memcpy(this,&b,sizeof(BoundingObject));
+    return *this;
+  }
+  
 }

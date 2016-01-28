@@ -16,10 +16,6 @@ NAMESPACE {
     : time(frame_time) {
     bones.reserve(num_bones);
   }
-
-  BonedAnimationBase::BonedAnimationBase(Array<KeyFrame>
-					 anim_keyframes)
-    : keyframes(anim_keyframes) {}
   
   BonedAnimation::BonedAnimation(Array<KeyFrame> anim_keyframes)
     : playing(true),
@@ -69,27 +65,10 @@ NAMESPACE {
     //Log::message("h: %f, ck: %u, t: %f", h, cur_keyframe, cur_time);
   }
 
-  BonedMeshBase::BonedMeshBase(Array<BasicMeshData> static_data,
-			       Array<u32> elems,
-			       Texture* tex,
-			       Array<BonedMeshData> bone_data,
-			       Array<Bone> default_bones,
-			       HashMap<String,
-			       BonedAnimationBase> mesh_animations)
-    : StaticMesh(static_data, elems, tex, SHADER_SKELETAL),
-    b_data(bone_data),
-    bones(default_bones),
-    animations(mesh_animations) {}
+  BonedMeshBase::BonedMeshBase(Texture* tex)
+    : StaticMesh(tex, SHADER_SKELETAL) {}
 
   void BonedMeshBase::init() {
-
-    /*for (u32 i = 0; i < bones.size(); ++i) {
-      Log::message(to_string(i) + ": " + bones[i].trans.toString());
-    }
-    for (auto d : StaticMesh::data) {
-      Log::message("Normal: " + d.norm.toString());
-      Log::message("Abs: %f\n", d.norm.abs());
-      }*/
     
     RenderableReg::init();
     b_vbo.init();
@@ -98,7 +77,7 @@ NAMESPACE {
     RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
 
-    b_vbo.bindArray(b_data, false);
+    b_vbo.bindArray(bone_data, false);
     RenderableReg::vao.registerVars({Shader::BONE_INDEXES0,
 	  Shader::BONE_WEIGHTS0});
 

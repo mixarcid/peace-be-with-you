@@ -5,6 +5,7 @@ PREPROCESS= cpp
 EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti -Wno-unused-command-line-argument
 DEBUG_FLAGS= -rdynamic -ggdb
+RELEASE_FLAGS= -Ofast
 INCLUDE= $(shell find Source -type d | sed 's/[^\s]*[^\s]/-I&/g')
 INCLUDE+= -IThirdParty/include
 SOURCES= $(call rwildcard, Source/, *.cpp)
@@ -40,7 +41,7 @@ LIBS+= -lGLEW -lglfw3 -lSOIL -lpthread
 debug: CXXFLAGS+= $(DEBUG_FLAGS)
 debug: $(SOURCES) $(EXECUTABLE)
 
-release: CXXFLAGS+= -O3
+release: CXXFLAGS+= $(RELEASE_FLAGS)
 release: $(SOURCES) $(EXECUTABLE)
 
 tests: debug
@@ -58,7 +59,7 @@ $(EXECUTABLE): $(OBJECTS)
 %.d:%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d
 
-ifeq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPENDS)
 endif
 

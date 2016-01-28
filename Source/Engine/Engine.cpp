@@ -10,6 +10,9 @@ NAMESPACE {
     flags(ENGINE_NO_FLAGS) {}
 
   Engine::~Engine() {
+    if (flags * ENGINE_ASSETS_LOADED) {
+      freeAllAssets();
+    }
     if (flags & ENGINE_GRAPHICS_INIT) {
       gl::terminate();
     }
@@ -35,7 +38,7 @@ NAMESPACE {
 
     flags |= ENGINE_GRAPHICS_INIT;
 
-    Asset::loadAll();
+    loadAllAssets();
     flags |= ENGINE_ASSETS_LOADED;
     
   }

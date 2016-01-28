@@ -18,6 +18,11 @@ NAMESPACE {
   template <typename T>
     using InitList = typename std::initializer_list<T>;
 
+  template <typename A, typename B>
+    Pair<A,B> makePair(A a, B b) {
+    return (Pair<A,B>(a,b));
+  }
+
 
   //Thanks, yrp from StackOverflow!
   template <typename T>

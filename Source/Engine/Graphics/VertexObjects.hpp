@@ -13,6 +13,8 @@ NAMESPACE {
     u32 length;
     u32* ids;
 
+    VAO();
+
     void init(u32 num_vaos = 1);
     void use(u32 index  = 0);
     /*the types of the shader vars must entirely be composed of 
@@ -21,7 +23,6 @@ NAMESPACE {
     void registerVars(Array<ShaderVar> vars,
 		      u32 index = 0);
     ~VAO();
-    //VAO operator=(const VAO b);
     
   };
 
@@ -30,6 +31,8 @@ NAMESPACE {
     u32 length;
     u32* ids;
     u32* lengths;
+
+    VBO();
 
     void init(u32 num_vbos = 1);
     template <typename T>
@@ -51,7 +54,6 @@ NAMESPACE {
     void draw(GLenum mode, u32 index = 0);
     ~VBO();
 
-    //static VBO getVBO(u32 num_vbos = 1);
   };
 
   struct EBO {
@@ -59,6 +61,8 @@ NAMESPACE {
     u32 length;
     u32* ids;
     u32* lengths;
+
+    EBO();
 
     void init(u32 num_ebos = 1);
     void bindArray(Array<u32> arr, bool dynamic,

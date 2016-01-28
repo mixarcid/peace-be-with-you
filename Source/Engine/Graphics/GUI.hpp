@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assets.hpp"
 #include "RenderableComp.hpp"
 #include "Texture.hpp"
 #include "Containers.hpp"
@@ -8,10 +9,10 @@ NAMESPACE {
 
   struct GUI {
     static const String FONT_NAME;
-    static Texture* FONT_TEXTURE_REGULAR;
-    static Texture* FONT_TEXTURE_BOLD;
-    static Texture* FONT_TEXTURE_ITALIC;
-    static Texture* FONT_TEXTURE_BOLD_ITALIC;
+    static Asset<Texture> FONT_TEXTURE_REGULAR;
+    static Asset<Texture> FONT_TEXTURE_BOLD;
+    static Asset<Texture> FONT_TEXTURE_ITALIC;
+    static Asset<Texture> FONT_TEXTURE_BOLD_ITALIC;
     static const Vec2f FONT_TEXTURE_SIZE;
     static const u8 FONT_TEXTURE_CHARS_PER_LINE;
     static const u8 FONT_TEXTURE_NUM_LINES;
