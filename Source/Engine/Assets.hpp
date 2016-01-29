@@ -42,6 +42,7 @@ NAMESPACE {
     struct AssetLoader : AssetLoaderBase {
 
     virtual void loadAll() {
+      loaded_assets.reserve(pending_assets.size());
       for (const auto& item : pending_assets) {
 	if (loaded_assets.find(item.first) == loaded_assets.end()) {
 	  loadAsset<T>(item.first);

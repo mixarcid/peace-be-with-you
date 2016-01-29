@@ -11,9 +11,9 @@ NAMESPACE {
 
   Graphics::~Graphics() {}
 
-  void Graphics::init(String shader_name) {
+  void Graphics::init(const String vert, const String frag) {
     
-    shade.init(shader_name);
+    shade.init(vert, frag);
     shade.use();
     
     glEnable(GL_BLEND);

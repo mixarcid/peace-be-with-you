@@ -34,7 +34,7 @@ NAMESPACE {
 		"Cannot determine OpenGL version");
     Log::message("Your OpenGL version is %s", version);
     
-    graphics.init("Toon");
+    graphics.init("Toon", "Toon");
 
     flags |= ENGINE_GRAPHICS_INIT;
 

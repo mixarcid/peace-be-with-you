@@ -24,7 +24,7 @@ NAMESPACE {
     Graphics(Engine* _engine);
     ~Graphics();
     
-    void init(const String shader_name);
+    void init(const String vert, const String frag);
     
     template <typename... Args>
     void emplaceDirLight(Args... args) {

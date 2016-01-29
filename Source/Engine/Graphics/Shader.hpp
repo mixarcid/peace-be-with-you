@@ -54,11 +54,9 @@ NAMESPACE {
     void keepBuffer(u32 shader_id, String name);
     
     void registerInt(i32 i) const;
-    //void registerMat4f(Mat4f mat) const;
     
     template <typename T>
     void registerVal(T val) {
-      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   sizeof(T),
@@ -66,12 +64,10 @@ NAMESPACE {
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
-      PEACE_GL_CHECK_ERROR;
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
-      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   num_elems*sizeof(T),
@@ -79,18 +75,12 @@ NAMESPACE {
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
-      PEACE_GL_CHECK_ERROR;
     }
     
     template <typename T>
     void registerArray(Array<T> data) {
       registerArray(data.begin(), data.size());
     }
-
-    /*static void initBuffer(u32 shader_id,
-			   String block_name,
-			   InitList<ShaderUniform*>
-			   uniforms);*/
       
   };
 
@@ -111,7 +101,7 @@ NAMESPACE {
     String frag_str;
 
     Shader();
-    void init(const String filename);
+    void init(const String vert, const String frag);
     void use();
     void _use_no_check();
     void localSetFlags(ShaderFlags shade_flags);

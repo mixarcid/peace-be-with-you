@@ -55,26 +55,42 @@ NAMESPACE {
   
   FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
 
-  static String getFileContents(const char* filename) {
-    
-    char contents[MAX_CHARS_IN_FILE];
-    FILE* file = fopen(filename, "r");
+  static String getFileContents(String filename) {
+
+    static HashMap<String, String> all_contents;
+
+    auto it = all_contents.find(filename);
+    if (it != all_contents.end()) {
+      return it->second;
+    }
+
+    FILE* file = fopen(filename.c_str(), "r");
     fatalAssert(file != NULL,
-	       "Error opening %s", filename);
+		"Error opening %s", filename.c_str());
+    
+    fseek(file, 0L, SEEK_END);
+    size_t file_size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    char* contents = new char[file_size];
     i32 line_num = -1;
 
     while (!feof(file)) {
       fatalAssert(line_num < MAX_CHARS_IN_FILE,
-		 "File %s is too long", filename);
+		  "File %s is too long", filename.c_str());
       contents[++line_num] = fgetc(file);
     }
     contents[line_num] = '\0';
     fatalAssert(contents != NULL,
-	       "Error reading %s", filename);
+		"Error reading %s", filename.c_str());
 
     fclose(file);
 
-    return String(contents);
+    String ret(contents);
+    delete[] contents;
+    all_contents[filename] = ret;
+    
+    return ret;
   }
 
   ShaderTypeInfo::ShaderTypeInfo(GLenum type_elem, i32 num_elem,
@@ -101,7 +117,7 @@ NAMESPACE {
     String comb_name = "_" + name;
     block_id = glGetUniformBlockIndex(shader_id,
 				      comb_name.c_str());
-    debugAssert(block_id != GL_INVALID_INDEX,
+    fatalAssert(block_id != GL_INVALID_INDEX,
 		"The uniform block %s does not "
 		"exist in the shader", comb_name.c_str());
     glUniformBlockBinding(shader_id,
@@ -109,18 +125,6 @@ NAMESPACE {
 			  id);
     glGenBuffers(1, &buffer_id);
     glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
-
-    /*i32 block_size;
-    glGetActiveUniformBlockiv(shader_id, block_id,
-			      GL_UNIFORM_BLOCK_DATA_SIZE,
-			      &block_size);
-    Log::message(name);
-    Log::message("name: %s, size: %d\n"
-		 "block id: %d, buffer id: %u",
-		 c_name,
-		 block_size,
-		 block_id,
-		 buffer_id);*/
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id,
@@ -132,20 +136,14 @@ NAMESPACE {
     glUniform1i(id, i);
   }
 
-  /*void ShaderUniform::registerMat4f(Mat4f mat) const {
-    glUniformMatrix4fv(id, 1, GL_FALSE, mat.data);
-    }*/
-
   Shader::Shader()
     : flags(SHADER_UNINITIALIZED) {}
 
-  void Shader::init(const String filename) {
+  void Shader::init(const String vert, const String frag) {
     
     for (u8 i=0; i<SHADER_FLAG_LAST; ++i) {
       flag_ids[i] = -1;
     }
-
-    //printf("%u\n", FIRST_SHADER_LOAD | first_load_flags);
 
     if (first_load_flags & FIRST_SHADER_LOAD) {
       vert_header = getFileContents(SHADER_HEADER_VERT);
@@ -153,14 +151,17 @@ NAMESPACE {
     }
 
     vert_str = vert_header + "\n"
-      + getFileContents((DIR_SHADERS + filename
-			 + DIR_VERT_EXTENSION).c_str());
+      + getFileContents((DIR_SHADERS + vert
+			 + DIR_VERT_EXTENSION));
     frag_str = frag_header + "\n"
-      + getFileContents((DIR_SHADERS + filename +
-			 DIR_FRAG_EXTENSION).c_str());
+      + getFileContents((DIR_SHADERS + frag +
+			 DIR_FRAG_EXTENSION));
 
     localSetFlags(SHADER_SKELETAL);
-    Log::message("Loaded shader %s", filename.c_str());
+#ifdef PEACE_LOG_LOADED_ASSETS
+    Log::message("Loaded vertex shader %s with fragment shader %s",
+		 vert.c_str(), frag.c_str());
+#endif
   }
 
   void Shader::localSetFlags(ShaderFlags shade_flags) {
@@ -198,11 +199,9 @@ NAMESPACE {
     String frag_source = preprocess + frag_str;
     const char* c_vert_source = vert_source.c_str();
     const char* c_frag_source = frag_source.c_str();
-    //Log::message("%s", c_vert_source);
 
     u32 vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &c_vert_source, NULL);
-    //printf("%p", &glCompileShader);
     glCompileShader(vert_id);
 
     u32 frag_id = glCreateShader(GL_FRAGMENT_SHADER);
@@ -222,8 +221,6 @@ NAMESPACE {
     id = glCreateProgram();
     glAttachShader(id, vert_id);
     glAttachShader(id, frag_id);
-
-    glBindFragDataLocation(id, 0, "outColor");
 
     if (shade_flags & SHADER_2D) {
       glBindAttribLocation(id, POSITION_2D_SHORT.id, "inPosition2d");
@@ -246,6 +243,8 @@ NAMESPACE {
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
+    glBindFragDataLocation(id, 0, "outColor");
+
     flags = shade_flags;
     flag_ids[flags] = id;
     PEACE_GL_CHECK_ERROR;
@@ -259,8 +258,8 @@ NAMESPACE {
     debugAssert(!(flags & SHADER_UNINITIALIZED),
 		"You must initialize the shader "
 		"before using it");
-    PEACE_GL_CHECK_ERROR;
     glUseProgram(id);
+    cur_shader = this;
     if (!(flags & SHADER_USE_COLOR)) {
       UNI_TEXTURE.id =
 	glGetUniformLocation(id, "uniTexture");
@@ -303,7 +302,6 @@ NAMESPACE {
 	UNI_BONES.keepBuffer(id, "uniBones");
       }
     }
-    cur_shader = this;
   }
 
   void Shader::use() {
