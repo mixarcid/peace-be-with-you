@@ -8,6 +8,8 @@
 #include "Matrix.hpp"
 
 NAMESPACE {
+
+  struct Texture;
   
   struct ShaderTypeInfo {
     
@@ -39,6 +41,7 @@ NAMESPACE {
     i32 id;
     const ShaderTypeInfo* info;
 
+    ShaderVar();
     ShaderVar(i32 var_id, ShaderTypeName var_type);
   };
 
@@ -47,13 +50,18 @@ NAMESPACE {
     u32 id;
     u32 block_id;
     u32 buffer_id;
+    //could have different meanings depending on the uniform type
+    //if it's a texture, it refers to the GL_TEXTUREn used by the
+    //texture
+    u32 num;
 
-    ShaderUniform(u32 _id);
+    ShaderUniform(u32 _num = 0);
 
     void initBuffer(u32 shader_id, String name);
     void keepBuffer(u32 shader_id, String name);
-    
+
     void registerInt(i32 i) const;
+    void registerTexture(Texture tex) const;
     
     template <typename T>
     void registerVal(T val) {
@@ -81,33 +89,43 @@ NAMESPACE {
     void registerArray(Array<T> data) {
       registerArray(data.begin(), data.size());
     }
-      
+
+    static u32 largest_id;
   };
 
+  /*
+    SHADER_PLAIN is used to define a plain old shader,
+    without any of the regular uniforms and variables
+    we add in
+  */
   PEACE_DEFINE_BITFLAGS(ShaderFlags, 8,
 			SHADER_NO_FLAGS = 0x00,
-			SHADER_UNINITIALIZED = 0x01,
-			SHADER_USE_COLOR = 0x02,
-			SHADER_SKELETAL = 0x04,
-			SHADER_2D = 0x08,
-			SHADER_FLAG_LAST = 0x09)
-  
+			SHADER_USE_COLOR = 0x01,
+			SHADER_SKELETAL = 0x02,
+			SHADER_2D = 0x04,
+			SHADER_LAST_RENDER_FLAG = 0x05,
+			SHADER_UNINITIALIZED = 0x08,
+			SHADER_PLAIN = 0x10);
   struct Shader {
 
     i32 id;
     ShaderFlags flags;
-    i32 flag_ids[SHADER_FLAG_LAST];
+    i32 flag_ids[SHADER_LAST_RENDER_FLAG];
     String vert_str;
     String frag_str;
 
-    Shader();
+    Shader(ShaderFlags _flags = SHADER_NO_FLAGS);
+    ~Shader();
     void init(const String vert, const String frag);
     void use();
     void _use_no_check();
     void localSetFlags(ShaderFlags shade_flags);
-    //ShaderVar getVar(const char* name, ShaderTypeName type);
-    //ShaderUniform getUniform(const char* name);
-    ~Shader();
+    
+    ShaderVar getVar(String name, ShaderTypeName type);
+    ShaderUniform getUniform(String name, u32 num=0);
+    ShaderUniform getUniformBuffer(String name,
+				   u32 num=0);
+    void bindOutputs(Array<String> names);
 
     const static ShaderVar POSITION;
     const static ShaderVar POSITION_2D_SHORT;

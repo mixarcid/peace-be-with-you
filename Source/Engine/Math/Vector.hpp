@@ -365,5 +365,8 @@ NAMESPACE {
   typedef Vec2<i16> Vec2s;
   typedef Vec3<i16> Vec3s;
   typedef Vec4<i16> Vec4s;
+  typedef Vec2<i32> Vec2i;
+  typedef Vec3<i32> Vec3i;
+  typedef Vec4<i32> Vec4i;
   
 }

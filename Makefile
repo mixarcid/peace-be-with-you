@@ -56,7 +56,7 @@ $(EXECUTABLE): $(OBJECTS)
 %.ii: %.d
 	$(PREPROCESS) -x c++ $(CXXFLAGS) $*.cpp $(INCLUDE) | tee $*.exp | $(EXPANDER) $(INCLUDE) "/dev/stdin" > $@
 
-%.d:%.cpp
+%.d: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d
 
 ifneq ($(MAKECMDGOALS),clean)

@@ -39,7 +39,7 @@ NAMESPACE {
     return Quaternionf(x,y,z,w);
   }
     
-  void loadStaticMesh(String name, FILE* file, Texture* tex) {
+  void loadStaticMesh(String name, FILE* file, Texture tex) {
 
     auto inserted = AssetLoader<StaticMesh>::
       loaded_assets.insert
@@ -83,7 +83,9 @@ NAMESPACE {
 #endif
   }
   
-  void loadBonedMesh(String name, FILE* file, Texture* tex) {
+    void loadBonedMesh(String name, FILE* file, Texture tex) {
+
+    PEACE_GL_CHECK_ERROR;
 
     auto inserted = AssetLoader<BonedMeshBase>::
       loaded_assets.insert
@@ -171,8 +173,10 @@ NAMESPACE {
 	base.keyframes.push_back(frame);
       }
     }
-    
+
+    PEACE_GL_CHECK_ERROR;
     mesh.init();
+    PEACE_GL_CHECK_ERROR;
     
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded BonedMesh %s", name.c_str());
@@ -180,8 +184,7 @@ NAMESPACE {
   }
 
  void loadPMF(String filename) {
-
-    //gl::checkError();
+   PEACE_GL_CHECK_ERROR;
     String full_name = (DIR_MODELS + filename
 			+ DIR_MODEL_EXTENSION);
     
@@ -207,7 +210,7 @@ NAMESPACE {
 		"Why are you loading a model with no meshes?");
 
     Texture* model_texture = AssetLoader<Texture>::getOrLoad(filename);
-
+    PEACE_GL_CHECK_ERROR;
     for (u32 mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
@@ -218,17 +221,19 @@ NAMESPACE {
       
       unsigned char mesh_type;
       fread(&mesh_type, sizeof(char), 1, file);
-
+      
+      PEACE_GL_CHECK_ERROR;
+      
       switch(mesh_type) {
       case PMF_TYPE_STATIC_NO_TEXTURE:
 	Log::fatalError("PMF type STATIC_NO_TEXTURE is"
 			" no longer supported");
 	break;
       case PMF_TYPE_STATIC_TEXTURE:
-        loadStaticMesh(final_name, file, model_texture);
+        loadStaticMesh(final_name, file, *model_texture);
 	break;
       case PMF_TYPE_BONED_TEXTURE:
-        loadBonedMesh(final_name, file, model_texture);
+        loadBonedMesh(final_name, file, *model_texture);
 	break;
       default:
 	Log::fatalError("Unable to determine type of"

@@ -4,18 +4,20 @@
 #include "Messageable.hpp"
 #include "Pointable.hpp"
 #include "Transform.hpp"
-#include "BoundingObject.hpp"
+#include "BoundingObjectUnion.hpp"
 
 NAMESPACE {
 
   struct Engine;
   struct Component;
-  
-  struct GameObject : BaseRTTI, Pointable, Messageable {
+
+  struct GameObject : BaseRTTI, Messageable, Transform {
 
     Engine* engine;
     Array<Pointer<Component>> components;
-    Transform transform;
+
+    BoundingObjectUnion tight_object;
+    BoundingObjectUnion loose_object;
 
     GameObject(Engine* _engine, Vec3f pos);
 
@@ -31,7 +33,7 @@ NAMESPACE {
     
     template <typename T>
     Pointer<T> getComponent() {
-      for (Pointer<Component> p : components) {
+      for (Pointer<Component>& p : components) {
 	if (typeId(p) == typeId<T>()) {
 	  return (Pointer<T>) p;
 	}
@@ -39,15 +41,8 @@ NAMESPACE {
       return NULL;
     }
 
-    //for either graphics or physics
-    virtual BoundingObject getTightBoundingObject();
-    virtual BoundingObject getLooseBoundingObject();
-    virtual BoundingAABB getBoundingAABB();
-
-    Vec3f getTrans();
-    Quaternionf getRot();
-    void setTrans(Vec3f trans);
-    void setRot(Quaternionf rot);
+    BoundingObject* getTightBoundingObject();
+    BoundingObject* getLooseBoundingObject();
     
   };
   

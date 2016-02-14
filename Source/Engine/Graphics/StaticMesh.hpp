@@ -4,10 +4,10 @@
 #include "RenderableComp.hpp"
 #include "Vector.hpp"
 #include "Containers.hpp"
-#include "String.hpp"
 #include "Texture.hpp"
 #include "BasicMesh.hpp"
-#include "BoundingObject.hpp"
+#include "BoundingSphere.hpp"
+#include "BoundingOBB.hpp"
 
 NAMESPACE {
 
@@ -15,19 +15,20 @@ NAMESPACE {
     
     Array<BasicMeshData> data;
     Array<u32> elements;
-    Texture* tex;
-    BoundingObject b_sphere;
-    BoundingObject b_obb;
+    Texture tex;
+    BoundingSphere b_sphere;
+    BoundingOBB b_obb;
     
-    StaticMesh(Texture* texture,
+    StaticMesh(Texture texture,
 	       ShaderFlags _shader_flags
 	       = SHADER_NO_FLAGS);
     
     void init();
-    virtual BoundingObject getTightBoundingObject();
-    virtual BoundingObject getLooseBoundingObject();
+    void init(EBO ebo);
+    BoundingObject* getTightBoundingObject();
+    BoundingObject* getLooseBoundingObject();
     virtual void render(RenderContext c);
-    
+
   };
   
 }

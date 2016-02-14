@@ -121,36 +121,36 @@ NAMESPACE {
       implimentFlags(cur_manager->flags);
     }
 
-    KeyCallBack* addKeyCallback(KeyCallBack fun) {
+    Pointer<KeyCallBack> addKeyCallback(KeyCallBack fun) {
       return main_manager.key_callbacks.push_back(fun);
     }
-    CharCallBack* addCharCallback(CharCallBack fun) {
+    Pointer<CharCallBack> addCharCallback(CharCallBack fun) {
       return main_manager.char_callbacks.push_back(fun);
     }
-    CursorPosCallBack* addCursorPosCallback(CursorPosCallBack fun) {
+    Pointer<CursorPosCallBack> addCursorPosCallback(CursorPosCallBack fun) {
       return main_manager.cursor_pos_callbacks.push_back(fun);
     }
-    ResizeCallBack* addWindowResizeCallback(ResizeCallBack fun) {
+    Pointer<ResizeCallBack> addWindowResizeCallback(ResizeCallBack fun) {
       return main_manager.resize_callbacks.push_back(fun);
     }
-    MouseButtonCallBack* addMouseButtonCallback(MouseButtonCallBack fun) {
+    Pointer<MouseButtonCallBack> addMouseButtonCallback(MouseButtonCallBack fun) {
       return main_manager.mouse_button_callbacks.push_back(fun);
     }
 
-    void removeKeyCallback(KeyCallBack* handle) {
+    void removeKeyCallback(Pointer<KeyCallBack> handle) {
       return main_manager.key_callbacks.removeAndReplace(handle);
     }
-    void removeCharCallback(CharCallBack* handle) {
+    void removeCharCallback(Pointer<CharCallBack> handle) {
       return main_manager.char_callbacks.removeAndReplace(handle);
     }
-    void removeCursorPosCallback(CursorPosCallBack* handle) {
+    void removeCursorPosCallback(Pointer<CursorPosCallBack> handle) {
       return main_manager.cursor_pos_callbacks
 	.removeAndReplace(handle);
     }
-    void removeWindowResizeCallback(ResizeCallBack* handle) {
+    void removeWindowResizeCallback(Pointer<ResizeCallBack> handle) {
       return main_manager.resize_callbacks.removeAndReplace(handle);
     }
-    void removeMouseButtonCallback(MouseButtonCallBack* handle) {
+    void removeMouseButtonCallback(Pointer<MouseButtonCallBack> handle) {
       return main_manager.mouse_button_callbacks
 	.removeAndReplace(handle);
     }
@@ -164,54 +164,54 @@ NAMESPACE {
       implimentFlags(main_manager.flags);
     }
 
-    KeyCallBack* addKeyCallback(String name,
-				KeyCallBack fun) {
+    Pointer<KeyCallBack> addKeyCallback(String name,
+					KeyCallBack fun) {
       return defineManager(name)->key_callbacks
 	.push_back(fun);
     }
-    CharCallBack* addCharCallback(String name,
-				  CharCallBack fun) {
+    Pointer<CharCallBack> addCharCallback(String name,
+					  CharCallBack fun) {
       return defineManager(name)->char_callbacks
 	.push_back(fun);
     }
-    CursorPosCallBack* addCursorPosCallback(String name,
-					    CursorPosCallBack fun) {
+    Pointer<CursorPosCallBack> addCursorPosCallback(String name,
+						    CursorPosCallBack fun) {
       return defineManager(name)->cursor_pos_callbacks
 	.push_back(fun);
     }
-    ResizeCallBack* addWindowResizeCallback(String name,
-					    ResizeCallBack fun) {
+    Pointer<ResizeCallBack> addWindowResizeCallback(String name,
+						    ResizeCallBack fun) {
       return defineManager(name)->resize_callbacks
 	.push_back(fun);
     }
-    MouseButtonCallBack* addMouseButtonCallback(String name,
-						MouseButtonCallBack fun) {
+    Pointer<MouseButtonCallBack> addMouseButtonCallback(String name,
+							MouseButtonCallBack fun) {
       return defineManager(name)->mouse_button_callbacks
 	.push_back(fun);
     }
 
     void removeKeyCallback(String name,
-			   KeyCallBack* handle) {
+			   Pointer<KeyCallBack> handle) {
       defineManager(name)->key_callbacks
 	.removeAndReplace(handle);
     }
     void removeCharCallback(String name,
-			    CharCallBack* handle) {
+			    Pointer<CharCallBack> handle) {
       defineManager(name)->char_callbacks
 	.removeAndReplace(handle);
     }
     void removeCursorPosCallback(String name,
-				 CursorPosCallBack* handle) {
+				 Pointer<CursorPosCallBack> handle) {
       defineManager(name)->cursor_pos_callbacks
 	.removeAndReplace(handle);
     }
     void removeWindowResizeCallback(String name,
-				    ResizeCallBack* handle) {
+				    Pointer<ResizeCallBack> handle) {
       defineManager(name)->resize_callbacks
 	.removeAndReplace(handle);
     }
     void removeMouseButtonCallback(String name,
-				   MouseButtonCallBack* handle) {
+				   Pointer<MouseButtonCallBack> handle) {
       defineManager(name)->mouse_button_callbacks
 	.removeAndReplace(handle);
     }
@@ -231,10 +231,6 @@ NAMESPACE {
       if (man == cur_manager) {
 	implimentFlags(man->flags);
       }
-    }
-
-    void getWindowSize(i32* width, i32* height) {
-      glfwGetWindowSize(window, width, height);
     }
 
   }

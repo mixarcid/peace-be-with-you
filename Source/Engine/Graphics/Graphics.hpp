@@ -5,6 +5,7 @@
 #include "Shader.hpp"
 #include "GUI.hpp"
 #include "Containers.hpp"
+#include "Renderer.hpp"
 
 NAMESPACE {
 
@@ -17,14 +18,13 @@ NAMESPACE {
     Engine* engine;
     GLFWwindow* window;
     Camera cam;
-    Shader shade;
-    Vec4f background_color;
+    Renderer renderer;
+    Vec2i win_size;
     f32 ambient;
 
     Graphics(Engine* _engine);
-    ~Graphics();
     
-    void init(const String vert, const String frag);
+    void init(GLFWwindow* _window);
     
     template <typename... Args>
     void emplaceDirLight(Args... args) {
@@ -35,9 +35,8 @@ NAMESPACE {
       dir_lights.emplace_back(args...);
     }
     
-    void render(GLFWwindow* window);
+    void render();
 
-    static Vec2f window_size;
   };
 
 }

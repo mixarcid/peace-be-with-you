@@ -32,9 +32,8 @@ NAMESPACE {
     return mat;
   }
 
-  void Camera::onWindowResize(i32 width, i32 height) {
-    aspect = width / (f32) height;
-    glViewport(0,0,width,height);
+  void Camera::setAspect(Vec2i win_size) {
+    aspect = win_size.x() / (f32) win_size.y();
   }
 
 }

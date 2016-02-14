@@ -23,55 +23,9 @@ NAMESPACE {
     return (Pair<A,B>(a,b));
   }
 
-
-  //Thanks, yrp from StackOverflow!
-  template <typename T>
-    struct HasOnMove {
-    
-    /* SFINAE foo-has-correct-sig :) */
-    template<typename A>
-    static std::true_type test(void(A::*)()) {
-      return std::true_type();
-    }
-
-    /* SFINAE foo-exists :) */
-    template <typename A> 
-    static decltype(test(&A::onMove)) 
-    test(decltype(&A::onMove),void *) {
-      /* foo exists. What about sig? */
-      typedef decltype(test(&A::onMove)) return_type; 
-      return return_type();
-    }
-
-    /* SFINAE game over :( */
-    template<typename A>
-    static std::false_type test(...) {
-      return std::false_type(); 
-    }
-
-    /* This will be either `std::true_type` or `std::false_type` */
-    typedef decltype(test<T>(0,0)) type;
-
-    static const bool value = type::value; /* Which is it? */
-
-    /*  `eval(T const &,std::true_type)` 
-	delegates to `T::foo()` when `type` == `std::true_type`
-    */
-    static void eval(T& t, std::true_type) {
-      t.onMove();
-    }
-    /* `eval(...)` is a no-op for otherwise unmatched arguments */
-    template <typename... Args>
-    static void eval(Args...) {}
-
-    /* `eval(T const & t)` delegates to :-
-       - `eval(t,type()` when `type` == `std::true_type`
-       - `eval(...)` otherwise
-    */  
-    static void eval(T& t) {
-      eval(t,type());
-    }
-  };
+  //to be called when a specific type is moved to the new position ptr
+  template<typename T>
+    void onMove(T* ptr) {}
 
   template <typename T, typename Alloc=GameAllocator>
     struct Array {
@@ -149,7 +103,7 @@ NAMESPACE {
       elements = Alloc::realloc(elements, tot_length*sizeof(T));
       if (old_elements != elements) {
 	for (T& elem : *this) {
-	  HasOnMove<T>::eval(elem);
+	  onMove(&elem);
 	}
       }
     }
@@ -168,7 +122,7 @@ NAMESPACE {
     }
   
     template <typename U=T, typename... Args>
-    Iterator emplace_back(Args... args) {
+    typename Array<U>::Iterator emplace_back(Args... args) {
       debugAssert(sizeof(U) == sizeof(T),
 		  "Array::emplace_back only accepts"
 		  " types that have the same size as"
@@ -192,7 +146,7 @@ NAMESPACE {
       if (used_length > 1) {
 	it->~T();
 	memcpy((void*)it,(void*)(end()-1),sizeof(T));
-	HasOnMove<T>::eval(*it);
+        onMove(it);
 	--used_length;
       } else {
 	clear();
@@ -200,6 +154,9 @@ NAMESPACE {
     }
 
     Iterator insert(Iterator pos, T& item) {
+      if (pos == end() - 1) {
+	push_back(item);
+      }
       debugAssert(pos >= begin() && pos < end(),
 		  "Invalid Iterator passed to "
 		  "Array::insert");
@@ -211,13 +168,13 @@ NAMESPACE {
 	      (void*)pos,
 	      (SizeType)((char*)end()-(char*)pos));
       for (Iterator it=pos+1; it<end(); ++it) {
-	HasOnMove<T>::eval(*it);
+	onMove(it);
       }
       return new(pos) T(item);
     }
 
     template <typename U=T, typename... Args>
-    Iterator emplace(Iterator pos, Args... args) {
+    typename Array<U>::Iterator emplace(Iterator pos, Args... args) {
       debugAssert(sizeof(U) == sizeof(T),
 		  "Array::emplace only accepts"
 		  " types that have the same size as"
@@ -233,7 +190,7 @@ NAMESPACE {
 	      (void*)pos,
 	      (SizeType)((char*)end()-(char*)pos));
       for (Iterator it=pos+1; it<end(); ++it) {
-	HasOnMove<T>::eval(*it);
+	onMove(it);
       }
       return new(pos) U(args...);
     }

@@ -17,32 +17,33 @@ NAMESPACE {
     
     virtual ~Pointable();
     
-    void onMove();
-    
     void operator=(const Pointable& p);
     void operator=(Pointable&& p);
 
   };
 
+  template<>
+     void onMove(Pointable* ptr);
+
   template <typename T>
     struct Pointer {
 
-    T* data;
+    Pointable* data;
     Array<Pointer<Pointable>*>::Iterator it;
 
-    Pointer(T* _data = NULL)
+    Pointer(Pointable* _data = NULL)
       : data(_data),
-	it(data ? ((Pointable*)data)->pointers.end() : NULL) {
+	it(NULL) {
       if (data) {
-	((Pointable*)data)->pointers.push_back((Pointer<Pointable>*)this);
+	it = data->pointers.push_back((Pointer<Pointable>*)this);
       }
     }
 
     Pointer(const Pointer& ptr)
       : data(ptr.data),
-	it(data ? ((Pointable*)data)->pointers.end() : NULL) {
+	it(NULL) {
       if (data) {
-	((Pointable*)data)->pointers.push_back((Pointer<Pointable>*)this);
+	it = data->pointers.push_back((Pointer<Pointable>*)this);
       }
     }
 
@@ -58,9 +59,9 @@ NAMESPACE {
     template <typename U>
     explicit Pointer(const Pointer<U>& ptr)
       : data((T*) ptr.data),
-	it(data ? ((Pointable*)data)->pointers.end() : NULL) {
+	it(NULL) {
       if (data) {
-	((Pointable*)data)->pointers.push_back((Pointer<Pointable>*)this);
+	it = data->pointers.push_back((Pointer<Pointable>*)this);
       }
     }
 
@@ -68,24 +69,27 @@ NAMESPACE {
     explicit Pointer(Pointer<U>&& ptr)
       : data((T*) ptr.data),
 	it(ptr.it) {
-      *it = (Pointer<Pointable>*) this;
+      if (data) {
+	*it = (Pointer<Pointable>*) this;
+      }
       ptr.data = NULL;
     }
   
     ~Pointer() {
       if (*this) {
-	((Pointable*)data)->pointers.removeAndReplace(it);
-	/*if (((Pointable*)data)->pointers.size() > 0) {
-	  (*it)->it = it;
-	  }*/
+	auto p1 = data;
+	auto p2 = &(p1->pointers);
+	p2->removeAndReplace(it);
       }
     }
     
     Pointer& operator=(const Pointer& ptr) {
+      if (*this) {
+	(data)->pointers.removeAndReplace(it);
+      }
       data = ptr.data;
       if (data) {
-	it = ((Pointable*)data)->pointers.end();
-	((Pointable*)data)->pointers.push_back((Pointer<Pointable>*)this);
+	it = data->pointers.push_back((Pointer<Pointable>*)this);
       } else {
 	it = NULL;
       }
@@ -93,20 +97,23 @@ NAMESPACE {
     }
 
     Pointer& operator=(Pointer&& ptr) {
+      if (*this) {
+	data->pointers.removeAndReplace(it);
+      }
       data = ptr.data;
       if (data) {
 	it = ptr.it;
-	*it = (Pointer<Pointable>*) this;
+        *it = (Pointer<Pointable>*) this;
 	ptr.data = NULL;
       }
       return *this;
     }
 
-    void operator==(T* _data) const {
+    void operator==(Pointable* _data) const {
       return data == _data;
     }
 
-    bool operator!=(T* _data) const {
+    bool operator!=(Pointable* _data) const {
       return data != _data;
     }
 
@@ -115,21 +122,24 @@ NAMESPACE {
     }
 
     operator T*() const {
-      return data;
+      return (T*) data;
     }
   
     T& operator*() const {
       debugAssert(data,
 		  "You are trying to dereference a NULL pointer");
-      return *data;
+      return (T&) *data;
     }
 
     T* operator->() const {
       debugAssert(data,
 		  "You are trying to dereference a NULL pointer");
-      return data;
+      return (T*) data;
     }
     
   };
+
+  template<>
+    void onMove(Pointer<Pointable>** ptr);
 
 }

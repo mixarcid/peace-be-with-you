@@ -34,7 +34,7 @@ NAMESPACE {
 		"Cannot determine OpenGL version");
     Log::message("Your OpenGL version is %s", version);
     
-    graphics.init("Toon", "Toon");
+    graphics.init(window);
 
     flags |= ENGINE_GRAPHICS_INIT;
 
@@ -43,8 +43,8 @@ NAMESPACE {
     
   }
 
-  void Engine::removeObject(GameObject* object) {
-    game_objects.removeAndReplace(object);
+  void Engine::removeObject(Pointer<GameObject> handle) {
+    game_objects.removeAndReplace(handle);
   }
   
   void Engine::loop() {
@@ -58,7 +58,7 @@ NAMESPACE {
     dt = (f32) (cur_time.getMilliseconds()
 		- prev_time.getMilliseconds())/1000;
 
-    graphics.render(window);
+    graphics.render();
     gl::checkError();
 
     glfwPollEvents();

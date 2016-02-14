@@ -30,11 +30,11 @@ NAMESPACE {
 
     //Game Objects MUST be created using only this method
     template <typename T, typename... Args>
-    void emplaceObject(Args... args) {
-      game_objects.emplace_back<T>(this, args...);
+    Pointer<T> emplaceObject(Args... args) {
+      return Pointer<T>(game_objects.emplace_back<T>(this, args...));
     }
 
-    void removeObject(GameObject* object);
+    void removeObject(Pointer<GameObject> handle);
     
     void loop();
     void begin();

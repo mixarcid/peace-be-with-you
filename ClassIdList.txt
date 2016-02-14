@@ -6,3 +6,4 @@ Player 5
 OctreeOutOfBoundsMessage 6
 Renderable 7
 RenderableComp 8
+TerrainChunk 9

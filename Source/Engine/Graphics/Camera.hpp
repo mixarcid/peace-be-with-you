@@ -26,7 +26,7 @@ NAMESPACE {
     Mat4f getView();
     Mat4f getProj();
 
-    void onWindowResize(i32 width, i32 height);
+    void setAspect(Vec2i win_size);
 
   };
 

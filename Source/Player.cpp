@@ -13,6 +13,8 @@ NAMESPACE {
   void Player::init() {
 
     addComponent(new BonedMesh(Player::mesh.get()));
+    addTransformChild(&engine->graphics.cam,
+		      Transform(Vec3f(0,-3,2)));
     
     Input::addCursorPosCallback
       ("Main",
@@ -54,16 +56,16 @@ NAMESPACE {
 	
 	switch(key) {
 	case GLFW_KEY_W:
-	  Player::ptr->setTrans(Player::ptr->getTrans()+dir*cam_speed);
+	  Player::ptr->transRel(dir*cam_speed);
 	  break;
 	case GLFW_KEY_S:
-	  Player::ptr->setTrans(Player::ptr->getTrans()-dir*cam_speed);
+	  Player::ptr->transRel(-dir*cam_speed);
 	  break;
 	case GLFW_KEY_A:
-	  Player::ptr->setTrans(Player::ptr->getTrans()-right*cam_speed);
+	  Player::ptr->transRel(-right*cam_speed);
 	  break;
 	case GLFW_KEY_D:
-	  Player::ptr->setTrans(Player::ptr->getTrans()+right*cam_speed);
+	  Player::ptr->transRel(right*cam_speed);
 	  break;
 	case GLFW_KEY_SPACE:
 	  if (act == GLFW_PRESS) {

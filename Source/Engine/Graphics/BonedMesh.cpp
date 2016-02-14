@@ -48,12 +48,11 @@ NAMESPACE {
     debugAssert(cur_keyframe > 0,
 		"Current keyframe should be greater than 0");
     f32 h;
-    /*if (cur_keyframe == 0) {
-      h = (cur_time/keyframes[cur_keyframe].time) * ANIM_H_MULTIPLIER;
-      } else {*/
     h = (((cur_time - keyframes[cur_keyframe-1].time))
 	 /(keyframes[cur_keyframe].time - keyframes[cur_keyframe-1].time));
-      //}
+    if (h > 1.0f) {
+      h = 1.0f;
+    }
     
     for (u32 i = 0; i < bones->size(); ++i) {
       (*bones)[i] = Transform::interp(keyframes[cur_keyframe - 1]
@@ -65,7 +64,7 @@ NAMESPACE {
     //Log::message("h: %f, ck: %u, t: %f", h, cur_keyframe, cur_time);
   }
 
-  BonedMeshBase::BonedMeshBase(Texture* tex)
+  BonedMeshBase::BonedMeshBase(Texture tex)
     : StaticMesh(tex, SHADER_SKELETAL) {}
 
   void BonedMeshBase::init() {
@@ -107,11 +106,11 @@ NAMESPACE {
     base->render(c);
   }
 
-  BoundingObject BonedMesh::getTightBoundingObject() {
+  BoundingObject* BonedMesh::getTightBoundingObject() {
     return base->getTightBoundingObject();
   }
   
-  BoundingObject BonedMesh::getLooseBoundingObject() {
+  BoundingObject* BonedMesh::getLooseBoundingObject() {
     return base->getLooseBoundingObject();
   }
 

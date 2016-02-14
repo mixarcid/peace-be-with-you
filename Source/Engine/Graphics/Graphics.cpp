@@ -4,17 +4,14 @@
 
 NAMESPACE {
 
-  Vec2f Graphics::window_size;
-
   Graphics::Graphics(Engine* _engine)
-    : engine(_engine) {}
+    : engine(_engine), window(NULL) {}
 
-  Graphics::~Graphics() {}
-
-  void Graphics::init(const String vert, const String frag) {
-    
-    shade.init(vert, frag);
-    shade.use();
+  void Graphics::init(GLFWwindow* _window) {
+    window = _window;
+    glfwGetWindowSize(window, &win_size.x(), &win_size.y());
+    renderer.init(win_size);
+    cam.setAspect(win_size);
     
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -22,28 +19,20 @@ NAMESPACE {
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
-    i32 w, h;
-    Input::getWindowSize(&w, &h);
-    window_size = Vec2f(w,h);
+
     Input::addWindowResizeCallback
-      ([this]
-       (GLFWwindow* win,
-	i32 w, i32 h) {
-	cam.onWindowResize(w,h);
-	window_size = Vec2f(w,h);
+      ([this](GLFWwindow* win, i32 x, i32 y) {
+	if (win == window) {
+	  win_size = Vec2i(x,y);
+	  renderer.onWindowResize(win_size);
+	  cam.setAspect(win_size);
+	}
       });
-    cam.onWindowResize(window_size.x(),
-		       window_size.y());
   }
   
-  void Graphics::render(GLFWwindow* window) {
+  void Graphics::render() {
 
-    glClearColor(background_color.x(),
-		 background_color.y(),
-		 background_color.z(),
-		 background_color.w());
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderer.prepare();
 
     Shader::UNI_DIR_LIGHTS
       .registerArray(dir_lights.begin(),
@@ -58,17 +47,19 @@ NAMESPACE {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
-    for (GameObject obj : engine->game_objects) {
+    for (GameObject& obj : engine->game_objects) {
       Pointer<RenderableComp> rend = obj.getComponent<RenderableComp>();
       if (rend) {
-	Mat4f comb = model*obj.transform.getMat();
+	Mat4f comb = model*obj.getMat();
 	Shader::UNI_MODEL.registerVal(comb);
 	rend->render(c);
       }
     }
 
-    /*view_proj = Mat4f::scale(Vec3f(1.0f/window_size.x(),
-				   1.0f/window_size.y(),
+    renderer.finalize();
+
+    view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),
+				   1.0f/win_size.y(),
 				   1));
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
     
@@ -77,7 +68,7 @@ NAMESPACE {
     
     for (GUINode node : gui_nodes) {
       node.render(c, model);
-      }*/
+    }
 
     glfwSwapBuffers(window);
     

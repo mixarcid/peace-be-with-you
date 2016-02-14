@@ -98,7 +98,9 @@ NAMESPACE {
 
   void Log::terminate() {
     Log::logger.update();
-    fclose(Log::logger.logfile);
+    if (Log::logger.logfile != stdout) {
+      fclose(Log::logger.logfile);
+    }
   }
 
   Log* Log::getSystem() {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VertexObjects.hpp"
+#include "GLObject.hpp"
 #include "Shader.hpp"
 #include "Component.hpp"
 
@@ -31,8 +31,9 @@ NAMESPACE {
     EBO ebo;
 
     using RenderableComp::RenderableComp;
-    void init();
-    void updateBuffers();
+    void init(VBO _vbo = VBO(),
+	      VAO _vao = VAO(),
+	      EBO _ebo = EBO());
     virtual void render(RenderContext c);
     
   };

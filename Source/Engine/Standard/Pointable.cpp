@@ -19,15 +19,6 @@ NAMESPACE {
       *pointer = NULL;
     }
   }
-
-  void Pointable::onMove() {
-    for (Pointer<Pointable>** pointer = pointers.begin();
-	 pointer < pointers.end();
-	 ++pointer) {
-      (*pointer)->data = this;
-      (*pointer)->it = pointer;
-    }
-  }
   
   void Pointable::operator=(const Pointable& p) {
     
@@ -40,10 +31,23 @@ NAMESPACE {
     pointers.clear();
     for (Pointer<Pointable>* pointer : p.pointers) {
       pointer->data = this;
-      pointer->it = pointers.end();
       pointers.push_back(pointer);
     }
     p.pointers.clear();
+  }
+
+  template<>
+    void onMove(Pointable* ptr) {
+    for (Pointer<Pointable>** pointer = ptr->pointers.begin();
+	 pointer < ptr->pointers.end();
+	 ++pointer) {
+      (*pointer)->data = ptr;
+    }
+  }
+
+  template<>
+    void onMove(Pointer<Pointable>** ptr) {
+    (*ptr)->it = ptr;
   }
 
 }

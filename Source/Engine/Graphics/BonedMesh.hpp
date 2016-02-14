@@ -51,7 +51,7 @@ NAMESPACE {
     Array<Bone> bones; //default pose
     HashMap<String, BonedAnimationBase> animations;
 
-    BonedMeshBase(Texture* tex);
+    BonedMeshBase(Texture tex);
     void init();
     BonedAnimation getAnimation(String name);
     
@@ -67,8 +67,8 @@ NAMESPACE {
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
     virtual void render(RenderContext c);
-    virtual BoundingObject getTightBoundingObject();
-    virtual BoundingObject getLooseBoundingObject();
+    BoundingObject* getTightBoundingObject();
+    BoundingObject* getLooseBoundingObject();
     
   };
 }

@@ -4,6 +4,7 @@
 #include "Vector.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
+#include "Pointable.hpp"
 
 NAMESPACE {
 
@@ -37,9 +38,21 @@ NAMESPACE {
     
   };
 
-  struct Transform : TransformTemp<0> {
+  struct Transform : Pointable, TransformTemp<0> {
+
+    Array<Pointer<Transform>> child_transforms;
+    
     using TransformTemp::TransformTemp;
+    void addTransformChild(Transform* child,
+			   Transform initial_diff);
+    Vec3f getTrans();
+    Quaternionf getRot();
+    void transRel(Vec3f trans);
+    void transAbs(Vec3f trans);
+    void rotRel(Quaternionf rot);
+    void rotAbs(Quaternionf rot);
   };
+  
   struct TransformPad : TransformTemp<1> {
     using TransformTemp::TransformTemp;
   };

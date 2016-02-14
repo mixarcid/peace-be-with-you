@@ -1,44 +1,67 @@
-#ifdef SHADER_USE_COLOR
-flat in vec4 color;
-#else
-in vec2 tex;
-#endif
-in vec3 normal;
-in vec4 test;
+uniform sampler2D diffuse;
+uniform sampler2D normal;
+in vec2 texCoord;
+out vec4 outColor;
 
-//uniform float light_intensity = 2;
+//code taken from https://open.gl/framebuffers
+vec4 sobel(sampler2D tex, vec2 coord, vec2 d) {
+  vec4 top = texture(tex, vec2(coord.x, coord.y + d.y));
+  vec4 bottom = texture(tex, vec2(coord.x, coord.y - d.y));
+  vec4 left = texture(tex, vec2(coord.x - d.x, coord.y));
+  vec4 right = texture(tex, vec2(coord.x + d.x, coord.y));
+  vec4 topLeft = texture(tex, vec2(coord.x - d.x, coord.y + d.y));
+  vec4 topRight = texture(tex, vec2(coord.x + d.x, coord.y + d.y));
+  vec4 bottomLeft = texture(tex, vec2(coord.x - d.x, coord.y - d.y));
+  vec4 bottomRight = texture(tex, vec2(coord.x + d.x, coord.y - d.y));
+  vec4 sx = -topLeft - 2 * left - bottomLeft + topRight   + 2 * right  + bottomRight;
+  vec4 sy = -topLeft - 2 * top  - topRight   + bottomLeft + 2 * bottom + bottomRight;
+  return sqrt(sx * sx + sy * sy);
+}
+
+float rand(float num) {
+  return fract(sin(num) * 43758.5453) - 0.5;
+}
+
+float interp(float a, float b, float x) {
+  float f = (1-cos(x*3.1415927))*0.5;
+  return  a*(1-f) + b*f;
+}
+
+float noise(float n) {
+
+  float num = n;
+  float a = floor(num);
+  float x = num - a;
+  float n1 = interp(rand(a), rand(a+1), x);
+
+  num = n*2;
+  a = floor(num);
+  x = num - a;
+  float n2 = interp(rand(a), rand(a+1), x)/2;
+
+  num = n*3;
+  a = floor(num);
+  x = num - a;
+  float n3 = interp(rand(a), rand(a+1), x)/3;
+
+  return n1 + n2 + n3;
+}
 
 void main() {
-#ifndef SHADER_2D
-  vec3 norm = normalize(normal);
-  vec3 light_color = vec3(uniAmbient);
-  for (uint i=0; i<MAX_DIR_LIGHTS; ++i) {
-    float intensity = max(0.0,
-			  dot(norm,
-			      -uniDirLights[i].dir));
-    if (intensity > 0.75f) {
-      intensity = 1.0f;
-    } else if (intensity > 0.5f) {
-      intensity = 0.75f;
-    } else if (intensity > 0.25f) {
-      intensity = 0.5f;
-    } else {
-      intensity = 0.25f;
-    }
-    light_color += uniDirLights[i].color*intensity;
+
+  vec2 res = textureSize(normal,0);
+  vec2 d = vec2(1/res.x, 1/res.y);
+  mat2 m = mat2
+    (0.2, 0.6,
+     0.3, 0.5);
+  float seed = dot(texCoord, vec2(12.9898,78.233))*0.5;
+  vec2 offset = vec2(noise(seed), noise(seed+8327))*0.005;
+  vec3 s = sobel(normal, texCoord + offset, d).xyz;
+  if (length(s) > 0.8) {
+    float l = 1 - length(s);
+    s = vec3(l,l,l);
+  } else {
+    s = texture(diffuse,texCoord).xyz;
   }
-#endif
-#ifdef SHADER_2D
-#ifdef SHADER_USE_COLOR
-  outColor = color;
-#else
-  outColor = uniColor*texture(uniTexture, tex);
-#endif
-#else
-#ifdef SHADER_USE_COLOR
-  outColor = vec4(light_color,1)*color;
-#else
-  outColor = vec4(light_color,1)*texture(uniTexture, tex);
-#endif
-#endif
+  outColor = vec4(s,1);
 }

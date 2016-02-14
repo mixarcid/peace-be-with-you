@@ -3,28 +3,12 @@
 NAMESPACE {
 
   GameObject::GameObject(Engine* _engine, Vec3f pos)
-    : engine(_engine), transform(pos) {}
+    : Transform(pos), engine(_engine) {}
 
-  Vec3f GameObject::getTrans() {
-    return transform.trans;
+  BoundingObject* GameObject::getTightBoundingObject() {
+    return tight_object.getBoundingObject();
   }
-  Quaternionf GameObject::getRot() {
-    return transform.rot;
-  }
-  void GameObject::setTrans(Vec3f trans) {
-    transform.trans = trans;
-  }
-  void GameObject::setRot(Quaternionf rot) {
-    transform.rot = rot;
-  }
-
-  BoundingObject GameObject::getTightBoundingObject() {
-    return BoundingObject();
-  }
-  BoundingObject GameObject::getLooseBoundingObject() {
-    return BoundingObject();
-  }
-  BoundingAABB GameObject::getBoundingAABB() {
-    return BoundingAABB(Vec3f(0,0,0), Vec3f(0,0,0));
+  BoundingObject* GameObject::getLooseBoundingObject() {
+    return loose_object.getBoundingObject();
   }
 }

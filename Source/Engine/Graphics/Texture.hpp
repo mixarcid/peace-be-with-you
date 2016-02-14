@@ -3,23 +3,20 @@
 #include "GL.hpp"
 #include "Standard.hpp"
 #include "String.hpp"
-#include "Shader.hpp"
 #include "Assets.hpp"
+#include "GLObject.hpp"
 
 NAMESPACE {
 
-  struct Texture {
+  struct Texture : GLObject {
 
-    u32 length;
-    u32* ids;
-
-    Texture(u32 num_textures = 1);
-    void init();
-    void load(String filename,
-	      ShaderUniform tex_uniform,
-	      u32 index = 0);
-    void use(u32 index = 0);
+    Texture() {}
     ~Texture();
+    
+    void init();
+    void loadFromFile(String filename);
+    void createEmpty(Vec2i size);
+    void use();
   };
 
   template<>

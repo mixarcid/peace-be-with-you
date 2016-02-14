@@ -20,4 +20,3 @@ layout(std140) uniform _uniColor {
   vec4 uniColor;
 };
 #endif
-out vec4 outColor;
