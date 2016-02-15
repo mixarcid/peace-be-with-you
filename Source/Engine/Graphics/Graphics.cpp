@@ -48,7 +48,7 @@ NAMESPACE {
     glEnable(GL_CULL_FACE);
     
     for (GameObject& obj : engine->game_objects) {
-      Pointer<RenderableComp> rend = obj.getComponent<RenderableComp>();
+      RenderableComp* rend = obj.getComponent<RenderableComp>();
       if (rend) {
 	Mat4f comb = model*obj.getMat();
 	Shader::UNI_MODEL.registerVal(comb);

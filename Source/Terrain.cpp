@@ -3,9 +3,9 @@
 
 NAMESPACE {
 
-  const f32 TERRAIN_CHUNK_SIZE = 10.0f;
+  const f32 TERRAIN_CHUNK_SIZE = 100.0f;
   //width of the chunk in vertices
-  const u32 TERRAIN_CHUNK_RES = 20;
+  const u32 TERRAIN_CHUNK_RES = 200;
   const f32 TERRAIN_CHUNK_STEP
     = TERRAIN_CHUNK_SIZE / (f32) TERRAIN_CHUNK_RES;
 
@@ -20,7 +20,7 @@ NAMESPACE {
   }
 
   void TerrainChunk::init() {
-    addComponent(Terrain::chunk_meshes.push_back(*Terrain::texture.get()));
+    addComponent(Terrain::chunk_meshes.emplace_back(*Terrain::texture.get()));
     tight_object.ground = BoundingGround(test);
     loose_object.object = BoundingObject();
   }
@@ -55,14 +55,18 @@ NAMESPACE {
 			  chunk_y*TERRAIN_CHUNK_SIZE/2,
 			  0);
 	Pointer<TerrainChunk> c = engine->emplaceObject<TerrainChunk>(pos);
-	Pointer<StaticMesh> mesh = (Pointer<StaticMesh>) c->getComponent<RenderableComp>();
+
+	Pointer<StaticMesh> mesh = Pointer<StaticMesh>
+	  (c->getComponent<RenderableComp>());
 
         for (u8 x = 0; x < TERRAIN_CHUNK_RES; ++x) {
 	  for (u8 y = 0; y < TERRAIN_CHUNK_RES; ++y) {
-	    mesh->data.push_back(TerrainGenerator::dataAtPos
-			     (Vec2f(TERRAIN_CHUNK_STEP*x+pos.x(),TERRAIN_CHUNK_STEP*y+pos.y())));
+	    mesh->data.push_back
+	      (TerrainGenerator::dataAtPos
+	       (Vec2f(TERRAIN_CHUNK_STEP*x+pos.x(),
+		      TERRAIN_CHUNK_STEP*y+pos.y())));
 	  }
-	} 
+	}
 
 	mesh->init(elem_buffer);
 	

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RTTI.hpp"
 #include "Containers.hpp"
 
 NAMESPACE {
@@ -7,7 +8,7 @@ NAMESPACE {
   template <typename T>
     struct Pointer;
 
-  struct Pointable {
+  struct Pointable : BaseRTTI {
 
     Array<Pointer<Pointable>*> pointers;
 
@@ -20,10 +21,9 @@ NAMESPACE {
     void operator=(const Pointable& p);
     void operator=(Pointable&& p);
 
-  };
+    void onMove();
 
-  template<>
-     void onMove(Pointable* ptr);
+  };
 
   template <typename T>
     struct Pointer {
@@ -58,7 +58,7 @@ NAMESPACE {
 
     template <typename U>
     explicit Pointer(const Pointer<U>& ptr)
-      : data((T*) ptr.data),
+      : data(ptr.data),
 	it(NULL) {
       if (data) {
 	it = data->pointers.push_back((Pointer<Pointable>*)this);
@@ -67,7 +67,7 @@ NAMESPACE {
 
     template <typename U>
     explicit Pointer(Pointer<U>&& ptr)
-      : data((T*) ptr.data),
+      : data(ptr.data),
 	it(ptr.it) {
       if (data) {
 	*it = (Pointer<Pointable>*) this;
@@ -141,5 +141,9 @@ NAMESPACE {
 
   template<>
     void onMove(Pointer<Pointable>** ptr);
-
+  
+  template <typename T>
+    inline TypeId typeId(Pointer<T> object) {
+    return object->type_id;
+  }
 }

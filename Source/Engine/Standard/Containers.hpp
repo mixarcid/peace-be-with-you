@@ -23,9 +23,64 @@ NAMESPACE {
     return (Pair<A,B>(a,b));
   }
 
+  //Thanks, yrp from StackOverflow!
+  template <typename T>
+    struct HasOnMove {
+
+    /* SFINAE foo-has-correct-sig :) */
+
+    template<typename A>
+    static std::true_type test(void(A::*)()) {
+      return std::true_type();
+    }
+
+    /* SFINAE foo-exists :) */
+    template <typename A> 
+    static decltype(test(&A::onMove)) 
+    test(decltype(&A::onMove),void *) {
+      /* foo exists. What about sig? */
+      typedef decltype(test(&A::onMove)) return_type; 
+      return return_type();
+    }
+
+    /* SFINAE game over :( */
+
+    template<typename A>
+    static std::false_type test(...) {
+      return std::false_type(); 
+    }
+
+
+    /* This will be either `std::true_type` or `std::false_type` */
+    typedef decltype(test<T>(0,0)) type;
+    static const bool value = type::value; /* Which is it? */
+
+    /*  `eval(T const &,std::true_type)` 
+	delegates to `T::foo()` when `type` == `std::true_type`
+    */
+    static void eval(T& t, std::true_type) {
+      t.onMove();
+    }
+
+    /* `eval(...)` is a no-op for otherwise unmatched arguments */
+    template <typename... Args>
+    static void eval(Args...) {}
+
+    /* `eval(T const & t)` delegates to :-
+       `eval(t,type()` when `type` == `std::true_type`
+       `eval(...)` otherwise
+    */  
+    static void eval(T& t) {
+      eval(t,type());
+    }
+
+  };
+
   //to be called when a specific type is moved to the new position ptr
   template<typename T>
-    void onMove(T* ptr) {}
+    void onMove(T* ptr) {
+    HasOnMove<T>::eval(*ptr);
+  }
 
   template <typename T, typename Alloc=GameAllocator>
     struct Array {

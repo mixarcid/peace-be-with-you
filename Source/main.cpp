@@ -40,10 +40,9 @@ i32 main() {
       });
 
     Terrain terrain(&engine);
-    terrain.generate(Vec2u(2,5));
+    terrain.generate(Vec2u(5,5));
     
     engine.emplaceObject<Player>(Vec3f(0,10,0));
-    
     engine.begin();
     
   } catch(Exception e) {

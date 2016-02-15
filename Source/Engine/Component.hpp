@@ -7,11 +7,14 @@ NAMESPACE {
 
   struct GameObject;
   
-  struct Component : BaseRTTI, Pointable {
+  struct Component : Pointable {
 
-    Component() {}
+    Component() {
+      $rttiConstruct("Component");
+    }
     virtual ~Component() {}
     
   };
+  $registerRttiStruct();
   
 }

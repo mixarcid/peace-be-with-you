@@ -11,7 +11,7 @@ NAMESPACE {
   struct Engine;
   struct Component;
 
-  struct GameObject : BaseRTTI, Messageable, Transform {
+  struct GameObject : Transform, Messageable {
 
     Engine* engine;
     Array<Pointer<Component>> components;
@@ -28,7 +28,7 @@ NAMESPACE {
 
     template <typename T>
     void addComponent(T* component) {
-      components.push_back((Pointer<Component>) component);
+      components.push_back(Pointer<Component>(component));
     }
     
     template <typename T>

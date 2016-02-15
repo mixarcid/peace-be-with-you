@@ -19,7 +19,7 @@ NAMESPACE {
     
     Camera(f32 cam_fovy = degreesToRadians(60),
 	   f32 cam_near = 1,
-	   f32 cam_far = 100);
+	   f32 cam_far = 1000);
 
     Mat3f getCoord();
 

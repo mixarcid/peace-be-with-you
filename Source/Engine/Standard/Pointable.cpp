@@ -36,12 +36,11 @@ NAMESPACE {
     p.pointers.clear();
   }
 
-  template<>
-    void onMove(Pointable* ptr) {
-    for (Pointer<Pointable>** pointer = ptr->pointers.begin();
-	 pointer < ptr->pointers.end();
+  void Pointable::onMove() {
+    for (Pointer<Pointable>** pointer = this->pointers.begin();
+	 pointer < this->pointers.end();
 	 ++pointer) {
-      (*pointer)->data = ptr;
+      (*pointer)->data = this;
     }
   }
 
