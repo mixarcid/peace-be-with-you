@@ -85,7 +85,6 @@ NAMESPACE {
     }
 
     static GLenum draw_mode = GL_TRIANGLES;
-    
     void setDrawMode(GLenum mode) {
       draw_mode = mode;
     }
@@ -96,6 +95,43 @@ NAMESPACE {
     
     void terminate() {
       glfwTerminate();
+    }
+
+    static GLenum polygon_mode = GL_FILL;
+    void setPolygonMode(GLenum mode) {
+      if (mode != polygon_mode) {
+	polygon_mode = mode;
+	glPolygonMode(GL_FRONT_AND_BACK, mode);
+      }
+    }
+
+    GLenum getPolygonMode() {
+      return polygon_mode;
+    }
+
+    static GraphicsMode graphics_mode = PEACE_GL_TRIANGLES;
+    void setGraphicsMode(GraphicsMode mode) {
+      if (graphics_mode != mode) {
+	graphics_mode = mode;
+	switch(graphics_mode) {
+	case PEACE_GL_TRIANGLES:
+	  gl::setDrawMode(GL_TRIANGLES);
+	  gl::setPolygonMode(GL_FILL);
+	  break;
+	case PEACE_GL_LINES:
+	  gl::setDrawMode(GL_TRIANGLES);
+	  gl::setPolygonMode(GL_LINE);
+	  break;
+	case PEACE_GL_POINTS:
+	  gl::setDrawMode(GL_POINTS);
+	  gl::setPolygonMode(GL_FILL);
+	  break;
+	}
+      }
+    }
+
+    GraphicsMode getGraphicsMode() {
+      return graphics_mode;
     }
     
   }

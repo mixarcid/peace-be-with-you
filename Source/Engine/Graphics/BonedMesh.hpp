@@ -47,12 +47,13 @@ NAMESPACE {
   struct BonedMeshBase : StaticMesh {
 
     VBO b_vbo;
-    Array<BonedMeshData> bone_data;
     Array<Bone> bones; //default pose
     HashMap<String, BonedAnimationBase> animations;
 
     BonedMeshBase(Texture tex);
-    void init();
+    void init(Array<BasicMeshData>& mesh_data,
+	      Array<BonedMeshData>& bone_data,
+	      Array<u32>& elements);
     BonedAnimation getAnimation(String name);
     
   };

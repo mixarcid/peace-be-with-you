@@ -55,7 +55,8 @@ NAMESPACE {
     u32 num_verts = fio::readLittleEndian<u32>(file);
     fatalAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
-    mesh.data.reserve(num_verts);
+    Array<BasicMeshData> mesh_data;
+    mesh_data.reserve(num_verts);
 
     for (u32 index = 0; index < num_verts; ++index) {
 
@@ -63,21 +64,22 @@ NAMESPACE {
       Vec3f norm = readVec3f(file);
       Vec2f tex_coord = readVec2f(file);
       tex_coord.y() = 1 - tex_coord.y();
-      mesh.data.push_back(BasicMeshData(pos, norm, tex_coord));
+      mesh_data.push_back(BasicMeshData(pos, norm, tex_coord));
       
     }
     
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
-    mesh.elements.reserve(num_elems);
+    Array<u32> mesh_elements;
+    mesh_elements.reserve(num_elems);
     fatalAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
 
     for (u32 index = 0; index < num_elems; ++index) {
       u32 elem = fio::readLittleEndian<u32>(file);
-      mesh.elements.push_back(elem);
+      mesh_elements.push_back(elem);
     }
 
-    mesh.init();
+    mesh.init(mesh_data, mesh_elements);
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded StaticMesh %s", name.c_str());
 #endif
@@ -101,8 +103,10 @@ NAMESPACE {
     u32 num_verts = fio::readLittleEndian<u32>(file);
     fatalAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
-    mesh.data.reserve(num_verts);
-    mesh.bone_data.reserve(num_verts);
+    Array<BasicMeshData> mesh_data;
+    Array<BonedMeshData> bone_data;
+    mesh_data.reserve(num_verts);
+    bone_data.reserve(num_verts);
     
     for (u32 index = 0; index < num_verts; ++index) {
 
@@ -122,19 +126,20 @@ NAMESPACE {
 	d.weights[i] = fio::readLittleEndian<f32>(file);
       }
       
-      mesh.data.push_back(BasicMeshData(pos, norm, tex_coord));
-      mesh.bone_data.push_back(d);
+      mesh_data.push_back(BasicMeshData(pos, norm, tex_coord));
+      bone_data.push_back(d);
       
     }
     
     u32 num_elems = 3*fio::readLittleEndian<u32>(file);
     fatalAssert(num_elems > 0,
 		"Why are you loading a mesh with no faces?");
-    mesh.elements.reserve(num_elems);
+    Array<u32> mesh_elements;
+    mesh_elements.reserve(num_elems);
 
     for (u32 index = 0; index < num_elems; ++index) {
       u32 elem = fio::readLittleEndian<u32>(file);
-      mesh.elements.push_back(elem);
+      mesh_elements.push_back(elem);
     }
 
     u32 num_bones = fio::readLittleEndian<u32>(file);
@@ -175,7 +180,7 @@ NAMESPACE {
     }
 
     PEACE_GL_CHECK_ERROR;
-    mesh.init();
+    mesh.init(mesh_data, bone_data, mesh_elements);
     PEACE_GL_CHECK_ERROR;
     
 #ifdef PEACE_LOG_LOADED_ASSETS

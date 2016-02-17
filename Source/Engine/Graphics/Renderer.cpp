@@ -48,6 +48,8 @@ NAMESPACE {
   }
   
   void Renderer::finalize() {
+    GLenum poly_mode = gl::getPolygonMode();
+    gl::setPolygonMode(GL_FILL);
     second_shade.use();
     FBO::useScreen();
     glClearColor(0,0,0,1);
@@ -55,6 +57,7 @@ NAMESPACE {
     diffuse_uniform.registerTexture(diffuse);
     normal_uniform.registerTexture(normal);
     screen_quad.render();
+    gl::setPolygonMode(poly_mode);
   }
 
 }

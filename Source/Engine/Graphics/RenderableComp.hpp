@@ -8,7 +8,7 @@ NAMESPACE {
 
   struct RenderContext {
     f32 dt;
-    RenderContext(f32 delta_time);
+    f32 dist;
   };
 
   struct RenderableComp : Component {
@@ -31,9 +31,7 @@ NAMESPACE {
     EBO ebo;
 
     using RenderableComp::RenderableComp;
-    void init(VBO _vbo = VBO(),
-	      VAO _vao = VAO(),
-	      EBO _ebo = EBO());
+    void init();
     virtual void render(RenderContext c);
     
   };

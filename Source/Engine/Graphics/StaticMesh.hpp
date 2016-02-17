@@ -13,8 +13,6 @@ NAMESPACE {
 
   struct StaticMesh : RenderableReg {
     
-    Array<BasicMeshData> data;
-    Array<u32> elements;
     Texture tex;
     BoundingSphere b_sphere;
     BoundingOBB b_obb;
@@ -23,8 +21,8 @@ NAMESPACE {
 	       ShaderFlags _shader_flags
 	       = SHADER_NO_FLAGS);
     
-    void init();
-    void init(EBO ebo);
+    void init(Array<BasicMeshData>& data,
+	      Array<u32>& elements);
     BoundingObject* getTightBoundingObject();
     BoundingObject* getLooseBoundingObject();
     virtual void render(RenderContext c);

@@ -35,15 +35,20 @@ NAMESPACE {
       return data[index];
     }
 
-    inline void operator=(const Vec b) {
-      memcpy(this, &b, sizeof(Vec));
+    template<typename U>
+    inline void operator=(const Vec<U, N> b) {
+      for (u8 n=0; n<N; ++n) {
+	data[n] = b.data[n];
+      }
     }
 
-    inline Vec operator+(const Vec b) const {
+    template<typename U>
+    inline Vec operator+(const Vec<U, N> b) const {
       return add(*this, b);
     }
 
-    inline Vec operator-(const Vec b) const {
+    template<typename U>
+    inline Vec operator-(const Vec<U, N> b) const {
       return sub(*this, b);
     }
 
@@ -51,11 +56,13 @@ NAMESPACE {
       return neg(*this);
     }
 
-    inline void operator+=(const Vec b) {
+    template<typename U>
+    inline void operator+=(const Vec<U, N> b) {
       *this = add(*this, b);
     }
 
-    inline void operator-=(const Vec b) {
+    template<typename U>
+    inline void operator-=(const Vec<U, N> b) {
       *this = sub(*this, b);
     }
 
@@ -98,15 +105,17 @@ NAMESPACE {
       return ret;
     }
 
-    static inline Vec add(const Vec a, const Vec b) {
+    template <typename U>
+    static inline Vec add(const Vec a, const Vec<U, N> b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
 	ret.data[i] = a.data[i] + b.data[i];
       }
       return ret;
     }
-    
-    static inline Vec sub(const Vec a, const Vec b) {
+
+    template <typename U>
+    static inline Vec sub(const Vec a, const Vec<U, N> b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
 	ret.data[i] = a.data[i] - b.data[i];
@@ -122,7 +131,8 @@ NAMESPACE {
       return ret;
     }
 
-    static inline T dot(const Vec a, const Vec b) {
+    template <typename U>
+    static inline T dot(const Vec a, const Vec<U, N> b) {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {
 	ret += a.data[i]*b.data[i];

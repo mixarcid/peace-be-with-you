@@ -42,14 +42,17 @@ NAMESPACE {
     Mat4f view_proj = cam.getProj()*cam.getView();
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
     Mat4f model;
-    RenderContext c(engine->dt);
-
+    RenderContext c;
+    c.dt = engine->dt;
+    
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
     for (GameObject& obj : engine->game_objects) {
       RenderableComp* rend = obj.getComponent<RenderableComp>();
       if (rend) {
+	Vec3f dist = cam.getTrans() - obj.getTrans();
+	c.dist = dist.norm();
 	Mat4f comb = model*obj.getMat();
 	Shader::UNI_MODEL.registerVal(comb);
 	rend->render(c);

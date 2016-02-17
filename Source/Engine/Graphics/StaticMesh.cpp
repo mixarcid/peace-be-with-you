@@ -7,19 +7,10 @@ NAMESPACE {
     : RenderableReg(_shader_flags),
     tex(texture) {}
 
-  void StaticMesh::init() {
+  void StaticMesh::init(Array<BasicMeshData>& data,
+			Array<u32>& elements) {
     RenderableReg::init();
     this->ebo.bindArray(elements, false);
-    this->vbo.bindArray(data, false);
-    this->vao.registerVars({Shader::POSITION,
-	  Shader::NORMAL,
-	  Shader::TEX_COORD});
-    b_sphere = BoundingSphere(data);
-    b_obb = BoundingOBB(data);
-  }
-
-  void StaticMesh::init(EBO ebo) {
-    RenderableReg::init(VBO(), VAO(), ebo);
     this->vbo.bindArray(data, false);
     this->vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL,

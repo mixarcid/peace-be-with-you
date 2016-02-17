@@ -9,6 +9,12 @@
 #include "String.hpp"
 
 NAMESPACE {
+
+  enum GraphicsMode {
+    PEACE_GL_TRIANGLES,
+    PEACE_GL_POINTS,
+    PEACE_GL_LINES
+  };
   
   namespace gl {
     
@@ -16,8 +22,19 @@ NAMESPACE {
     GLFWwindow* createWindow(Vec2s size, String name);
     void checkError();
     void ignoreError(GLenum code);
+
+    /*the drawMode and polygonMode functions
+      are for more low-level stuff. To switch 
+      between points, triangles, and lines,
+      use the graphicsMode functions*/
     void setDrawMode(GLenum mode);
     GLenum getDrawMode();
+    void setPolygonMode(GLenum mode);
+    GLenum getPolygonMode();
+
+    void setGraphicsMode(GraphicsMode mode);
+    GraphicsMode getGraphicsMode();
+    
     void terminate();
     
   }

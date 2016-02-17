@@ -67,12 +67,14 @@ NAMESPACE {
   BonedMeshBase::BonedMeshBase(Texture tex)
     : StaticMesh(tex, SHADER_SKELETAL) {}
 
-  void BonedMeshBase::init() {
+  void BonedMeshBase::init(Array<BasicMeshData>& mesh_data,
+			   Array<BonedMeshData>& bone_data,
+			   Array<u32>& elements) {
     
     RenderableReg::init();
     b_vbo.init();
 
-    RenderableReg::vbo.bindArray(StaticMesh::data, false);
+    RenderableReg::vbo.bindArray(mesh_data, false);
     RenderableReg::vao.registerVars({Shader::POSITION,
 	  Shader::NORMAL, Shader::TEX_COORD});
 
@@ -80,7 +82,7 @@ NAMESPACE {
     RenderableReg::vao.registerVars({Shader::BONE_INDEXES0,
 	  Shader::BONE_WEIGHTS0});
 
-    RenderableReg::ebo.bindArray(StaticMesh::elements, false);
+    RenderableReg::ebo.bindArray(elements, false);
   }
 
   BonedAnimation BonedMeshBase::getAnimation(String name) {

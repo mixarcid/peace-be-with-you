@@ -28,22 +28,23 @@ i32 main() {
 	  engine.flags &= ~ENGINE_RUNNING;
 	  break;
 	case GLFW_KEY_1:
-	  gl::setDrawMode(GL_TRIANGLES);
+	  gl::setGraphicsMode(PEACE_GL_TRIANGLES);
 	  break;
 	case GLFW_KEY_2:
-	  gl::setDrawMode(GL_LINES);
+	  gl::setGraphicsMode(PEACE_GL_LINES);
 	  break;
 	case GLFW_KEY_3:
-	  gl::setDrawMode(GL_POINTS);
+	  gl::setGraphicsMode(PEACE_GL_POINTS);
 	  break;
 	}
       });
 
     Terrain terrain(&engine);
-    terrain.generate(Vec2u(5,5));
+    terrain.generate(Vec3f(0,0,0),Vec2u(5,5));
     
     engine.emplaceObject<Player>(Vec3f(0,10,0));
     engine.begin();
+    //printf("%d vs %d\n", (i32) 1 & 255, (i32) -1.01 & 255);
     
   } catch(Exception e) {
     Log::error(e.what());

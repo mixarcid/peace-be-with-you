@@ -1,11 +1,19 @@
 #include "TerrainGenerator.hpp"
+#include "Noise.hpp"
 
 NAMESPACE {
 
-  BasicMeshData TerrainGenerator::dataAtPos(Vec2f pos) {
-    return BasicMeshData(Vec3f(pos.x(),pos.y(),0),
-			 Vec3f(0,0,1),
-			 Vec2f(0,0));
+  TerrainGenerator::TerrainGenerator() {}
+
+  f32 TerrainGenerator::heightAtPoint(Vec2f pos) {
+    f32 ret = Noise::fractal
+      ([this](Vec2f p, i32 i)->f32 {
+	return 1.0f-abs(perlin.getValue(p));
+      }, pos/100, 8);
+    return 20*(ret-0.5);
+  }
+  Vec2f TerrainGenerator::texCoordAtPoint(Vec2f pos) {
+    return Vec2f(0,0);
   }
   
 }

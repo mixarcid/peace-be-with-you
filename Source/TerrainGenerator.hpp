@@ -1,12 +1,15 @@
 #pragma once
-
-#include "BasicMesh.hpp"
+#include "Perlin.hpp"
 
 NAMESPACE {
 
   struct TerrainGenerator {
 
-    static BasicMeshData dataAtPos(Vec2f pos);
+    Perlin perlin;
+    
+    TerrainGenerator();
+    f32 heightAtPoint(Vec2f pos);
+    Vec2f texCoordAtPoint(Vec2f pos);
 
   };
 

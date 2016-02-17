@@ -57,11 +57,11 @@ void main() {
   float seed = dot(texCoord, vec2(12.9898,78.233))*0.5;
   vec2 offset = vec2(noise(seed), noise(seed+8327))*0.005;
   vec3 s = sobel(normal, texCoord + offset, d).xyz;
-  if (length(s) > 0.8) {
+  if (length(s) > 0.9) {
     float l = 1 - length(s);
     s = vec3(l,l,l);
   } else {
     s = texture(diffuse,texCoord).xyz;
   }
-  outColor = vec4(s,1);
+  outColor = vec4(s,1);//vec4(texture(normal, texCoord));
 }

@@ -21,11 +21,11 @@ void main() {
     if (intensity > 0.75f) {
       intensity = 1.0f;
     } else if (intensity > 0.5f) {
-      intensity = 0.75f;
+      intensity = 0.7f;
     } else if (intensity > 0.25f) {
-      intensity = 0.5f;
+      intensity = 0.4f;
     } else {
-      intensity = 0.25f;
+      intensity = 0.0f;
     }
     light_color += uniDirLights[i].color*intensity;
   }

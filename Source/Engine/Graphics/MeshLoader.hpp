@@ -11,7 +11,6 @@ NAMESPACE {
   /*Both these Assets expect the name to be 
     in the form "Filename:Meshname"
    */
-  
   template<>
     StaticMesh* loadAsset<StaticMesh>(String name);
   template<>
