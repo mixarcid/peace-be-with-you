@@ -5,12 +5,17 @@ NAMESPACE {
   Renderer::Renderer() : second_shade(SHADER_PLAIN) {}
   
   void Renderer::init(Vec2i win_size) {
-    
+    PEACE_GL_CHECK_ERROR;
     first_shade.init("Main", "Main");
+    PEACE_GL_CHECK_ERROR;
     first_shade.bindOutputs({"outColor","outNormal"});
+    PEACE_GL_CHECK_ERROR;
     second_shade.init("PassThrough", "Toon");
+    PEACE_GL_CHECK_ERROR;
     second_shade.bindOutputs({"outColor"});
+    PEACE_GL_CHECK_ERROR;
     first_shade.use();
+    PEACE_GL_CHECK_ERROR;
     
     screen_coord = second_shade.getVar("screenCoord", TYPE_VECTOR2F);
     diffuse_uniform = second_shade.getUniform("diffuse", 0);

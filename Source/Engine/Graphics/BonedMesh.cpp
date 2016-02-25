@@ -3,6 +3,8 @@
 
 NAMESPACE {
 
+  const ShaderFlags BonedMesh::SHADER_FLAGS;
+  
   void Bone::operator=(const TransformPad b) {
     memcpy(this, &b, sizeof(TransformPad));
   }
@@ -55,17 +57,16 @@ NAMESPACE {
     }
     
     for (u32 i = 0; i < bones->size(); ++i) {
-      (*bones)[i] = Transform::interp(keyframes[cur_keyframe - 1]
-				      .bones[i],
-				      keyframes[cur_keyframe]
-				      .bones[i],
+      (*bones)[i] = TransformPad::interp(keyframes[cur_keyframe - 1]
+					 .bones[i],
+					 keyframes[cur_keyframe]
+					 .bones[i],
 				      h);
     }
-    //Log::message("h: %f, ck: %u, t: %f", h, cur_keyframe, cur_time);
   }
 
   BonedMeshBase::BonedMeshBase(Texture tex)
-    : StaticMesh(tex, SHADER_SKELETAL) {}
+    : StaticMesh(tex, BonedMesh::SHADER_FLAGS) {}
 
   void BonedMeshBase::init(Array<BasicMeshData>& mesh_data,
 			   Array<BonedMeshData>& bone_data,
@@ -83,6 +84,8 @@ NAMESPACE {
 	  Shader::BONE_WEIGHTS0});
 
     RenderableReg::ebo.bindArray(elements, false);
+    b_sphere = BoundingSphere(mesh_data);
+    b_obb = BoundingOBB(mesh_data);
   }
 
   BonedAnimation BonedMeshBase::getAnimation(String name) {
@@ -104,6 +107,7 @@ NAMESPACE {
 
   void BonedMesh::render(RenderContext c) {
     cur_animation.step(&bones, c.dt);
+    //Shader::setFlags(SHADER_FLAGS);
     Shader::UNI_BONES.registerArray(bones);
     base->render(c);
   }

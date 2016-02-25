@@ -171,6 +171,17 @@ NAMESPACE {
     }
     return ret;
   }
+
+  template <typename T>
+    struct Mat2 : Mat<T,2> {
+
+    using Mat<T,2>::Mat;
+    inline Mat2() : Mat<T,2>::Mat() {}
+    inline Mat2(Mat<T,2> init) {
+      memcpy(this, &init, sizeof(Mat2));
+    }
+    
+  };
   
   template <typename T>
     struct Mat3 : Mat<T,3> {
@@ -254,6 +265,7 @@ NAMESPACE {
     
   };
 
+  typedef Mat2<f32> Mat2f;
   typedef Mat3<f32> Mat3f;
   typedef Mat4<f32> Mat4f;
   

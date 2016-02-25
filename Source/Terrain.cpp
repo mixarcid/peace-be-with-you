@@ -21,14 +21,16 @@ NAMESPACE {
 
   f32 test(Vec2f pos, Vec3f* norm) {
     *norm = Vec3f(0,0,1);
-    return 1;
+    return 0;
   }
 
   void TerrainChunk::init() {
     addComponent(Terrain::chunk_meshes.emplace_back());
-    tight_object.ground = BoundingGround(test);
-    loose_object.object = BoundingObject();
+    BoundingGround ground(test);
+    tight_object.set(&ground);
   }
+
+  TerrainChunk::~TerrainChunk() {}
 
   Vec3f computeNormal(Vec3f point,
 		      Vec3f adjacent_points[4]) {
@@ -101,8 +103,19 @@ NAMESPACE {
     
   }
 
+  Terrain::~Terrain() {
+    if (ground_object) {
+      delete ground_object->getComponent<PhysicsComp>();
+    }
+  }
+
   void Terrain::generate(Vec3f pos, Vec2u size) {
 
+    ground_object = engine->emplaceStatic<GameObject>(pos);
+    ground_object->addComponent(new PhysicsComp(ground_object, Material::STATIC));
+    BoundingGround bound(test);
+    ground_object->tight_object.set(&bound);
+    
     TerrainGenerator gen;
 
     Vec3f offset = pos -
@@ -116,7 +129,7 @@ NAMESPACE {
 	  (chunk_x*(CHUNK_SIZE-CHUNK_STEP),
 	   chunk_y*(CHUNK_SIZE-CHUNK_STEP));
 	
-	Pointer<TerrainChunk> c = engine->emplaceObject<TerrainChunk>
+	Pointer<TerrainChunk> c = engine->emplaceStatic<TerrainChunk>
 	  (Vec3f(position.x(), position.y(), offset.z()));
 	//Log::message(to_string(position));
 	

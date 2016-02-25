@@ -53,12 +53,14 @@ NAMESPACE {
     return (2/5)*mass*sqr(radius);
   }
 
-  void BoundingSphere::transform(Transform t) {
+  BoundingObject* BoundingSphere::transform(TransformBasic t) {
+    BoundingSphere* ret = new BoundingSphere(*this);
     center += t.trans;
+    return ret;
   }
 
   //thanks, nerdinand from StackOverFlow
-  COLLIDE_FUNC(BOUNDING_SPHERE, BOUNDING_AABB, {
+  COLLIDE_FUNC(SPHERE, AABB, {
 
       BoundingSphere* sphere = (BoundingSphere*) oa;
       BoundingAABB* aabb = (BoundingAABB*) ob;
@@ -88,7 +90,7 @@ NAMESPACE {
       return min_dist < sqr(sphere->radius);
     });
 
-  COLLIDE_FUNC(BOUNDING_SPHERE, BOUNDING_SPHERE, {
+  COLLIDE_FUNC(SPHERE, SPHERE, {
 
       BoundingSphere* a = (BoundingSphere*) oa;
       BoundingSphere* b = (BoundingSphere*) ob;
@@ -100,7 +102,7 @@ NAMESPACE {
       
     });
   
-  MANIFOLD_FUNC(BOUNDING_SPHERE, BOUNDING_SPHERE, {
+  MANIFOLD_FUNC(SPHERE, SPHERE, {
 
       BoundingSphere* a = (BoundingSphere*) oa;
       BoundingSphere* b = (BoundingSphere*) ob;
@@ -126,7 +128,7 @@ NAMESPACE {
     
     });
 
-  COLLIDE_FUNC(BOUNDING_SPHERE, BOUNDING_OBB, {
+  COLLIDE_FUNC(SPHERE, OBB, {
 
       BoundingSphere* a = (BoundingSphere*) oa;
       BoundingOBB* b = (BoundingOBB*) ob;

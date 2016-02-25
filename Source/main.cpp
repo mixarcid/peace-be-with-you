@@ -10,7 +10,7 @@ i32 main() {
   Engine engine;
   engine.init();
       
-  try {
+  //try {
 
     engine.graphics.ambient = 0;
     engine.graphics.emplaceDirLight(Vec3f(-1,-1,1),
@@ -42,13 +42,13 @@ i32 main() {
     Terrain terrain(&engine);
     terrain.generate(Vec3f(0,0,0),Vec2u(5,5));
     
-    engine.emplaceObject<Player>(Vec3f(0,10,0));
+    engine.emplaceDynamic<Player>(Vec3f(0,0,30));
     engine.begin();
     //printf("%d vs %d\n", (i32) 1 & 255, (i32) -1.01 & 255);
     
-  } catch(Exception e) {
+    /*} catch(Exception e) {
     Log::error(e.what());
-  }
+    }*/
 
   Log::message("Peace Be With You shut down sucessfully");
   return EXIT_SUCCESS;

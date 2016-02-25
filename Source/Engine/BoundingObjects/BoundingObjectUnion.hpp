@@ -6,23 +6,26 @@
 #include "BoundingOBB.hpp"
 #include "BoundingGround.hpp"
 
+
 NAMESPACE {
   
   struct BoundingObjectUnion {
+
+    //This code is hideous
+    typedef BoundingOBB BoundingObb;
+    typedef BoundingAABB BoundingAabb;
     
     union {
-      BoundingSphere sphere;
-      BoundingAABB aabb;
-      BoundingOBB obb;
-      BoundingGround ground;
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-2]);
+      Bounding$(className(entry)) obj_$(entry);
+      END_FOR;
       BoundingObject object;
     };
 
-    BoundingObjectUnion() {}
-
-    BoundingObject* getBoundingObject() {
-      return (BoundingObject*) this;
-    }
+    BoundingObjectUnion();
+    ~BoundingObjectUnion() {}
+    BoundingObject* getBoundingObject();
+    void set(BoundingObject* obj);
     
   };
 }

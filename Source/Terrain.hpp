@@ -14,6 +14,7 @@ NAMESPACE {
       init();
     }
     void init();
+    ~TerrainChunk();
     
   };
   $registerRttiStruct();
@@ -21,8 +22,10 @@ NAMESPACE {
   struct Terrain {
 
     Engine* engine;
+    Pointer<GameObject> ground_object;
 
     Terrain(Engine* _engine);
+    ~Terrain();
     //size in chunks
     void generate(Vec3f pos, Vec2u size);
 

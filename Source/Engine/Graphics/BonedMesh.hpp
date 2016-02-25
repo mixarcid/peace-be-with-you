@@ -70,6 +70,9 @@ NAMESPACE {
     virtual void render(RenderContext c);
     BoundingObject* getTightBoundingObject();
     BoundingObject* getLooseBoundingObject();
+
+    const static ShaderFlags SHADER_FLAGS
+    = StaticMesh::SHADER_FLAGS | SHADER_SKELETAL;
     
   };
 }

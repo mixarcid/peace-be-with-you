@@ -4,7 +4,7 @@
 
 NAMESPACE {
   
-  struct BoundingAABB : BoundingObjectBase<BOUNDING_AABB> {
+  struct BoundingAABB : BoundingObjectBase<BoundingObject::AABB> {
 
     Vec3f center;
     Vec3f halves;
@@ -13,7 +13,7 @@ NAMESPACE {
     BoundingAABB(Vec3f _center, Vec3f _halves);
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
+    virtual BoundingObject* transform(TransformBasic t);
     
   };
 

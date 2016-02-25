@@ -3,16 +3,28 @@ out vec3 outNormal;
 
 #ifdef SHADER_USE_COLOR
 flat in vec4 color;
-#else
+#endif
+
+#ifdef SHADER_USE_TEXTURE
 in vec2 tex;
 #endif
+
+#ifdef SHADER_USE_NORMAL
 in vec3 normal;
+#endif
+
 in vec3 pos;
 
 void main() {
+
+  outColor = vec4(1,1,1,1);
+  
+#ifdef SHADER_USE_NORMAL
+  
   outNormal = normal;
-#ifndef SHADER_2D
   vec3 norm = normalize(normal);
+  
+#ifdef SHADER_3D
   vec3 light_color = vec3(uniAmbient);
   for (uint i=0; i<MAX_DIR_LIGHTS; ++i) {
     float intensity = max(0.0,
@@ -29,18 +41,19 @@ void main() {
     }
     light_color += uniDirLights[i].color*intensity;
   }
+  outColor *= vec4(light_color, 1);
 #endif
+#endif
+  
+#ifdef SHADER_USE_COLOR
+  outColor *= color;
+#endif
+#ifdef SHADER_USE_TEXTURE
+  outColor *= texture(uniTexture, tex);
+#endif
+
 #ifdef SHADER_2D
-#ifdef SHADER_USE_COLOR
-  outColor = color;
-#else
-  outColor = uniColor*texture(uniTexture, tex);
+  outColor *= uniColor;
 #endif
-#else
-#ifdef SHADER_USE_COLOR
-  outColor = vec4(light_color,1)*color;
-#else
-  outColor = vec4(light_color,1)*texture(uniTexture, tex);
-#endif
-#endif
+  
 }

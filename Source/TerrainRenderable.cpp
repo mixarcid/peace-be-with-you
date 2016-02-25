@@ -3,8 +3,10 @@
 
 NAMESPACE {
 
+  const ShaderFlags TerrainRenderable::SHADER_FLAGS;
+
   TerrainRenderable::TerrainRenderable()
-    : RenderableComp(SHADER_NO_FLAGS),
+    : RenderableComp(SHADER_FLAGS),
     tex(*Terrain::texture.get()) {}
 
   void TerrainRenderable::init(Array<BasicMeshData>& data) {

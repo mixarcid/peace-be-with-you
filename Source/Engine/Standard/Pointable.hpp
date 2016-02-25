@@ -109,7 +109,11 @@ NAMESPACE {
       return *this;
     }
 
-    void operator==(Pointable* _data) const {
+    bool operator==(Pointer b) {
+      return data == b.data;
+    }
+    
+    bool operator==(Pointable* _data) const {
       return data == _data;
     }
 
@@ -123,6 +127,11 @@ NAMESPACE {
 
     operator T*() const {
       return (T*) data;
+    }
+
+    template <typename U>
+    explicit operator U*() const {
+      return (U*) data;
     }
   
     T& operator*() const {

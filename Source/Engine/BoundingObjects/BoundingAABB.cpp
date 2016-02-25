@@ -13,8 +13,12 @@ NAMESPACE {
     f32 size = (halves.x()+halves.y()+halves.z())*(2/3);
     return (mass*sqr(size))/6;
   }
+
+  BoundingObject* BoundingAABB::transform(TransformBasic t) {
+    PEACE_UNIMPLIMENTED(NULL);
+  }
   
-  COLLIDE_FUNC(BOUNDING_AABB, BOUNDING_AABB, {
+  COLLIDE_FUNC(AABB, AABB, {
 
       BoundingAABB* a = (BoundingAABB*) oa;
       BoundingAABB* b = (BoundingAABB*) ob;
@@ -29,7 +33,7 @@ NAMESPACE {
       return true;
     });
   
-  CONTAINED_IN_FUNC(BOUNDING_AABB, BOUNDING_AABB, {
+  CONTAINED_IN_FUNC(AABB, AABB, {
 
       BoundingAABB* a = (BoundingAABB*) oa;
       BoundingAABB* b = (BoundingAABB*) ob;
@@ -42,7 +46,4 @@ NAMESPACE {
 	       < (a->halves.z() + b->halves.z())));
     });
   
-  void BoundingAABB::transform(Transform t) {
-    PEACE_UNIMPLIMENTED();
-  }
 }

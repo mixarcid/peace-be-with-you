@@ -5,7 +5,7 @@
 
 NAMESPACE {
 
-  struct BoundingSphere : BoundingObjectBase<BOUNDING_SPHERE> {
+  struct BoundingSphere : BoundingObjectBase<BoundingObject::SPHERE> {
 
     Vec3f center;
     f32 radius;
@@ -14,7 +14,7 @@ NAMESPACE {
     BoundingSphere(Array<BasicMeshData>& data);
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
+    virtual BoundingObject* transform(TransformBasic t);
     
   };
 

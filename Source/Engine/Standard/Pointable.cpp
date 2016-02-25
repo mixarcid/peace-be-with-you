@@ -25,7 +25,7 @@ NAMESPACE {
   }
 
   void Pointable::operator=(Pointable&& p) {
-    for (Pointer<Pointable>* pointer : pointers) {
+    /*for (Pointer<Pointable>* pointer : pointers) {
       *pointer = NULL;
     }
     pointers.clear();
@@ -33,7 +33,7 @@ NAMESPACE {
       pointer->data = this;
       pointers.push_back(pointer);
     }
-    p.pointers.clear();
+    p.pointers.clear();*/
   }
 
   void Pointable::onMove() {

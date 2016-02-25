@@ -1,11 +1,13 @@
 #include "Engine.hpp"
 #include "Input.hpp"
 #include "Assets.hpp"
+#include "BoundingObject.hpp"
 
 NAMESPACE {
 
   Engine::Engine()
     : graphics(this),
+    physics(this),
     dt(0),
     flags(ENGINE_NO_FLAGS) {}
 
@@ -42,10 +44,6 @@ NAMESPACE {
     flags |= ENGINE_ASSETS_LOADED;
     
   }
-
-  void Engine::removeObject(Pointer<GameObject> handle) {
-    game_objects.removeAndReplace(handle);
-  }
   
   void Engine::loop() {
 
@@ -57,7 +55,7 @@ NAMESPACE {
     cur_time.makeCurrent();
     dt = (f32) (cur_time.getMilliseconds()
 		- prev_time.getMilliseconds())/1000;
-
+    physics.update();
     graphics.render();
     gl::checkError();
 

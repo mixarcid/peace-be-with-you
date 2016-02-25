@@ -1,92 +1,102 @@
 #pragma once
 
+#include "RenderableComp.hpp"
 #include "Transform.hpp"
 
 NAMESPACE {
 
   struct Manifold;
   struct BoundingObject;
-
-  enum BoundingObjectType {
-    BOUNDING_AABB,
-    BOUNDING_SPHERE,
-    BOUNDING_OBB,
-    BOUNDING_GROUND,
-    BOUNDING_NONE,
-    BOUNDING_LAST
-  };
   
-  typedef function<bool(BoundingObject*, BoundingObject*)>
+  /*typedef function<bool(BoundingObject*, BoundingObject*)>
     TestCollisionFunc;
   typedef function<bool(BoundingObject*, BoundingObject*, Manifold*)>
-    ManifoldFunc;
+  ManifoldFunc;*/
+
+  typedef bool (*TestCollisionFunc) (BoundingObject*, BoundingObject*);
+  typedef bool (*ManifoldFunc) (BoundingObject*, BoundingObject*, Manifold*);
 
   struct BoundingObject {
+
+    PEACE_ENUM(BoundingObjectType,
+	       AABB,
+	       SPHERE,
+	       OBB,
+	       GROUND,
+	       NONE,
+	       LAST);
+    typedef BoundingObjectType Type;
     
-    BoundingObjectType type;
+    Type type;
     
-    BoundingObject(BoundingObjectType _type = BOUNDING_NONE);
+    BoundingObject(Type _type = NONE);
+    virtual ~BoundingObject() {}
     bool isContainedIn(BoundingObject* b);
     bool intersects(BoundingObject* b);
     bool intersects(BoundingObject* b, Manifold* man);
 
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
+    //return value must be deleted manually
+    virtual BoundingObject* transform(TransformBasic t);
+    virtual void render(RenderContext c) {}
 
     static TestCollisionFunc
-    contained_in_functions[BOUNDING_LAST][BOUNDING_LAST];
+    contained_in_functions[LAST][LAST];
     static TestCollisionFunc
-    collide_functions[BOUNDING_LAST][BOUNDING_LAST];
+    collide_functions[LAST][LAST];
     static ManifoldFunc
-    manifold_functions[BOUNDING_LAST][BOUNDING_LAST];
+    manifold_functions[LAST][LAST];
 
   };
 
   struct DefineContainedInFunc {
-    DefineContainedInFunc(BoundingObjectType a,
-			  BoundingObjectType b,
+    DefineContainedInFunc(BoundingObject::Type a,
+			  BoundingObject::Type b,
 			  TestCollisionFunc func);
   };
 
   struct DefineCollideFunc {
-    DefineCollideFunc(BoundingObjectType a,
-		      BoundingObjectType b,
+    DefineCollideFunc(BoundingObject::Type a,
+		      BoundingObject::Type b,
 		      TestCollisionFunc func);
   };
 
   struct DefineManifoldFunc {
-    DefineManifoldFunc(BoundingObjectType a,
-		       BoundingObjectType b,
+    DefineManifoldFunc(BoundingObject::Type a,
+		       BoundingObject::Type b,
 		       ManifoldFunc func);
   };
 
 #define CONTAINED_IN_FUNC(a_type, b_type, ...)				\
   DefineContainedInFunc contained_in##a_type##b_type			\
-    (a_type, b_type, [] (BoundingObject* oa,				\
-			 BoundingObject* ob)->bool {			\
+    (BoundingObject::a_type,						\
+     BoundingObject::b_type, [] (BoundingObject* oa,			\
+				 BoundingObject* ob)->bool {		\
       __VA_ARGS__							\
 	});
   
 #define COLLIDE_FUNC(a_type, b_type, ...)				\
   DefineCollideFunc collide##a_type##b_type				\
-    (a_type, b_type, [] (BoundingObject* oa,				\
-			 BoundingObject* ob)->bool {			\
+    (BoundingObject::a_type,						\
+     BoundingObject::b_type, [] (BoundingObject* oa,			\
+				 BoundingObject* ob)->bool {		\
       __VA_ARGS__							\
 	});
   
 #define MANIFOLD_FUNC(a_type, b_type, ...)				\
   DefineManifoldFunc manifold##a_type##b_type				\
-    (a_type, b_type, [] (BoundingObject* oa, BoundingObject* ob,	\
-			 Manifold* man)->bool {				\
+    (BoundingObject::a_type,						\
+     BoundingObject::b_type, [] (BoundingObject* oa, BoundingObject* ob, \
+				 Manifold* man)->bool {			\
       __VA_ARGS__							\
 	});
   
 
-  template <BoundingObjectType Type>
+  template <BoundingObject::Type T>
     struct BoundingObjectBase : BoundingObject {
 
-    BoundingObjectBase() : BoundingObject(Type) {}
+    BoundingObjectBase() : BoundingObject(T) {}
     
   };
 

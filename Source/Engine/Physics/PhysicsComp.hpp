@@ -3,14 +3,9 @@
 #include "Component.hpp"
 #include "Containers.hpp"
 #include "Vector.hpp"
+#include "Quaternion.hpp"
 
 NAMESPACE {
-
-  struct GameObject;
-
-  PEACE_DEFINE_BITFLAGS(PhysicsComponentFlags, 8,
-			PHYSICS_NO_FLAGS = 0x00,
-			PHYSICS_STATIC = 0x01);
 
   struct MassData {
 
@@ -32,7 +27,7 @@ NAMESPACE {
     const static Material STATIC;
   };
 
-  struct PhysicsComponent : Component {
+  struct PhysicsComp : Component {
 
     Material material;
     MassData mass_data;
@@ -42,15 +37,20 @@ NAMESPACE {
 
     Quaternionf spin;
 
-    PhysicsComponentFlags physics_flags;
-
-    PhysicsComponent(GameObject* obj,
-		     Material mat,
-		     Vec3f xi,
-		     Vec3f vi = Vec3f(0,0,0),
-		     PhysicsComponentFlags _flags = PHYSICS_NO_FLAGS);
+    PhysicsComp(GameObject* object,
+		Material mat,
+		Vec3f vi = Vec3f(0,0,0))
+      : material(mat),
+	mass_data(0,0),
+	veloc(vi),
+	force(Vec3f(0,0,0)) {
+      $rttiConstruct("PhysicsComp");
+      init(object);
+    }
+    void init(GameObject* object);
     void update(f32 dt);
     void applyForce(Vec3f force);
   };
+  $registerRttiStruct();
   
 }

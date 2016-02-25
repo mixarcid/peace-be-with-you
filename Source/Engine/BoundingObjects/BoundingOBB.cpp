@@ -14,12 +14,12 @@ NAMESPACE {
     Vec3f max, min = data[0].pos;
 
     for (BasicMeshData d : data) {
-      max.data[0] = max.x() > d.pos.x() ? max.x() : d.pos.x();
-      max.data[1] = max.y() > d.pos.y() ? max.y() : d.pos.y();
-      max.data[2] = max.z() > d.pos.z() ? max.z() : d.pos.z();
-      min.data[0] = min.x() < d.pos.x() ? min.x() : d.pos.x();
-      min.data[1] = min.y() < d.pos.y() ? min.y() : d.pos.y();
-      min.data[2] = min.z() < d.pos.z() ? min.z() : d.pos.z();
+      max.x() = max.x() > d.pos.x() ? max.x() : d.pos.x();
+      max.y() = max.y() > d.pos.y() ? max.y() : d.pos.y();
+      max.z() = max.z() > d.pos.z() ? max.z() : d.pos.z();
+      min.x() = min.x() < d.pos.x() ? min.x() : d.pos.x();
+      min.y() = min.y() < d.pos.y() ? min.y() : d.pos.y();
+      min.z() = min.z() < d.pos.z() ? min.z() : d.pos.z();
     }
 
     center = (max + min)/2;
@@ -36,9 +36,12 @@ NAMESPACE {
     return (mass*sqr(size))/6;
   }
 
-  void BoundingOBB::transform(Transform t) {
-    center += t.trans;
-    coord *= t.rot.mat3();
+  BoundingObject* BoundingOBB::transform(TransformBasic t) {
+    BoundingOBB* ret = new BoundingOBB(*this);
+    ret->center += t.trans;
+    ret->coord *= t.rot.mat3();
+    //Log::message(to_string(ret->coord));
+    return ret;
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -58,8 +61,10 @@ NAMESPACE {
     }
     return ret;
   }
+
+  void BoundingOBB::render(RenderContext c) {}
   
-  CONTAINED_IN_FUNC(BOUNDING_OBB, BOUNDING_AABB, {
+  CONTAINED_IN_FUNC(OBB, AABB, {
 
       BoundingOBB* obb = (BoundingOBB*) oa;
       BoundingAABB* aabb = (BoundingAABB*) ob;
@@ -85,7 +90,7 @@ NAMESPACE {
       
     });
 
-  COLLIDE_FUNC(BOUNDING_OBB, BOUNDING_OBB, {
+  COLLIDE_FUNC(OBB, OBB, {
 
       BoundingOBB* a = (BoundingOBB*) oa;
       BoundingOBB* b = (BoundingOBB*) ob;
@@ -198,7 +203,7 @@ NAMESPACE {
     /*Log::message("%u,%f", index, dist);*/	\
   }
   
-  MANIFOLD_FUNC(BOUNDING_OBB, BOUNDING_OBB, {
+  MANIFOLD_FUNC(OBB, OBB, {
 
       BoundingOBB* a = (BoundingOBB*) oa;
       BoundingOBB* b = (BoundingOBB*) ob;

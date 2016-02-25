@@ -2,9 +2,11 @@
 #include "Assets.hpp"
 #include "Input.hpp"
 #include "Engine.hpp"
+#include "PhysicsComp.hpp"
 
 NAMESPACE {
 
+  ChildTransform* Player::camera = NULL;
   Pointer<Player> Player::ptr;
   f32 Player::cam_speed(1);
   f32 Player::cam_rot_speed(0.001);
@@ -12,9 +14,18 @@ NAMESPACE {
   
   void Player::init() {
 
+    /*new (&tight_object.obb) BoundingOBB(*((BoundingOBB*)Player::mesh.get()->getTightBoundingObject()));
+      new (&loose_object.sphere) BoundingSphere(*((BoundingSphere*)Player::mesh.get()->getLooseBoundingObject()));*/
+
+    tight_object.set(Player::mesh.get()->getTightBoundingObject());
+    loose_object.set(Player::mesh.get()->getLooseBoundingObject());
+    
+
     addComponent(new BonedMesh(Player::mesh.get()));
-    addTransformChild(&engine->graphics.cam,
-		      Transform(Vec3f(0,-3,2)));
+    addComponent(new PhysicsComp(this,
+				 Material(985, 0.5)));
+    camera = addChildTransform(&engine->graphics.cam,
+			       TransformBasic(Vec3f(0,-10,0)));
     
     Input::addCursorPosCallback
       ("Main",
@@ -34,7 +45,9 @@ NAMESPACE {
 	Quaternionf q(-y_tot*cam_rot_speed,
 		      0,
 		      -x_tot*cam_rot_speed);
-	Player::ptr->engine->graphics.cam.rot = q;
+	/*Player::ptr->moveChildTransformAbs
+	  (Player::camera, TransformBasic(Vec3f(0,0,0), q));*/
+	Player::ptr->rotAbs(q);
 	
 	prev_x = x;
 	prev_y = y;
@@ -80,6 +93,7 @@ NAMESPACE {
 
   Player::~Player() {
     delete getComponent<RenderableComp>();
+    delete getComponent<PhysicsComp>();
   }
 
 }

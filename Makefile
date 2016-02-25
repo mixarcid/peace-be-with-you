@@ -6,7 +6,7 @@ EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti -Wno-unused-command-line-argument
 DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused
 RELEASE_FLAGS= -Ofast
-INCLUDE= $(shell find Source -type d | sed 's/[^\s]*[^\s]/-I&/g')
+INCLUDE= $(shell find Source -type d | sed 's/[^\ ]*[^\ ]/-I&/g')
 INCLUDE+= -IThirdParty/include
 SOURCES= $(call rwildcard, Source/, *.cpp)
 OUTDIR= bin/

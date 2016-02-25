@@ -11,4 +11,25 @@ NAMESPACE {
   BoundingObject* GameObject::getLooseBoundingObject() {
     return loose_object.getBoundingObject();
   }
+
+  /*void GameObject::transRel(Vec3f trans) {
+    Transform::transRel(trans);
+    onChange();
+  }
+  void GameObject::transAbs(Vec3f trans) {
+    Transform::transAbs(trans);
+    onChange();
+  }
+  void GameObject::rotRel(Quaternionf rot) {
+    Transform::rotRel(rot);
+    onChange();
+  }
+  void GameObject::rotAbs(Quaternionf rot) {
+    Transform::rotAbs(rot);
+    onChange();
+  }
+  void GameObject::onChange() {
+    tight_object.getBoundingObject()->transform(*((Transform*)this));
+    loose_object.getBoundingObject()->transform(*((Transform*)this));
+    }*/
 }

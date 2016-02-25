@@ -21,15 +21,24 @@ vec3 quatRot(vec4 q, vec3 v) {
 
 #ifdef SHADER_2D
 in vec2 inPosition2d;
-#else
+#endif
+
+#ifdef SHADER_3D
 in vec3 inPosition;
+#endif
+
+#ifdef SHADER_USE_NORMAL
 in vec3 inNormal;
 #endif
+
 #ifdef SHADER_USE_COLOR
 in vec4 inColor;
-#else
+#endif
+
+#ifdef SHADER_USE_TEXTURE
 in vec2 inTexCoord;
 #endif
+
 #ifdef SHADER_SKELETAL
 in uvec4 inBoneIndexes0;
 in vec4 inBoneWeights0;

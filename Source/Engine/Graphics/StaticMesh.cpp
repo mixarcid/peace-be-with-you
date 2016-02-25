@@ -2,9 +2,11 @@
 
 NAMESPACE {
 
+  const ShaderFlags StaticMesh::SHADER_FLAGS;
+  
   StaticMesh::StaticMesh(Texture texture,
-			 ShaderFlags _shader_flags)
-    : RenderableReg(_shader_flags),
+			 ShaderFlags flags)
+    : RenderableReg(flags),
     tex(texture) {}
 
   void StaticMesh::init(Array<BasicMeshData>& data,
@@ -24,7 +26,7 @@ NAMESPACE {
   }
     
   BoundingObject* StaticMesh::getLooseBoundingObject() {
-    return &b_obb;
+    return &b_sphere;
   }
   
   void StaticMesh::render(RenderContext c) {

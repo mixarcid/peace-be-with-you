@@ -6,11 +6,12 @@
 #include "GUI.hpp"
 #include "Containers.hpp"
 #include "Renderer.hpp"
+#include "GameObject.hpp"
 
 NAMESPACE {
 
   struct Engine;
-
+  
   struct Graphics {
 
     Array<GUINode> gui_nodes;
@@ -35,6 +36,9 @@ NAMESPACE {
       dir_lights.emplace_back(args...);
     }
     
+    void renderFunc(ComponentPair<RenderableComp> obj,
+		    RenderContext c,
+		    Mat4f model);
     void render();
 
   };

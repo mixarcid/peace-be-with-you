@@ -18,14 +18,16 @@ NAMESPACE {
     BoundingOBB b_obb;
     
     StaticMesh(Texture texture,
-	       ShaderFlags _shader_flags
-	       = SHADER_NO_FLAGS);
+	       ShaderFlags flags = SHADER_FLAGS);
     
     void init(Array<BasicMeshData>& data,
 	      Array<u32>& elements);
     BoundingObject* getTightBoundingObject();
     BoundingObject* getLooseBoundingObject();
     virtual void render(RenderContext c);
+
+    const static ShaderFlags SHADER_FLAGS
+    = (SHADER_3D | SHADER_USE_NORMAL | SHADER_USE_TEXTURE);
 
   };
   

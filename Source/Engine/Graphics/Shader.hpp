@@ -55,7 +55,7 @@ NAMESPACE {
     //texture
     u32 num;
 
-    ShaderUniform(u32 _num = 0);
+    ShaderUniform(u32 _num = 0, bool is_buffer = true);
 
     void initBuffer(u32 shader_id, String name);
     void keepBuffer(u32 shader_id, String name);
@@ -65,6 +65,7 @@ NAMESPACE {
     
     template <typename T>
     void registerVal(T val) {
+      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   sizeof(T),
@@ -72,10 +73,12 @@ NAMESPACE {
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
+      PEACE_GL_CHECK_ERROR;
     }
 
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
+      PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   num_elems*sizeof(T),
@@ -83,38 +86,73 @@ NAMESPACE {
 		   GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
+      PEACE_GL_CHECK_ERROR;
     }
     
     template <typename T>
     void registerArray(Array<T> data) {
+      PEACE_GL_CHECK_ERROR;
       registerArray(data.begin(), data.size());
+      PEACE_GL_CHECK_ERROR;
     }
 
     static u32 largest_id;
   };
+
+  PEACE_DEFINE_BITFLAGS(ShaderFlags, 16,
+			SHADER_NO_FLAGS = 0x00,
+			SHADER_USE_NORMAL = 0x01,
+			SHADER_USE_COLOR = 0x02,
+			SHADER_USE_TEXTURE = 0x04,
+			SHADER_SKELETAL = 0x08,
+		        SHADER_2D = 0x10,
+			SHADER_3D = 0x20,
+			SHADER_LAST_FLAG = 0x21,
+			SHADER_ALL_FLAGS = 0x3f);
 
   /*
     SHADER_PLAIN is used to define a plain old shader,
     without any of the regular uniforms and variables
     we add in
   */
-  PEACE_DEFINE_BITFLAGS(ShaderFlags, 8,
-			SHADER_NO_FLAGS = 0x00,
-			SHADER_USE_COLOR = 0x01,
-			SHADER_SKELETAL = 0x02,
-			SHADER_2D = 0x04,
-			SHADER_LAST_RENDER_FLAG = 0x05,
-			SHADER_UNINITIALIZED = 0x08,
-			SHADER_PLAIN = 0x10);
+    
+  PEACE_DEFINE_BITFLAGS(ShaderSettings, 16,
+			SHADER_NO_SETTINGS = 0x00,
+			SHADER_UNINITIALIZED = 0x01,
+			SHADER_PLAIN = 0x02);
+
+  struct GlobalShaderVar : ShaderVar {
+
+    String name;
+    GlobalShaderVar(String _name,
+		    ShaderFlags flags,
+		    i32 var_id,
+		    ShaderTypeName var_type);
+    static Array<GlobalShaderVar*> vars[SHADER_ALL_FLAGS+1];
+    
+  };
+
+  struct GlobalShaderUniform : ShaderUniform {
+
+    String name;
+    GlobalShaderUniform(String _name,
+			ShaderFlags flags,
+			u32 num = 0,
+			bool is_buffer = true);
+    static Array<GlobalShaderUniform*> uniforms[SHADER_ALL_FLAGS+1];
+
+  };
+
   struct Shader {
 
     i32 id;
+    ShaderSettings settings;
     ShaderFlags flags;
-    i32 flag_ids[SHADER_LAST_RENDER_FLAG];
+    i32 flag_ids[SHADER_ALL_FLAGS+1];
     String vert_str;
     String frag_str;
 
-    Shader(ShaderFlags _flags = SHADER_NO_FLAGS);
+    Shader(ShaderSettings _settings = SHADER_NO_SETTINGS);
     ~Shader();
     void init(const String vert, const String frag);
     void use();
@@ -127,21 +165,21 @@ NAMESPACE {
 				   u32 num=0);
     void bindOutputs(Array<String> names);
 
-    const static ShaderVar POSITION;
-    const static ShaderVar POSITION_2D_SHORT;
-    const static ShaderVar COLOR;
-    const static ShaderVar TEX_COORD;
-    const static ShaderVar NORMAL;
-    const static ShaderVar BONE_INDEXES0;
-    const static ShaderVar BONE_WEIGHTS0;
+    const static GlobalShaderVar POSITION;
+    const static GlobalShaderVar POSITION_2D_SHORT;
+    const static GlobalShaderVar COLOR;
+    const static GlobalShaderVar TEX_COORD;
+    const static GlobalShaderVar NORMAL;
+    const static GlobalShaderVar BONE_INDEXES0;
+    const static GlobalShaderVar BONE_WEIGHTS0;
 
-    static ShaderUniform UNI_TEXTURE;
-    static ShaderUniform UNI_MODEL;
-    static ShaderUniform UNI_VIEW_PROJ;
-    static ShaderUniform UNI_BONES;
-    static ShaderUniform UNI_DIR_LIGHTS;
-    static ShaderUniform UNI_AMBIENT;
-    static ShaderUniform UNI_COLOR;
+    static GlobalShaderUniform UNI_TEXTURE;
+    static GlobalShaderUniform UNI_MODEL;
+    static GlobalShaderUniform UNI_VIEW_PROJ;
+    static GlobalShaderUniform UNI_BONES;
+    static GlobalShaderUniform UNI_DIR_LIGHTS;
+    static GlobalShaderUniform UNI_AMBIENT;
+    static GlobalShaderUniform UNI_COLOR;
 
     static Shader* cur_shader;
 

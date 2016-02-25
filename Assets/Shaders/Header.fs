@@ -5,16 +5,20 @@ struct DirLight {
   vec3 color;
 };
 
+#ifdef SHADER_3D
 layout(std140) uniform _uniDirLights {
   DirLight uniDirLights[MAX_DIR_LIGHTS];
 };
+
 layout(std140) uniform _uniAmbient {
   float uniAmbient;
 };
+#endif
 
-#ifndef SHADER_USE_COLOR
+#ifdef SHADER_USE_TEXTURE
 uniform sampler2D uniTexture;
 #endif
+
 #ifdef SHADER_2D
 layout(std140) uniform _uniColor {
   vec4 uniColor;

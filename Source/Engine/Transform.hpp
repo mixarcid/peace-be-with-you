@@ -8,7 +8,7 @@
 
 NAMESPACE {
 
-  template <u8 Pad>
+  template <typename T, u8 Pad>
     struct TransformTemp {
 
     Vec3f trans;
@@ -23,37 +23,63 @@ NAMESPACE {
       return Mat4f::translate(trans)*rot.mat4();
     }
 
-    template<typename T>
-    static T combine(T a, T b) {
+    template <typename U, typename V>
+    static T combine(const U& a, const V& b) {
       T ret(a.trans + (a.rot * b.trans),
 		    b.rot*a.rot);
       return ret;
     }
 
-    template<typename T>
-    static T interp(T a, T b, f32 h) {
+    template <typename U, typename V>
+    static T interp(const U& a, const V& b, f32 h) {
       return T(Vec3f::lerp(a.trans, b.trans, h),
 	       Quaternionf::lerp(a.rot, b.rot, h));
     }
     
   };
 
-  struct Transform : Pointable, TransformTemp<0> {
+  struct TransformBasic : TransformTemp<TransformBasic, 0> {
+    using TransformTemp::TransformTemp;
+  };
 
-    Array<Pointer<Transform>> child_transforms;
+  struct Transform;
+
+  struct ChildTransform  {
+    
+    TransformBasic diff;
+    Pointer<Transform> obj;
+
+    ChildTransform(TransformBasic _diff,
+		   Pointer<Transform> _obj);
+    
+  };
+
+  struct Transform : Pointable, TransformTemp<Transform, 0> {
+
+    Array<ChildTransform> child_transforms;
     
     using TransformTemp::TransformTemp;
-    void addTransformChild(Transform* child,
-			   Transform initial_diff);
+    
     Vec3f getTrans();
     Quaternionf getRot();
+    TransformBasic getBasicTransform();
+    
     void transRel(Vec3f trans);
     void transAbs(Vec3f trans);
     void rotRel(Quaternionf rot);
     void rotAbs(Quaternionf rot);
+    void onChange();
+    
+    ChildTransform* addChildTransform(Transform* child,
+				      TransformBasic diff);
+    void moveChildTransformAbs(ChildTransform* child,
+			       TransformBasic diff);
+    void moveChildTransformRel(ChildTransform* child,
+			       TransformBasic diff);
+    
   };
   
-  struct TransformPad : TransformTemp<1> {
+  struct TransformPad : TransformTemp<TransformPad, 1> {
     using TransformTemp::TransformTemp;
   };
 

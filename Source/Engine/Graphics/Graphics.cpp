@@ -29,6 +29,16 @@ NAMESPACE {
 	}
       });
   }
+
+  void Graphics::renderFunc(ComponentPair<RenderableComp> obj,
+			    RenderContext c,
+			    Mat4f model) {
+    Vec3f dist = cam.getTrans() - obj.obj->getTrans();
+    c.dist = dist.norm();
+    Mat4f comb = model*obj.obj->getMat();
+    Shader::UNI_MODEL.registerVal(comb);
+    obj.comp->render(c);
+  }
   
   void Graphics::render() {
 
@@ -47,18 +57,16 @@ NAMESPACE {
     
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    
-    for (GameObject& obj : engine->game_objects) {
-      RenderableComp* rend = obj.getComponent<RenderableComp>();
-      if (rend) {
-	Vec3f dist = cam.getTrans() - obj.getTrans();
-	c.dist = dist.norm();
-	Mat4f comb = model*obj.getMat();
-	Shader::UNI_MODEL.registerVal(comb);
-	rend->render(c);
-      }
-    }
 
+    engine->traverseStatic<RenderableComp>
+      (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
+	renderFunc(obj, c, model);
+      });
+    engine->traverseDynamic<RenderableComp>
+      (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
+	renderFunc(obj, c, model);
+      });
+    
     renderer.finalize();
 
     view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),

@@ -17,6 +17,7 @@ NAMESPACE {
     void init();
     ~Player();
 
+    static ChildTransform* camera;
     static Pointer<Player> ptr;
     static f32 cam_speed;
     static f32 cam_rot_speed;

@@ -13,22 +13,39 @@ NAMESPACE {
     ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32)),
     ShaderTypeInfo(GL_SHORT, 2, 2*sizeof(i16))
   };
-  
-  const ShaderVar Shader::POSITION(0, TYPE_VECTOR3F);
-  const ShaderVar Shader::COLOR(1, TYPE_VECTOR4F);
-  const ShaderVar Shader::TEX_COORD(2, TYPE_VECTOR2F);
-  const ShaderVar Shader::NORMAL(3, TYPE_VECTOR3F);
-  const ShaderVar Shader::BONE_INDEXES0(4, TYPE_VECTOR4U);
-  const ShaderVar Shader::BONE_WEIGHTS0(5, TYPE_VECTOR4F);
-  const ShaderVar Shader::POSITION_2D_SHORT(6, TYPE_VECTOR2S);
 
-  ShaderUniform Shader::UNI_TEXTURE(0);
-  ShaderUniform Shader::UNI_MODEL;
-  ShaderUniform Shader::UNI_VIEW_PROJ;
-  ShaderUniform Shader::UNI_BONES;
-  ShaderUniform Shader::UNI_DIR_LIGHTS;
-  ShaderUniform Shader::UNI_AMBIENT;
-  ShaderUniform Shader::UNI_COLOR;
+  Array<GlobalShaderVar*> GlobalShaderVar::vars[SHADER_ALL_FLAGS+1];
+  Array<GlobalShaderUniform*> GlobalShaderUniform::uniforms[SHADER_ALL_FLAGS+1];
+  
+  const GlobalShaderVar Shader::POSITION
+    ("inPosition", SHADER_3D, 0, TYPE_VECTOR3F);
+  const GlobalShaderVar Shader::COLOR
+    ("inColor", SHADER_USE_COLOR, 1, TYPE_VECTOR4F);
+  const GlobalShaderVar Shader::TEX_COORD
+    ("inTexCoord", SHADER_USE_TEXTURE, 2, TYPE_VECTOR2F);
+  const GlobalShaderVar Shader::NORMAL
+    ("inNormal", SHADER_USE_NORMAL, 3, TYPE_VECTOR3F);
+  const GlobalShaderVar Shader::BONE_INDEXES0
+    ("inBoneIndexes0", SHADER_SKELETAL, 4, TYPE_VECTOR4U);
+  const GlobalShaderVar Shader::BONE_WEIGHTS0
+    ("inBoneWeights0", SHADER_SKELETAL, 5, TYPE_VECTOR4F);
+  const GlobalShaderVar Shader::POSITION_2D_SHORT
+    ("inPosition2d", SHADER_2D, 6, TYPE_VECTOR2S);
+
+  GlobalShaderUniform Shader::UNI_TEXTURE
+    ("uniTexture", SHADER_USE_TEXTURE, 0, false);
+  GlobalShaderUniform Shader::UNI_MODEL
+    ("uniModel", ~SHADER_NO_FLAGS);
+  GlobalShaderUniform Shader::UNI_VIEW_PROJ
+    ("uniViewProj", ~SHADER_NO_FLAGS);
+  GlobalShaderUniform Shader::UNI_BONES
+    ("uniBones", SHADER_SKELETAL);
+  GlobalShaderUniform Shader::UNI_DIR_LIGHTS
+    ("uniDirLights", SHADER_3D);
+  GlobalShaderUniform Shader::UNI_AMBIENT
+    ("uniAmbient", SHADER_3D);
+  GlobalShaderUniform Shader::UNI_COLOR
+    ("uniColor", SHADER_2D);
 
   Shader* Shader::cur_shader = NULL;
 
@@ -43,17 +60,8 @@ NAMESPACE {
 
   static String vert_header;
   static String frag_header;
-  
-  PEACE_DEFINE_BITFLAGS(FirstLoadFLags, 8,
-			FIRST_SHADER_LOAD = 0x01,
-			FIRST_COLOR_LOAD = 0x02,
-			FIRST_TEXTURE_LOAD = 0x04,
-			FIRST_SKELETAL_LOAD = 0x08,
-			FIRST_3D_LOAD = 0x10,
-			FIRST_2D_LOAD = 0x20,
-			FIRST_LOAD_ALL = 0xff);
-  
-  FirstLoadFLags first_load_flags = FIRST_LOAD_ALL;
+
+  static bool first_shader_load = true;
 
   static String getFileContents(String filename) {
 
@@ -101,11 +109,15 @@ NAMESPACE {
   }
 
   u32 ShaderUniform::largest_id = 0;
-  ShaderUniform::ShaderUniform(u32 _num)
-    : id(largest_id++), num(_num) {};
+  ShaderUniform::ShaderUniform(u32 _num, bool is_buffer)
+    : id(largest_id++),
+    block_id(is_buffer ? 0 : -1),
+    buffer_id(is_buffer ? 0 : -1),
+    num(_num) {};
 
   void ShaderUniform::initBuffer(u32 shader_id,
 				 String name) {
+    PEACE_GL_CHECK_ERROR;
     String comb_name = "_" + name;
     block_id = glGetUniformBlockIndex(shader_id,
 				      comb_name.c_str());
@@ -137,23 +149,48 @@ NAMESPACE {
     tex.use();
   }
 
-  Shader::Shader(ShaderFlags _flags)
-    : flags(_flags | SHADER_UNINITIALIZED) {}
+  GlobalShaderVar::GlobalShaderVar(String _name,
+				   ShaderFlags flags,
+				   i32 var_id,
+				   ShaderTypeName var_type)
+    : ShaderVar(var_id, var_type), name(_name) {
+    for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
+      if (mask & flags) {
+	vars[mask].push_back(this);
+      }
+    }
+  }
+
+  GlobalShaderUniform::GlobalShaderUniform(String _name,
+					   ShaderFlags flags,
+					   u32 num,
+					   bool is_buffer)
+    : ShaderUniform(num, is_buffer), name(_name) {
+    for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
+      if (mask & flags) {
+	uniforms[mask].push_back(this);
+      }
+    }
+  }
+
+  Shader::Shader(ShaderSettings _settings)
+    : settings(_settings | SHADER_UNINITIALIZED), flags(SHADER_NO_FLAGS) {}
 
   Shader::~Shader() {
-    if (!(flags & SHADER_UNINITIALIZED)) {
+    if (!(settings & SHADER_UNINITIALIZED)) {
       glDeleteProgram(id);
     }
   }
 
   void Shader::init(const String vert, const String frag) {
     
-    for (u8 i=0; i<SHADER_LAST_RENDER_FLAG; ++i) {
+    for (u8 i=0; i<SHADER_ALL_FLAGS+1; ++i) {
       flag_ids[i] = -1;
     }
 
-    if (!(flags & SHADER_PLAIN) &&
-	(first_load_flags & FIRST_SHADER_LOAD)) {
+    if (!(settings & SHADER_PLAIN) &&
+	first_shader_load) {
+      first_shader_load = false;
       vert_header = getFileContents(SHADER_HEADER_VERT);
       frag_header = getFileContents(SHADER_HEADER_FRAG);
     }
@@ -164,30 +201,30 @@ NAMESPACE {
     frag_str = frag_header + "\n"
       + getFileContents((DIR_SHADERS + frag +
 			 DIR_FRAG_EXTENSION));
-    localSetFlags(SHADER_NO_FLAGS);
+
+    if (settings & SHADER_PLAIN) {
+      localSetFlags(SHADER_NO_FLAGS);
+    } else {
+      localSetFlags(SHADER_ALL_FLAGS);
+    }
     
-    //#ifdef PEACE_LOG_LOADED_ASSETS
+#ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded vertex shader %s with fragment shader %s",
 		 vert.c_str(), frag.c_str());
-    //#endif
+#endif
   }
 
   void Shader::localSetFlags(ShaderFlags shade_flags) {
 
-    debugAssert(!(flags & SHADER_PLAIN)
+    debugAssert(!(settings & SHADER_PLAIN)
 		|| (shade_flags == SHADER_NO_FLAGS),
 		"You cannot call Shader::localSetFlags "
-		"on a plain Shader (unless with SHADER_NO_FLAGS)");
-    debugAssert(shade_flags <= SHADER_LAST_RENDER_FLAG,
-		"You must call Shader::localSetFlags "
-		"with valid flags");
+		"on a plain Shader (unless with Shader::NO_FLAGS)");
     
-    if (flags == shade_flags) {
+    if ((flags == shade_flags) &&
+	!((settings & SHADER_UNINITIALIZED))) {
       return;
     }
-
-    debugAssert(shade_flags < SHADER_LAST_RENDER_FLAG,
-		"Shader::setFlags called with invalid flags");
     
     i32 flag_id = flag_ids[shade_flags];
     if (flag_id != -1) {
@@ -201,15 +238,16 @@ NAMESPACE {
     }
 
     String preprocess = "#version 150 core\n";
-    if (shade_flags & SHADER_USE_COLOR) {
-      preprocess += "#define SHADER_USE_COLOR\n";
+
+    if (shade_flags == SHADER_NO_FLAGS) {
+      preprocess += "#define SHADER_NO_FLAGS\n";
     }
-    if (shade_flags & SHADER_SKELETAL) {
-      preprocess += "#define SHADER_SKELETAL\n";
+    
+    FOR(entry in getEnumEntries("ShaderFlags")[:-2]);
+    if (shade_flags & $(entry)) {
+      preprocess += "#define $(entry)\n";
     }
-    if (shade_flags & SHADER_2D) {
-      preprocess += "#define SHADER_2D\n";
-    }
+    END_FOR;
     
     String vert_source = preprocess + vert_str;
     String frag_source = preprocess + frag_str;
@@ -238,22 +276,9 @@ NAMESPACE {
     glAttachShader(id, vert_id);
     glAttachShader(id, frag_id);
 
-    if (!(flags & SHADER_PLAIN)) {
-      if (shade_flags & SHADER_2D) {
-	glBindAttribLocation(id, POSITION_2D_SHORT.id, "inPosition2d");
-      } else {
-	glBindAttribLocation(id, POSITION.id, "inPosition");
-	glBindAttribLocation(id, NORMAL.id, "inNormal");
-      }
-    
-      if (shade_flags & SHADER_USE_COLOR) {
-	glBindAttribLocation(id, COLOR.id, "inColor");
-      } else {
-	glBindAttribLocation(id, TEX_COORD.id, "inTexCoord");
-      }
-      if (shade_flags & SHADER_SKELETAL) {
-	glBindAttribLocation(id, BONE_INDEXES0.id, "inBoneIndexes0");
-	glBindAttribLocation(id, BONE_WEIGHTS0.id, "inBoneWeights0");
+    if (!(settings & SHADER_PLAIN)) {
+      for (GlobalShaderVar* var : GlobalShaderVar::vars[shade_flags]) {
+	glBindAttribLocation(id, var->id, var->name.c_str());
       }
     }
 
@@ -261,62 +286,31 @@ NAMESPACE {
     glDeleteShader(vert_id);
     glDeleteShader(frag_id);
 
-    if (!(flags & SHADER_PLAIN)) {
+    if (!(settings & SHADER_PLAIN)) {
       flags = shade_flags;
       flag_ids[flags] = id;
-    } else {
-      flags &= ~SHADER_UNINITIALIZED;
     }
     
-    if (cur_shader == this) {
+    settings &= ~SHADER_UNINITIALIZED;
+    
+    //if (cur_shader == this) {
       _use_no_check();
-    }
+      //}
+    
   }
 
   void Shader::_use_no_check() {
-    debugAssert(!(flags & SHADER_UNINITIALIZED),
+    debugAssert(!(settings & SHADER_UNINITIALIZED),
 		"You must initialize the shader "
 		"before using it");
     glUseProgram(id);
     cur_shader = this;
-    if (!(flags & SHADER_PLAIN)) {
-      if (!(flags & SHADER_USE_COLOR)) {
-	UNI_TEXTURE.id =
-	  glGetUniformLocation(id, "uniTexture");
-      }
-      if (first_load_flags & FIRST_SHADER_LOAD) {
-	UNI_MODEL.initBuffer(id, "uniModel");
-	UNI_VIEW_PROJ.initBuffer(id, "uniViewProj");
-	first_load_flags &= ~FIRST_SHADER_LOAD;
-      } else {
-	UNI_MODEL.keepBuffer(id, "uniModel");
-	UNI_VIEW_PROJ.keepBuffer(id, "uniViewProj");
-      }
-      if (flags & SHADER_2D) {
-	if (first_load_flags & FIRST_2D_LOAD) {
-	  UNI_COLOR.initBuffer(id, "uniColor");
-	  first_load_flags &= ~FIRST_2D_LOAD;
+    if (!(settings & SHADER_PLAIN)) {
+      for (GlobalShaderUniform* uniform : GlobalShaderUniform::uniforms[flags]) {
+	if (uniform->block_id != -1) {
+	  uniform->initBuffer(id, uniform->name);
 	} else {
-	  UNI_COLOR.keepBuffer(id, "uniColor");
-	}
-	UNI_COLOR.registerVal(Vec4f(1,1,1,1));
-      }
-      if (!(flags & SHADER_2D)) {
-	if (first_load_flags & FIRST_3D_LOAD) {
-	  UNI_DIR_LIGHTS.initBuffer(id, "uniDirLights");
-	  UNI_AMBIENT.initBuffer(id, "uniAmbient");
-	  first_load_flags &= ~FIRST_3D_LOAD;
-	} else {
-	  UNI_DIR_LIGHTS.keepBuffer(id, "uniDirLights");
-	  UNI_AMBIENT.keepBuffer(id, "uniAmbient");
-	}
-      }
-      if (flags & SHADER_SKELETAL) {
-	if (first_load_flags & FIRST_SKELETAL_LOAD) {
-	  UNI_BONES.initBuffer(id, "uniBones");
-	  first_load_flags &= ~FIRST_SKELETAL_LOAD;
-	} else {
-	  UNI_BONES.keepBuffer(id, "uniBones");
+	  uniform->id = glGetUniformLocation(id, uniform->name.c_str());
 	}
       }
     }
@@ -352,6 +346,8 @@ NAMESPACE {
   }
 
   void Shader::bindOutputs(Array<String> names) {
+    debugAssert(!(settings & SHADER_UNINITIALIZED),
+		"You must initialize the shader before binding outputs");
     u32 index = 0;
     for (String name : names) {
       glBindFragDataLocation(id, index++, name.c_str());

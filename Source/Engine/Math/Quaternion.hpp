@@ -173,7 +173,7 @@ NAMESPACE {
 
     static inline Vec3<T> rotate(const Quaternion q, const Vec3<T> vec) {
       
-      Vec3<T> vn = vec.normalized();
+      Vec3<T> vn = vec;//.normalized();
       Quaternion vec_q(vn.x(), vn.y(), vn.z(), 0);
       Quaternion res = vec_q * q.conjugate();
       res *= q;

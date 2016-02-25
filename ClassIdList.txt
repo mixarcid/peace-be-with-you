@@ -8,3 +8,4 @@ Renderable 7
 RenderableComp 8
 TerrainChunk 9
 Component 10
+PhysicsComp 11

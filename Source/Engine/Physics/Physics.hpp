@@ -1,14 +1,17 @@
 #pragma once
 
-#include "PhysicsComponent.hpp"
+#include "PhysicsComp.hpp"
 
 NAMESPACE {
+
+  struct Engine;
   
   struct Physics {
 
+    Engine* engine;
     Vec3f gravity;
 
-    Physics(Engine* engine);
+    Physics(Engine* _engine);
     void update();
     
   };
