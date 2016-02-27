@@ -1,17 +1,23 @@
 #include "Graphics.hpp"
 #include "Input.hpp"
 #include "Engine.hpp"
+#include "RenderableShape.hpp"
 
 NAMESPACE {
 
   Graphics::Graphics(Engine* _engine)
-    : engine(_engine), window(NULL) {}
+    : engine(_engine),
+    window(NULL),
+    flags(GRAPHICS_NO_FLAGS) {}
 
   void Graphics::init(GLFWwindow* _window) {
+    
     window = _window;
     glfwGetWindowSize(window, &win_size.x(), &win_size.y());
     renderer.init(win_size);
     cam.setAspect(win_size);
+
+    RenderableShape::init();
     
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -38,6 +44,23 @@ NAMESPACE {
     Mat4f comb = model*obj.obj->getMat();
     Shader::UNI_MODEL.registerVal(comb);
     obj.comp->render(c);
+
+    if (flags & GRAPHICS_RENDER_BOUNDING_TIGHT) {
+      BoundingObject* bound =
+	obj.obj->getTightBoundingObject()->transform
+	(obj.obj->getBasicTransform());
+      bound->render(c);
+      delete bound;
+    }
+
+    if (flags & GRAPHICS_RENDER_BOUNDING_LOOSE) {
+      BoundingObject* bound =
+	obj.obj->getLooseBoundingObject()->transform
+	(obj.obj->getBasicTransform());
+      bound->render(c);
+      delete bound;
+    }
+    
   }
   
   void Graphics::render() {

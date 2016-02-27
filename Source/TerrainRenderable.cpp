@@ -9,7 +9,7 @@ NAMESPACE {
     : RenderableComp(SHADER_FLAGS),
     tex(*Terrain::texture.get()) {}
 
-  void TerrainRenderable::init(Array<BasicMeshData>& data) {
+  void TerrainRenderable::init() {
     Shader::setFlags(RenderableComp::shader_flags);
     vao.init();
     vao.use();

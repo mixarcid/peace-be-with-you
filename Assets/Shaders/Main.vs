@@ -23,7 +23,7 @@ void main() {
 #endif
   
 #ifdef SHADER_USE_NORMAL
-  normal = inNormal;
+  normal = normalize(transpose(inverse(mat3(uniModel))) * inNormal);
 #endif
 
 #ifdef SHADER_3D
@@ -55,7 +55,6 @@ void main() {
 #endif
 
 #ifdef SHADER_3D
-  normal = normalize(transpose(inverse(mat3(uniModel))) * normal);
   gl_Position = uniViewProj*uniModel*vec4(position,1);
   gl_PointSize = gl_Position.z < 1 ? 25 : 25/gl_Position.z;
 #endif

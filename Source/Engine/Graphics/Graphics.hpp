@@ -11,6 +11,12 @@
 NAMESPACE {
 
   struct Engine;
+
+  PEACE_DEFINE_BITFLAGS
+    (GraphicsFlags, 8,
+     GRAPHICS_NO_FLAGS = 0x00,
+     GRAPHICS_RENDER_BOUNDING_TIGHT = 0x01,
+     GRAPHICS_RENDER_BOUNDING_LOOSE = 0x02);
   
   struct Graphics {
 
@@ -22,6 +28,7 @@ NAMESPACE {
     Renderer renderer;
     Vec2i win_size;
     f32 ambient;
+    GraphicsFlags flags;
 
     Graphics(Engine* _engine);
     

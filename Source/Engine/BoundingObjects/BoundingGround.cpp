@@ -76,9 +76,10 @@ NAMESPACE {
 	      (Vec3f
 	       (x ? a->halves.x() : -a->halves.x(),
 		y ? a->halves.y() : -a->halves.y(),
-		y ? a->halves.y() : -a->halves.y()));
+		z ? a->halves.z() : -a->halves.z()));
 
 	    f32 cur_pen = b->dataAtPoint(point.xy(), &cur_normal) - point.z();
+	    //Log::message(to_string(b->dataAtPoint(point.xy(), &cur_normal)));
 
 	    if (cur_pen > 0.0f) {
 	      

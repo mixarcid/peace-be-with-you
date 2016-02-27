@@ -19,6 +19,7 @@ NAMESPACE {
 
     static ChildTransform* camera;
     static Pointer<Player> ptr;
+    static TransformBasic camera_diff;
     static f32 cam_speed;
     static f32 cam_rot_speed;
     static Asset<BonedMeshBase> mesh;

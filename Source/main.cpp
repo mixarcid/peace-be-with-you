@@ -36,6 +36,12 @@ i32 main() {
 	case GLFW_KEY_3:
 	  gl::setGraphicsMode(PEACE_GL_POINTS);
 	  break;
+	case GLFW_KEY_4:
+	  if (act == GLFW_PRESS) {
+	    engine.graphics.flags ^=
+	      GRAPHICS_RENDER_BOUNDING_TIGHT;
+	  }
+	  break;
 	}
       });
 

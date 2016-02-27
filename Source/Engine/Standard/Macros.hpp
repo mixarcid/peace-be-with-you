@@ -33,9 +33,15 @@ $extend(getEnumEntries)
   constexpr inline name operator&(const name a, const name b) {	\
     return (name) ((u##size) a & (u##size) b);			\
   }								\
+  constexpr inline name operator^(const name a, const name b) {	\
+    return (name) ((u##size) a ^ (u##size) b);			\
+  }								\
   constexpr inline void operator|=(name& a, const name b) {	\
     a = a | b;							\
   }								\
   constexpr inline void operator&=(name& a, const name b) {	\
     a = a & b;							\
-  }
+  }								\
+  constexpr inline void operator^=(name& a, const name b) {	\
+    a = a ^ b;							\
+  }								

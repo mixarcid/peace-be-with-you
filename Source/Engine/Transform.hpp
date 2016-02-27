@@ -26,8 +26,13 @@ NAMESPACE {
     template <typename U, typename V>
     static T combine(const U& a, const V& b) {
       T ret(a.trans + (a.rot * b.trans),
-		    b.rot*a.rot);
+		    a.rot*b.rot);
       return ret;
+    }
+
+    template <typename U, typename... Args>
+    static T combine(const U& a, const Args... args) {
+      return combine(a, combine(args...));
     }
 
     template <typename U, typename V>

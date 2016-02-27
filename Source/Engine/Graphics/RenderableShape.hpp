@@ -4,16 +4,20 @@
 
 NAMESPACE {
 
-  /*struct RenderableShapeData {
+  struct RenderableShapeData {
+    
     Vec3f pos;
-    Vec3f color;
-  }
+    Vec4f color;
+
+    RenderableShapeData(Vec3f _pos, Vec4f _color);
+    
+  };
 
   struct RenderableShape : RenderableReg {
 
-    Vec3f color;
+    Vec4f color;
 
-    RenderableShape(Vec3f _color);
+    RenderableShape(Vec4f _color);
     virtual void render(RenderContext c);
 
     static RenderableShape CUBE;
@@ -21,6 +25,6 @@ NAMESPACE {
     
     static void init();
     
-    };*/
+    };
   
 }

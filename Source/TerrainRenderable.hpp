@@ -11,14 +11,15 @@ NAMESPACE {
     VAO vao;
     VBO vbo;
     Texture tex;
-
+    Array<BasicMeshData> data;
+    
     TerrainRenderable();
-    void init(Array<BasicMeshData>& data);
+    void init();
     virtual void render(RenderContext c);
-
+    
     const static ShaderFlags SHADER_FLAGS
     = SHADER_3D | SHADER_USE_NORMAL | SHADER_USE_TEXTURE;
-
+    
   };
 
 }

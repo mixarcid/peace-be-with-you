@@ -1,6 +1,7 @@
 #include "BoundingOBB.hpp"
 #include "BoundingAABB.hpp"
 #include "Manifold.hpp"
+#include "RenderableShape.hpp"
 
 NAMESPACE {
 
@@ -62,7 +63,13 @@ NAMESPACE {
     return ret;
   }
 
-  void BoundingOBB::render(RenderContext c) {}
+  void BoundingOBB::render(RenderContext c) {
+    Shader::UNI_MODEL.registerVal
+      (Mat4f::translate(center) *
+       Mat4f(coord) *
+       Mat4f::scale(halves));
+    RenderableShape::CUBE.render(c);
+  }
   
   CONTAINED_IN_FUNC(OBB, AABB, {
 

@@ -79,6 +79,9 @@ NAMESPACE {
     template <typename T>
     void registerArray(T* data, u32 num_elems) {
       PEACE_GL_CHECK_ERROR;
+      debugAssert(block_id != GL_INVALID_INDEX,
+		  "You're trying to send data to a "
+		  "buffer that doesn't exist");
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
       glBufferData(GL_UNIFORM_BUFFER,
 		   num_elems*sizeof(T),

@@ -121,14 +121,16 @@ NAMESPACE {
     String comb_name = "_" + name;
     block_id = glGetUniformBlockIndex(shader_id,
 				      comb_name.c_str());
-    fatalAssert(block_id != GL_INVALID_INDEX,
+    /*fatalAssert(block_id != GL_INVALID_INDEX,
 		"The uniform block %s does not "
-		"exist in the shader", comb_name.c_str());
-    glUniformBlockBinding(shader_id,
-			  block_id,
-			  id);
-    glGenBuffers(1, &buffer_id);
-    glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+		"exist in the shader", comb_name.c_str());*/
+    if (block_id != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shader_id,
+			    block_id,
+			    id);
+      glGenBuffers(1, &buffer_id);
+      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+    }
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id,
@@ -307,7 +309,7 @@ NAMESPACE {
     cur_shader = this;
     if (!(settings & SHADER_PLAIN)) {
       for (GlobalShaderUniform* uniform : GlobalShaderUniform::uniforms[flags]) {
-	if (uniform->block_id != -1) {
+	if (uniform->buffer_id != -1) {
 	  uniform->initBuffer(id, uniform->name);
 	} else {
 	  uniform->id = glGetUniformLocation(id, uniform->name.c_str());

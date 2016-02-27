@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  const static f32 COLLISION_POS_CORRECTION = 0.9;
+  const static f32 COLLISION_POS_CORRECTION = 0.8;
 
   bool resolveCollision(ComponentPair<PhysicsComp> a,
 			ComponentPair<PhysicsComp> b,
@@ -52,23 +52,23 @@ NAMESPACE {
     //Log::message((impulse*a.comp->mass_data.inv_mass).toString());
 
         
-    if (second_arg_is_static) {
+    /*if (second_arg_is_static) {
 
       a.comp->veloc += impulse*a.comp->mass_data.inv_mass;
-      a.obj->transRel(-m.normal*m.penetration);
-      Log::message("%f", m.penetration);
+      a.obj->transRel(-m.normal*m.penetration*COLLISION_POS_CORRECTION);
+      //Log::message("%f", m.penetration);
       
-    } else {
+      } else {*/
       
-      f32 cf  = COLLISION_POS_CORRECTION * m.penetration
-	/ (a.comp->mass_data.inv_mass + b.comp->mass_data.inv_mass);
-      Vec3f correction = m.normal*cf;
+    f32 cf  = COLLISION_POS_CORRECTION * m.penetration
+      / (a.comp->mass_data.inv_mass + b.comp->mass_data.inv_mass);
+    Vec3f correction = m.normal*cf;
 
-      a.comp->veloc += impulse*a.comp->mass_data.inv_mass;
-      a.obj->transRel(-correction * a.comp->mass_data.inv_mass);
-      b.obj->transRel(correction * b.comp->mass_data.inv_mass);
-      b.comp->veloc -= impulse*b.comp->mass_data.inv_mass;
-    }
+    a.comp->veloc += impulse*a.comp->mass_data.inv_mass;
+    a.obj->transRel(-correction * a.comp->mass_data.inv_mass);
+    b.obj->transRel(correction * b.comp->mass_data.inv_mass);
+    b.comp->veloc -= impulse*b.comp->mass_data.inv_mass;
+      //}
 
     CollisionMessage a_msg(a);
     CollisionMessage b_msg(b);
