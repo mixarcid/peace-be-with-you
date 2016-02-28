@@ -40,18 +40,17 @@ NAMESPACE {
   }
     
   void loadStaticMesh(String name, FILE* file, Texture tex) {
-
+ 
     auto inserted = AssetLoader<StaticMesh>::
-      loaded_assets.insert
-      (makePair(name, StaticMesh(tex)));
-    
+      loaded_assets.emplace(name, tex);
+      
     debugAssert(inserted.second,
 		"There was a problem inserting the StaticMesh %s"
 		" into the HashMap",
 		name.c_str());
     
     StaticMesh& mesh = inserted.first->second;
-
+    
     u32 num_verts = fio::readLittleEndian<u32>(file);
     fatalAssert(num_verts > 0,
 		"Why are you loading a mesh with no vertices?");
@@ -90,8 +89,7 @@ NAMESPACE {
     PEACE_GL_CHECK_ERROR;
 
     auto inserted = AssetLoader<BonedMeshBase>::
-      loaded_assets.insert
-      (makePair(name, BonedMeshBase(tex)));
+      loaded_assets.emplace(name, tex);
     
     debugAssert(inserted.second,
 		"There was a problem loading the BonedMesh %s"

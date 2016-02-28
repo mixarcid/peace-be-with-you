@@ -85,6 +85,7 @@ NAMESPACE {
       (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
 	renderFunc(obj, c, model);
       });
+    
     engine->traverseDynamic<RenderableComp>
       (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
 	renderFunc(obj, c, model);

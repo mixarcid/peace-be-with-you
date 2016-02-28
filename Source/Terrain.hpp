@@ -38,6 +38,7 @@ NAMESPACE {
     static const f32 CHUNK_SIZE;
     static const u32 CHUNK_RES;
     static const f32 CHUNK_STEP;
+    static const StaticMaterial material;
     
   };
 

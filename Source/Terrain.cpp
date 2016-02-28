@@ -19,6 +19,8 @@ NAMESPACE {
   EBO Terrain::elem_buffer_mid;
   EBO Terrain::elem_buffer_small;
 
+  const StaticMaterial Terrain::material(0.7, 0.6);
+  
   void TerrainChunk::init() {
     addComponent(Terrain::chunk_meshes.emplace_back());
   }
@@ -105,14 +107,14 @@ NAMESPACE {
   void Terrain::generate(Vec3f pos, Vec2u size) {
 
     ground_object = engine->emplaceStatic<GameObject>(pos);
-    ground_object->addComponent(new PhysicsComp(ground_object, Material::STATIC));
+    ground_object->addComponent(new PhysicsComp(ground_object, material));
     
     TerrainGenerator gen;
 
     Vec3f offset = pos -
       (Vec3f(size.x()-1, size.y()-1, 0)
        *(CHUNK_SIZE-CHUNK_STEP)/2);
-    Log::message(to_string(offset));
+    //Log::message(to_string(offset));
 
     BoundingGround bound
       ([offset, size](Vec2f p, Vec3f* norm) -> f32 {
@@ -121,9 +123,9 @@ NAMESPACE {
 	const f32 rel_div = (CHUNK_SIZE-2*CHUNK_STEP);
 	i32 x_chunk_index = rel_pos.x()/rel_div;
 	i32 y_chunk_index = rel_pos.y()/rel_div;
-	Log::message("--");
+	/*Log::message("--");
 	Log::message(to_string(rel_pos));
-	Log::message("%u, %u", x_chunk_index, y_chunk_index);
+	Log::message("%u, %u", x_chunk_index, y_chunk_index);*/
 	if (rel_pos.cx() < 0 ||
 	    rel_pos.cy() < 0 ||
 	    x_chunk_index >= size.cx() ||
@@ -140,11 +142,7 @@ NAMESPACE {
 	  y_chunk_index*rel_div;
 	u32 x_mesh_index = rel_x/CHUNK_STEP;
 	u32 y_mesh_index = rel_y/CHUNK_STEP;
-	//Log::message("%f, %f, %f", rel_x, rel_y, CHUNK_STEP);
-	//Log::message("%u, %u", x_mesh_index, y_mesh_index);
-
-	/**norm = Vec3f(0,0,1);
-	return 0;*/
+	
 	BasicMeshData d = rend->data
 	  [x_mesh_index*CHUNK_RES + y_mesh_index];
 	*norm = d.norm;

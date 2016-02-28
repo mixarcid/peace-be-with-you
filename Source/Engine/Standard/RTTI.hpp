@@ -22,6 +22,11 @@ NAMESPACE {
   
   struct BaseRTTI {
     TypeId type_id;
+    BaseRTTI();
+    BaseRTTI(BaseRTTI& b);
+    BaseRTTI(BaseRTTI&& b);
+    BaseRTTI& operator=(BaseRTTI& b);
+    BaseRTTI& operator=(BaseRTTI&& b);
     virtual ~BaseRTTI() {}
   };
 

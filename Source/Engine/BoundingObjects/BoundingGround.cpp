@@ -30,33 +30,7 @@ NAMESPACE {
       return (lowest_z < b->dataAtPoint(a->center.xy(), NULL)); 
     });
 
-  COLLIDE_FUNC(OBB, GROUND, {
-
-      BoundingOBB* a = (BoundingOBB*) oa;
-      BoundingGround* b = (BoundingGround*) ob;
-
-      for (u8 x=0; x<2; ++x) {
-	for (u8 y=0; y<2; ++y) {
-	  for (u8 z=0; z<2; ++z) {
-
-	    Vec3f point =
-	      a->coord*(a->center+Vec3f(x ? a->halves.x() : -a->halves.x(),
-				      y ? a->halves.y() : -a->halves.y(),
-				      y ? a->halves.y() : -a->halves.y()));
-	  
-	    if (point.z() < b->dataAtPoint(point.xy(), NULL)) {
-	      return true;
-	    }
-	  
-	  }
-	}
-      }
-
-      return false;
-    
-    });
-
-  MANIFOLD_FUNC(OBB, GROUND, {
+  /*MANIFOLD_FUNC(OBB, GROUND, {
 
       BoundingOBB* a = (BoundingOBB*) oa;
       BoundingGround* b = (BoundingGround*) ob;
@@ -109,6 +83,41 @@ NAMESPACE {
 
       return true;
     
+      });*/
+  
+  MANIFOLD_FUNC(OBB, GROUND, {
+
+      BoundingOBB* a = (BoundingOBB*) oa;
+      BoundingGround* b = (BoundingGround*) ob;
+
+      for (i8 axis = 2; axis >= 0; --axis) {
+
+	Vec3f proj;
+	switch(axis) {
+	case 0:
+	  proj = a->coord*Vec3f(a->halves.x(),0,0);
+	  break;
+	case 1:
+	  proj = a->coord*Vec3f(0,a->halves.y(),0);
+	  break;
+	case 2:
+	  proj = a->coord*Vec3f(0,0,a->halves.z());
+	  break;
+	}
+
+	for (u8 s = 0; s < 2; ++s) {
+	  Vec3f point = a->center - (s ? proj : -proj);
+	  //Log::message(to_string(point));
+	  man->penetration = b->dataAtPoint
+	    (point.xy(), &man->normal) - point.z();
+	  if (man->penetration > 0.0f) {
+	    man->normal = -man->normal;
+	    return true;
+	  }
+	}
+      }
+
+      return false;
+    
     });
- 
 }

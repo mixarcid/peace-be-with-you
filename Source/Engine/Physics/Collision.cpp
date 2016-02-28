@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  const static f32 COLLISION_POS_CORRECTION = 0.8;
+  const static f32 COLLISION_POS_CORRECTION = 0.9;
 
   bool resolveCollision(ComponentPair<PhysicsComp> a,
 			ComponentPair<PhysicsComp> b,
@@ -38,18 +38,13 @@ NAMESPACE {
     
     //Log::message(to_string(m.normal) + " " + to_string(m.penetration));
     
-    f32 vn = Vec3f::dot((b.comp->veloc - a.comp->veloc), m.normal);
-    
-    //if (vn <= 0) return;
-    //Log::message("VN: %f", vn);
+    Vec3f rv = b.comp->veloc - a.comp->veloc;
+    f32 vn = Vec3f::dot(rv, m.normal);
 
     f32 e = min(a.comp->material.cor, b.comp->material.cor);
     f32 j = ((1 + e) * vn)
       /(a.comp->mass_data.inv_mass + b.comp->mass_data.inv_mass);
-
     Vec3f impulse = m.normal * j;
-    //Log::message(to_string(impulse));
-    //Log::message((impulse*a.comp->mass_data.inv_mass).toString());
 
         
     /*if (second_arg_is_static) {
@@ -64,12 +59,32 @@ NAMESPACE {
       / (a.comp->mass_data.inv_mass + b.comp->mass_data.inv_mass);
     Vec3f correction = m.normal*cf;
 
-    a.comp->veloc += impulse*a.comp->mass_data.inv_mass;
     a.obj->transRel(-correction * a.comp->mass_data.inv_mass);
     b.obj->transRel(correction * b.comp->mass_data.inv_mass);
-    b.comp->veloc -= impulse*b.comp->mass_data.inv_mass;
-      //}
+    a.comp->applyImpulse(impulse);
+    b.comp->applyImpulse(-impulse);
 
+    //friction stuff
+    rv = b.comp->veloc - a.comp->veloc;
+    Vec3f t = rv - (m.normal*Vec3f::dot(rv, m.normal));
+    t.normalize();
+    f32 jt = -Vec3f::dot(rv, t) /
+      (a.comp->mass_data.inv_mass +
+       b.comp->mass_data.inv_mass);
+    Vec3f f_impulse;
+    f32 cof = (a.comp->material.cof_static +
+	       a.comp->material.cof_static)/2;
+    if (abs(jt) < j*cof) {
+      f_impulse = t*jt;
+    } else {
+      cof = (a.comp->material.cof_dynamic +
+	     a.comp->material.cof_dynamic)/2;
+      f_impulse = -t*j*cof;
+    }
+    //Log::message(to_string(f_impulse) + to_string(impulse));
+    a.comp->applyImpulse(f_impulse);
+    b.comp->applyImpulse(-f_impulse);
+	
     CollisionMessage a_msg(a);
     CollisionMessage b_msg(b);
     a.obj->message(&b_msg);

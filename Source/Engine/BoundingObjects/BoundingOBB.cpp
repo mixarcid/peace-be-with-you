@@ -211,7 +211,7 @@ NAMESPACE {
   }
   
   MANIFOLD_FUNC(OBB, OBB, {
-
+ 
       BoundingOBB* a = (BoundingOBB*) oa;
       BoundingOBB* b = (BoundingOBB*) ob;
     

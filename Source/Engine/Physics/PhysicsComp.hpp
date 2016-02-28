@@ -21,10 +21,18 @@ NAMESPACE {
     
     f32 density;
     f32 cor; //coefficient of restitution
+    f32 cof_static; //static coefficient of friction
+    f32 cof_dynamic; //dynamic coefficient of friction
     
-    Material(f32 mat_density, f32 mat_restitution);
-    
-    const static Material STATIC;
+    Material(f32 _density,
+	     f32 _restitution,
+	     f32 _cof_static,
+	     f32 _cof_dynamic);
+  };
+
+  struct StaticMaterial : Material {
+    StaticMaterial(f32 cof_static,
+		   f32 cof_dynamic);
   };
 
   struct PhysicsComp : Component {
@@ -49,7 +57,7 @@ NAMESPACE {
     }
     void init(GameObject* object);
     void update(f32 dt);
-    void applyForce(Vec3f force);
+    void applyImpulse(Vec3f j);
   };
   $registerRttiStruct();
   

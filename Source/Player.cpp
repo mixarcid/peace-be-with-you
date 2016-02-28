@@ -3,6 +3,7 @@
 #include "Input.hpp"
 #include "Engine.hpp"
 #include "PhysicsComp.hpp"
+#include "MonkeyHead.hpp"
 
 NAMESPACE {
 
@@ -17,16 +18,13 @@ NAMESPACE {
   
   void Player::init() {
 
-    /*new (&tight_object.obb) BoundingOBB(*((BoundingOBB*)Player::mesh.get()->getTightBoundingObject()));
-      new (&loose_object.sphere) BoundingSphere(*((BoundingSphere*)Player::mesh.get()->getLooseBoundingObject()));*/
-
-    tight_object.set(Player::mesh.get()->getTightBoundingObject());
-    loose_object.set(Player::mesh.get()->getLooseBoundingObject());
+    tight_object.set(mesh.get()->getTightBoundingObject());
+    loose_object.set(mesh.get()->getLooseBoundingObject());
     
 
     addComponent(new BonedMesh(Player::mesh.get()));
     addComponent(new PhysicsComp(this,
-				 Material(985, 0.1)));
+				 Material(985, 0.1, 0.5, 0.4)));
     
     camera = addChildTransform(&engine->graphics.cam,
 			       camera_diff);
@@ -48,11 +46,7 @@ NAMESPACE {
 	
 	Quaternionf qy(-y_tot*cam_rot_speed,0,0);
 	Quaternionf qx(0,0,-x_tot*cam_rot_speed);
-	/*Player::ptr->moveChildTransformAbs
-	  (Player::camera, TransformBasic::combine
-	   (TransformBasic(Vec3f(0,0,0), qx.conjugate()),
-	    Transform::combine
-	    (TransformBasic(Vec3f(0,0,0), qx*qy), camera_diff)));*/
+
 	Player::ptr->moveChildTransformAbs
 	  (Player::camera, TransformBasic::combine
 	   (TransformBasic(Vec3f(0,0,0), qy), camera_diff));
@@ -61,6 +55,19 @@ NAMESPACE {
 	prev_x = x;
 	prev_y = y;
 	  
+      });
+
+    Input::addMouseButtonCallback
+      ("Main",
+       [](GLFWwindow* win,
+	  i32 button, i32 act, i32 mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT &&
+	    act == GLFW_PRESS) {
+	  Vec3f dir = -(Player::ptr->getRot()*Vec3f(0,1,0));
+	  dir.normalize();
+	  Player::ptr->engine->emplaceDynamic
+	    <MonkeyHead>(Player::ptr->getTrans()+dir*5, dir*20);
+	}
       });
 
       

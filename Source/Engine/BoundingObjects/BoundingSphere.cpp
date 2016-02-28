@@ -55,7 +55,7 @@ NAMESPACE {
 
   BoundingObject* BoundingSphere::transform(TransformBasic t) {
     BoundingSphere* ret = new BoundingSphere(*this);
-    center += t.trans;
+    ret->center += t.trans;
     return ret;
   }
 
@@ -91,7 +91,6 @@ NAMESPACE {
     });
 
   COLLIDE_FUNC(SPHERE, SPHERE, {
-
       BoundingSphere* a = (BoundingSphere*) oa;
       BoundingSphere* b = (BoundingSphere*) ob;
     

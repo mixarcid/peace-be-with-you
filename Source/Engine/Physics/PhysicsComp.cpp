@@ -21,12 +21,18 @@ NAMESPACE {
     }
   }
 
-  const Material Material::STATIC(0,1);
+  Material::Material(f32 _density,
+		     f32 _restitution,
+		     f32 _cof_static,
+		     f32 _cof_dynamic)
+    : density(_density),
+    cor(_restitution),
+    cof_static(_cof_static),
+    cof_dynamic(_cof_dynamic) {}
 
-  Material::Material(f32 mat_density,
-		     f32 mat_restitution)
-    : density(mat_density),
-    cor(mat_restitution) {}
+  StaticMaterial::StaticMaterial(f32 cof_static,
+				 f32 cof_dynamic)
+    : Material(1, 0, cof_static, cof_dynamic) {}
 
   void PhysicsComp::init(GameObject* object) {
     //Log::message("%f", object->getTightBoundingObject()->getVolume());
@@ -40,8 +46,8 @@ NAMESPACE {
     veloc += force*mass_data.inv_mass*dt;
   }
 
-  void PhysicsComp::applyForce(Vec3f f) {
-    force += f;
+  void PhysicsComp::applyImpulse(Vec3f j) {
+    veloc += j*mass_data.inv_mass;
   }
   
 }
