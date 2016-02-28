@@ -9,5 +9,6 @@
 *.blend3
 bin/*
 #*#
+.*
 tests/bin/*
 ClassIdList.txt
