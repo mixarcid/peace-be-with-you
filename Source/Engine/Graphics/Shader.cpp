@@ -1,6 +1,8 @@
 #include "Shader.hpp"
 #include "Assets.hpp"
 #include "Texture.hpp"
+#include "BonedMesh.hpp"
+#include "Light.hpp"
 
 NAMESPACE {
 
@@ -33,19 +35,19 @@ NAMESPACE {
     ("inPosition2d", SHADER_2D, 6, TYPE_VECTOR2S);
 
   GlobalShaderUniform Shader::UNI_TEXTURE
-    ("uniTexture", SHADER_USE_TEXTURE, 0, false);
+    ("uniTexture", SHADER_USE_TEXTURE, sizeof(i32), 0, false);
   GlobalShaderUniform Shader::UNI_MODEL
-    ("uniModel", ~SHADER_NO_FLAGS);
+    ("uniModel", ~SHADER_NO_FLAGS, sizeof(Mat4f));
   GlobalShaderUniform Shader::UNI_VIEW_PROJ
-    ("uniViewProj", ~SHADER_NO_FLAGS);
+    ("uniViewProj", ~SHADER_NO_FLAGS, sizeof(Mat4f));
   GlobalShaderUniform Shader::UNI_BONES
-    ("uniBones", SHADER_SKELETAL);
+    ("uniBones", SHADER_SKELETAL, MAX_BONES*sizeof(Bone));
   GlobalShaderUniform Shader::UNI_DIR_LIGHTS
-    ("uniDirLights", SHADER_3D);
+    ("uniDirLights", SHADER_3D, MAX_DIR_LIGHTS*sizeof(DirLight));
   GlobalShaderUniform Shader::UNI_AMBIENT
-    ("uniAmbient", SHADER_3D);
+    ("uniAmbient", SHADER_3D, sizeof(f32));
   GlobalShaderUniform Shader::UNI_COLOR
-    ("uniColor", SHADER_2D);
+    ("uniColor", SHADER_2D, sizeof(Vec4f));
 
   Shader* Shader::cur_shader = NULL;
 
@@ -116,7 +118,8 @@ NAMESPACE {
     num(_num) {};
 
   void ShaderUniform::initBuffer(u32 shader_id,
-				 String name) {
+				 String name,
+				 u32 size) {
     PEACE_GL_CHECK_ERROR;
     String comb_name = "_" + name;
     block_id = glGetUniformBlockIndex(shader_id,
@@ -125,17 +128,34 @@ NAMESPACE {
 		"The uniform block %s does not "
 		"exist in the shader", comb_name.c_str());*/
     if (block_id != GL_INVALID_INDEX) {
+      glGenBuffers(1, &buffer_id);
       glUniformBlockBinding(shader_id,
 			    block_id,
 			    id);
-      glGenBuffers(1, &buffer_id);
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+      glBufferData(GL_UNIFORM_BUFFER,
+		   size,
+		   NULL,
+		   GL_DYNAMIC_DRAW);
     }
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id,
-				 String name) {
-    initBuffer(shader_id, name);
+				 String name,
+				 u32 size) {
+    PEACE_GL_CHECK_ERROR;
+    String comb_name = "_" + name;
+    block_id = glGetUniformBlockIndex(shader_id,
+				      comb_name.c_str());
+    /*fatalAssert(block_id != GL_INVALID_INDEX,
+      "The uniform block %s does not "
+      "exist in // TODO: he shader", comb_name.c_str());*/
+    if (block_id != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shader_id,
+			    block_id,
+			    id);
+      glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
+    }
   }
 
   void ShaderUniform::registerInt(i32 i) const {
@@ -165,13 +185,26 @@ NAMESPACE {
 
   GlobalShaderUniform::GlobalShaderUniform(String _name,
 					   ShaderFlags flags,
+					   u32 _size,
 					   u32 num,
 					   bool is_buffer)
-    : ShaderUniform(num, is_buffer), name(_name) {
-    for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
-      if (mask & flags) {
-	uniforms[mask].push_back(this);
+    : ShaderUniform(num, is_buffer),
+    name(_name),
+    size(_size),
+    flags(UNIFORM_UNINITIALIZED) {
+      for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
+	if (mask & flags) {
+	  uniforms[mask].push_back(this);
+	}
       }
+    }
+
+  void GlobalShaderUniform::initOrKeep(u32 shader_id) {
+    if (flags & UNIFORM_UNINITIALIZED) {
+      initBuffer(shader_id, name, size);
+      flags &= ~UNIFORM_UNINITIALIZED;
+    } else {
+      keepBuffer(shader_id, name, size);
     }
   }
 
@@ -310,7 +343,7 @@ NAMESPACE {
     if (!(settings & SHADER_PLAIN)) {
       for (GlobalShaderUniform* uniform : GlobalShaderUniform::uniforms[flags]) {
 	if (uniform->buffer_id != -1) {
-	  uniform->initBuffer(id, uniform->name);
+	  uniform->initBuffer(id, uniform->name, uniform->size);
 	} else {
 	  uniform->id = glGetUniformLocation(id, uniform->name.c_str());
 	}
@@ -341,9 +374,10 @@ NAMESPACE {
   }
 
   ShaderUniform Shader::getUniformBuffer(String name,
+					 u32 size,
 					 u32 num) {
     ShaderUniform ret(num);
-    ret.initBuffer(id, name.c_str());
+    ret.initBuffer(id, name.c_str(), size);
     return ret;
   }
 

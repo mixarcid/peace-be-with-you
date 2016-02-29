@@ -65,8 +65,9 @@ NAMESPACE {
 	    act == GLFW_PRESS) {
 	  Vec3f dir = -(Player::ptr->getRot()*Vec3f(0,1,0));
 	  dir.normalize();
-	  Player::ptr->engine->emplaceDynamic
+	  auto p = Player::ptr->engine->emplaceDynamic
 	    <MonkeyHead>(Player::ptr->getTrans()+dir*5, dir*20);
+	  p->rotAbs(Player::ptr->getRot());
 	}
       });
 

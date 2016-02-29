@@ -57,8 +57,8 @@ NAMESPACE {
 
     ShaderUniform(u32 _num = 0, bool is_buffer = true);
 
-    void initBuffer(u32 shader_id, String name);
-    void keepBuffer(u32 shader_id, String name);
+    void initBuffer(u32 shader_id, String name, u32 size);
+    void keepBuffer(u32 shader_id, String name, u32 size);
 
     void registerInt(i32 i) const;
     void registerTexture(Texture tex) const;
@@ -67,10 +67,11 @@ NAMESPACE {
     void registerVal(T val) {
       PEACE_GL_CHECK_ERROR;
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
-      glBufferData(GL_UNIFORM_BUFFER,
-		   sizeof(T),
-		   &val,
-		   GL_DYNAMIC_DRAW);
+      glBufferSubData(GL_UNIFORM_BUFFER,
+		      0,
+		      sizeof(T),
+		      &val);
+		      //GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
       PEACE_GL_CHECK_ERROR;
@@ -83,10 +84,11 @@ NAMESPACE {
 		  "You're trying to send data to a "
 		  "buffer that doesn't exist");
       glBindBuffer(GL_UNIFORM_BUFFER, buffer_id);
-      glBufferData(GL_UNIFORM_BUFFER,
-		   num_elems*sizeof(T),
-		   data,
-		   GL_DYNAMIC_DRAW);
+      glBufferSubData(GL_UNIFORM_BUFFER,
+		      0,
+		      num_elems*sizeof(T),
+		      data);
+		      //GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER,
 		       id, buffer_id);
       PEACE_GL_CHECK_ERROR;
@@ -135,20 +137,29 @@ NAMESPACE {
     
   };
 
+  PEACE_DEFINE_BITFLAGS(GlobalUniformFlags, 8,
+			UNIFORM_NO_FLAGS = 0x00,
+			UNIFORM_UNINITIALIZED = 0x01);
+
   struct GlobalShaderUniform : ShaderUniform {
 
     String name;
+    u32 size;
+    GlobalUniformFlags flags;
+    
     GlobalShaderUniform(String _name,
 			ShaderFlags flags,
+			u32 _size,
 			u32 num = 0,
 			bool is_buffer = true);
+    void initOrKeep(u32 shader_id);
     static Array<GlobalShaderUniform*> uniforms[SHADER_ALL_FLAGS+1];
 
   };
 
   struct Shader {
 
-    i32 id;
+    u32 id;
     ShaderSettings settings;
     ShaderFlags flags;
     i32 flag_ids[SHADER_ALL_FLAGS+1];
@@ -165,6 +176,7 @@ NAMESPACE {
     ShaderVar getVar(String name, ShaderTypeName type);
     ShaderUniform getUniform(String name, u32 num=0);
     ShaderUniform getUniformBuffer(String name,
+				   u32 size,
 				   u32 num=0);
     void bindOutputs(Array<String> names);
 

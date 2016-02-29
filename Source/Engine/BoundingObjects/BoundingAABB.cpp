@@ -1,4 +1,5 @@
 #include "BoundingAABB.hpp"
+#include "RenderableShape.hpp"
 
 NAMESPACE {
   
@@ -15,7 +16,16 @@ NAMESPACE {
   }
 
   BoundingObject* BoundingAABB::transform(TransformBasic t) {
-    PEACE_UNIMPLIMENTED(NULL);
+    BoundingAABB* ret = new BoundingAABB(*this);
+    ret->center += t.trans;
+    return ret;
+  }
+
+  void BoundingAABB::render(RenderContext c) {
+    Shader::UNI_MODEL.registerVal
+      (Mat4f::translate(center) *
+       Mat4f::scale(halves));
+    RenderableShape::CUBE.render(c);
   }
   
   COLLIDE_FUNC(AABB, AABB, {

@@ -60,7 +60,21 @@ NAMESPACE {
     gl::checkError();
 
     glfwPollEvents();
-    
+
+    //FPS calculation
+    static Time last_second = prev_time;
+    static u32 num_frames = 0;
+    static f32 fps = 0;
+
+    ++num_frames;
+
+    if (cur_time.getMilliseconds() -
+	last_second.getMilliseconds() > 1000) {
+      fps = num_frames;
+      num_frames = 0;
+      last_second = cur_time;
+    }
+    Log::message("FPS: %f", fps);
     prev_time = cur_time;
   }
 

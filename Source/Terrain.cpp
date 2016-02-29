@@ -3,15 +3,15 @@
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 260.0f;
+  const f32 Terrain::CHUNK_SIZE = 300.0f;
   //width of the chunk in vertices
   //must be power of 2 plus 2 (not entirely sure why)
   const u32 Terrain::CHUNK_RES = 130;//258;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
-  const u8 MID_REDUCTION = 2;
-  const u8 SMALL_REDUCTION = 4;
+  const u8 MID_REDUCTION = 4;
+  const u8 SMALL_REDUCTION = 8;
 
   Asset<Texture> Terrain::texture("Terrain");
   Array<TerrainRenderable> Terrain::chunk_meshes;
@@ -164,14 +164,18 @@ NAMESPACE {
 	
 	Pointer<TerrainRenderable> mesh = Pointer<TerrainRenderable>
 	  (c->getComponent<RenderableComp>());
-        mesh->data.reserve(sqr(CHUNK_RES));
-	
+	mesh->data.reserve(sqr(CHUNK_RES));
+
+	f32 max_z = -FLT_MAX;
+	f32 min_z = FLT_MAX;
         for (u16 x = 0; x < CHUNK_RES; ++x) {
 	  for (u16 y = 0; y < CHUNK_RES; ++y) {
 
 	    Vec2f local_pos(CHUNK_STEP*x - CHUNK_SIZE/2,
 			    CHUNK_STEP*y - CHUNK_SIZE/2);
 	    f32 height = gen.heightAtPoint(local_pos + position);
+	    max_z = height > max_z ? height : max_z;
+	    min_z = height < min_z ? height : min_z;
 	    Vec2f tex_coord = gen.texCoordAtPoint(local_pos + position);
 	    mesh->data.push_back
 	      (BasicMeshData(Vec3f(local_pos.x(),
@@ -181,6 +185,12 @@ NAMESPACE {
 			     tex_coord));;
 	  }
 	}
+
+	BoundingAABB aabb(Vec3f(0,0,(max_z + min_z)/2),
+			  Vec3f(CHUNK_SIZE,
+				CHUNK_SIZE,
+				max_z - min_z));
+	c->loose_object.set(&aabb);
 
 	//Time to compute some normals!
 	for (u16 x = 0; x < CHUNK_RES; ++x) {

@@ -40,13 +40,15 @@ i32 main() {
 	  if (act == GLFW_PRESS) {
 	    engine.graphics.flags ^=
 	      GRAPHICS_RENDER_BOUNDING_TIGHT;
+	    engine.graphics.flags ^=
+	      GRAPHICS_RENDER_BOUNDING_LOOSE;
 	  }
 	  break;
 	}
       });
 
     Terrain terrain(&engine);
-    terrain.generate(Vec3f(0,0,0),Vec2u(5,5));
+    terrain.generate(Vec3f(0,0,0),Vec2u(1,2));
     
     engine.emplaceDynamic<Player>(Vec3f(0,0,30));
     engine.begin();
