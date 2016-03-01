@@ -362,6 +362,14 @@ NAMESPACE {
     inline T ca() const {
       return Vec<T,4>::data[3];
     }
+
+    inline Vec2<T> xy() const {
+      return Vec2<T>(cx(),cy());
+    }
+
+    inline Vec3<T> xyz() const {
+      return Vec3<T>(cx(),cy(),cz());
+    }
     
   };
 

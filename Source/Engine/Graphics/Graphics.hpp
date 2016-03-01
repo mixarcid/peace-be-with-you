@@ -7,6 +7,7 @@
 #include "Containers.hpp"
 #include "Renderer.hpp"
 #include "GameObject.hpp"
+#include "BoundingFrustum.hpp"
 
 NAMESPACE {
 
@@ -43,9 +44,10 @@ NAMESPACE {
       dir_lights.emplace_back(args...);
     }
     
-    void renderFunc(ComponentPair<RenderableComp> obj,
-		    RenderContext c,
-		    Mat4f model);
+    inline bool renderFunc(ComponentPair<RenderableComp> obj,
+			   RenderContext c,
+			   Mat4f model,
+			   BoundingFrustum frustum);
     void render();
 
   };

@@ -5,7 +5,7 @@
 #include "BoundingAABB.hpp"
 #include "BoundingOBB.hpp"
 #include "BoundingGround.hpp"
-
+#include "BoundingFrustum.hpp"
 
 NAMESPACE {
   

@@ -23,6 +23,7 @@ NAMESPACE {
 	       SPHERE,
 	       OBB,
 	       GROUND,
+	       FRUSTUM,
 	       NONE,
 	       LAST);
     typedef BoundingObjectType Type;

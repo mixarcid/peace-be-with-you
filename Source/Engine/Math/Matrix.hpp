@@ -24,6 +24,8 @@ NAMESPACE {
     }
 
     inline Vec<T,N> row(const u8 index) const {
+      debugAssert(index < N,
+		  "Invalid index passed to Mat::col");
       Vec<T,N> ret;
       for (u8 i=0; i<N; ++i) {
 	ret.data[i] = cols[i].data[index];
@@ -32,6 +34,8 @@ NAMESPACE {
     }
 
     inline Vec<T,N> col(const u8 index) const {
+      debugAssert(index < N,
+		  "Invalid index passed to Mat::col");
       return cols[index];
     }
 

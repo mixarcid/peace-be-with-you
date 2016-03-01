@@ -187,9 +187,9 @@ NAMESPACE {
 	}
 
 	BoundingAABB aabb(Vec3f(0,0,(max_z + min_z)/2),
-			  Vec3f(CHUNK_SIZE,
-				CHUNK_SIZE,
-				max_z - min_z));
+			  Vec3f(CHUNK_SIZE-2*CHUNK_STEP,
+				CHUNK_SIZE-2*CHUNK_STEP,
+				max_z - min_z)/2);
 	c->loose_object.set(&aabb);
 
 	//Time to compute some normals!

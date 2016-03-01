@@ -74,7 +74,7 @@ NAMESPACE {
       num_frames = 0;
       last_second = cur_time;
     }
-    Log::message("FPS: %f", fps);
+    //Log::message("FPS: %f", fps);
     prev_time = cur_time;
   }
 

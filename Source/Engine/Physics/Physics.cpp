@@ -38,8 +38,8 @@ NAMESPACE {
 	obj.obj->transRel(obj.comp->veloc*dt);
 
       });
-    Log::message("collision checks: %u", num_checks);
-    Log::message("collisions: %u", num_collisions);
+    //Log::message("collision checks: %u", num_checks);
+    //Log::message("collisions: %u", num_collisions);
   }
   
 }

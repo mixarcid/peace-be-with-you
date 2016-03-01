@@ -36,9 +36,18 @@ NAMESPACE {
       });
   }
 
-  void Graphics::renderFunc(ComponentPair<RenderableComp> obj,
+  bool Graphics::renderFunc(ComponentPair<RenderableComp> obj,
 			    RenderContext c,
-			    Mat4f model) {
+			    Mat4f model,
+			    BoundingFrustum frustum) {
+    
+    BoundingObject* bound = obj.obj->getLooseBoundingObject()->transform(obj.obj->getBasicTransform());
+    if (!frustum.intersects(bound)) {
+      delete bound;
+      return false;
+    }
+    delete bound;
+    
     Vec3f dist = cam.getTrans() - obj.obj->getTrans();
     c.dist = dist.norm();
     Mat4f comb = model*obj.obj->getMat();
@@ -60,7 +69,7 @@ NAMESPACE {
       bound->render(c);
       delete bound;
     }
-    
+    return true;
   }
   
   void Graphics::render() {
@@ -73,6 +82,7 @@ NAMESPACE {
     Shader::UNI_AMBIENT.registerVal(ambient);
 
     Mat4f view_proj = cam.getProj()*cam.getView();
+    BoundingFrustum frustum(view_proj);
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
     Mat4f model;
     RenderContext c;
@@ -81,16 +91,22 @@ NAMESPACE {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    u32 objects_rendered = 0;
     engine->traverseStatic<RenderableComp>
-      (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
-	renderFunc(obj, c, model);
+      (&frustum, [this, c, model, frustum, &objects_rendered](ComponentPair<RenderableComp> obj) {
+	if (renderFunc(obj, c, model, frustum)) {
+	  ++objects_rendered;
+	}
       });
     
     engine->traverseDynamic<RenderableComp>
-      (NULL, [this, c, model](ComponentPair<RenderableComp> obj) {
-	renderFunc(obj, c, model);
+      (&frustum, [this, c, model, frustum, &objects_rendered](ComponentPair<RenderableComp> obj) {
+    if (renderFunc(obj, c, model, frustum)) {
+	  ++objects_rendered;
+	}
       });
     
+    Log::message("Objects rendered: %u", objects_rendered);
     renderer.finalize();
 
     view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),
