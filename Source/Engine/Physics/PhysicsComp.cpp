@@ -1,6 +1,7 @@
 #include "PhysicsComp.hpp"
 #include "BoundingObject.hpp"
 #include "GameObject.hpp"
+#include "Engine.hpp"
 
 NAMESPACE {
 
@@ -34,20 +35,59 @@ NAMESPACE {
 				 f32 cof_dynamic)
     : Material(1, 0, cof_static, cof_dynamic) {}
 
-  void PhysicsComp::init(GameObject* object) {
-    //Log::message("%f", object->getTightBoundingObject()->getVolume());
+  void StaticPhysicsComp::init(Pointer<GameObject> object) {
     f32 mass = object->getTightBoundingObject()->getVolume()
       * material.density;
     f32 inertia = object->getTightBoundingObject()->getInertia(mass);
     mass_data = MassData(mass, inertia);
   }
 
-  void PhysicsComp::update(f32 dt) {
-    veloc += force*mass_data.inv_mass*dt;
+  Vec3f StaticPhysicsComp::getVeloc() {
+    return Vec3f(0,0,0);
   }
 
-  void PhysicsComp::applyImpulse(Vec3f j) {
+  bool StaticPhysicsComp::isMoving() {
+    return false;
+  }
+
+  Vec3f DynamicPhysicsComp::getVeloc() {
+    return veloc;
+  }
+
+  void DynamicPhysicsComp::update(Pointer<DynamicObject> object, f32 dt) {
+      veloc += force*mass_data.inv_mass*dt;
+      object->transRel(veloc*dt);
+  }
+
+  void DynamicPhysicsComp::applyImpulse(Vec3f j) {
     veloc += j*mass_data.inv_mass;
+  }
+
+  void DynamicPhysicsComp::onMove(Pointer<DynamicObject> object) {
+    if (!moving_object_handle) {
+      moving_object_handle = object->engine->physics.moving_objects.emplace_back
+	(object, this);
+    }
+  }
+  void DynamicPhysicsComp::onStop(Pointer<DynamicObject> object) {
+    if (moving_object_handle) {
+      object->engine->physics.moving_objects.removeAndReplace(moving_object_handle);
+      moving_object_handle = NULL;
+      veloc = Vec3f(0,0,0);
+      prev_veloc = Vec3f(0,0,0);
+    }
+  }
+
+  const static f32 VELOC_EPSILON = 0.01f;
+  const static f32 VELOC_CHANGE_EPSILON = 0.001f;
+  bool DynamicPhysicsComp::isMoving() {
+    return (veloc.normSquared() > VELOC_EPSILON) &&
+    ((veloc-prev_veloc).normSquared() > VELOC_CHANGE_EPSILON);
+  }
+
+  void DynamicPhysicsComp::_on_move() {
+    moving_object_handle._on_move();
+    Pointable::_on_move();
   }
   
 }

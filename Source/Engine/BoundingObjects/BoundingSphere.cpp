@@ -53,10 +53,8 @@ NAMESPACE {
     return (2/5)*mass*sqr(radius);
   }
 
-  BoundingObject* BoundingSphere::transform(TransformBasic t) {
-    BoundingSphere* ret = new BoundingSphere(*this);
-    ret->center += t.trans;
-    return ret;
+  void BoundingSphere::transform(Transform t) {
+    center += t.trans;
   }
 
   //thanks, nerdinand from StackOverFlow

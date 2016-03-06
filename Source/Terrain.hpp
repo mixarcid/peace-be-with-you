@@ -5,11 +5,11 @@
 
 NAMESPACE {
 
-  struct TerrainChunk : GameObject {
+  struct TerrainChunk : StaticObject {
     
     //pos: the back-left corner of the chunk. The z-value will always be 0.
     TerrainChunk(Engine* engine, Vec3f pos)
-      : GameObject(engine, pos) {
+      : StaticObject(engine, pos) {
       $rttiConstruct("TerrainChunk");
       init();
     }
@@ -22,7 +22,7 @@ NAMESPACE {
   struct Terrain {
 
     Engine* engine;
-    Pointer<GameObject> ground_object;
+    Pointer<StaticObject> ground_object;
 
     Terrain(Engine* _engine);
     ~Terrain();

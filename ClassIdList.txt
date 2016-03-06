@@ -9,3 +9,7 @@ RenderableComp 8
 TerrainChunk 9
 Component 10
 PhysicsComp 11
+StaticPhysicsComp 12
+DynamicPhysicsComp 13
+Camera 14
+CameraComp 15

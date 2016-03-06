@@ -16,7 +16,7 @@ NAMESPACE {
     Vec3f getClosestPoint(Vec3f point);
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual BoundingObject* transform(TransformBasic t);
+    virtual void transform(Transform t);
     virtual void render(RenderContext c);
     
   };

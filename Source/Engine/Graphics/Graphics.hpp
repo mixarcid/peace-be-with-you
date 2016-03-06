@@ -25,7 +25,7 @@ NAMESPACE {
     Array<DirLight> dir_lights;
     Engine* engine;
     GLFWwindow* window;
-    Camera cam;
+    Pointer<Camera> cam;
     Renderer renderer;
     Vec2i win_size;
     f32 ambient;
@@ -43,11 +43,6 @@ NAMESPACE {
 		  "lights to scene");
       dir_lights.emplace_back(args...);
     }
-    
-    inline bool renderFunc(ComponentPair<RenderableComp> obj,
-			   RenderContext c,
-			   Mat4f model,
-			   BoundingFrustum frustum);
     void render();
 
   };

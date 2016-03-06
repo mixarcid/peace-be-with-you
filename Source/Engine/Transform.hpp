@@ -18,6 +18,14 @@ NAMESPACE {
     TransformTemp(Vec3f _trans = Vec3f(0,0,0),
 	      Quaternionf _rot = Quaternionf(0,0,0,1))
       : trans(_trans), rot(_rot) {}
+
+    Vec3f getTrans() {
+      return trans;
+    }
+    
+    Quaternionf getRot() {
+      return rot;
+    }
     
     Mat4f getMat() {
       return Mat4f::translate(trans)*rot.mat4();
@@ -43,49 +51,12 @@ NAMESPACE {
     
   };
 
-  struct TransformBasic : TransformTemp<TransformBasic, 0> {
+  struct Transform : TransformTemp<Transform, 0> {
     using TransformTemp::TransformTemp;
   };
 
-  struct Transform;
-
-  struct ChildTransform  {
-    
-    TransformBasic diff;
-    Pointer<Transform> obj;
-
-    ChildTransform(TransformBasic _diff,
-		   Pointer<Transform> _obj);
-    
-  };
-
-  struct Transform : Pointable, TransformTemp<Transform, 0> {
-
-    Array<ChildTransform> child_transforms;
-    
-    using TransformTemp::TransformTemp;
-    
-    Vec3f getTrans();
-    Quaternionf getRot();
-    TransformBasic getBasicTransform();
-    
-    void transRel(Vec3f trans);
-    void transAbs(Vec3f trans);
-    void rotRel(Quaternionf rot);
-    void rotAbs(Quaternionf rot);
-    void onChange();
-    
-    ChildTransform* addChildTransform(Transform* child,
-				      TransformBasic diff);
-    void moveChildTransformAbs(ChildTransform* child,
-			       TransformBasic diff);
-    void moveChildTransformRel(ChildTransform* child,
-			       TransformBasic diff);
-    
-  };
-  
   struct TransformPad : TransformTemp<TransformPad, 1> {
     using TransformTemp::TransformTemp;
   };
-
+  
 }

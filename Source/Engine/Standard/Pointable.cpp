@@ -1,4 +1,5 @@
 #include "Pointable.hpp"
+#include "Log.hpp"
 
 NAMESPACE {
 
@@ -36,7 +37,7 @@ NAMESPACE {
     p.pointers.clear();*/
   }
 
-  void Pointable::onMove() {
+  void Pointable::_on_move() {
     for (Pointer<Pointable>** pointer = this->pointers.begin();
 	 pointer < this->pointers.end();
 	 ++pointer) {
@@ -45,7 +46,7 @@ NAMESPACE {
   }
 
   template<>
-    void onMove(Pointer<Pointable>** ptr) {
+    void _on_move(Pointer<Pointable>** ptr) {
     (*ptr)->it = ptr;
   }
 

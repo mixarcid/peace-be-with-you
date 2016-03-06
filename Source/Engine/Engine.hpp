@@ -18,8 +18,8 @@ NAMESPACE {
   
   struct Engine {
 
-    Array<GameObject> static_objects;
-    Array<GameObject> dynamic_objects;
+    Array<StaticObject> static_objects;
+    Array<DynamicObject> dynamic_objects;
     SystemManager system_manager;
     Graphics graphics;
     Physics physics;
@@ -34,7 +34,7 @@ NAMESPACE {
 
     void init();
 
-    //Game Objects MUST be created using only these methods
+    //GameObjects MUST be created using only these methods
     template <typename T, typename... Args>
     Pointer<T> emplaceStatic(Args... args) {
       return Pointer<T>(static_objects.emplace_back<T>(this, args...));
@@ -46,11 +46,11 @@ NAMESPACE {
 
     template <typename T>
     void removeStatic(Pointer<T> handle) {
-      static_objects.removeAndReplace(Pointer<GameObject>(handle));
+      static_objects.removeAndReplace(Pointer<StaticObject>(handle));
     }
     template <typename T>
     void removeDynamic(Pointer<T> handle) {
-      dynamic_objects.removeAndReplace(Pointer<GameObject>(handle));
+      dynamic_objects.removeAndReplace(Pointer<DynamicObject>(handle));
     }
 
     /*
@@ -58,28 +58,30 @@ NAMESPACE {
       with the object before calling callback
       calling these functions with bound equal to NULL will result
       in the traversal of all objects
+      the traversal will immediately stop if the callback returns false
     */
     template <typename T>
     void traverseStatic(BoundingObject* bound,
-			function<void(ComponentPair<T>)> callback) {
-      for (GameObject& obj : static_objects) {
+			function<bool(StaticComponentPair<T>)> callback) {
+      for (StaticObject& obj : static_objects) {
 	Pointer<T> comp = obj.getComponent<T>();
-	if (comp) {
-	  callback(ComponentPair<T>(&obj, comp));
+	if (comp && !callback(StaticComponentPair<T>(&obj, comp))) {
+	  break;
 	}
       }
     }
     
     template <typename T>
     void traverseDynamic(BoundingObject* bound,
-			 function<void(ComponentPair<T>)> callback) {
-      for (GameObject& obj : dynamic_objects) {
+			 function<bool(DynamicComponentPair<T>)> callback) {
+      for (DynamicObject& obj : dynamic_objects) {
 	Pointer<T> comp = obj.getComponent<T>();
-	if (comp) {
-	  callback(ComponentPair<T>(&obj, comp));
+	if (comp && !callback(DynamicComponentPair<T>(&obj, comp))) {
+	  break;
 	}
       }
     }
+    
     void loop();
     void begin();
     

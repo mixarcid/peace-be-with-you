@@ -15,7 +15,8 @@ NAMESPACE {
     window = _window;
     glfwGetWindowSize(window, &win_size.x(), &win_size.y());
     renderer.init(win_size);
-    cam.setAspect(win_size);
+    cam = engine->emplaceDynamic<Camera>();
+    cam->setAspect(win_size);
 
     RenderableShape::init();
     
@@ -31,44 +32,37 @@ NAMESPACE {
 	if (win == window) {
 	  win_size = Vec2i(x,y);
 	  renderer.onWindowResize(win_size);
-	  cam.setAspect(win_size);
+	  cam->setAspect(win_size);
 	}
       });
   }
 
-  bool Graphics::renderFunc(ComponentPair<RenderableComp> obj,
-			    RenderContext c,
-			    Mat4f model,
-			    BoundingFrustum frustum) {
+  static inline bool renderFunc(Graphics* graphics,
+				Pointer<GameObject> obj,
+				RenderableComp* comp,
+				RenderContext c,
+				Mat4f model,
+				BoundingFrustum frustum) {
     
-    BoundingObject* bound = obj.obj->getLooseBoundingObject()->transform(obj.obj->getBasicTransform());
+    BoundingObject* bound = obj->getLooseBoundingObject();
     if (!frustum.intersects(bound)) {
-      delete bound;
       return false;
     }
-    delete bound;
     
-    Vec3f dist = cam.getTrans() - obj.obj->getTrans();
+    Vec3f dist = graphics->cam->getTrans() - obj->getTrans();
     c.dist = dist.norm();
-    Mat4f comb = model*obj.obj->getMat();
+    Mat4f comb = model*obj->getMat();
     Shader::UNI_MODEL.registerVal(comb);
-    obj.comp->render(c);
+    comp->render(c);
 
-    if (flags & GRAPHICS_RENDER_BOUNDING_TIGHT) {
-      BoundingObject* bound =
-	obj.obj->getTightBoundingObject()->transform
-	(obj.obj->getBasicTransform());
+    if (graphics->flags & GRAPHICS_RENDER_BOUNDING_LOOSE) {
       bound->render(c);
-      delete bound;
     }
-
-    if (flags & GRAPHICS_RENDER_BOUNDING_LOOSE) {
-      BoundingObject* bound =
-	obj.obj->getLooseBoundingObject()->transform
-	(obj.obj->getBasicTransform());
+    if (graphics->flags & GRAPHICS_RENDER_BOUNDING_TIGHT) {
+      bound = obj->getTightBoundingObject();
       bound->render(c);
-      delete bound;
     }
+    
     return true;
   }
   
@@ -81,7 +75,7 @@ NAMESPACE {
 		     Shader::MAX_DIR_LIGHTS);
     Shader::UNI_AMBIENT.registerVal(ambient);
 
-    Mat4f view_proj = cam.getProj()*cam.getView();
+    Mat4f view_proj = cam->getProj()*cam->getView();
     BoundingFrustum frustum(view_proj);
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
     Mat4f model;
@@ -93,20 +87,22 @@ NAMESPACE {
 
     u32 objects_rendered = 0;
     engine->traverseStatic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered](ComponentPair<RenderableComp> obj) {
-	if (renderFunc(obj, c, model, frustum)) {
+      (&frustum, [this, c, model, frustum, &objects_rendered](StaticComponentPair<RenderableComp> obj) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>)obj.obj, obj.comp, c, model, frustum)) {
 	  ++objects_rendered;
 	}
+	return true;
       });
     
     engine->traverseDynamic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered](ComponentPair<RenderableComp> obj) {
-    if (renderFunc(obj, c, model, frustum)) {
+      (&frustum, [this, c, model, frustum, &objects_rendered](DynamicComponentPair<RenderableComp> obj) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>)obj.obj, obj.comp, c, model, frustum)) {
 	  ++objects_rendered;
 	}
+	return true;
       });
     
-    Log::message("Objects rendered: %u", objects_rendered);
+    //Log::message("Objects rendered: %u", objects_rendered);
     renderer.finalize();
 
     view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),

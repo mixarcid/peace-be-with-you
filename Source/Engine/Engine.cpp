@@ -9,7 +9,9 @@ NAMESPACE {
     : graphics(this),
     physics(this),
     dt(0),
-    flags(ENGINE_NO_FLAGS) {}
+    flags(ENGINE_NO_FLAGS) {
+      //dynamic_objects.reserve(200);
+    }
 
   Engine::~Engine() {
     if (flags * ENGINE_ASSETS_LOADED) {

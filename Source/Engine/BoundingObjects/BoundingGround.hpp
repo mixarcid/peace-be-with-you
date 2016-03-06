@@ -18,7 +18,6 @@ NAMESPACE {
     BoundingGround(GroundDataFunc func);
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual BoundingObject* transform(TransformBasic t);
     
   };
 

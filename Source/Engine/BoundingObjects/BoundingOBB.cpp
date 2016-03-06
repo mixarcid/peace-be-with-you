@@ -37,12 +37,9 @@ NAMESPACE {
     return (mass*sqr(size))/6;
   }
 
-  BoundingObject* BoundingOBB::transform(TransformBasic t) {
-    BoundingOBB* ret = new BoundingOBB(*this);
-    ret->center += t.trans;
-    ret->coord *= t.rot.mat3();
-    //Log::message(to_string(ret->coord));
-    return ret;
+  void BoundingOBB::transform(Transform t) {
+    center += t.trans;
+    coord *= t.rot.mat3();
   }
 
   Vec3f BoundingOBB::getClosestPoint(Vec3f point) {
@@ -110,7 +107,7 @@ NAMESPACE {
     
       for (u8 i = 0; i < 3; ++i) {
 	for (u8 j = 0; j < 3; ++j) {
-	  ar.cols[j].data[i] = abs(r(i,j)) + PEACE_OBB_TEST_EPSILON;
+	  ar(i,j)= abs(r(i,j)) + PEACE_OBB_TEST_EPSILON;
 	}
       }
 
@@ -203,7 +200,7 @@ NAMESPACE {
 #define PEACE_OBB_EDGE_TEST(index)		\
   if (dist > 0) {				\
     return false;				\
-  } else if (dist > face_pen+0.5 &&		\
+  } else if (dist > face_pen+0.05 &&		\
 	     dist > pen) {			\
     pen = dist;					\
     axis = index;				\
@@ -230,7 +227,7 @@ NAMESPACE {
     
       for (u8 i = 0; i < 3; ++i) {
 	for (u8 j = 0; j < 3; ++j) {
-	  ar.cols[j].data[i] = abs(r(i,j)) + PEACE_OBB_TEST_EPSILON;
+	  ar(i,j) = abs(r(i,j)) + PEACE_OBB_TEST_EPSILON;
 	}
       }
 

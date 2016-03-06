@@ -21,17 +21,17 @@ NAMESPACE {
     void operator=(const Pointable& p);
     void operator=(Pointable&& p);
 
-    void onMove();
+    void _on_move();
 
   };
 
   template <typename T>
     struct Pointer {
 
-    Pointable* data;
+    T* data;
     Array<Pointer<Pointable>*>::Iterator it;
 
-    Pointer(Pointable* _data = NULL)
+    Pointer(T* _data = NULL)
       : data(_data),
 	it(NULL) {
       if (data) {
@@ -58,7 +58,7 @@ NAMESPACE {
 
     template <typename U>
     explicit Pointer(const Pointer<U>& ptr)
-      : data(ptr.data),
+      : data((T*)ptr.data),
 	it(NULL) {
       if (data) {
 	it = data->pointers.push_back((Pointer<Pointable>*)this);
@@ -67,7 +67,7 @@ NAMESPACE {
 
     template <typename U>
     explicit Pointer(Pointer<U>&& ptr)
-      : data(ptr.data),
+      : data((T*)ptr.data),
 	it(ptr.it) {
       if (data) {
 	*it = (Pointer<Pointable>*) this;
@@ -94,6 +94,10 @@ NAMESPACE {
 	it = NULL;
       }
       return *this;
+    }
+
+    void _on_move() {
+      *it = (Pointer<Pointable>*)this;
     }
 
     Pointer& operator=(Pointer&& ptr) {
@@ -149,7 +153,7 @@ NAMESPACE {
   };
 
   template<>
-    void onMove(Pointer<Pointable>** ptr);
+    void _on_move(Pointer<Pointable>** ptr);
   
   template <typename T>
     inline TypeId typeId(Pointer<T> object) {

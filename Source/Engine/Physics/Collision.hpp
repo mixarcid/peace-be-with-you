@@ -9,17 +9,18 @@ NAMESPACE {
   struct CollisionMessage : Message {
 
     //the object the messagee collided with
-    ComponentPair<PhysicsComp> object;
+    Pointer<GameObject> object;
 
-    CollisionMessage(ComponentPair<PhysicsComp> _object)
+    CollisionMessage(Pointer<GameObject> _object)
       : object(_object) {
       $rttiConstruct("CollisionMessage");
     }
   };
   $registerRttiStruct();
-  
-  bool resolveCollision(ComponentPair<PhysicsComp> a,
-			ComponentPair<PhysicsComp> b,
-			bool second_arg_is_static);
+
+  bool resolveCollision(DynamicComponentPair<DynamicPhysicsComp> a,
+			DynamicComponentPair<DynamicPhysicsComp> b);
+  bool resolveCollision(DynamicComponentPair<DynamicPhysicsComp> a,
+			StaticComponentPair<StaticPhysicsComp> b);
   
 }

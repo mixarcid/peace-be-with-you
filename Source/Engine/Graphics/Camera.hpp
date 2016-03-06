@@ -3,11 +3,11 @@
 #include "Vector.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
-#include "Transform.hpp"
+#include "GameObject.hpp"
 
 NAMESPACE {
 
-  struct Camera : Transform {
+  struct CameraComp : Component {
     
     f32 fovy; //in radians, naturally
     f32 near_clip;
@@ -16,10 +16,31 @@ NAMESPACE {
     i32 win_width;
     i32 win_height;
     f32 aspect;
+
+    CameraComp(f32 _fovy,
+	       f32 _near,
+	       f32 _far)
+      : fovy(_fovy),
+	near_clip(_near),
+	far_clip(_far) {
+      $rttiConstruct("CameraComp");
+    }
+  };
+  $registerRttiStruct();
+  
+  struct Camera : DynamicObject {
     
-    Camera(f32 cam_fovy = degreesToRadians(60),
-	   f32 cam_near = 1,
-	   f32 cam_far = 1000);
+    Camera(Engine* engine,
+	   f32 _fovy = degreesToRadians(60),
+	   f32 _near = 1,
+	   f32 _far = 1000)
+      : DynamicObject(engine, Vec3f()) {
+      $rttiConstruct("Camera");
+      addComponent(new CameraComp(_fovy, _near, _far));
+    }
+    ~Camera() {
+      delete getComponent<CameraComp>();
+    }
 
     Mat3f getCoord();
 
@@ -29,5 +50,6 @@ NAMESPACE {
     void setAspect(Vec2i win_size);
 
   };
+  $registerRttiStruct();
 
 }

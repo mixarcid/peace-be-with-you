@@ -13,12 +13,16 @@ NAMESPACE {
       memset(this, 0, sizeof(Vec));
     }
 
-    inline T norm() const {
+    inline T normSquared() const {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {
 	ret += sqr((*this).data[i]);
       }
-      return sqrt(ret);
+      return ret;
+    }
+
+    inline T norm() const {
+      return sqrt(normSquared());
     }
 
     inline Vec normalized() const {

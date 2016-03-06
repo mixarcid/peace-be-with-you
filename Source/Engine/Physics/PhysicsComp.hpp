@@ -4,6 +4,7 @@
 #include "Containers.hpp"
 #include "Vector.hpp"
 #include "Quaternion.hpp"
+#include "GameObject.hpp"
 
 NAMESPACE {
 
@@ -35,30 +36,72 @@ NAMESPACE {
 		   f32 cof_dynamic);
   };
 
-  struct PhysicsComp : Component {
-
+  struct StaticPhysicsComp : Component {
+    
     Material material;
     MassData mass_data;
+
+    StaticPhysicsComp(Pointer<StaticObject> object,
+		      Material mat)
+      : material(mat),
+	mass_data(0,0) {
+      $rttiConstruct("StaticPhysicsComp");
+      init((Pointer<GameObject>)object);
+    }
+
+    StaticPhysicsComp(Pointer<GameObject> object,
+		      Material mat)
+      : material(mat),
+	mass_data(0,0) {
+      $rttiConstruct("StaticPhysicsComp");
+      init(object);
+    }
+    
+    void init(Pointer<GameObject> object);
+    Vec3f getVeloc();
+    void applyImpulse(Vec3f j) {}
+    void onMove(Pointer<StaticObject> object) {}
+    void onStop(Pointer<StaticObject> object) {}
+    bool isMoving();
+    
+  };
+  $registerRttiStruct();
+
+  struct DynamicPhysicsComp : StaticPhysicsComp {
+
+    typedef Array<DynamicComponentPairP<DynamicPhysicsComp>> MovingObjectArray;
+    typedef Pointer<DynamicComponentPairP<DynamicPhysicsComp>> MovingObjectHandle;
     
     Vec3f veloc;
+    Vec3f prev_veloc;
     Vec3f force;
 
     Quaternionf spin;
 
-    PhysicsComp(GameObject* object,
-		Material mat,
-		Vec3f vi = Vec3f(0,0,0))
-      : material(mat),
-	mass_data(0,0),
+    MovingObjectHandle moving_object_handle;
+
+    DynamicPhysicsComp(Pointer<DynamicObject> object,
+		       Material mat,
+		       Vec3f vi = Vec3f(0,0,0))
+      : StaticPhysicsComp((Pointer<GameObject>)object, mat),
 	veloc(vi),
+	prev_veloc(FLT_MAX, FLT_MAX, FLT_MAX),
 	force(Vec3f(0,0,0)) {
-      $rttiConstruct("PhysicsComp");
-      init(object);
+      onMove(object);
+      $rttiConstruct("DynamicPhysicsComp");
     }
-    void init(GameObject* object);
-    void update(f32 dt);
+
+    Vec3f getVeloc();
+    
+    void update(Pointer<DynamicObject> object, f32 dt);
     void applyImpulse(Vec3f j);
+    void onMove(Pointer<DynamicObject> object);
+    void onStop(Pointer<DynamicObject> object);
+    bool isMoving();
+
+    void _on_move();
+    
   };
   $registerRttiStruct();
-  
+
 }

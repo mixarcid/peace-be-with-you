@@ -15,10 +15,8 @@ NAMESPACE {
     return (mass*sqr(size))/6;
   }
 
-  BoundingObject* BoundingAABB::transform(TransformBasic t) {
-    BoundingAABB* ret = new BoundingAABB(*this);
-    ret->center += t.trans;
-    return ret;
+  void BoundingAABB::transform(Transform t) {
+    center += t.trans;
   }
 
   void BoundingAABB::render(RenderContext c) {

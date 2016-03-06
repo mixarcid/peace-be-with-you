@@ -16,10 +16,6 @@ NAMESPACE {
     PEACE_UNIMPLIMENTED(0);
   }
 
-  BoundingObject* BoundingGround::transform(TransformBasic t) {
-    return new BoundingGround(*this);
-  }
-
   //Isn't perfect at all, but may work
   COLLIDE_FUNC(SPHERE, GROUND, {
 

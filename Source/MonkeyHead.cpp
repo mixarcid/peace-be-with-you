@@ -8,12 +8,14 @@ NAMESPACE {
   void MonkeyHead::init(Vec3f veloc) {
     tight_object.set(mesh.get()->getTightBoundingObject());
     loose_object.set(mesh.get()->getLooseBoundingObject());
+    getTightBoundingObject()->transform(getTransform());
+    getLooseBoundingObject()->transform(getTransform());
     addComponent(mesh.get());
-    addComponent(new PhysicsComp(this, material, veloc));
+    addComponent(new DynamicPhysicsComp(this, material, veloc));
   }
 
   MonkeyHead::~MonkeyHead() {
-    delete getComponent<PhysicsComp>();
+    delete getComponent<DynamicPhysicsComp>();
   }
 
 }

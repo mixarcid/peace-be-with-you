@@ -100,14 +100,15 @@ NAMESPACE {
 
   Terrain::~Terrain() {
     if (ground_object) {
-      delete ground_object->getComponent<PhysicsComp>();
+      delete ground_object->getComponent<StaticPhysicsComp>();
     }
   }
 
   void Terrain::generate(Vec3f pos, Vec2u size) {
 
-    ground_object = engine->emplaceStatic<GameObject>(pos);
-    ground_object->addComponent(new PhysicsComp(ground_object, material));
+    ground_object = engine->emplaceStatic<StaticObject>(pos);
+    ground_object->addComponent
+      (new StaticPhysicsComp(ground_object, material));
     
     TerrainGenerator gen;
 
@@ -191,6 +192,7 @@ NAMESPACE {
 				CHUNK_SIZE-2*CHUNK_STEP,
 				max_z - min_z)/2);
 	c->loose_object.set(&aabb);
+	c->getLooseBoundingObject()->transform(c->getTransform());
 
 	//Time to compute some normals!
 	for (u16 x = 0; x < CHUNK_RES; ++x) {

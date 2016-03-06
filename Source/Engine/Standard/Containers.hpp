@@ -36,10 +36,10 @@ NAMESPACE {
 
     /* SFINAE foo-exists :) */
     template <typename A> 
-    static decltype(test(&A::onMove)) 
-    test(decltype(&A::onMove),void *) {
+    static decltype(test(&A::_on_move)) 
+    test(decltype(&A::_on_move),void *) {
       /* foo exists. What about sig? */
-      typedef decltype(test(&A::onMove)) return_type; 
+      typedef decltype(test(&A::_on_move)) return_type; 
       return return_type();
     }
 
@@ -59,7 +59,7 @@ NAMESPACE {
 	delegates to `T::foo()` when `type` == `std::true_type`
     */
     static void eval(T& t, std::true_type) {
-      t.onMove();
+      t._on_move();
     }
 
     /* `eval(...)` is a no-op for otherwise unmatched arguments */
@@ -78,7 +78,7 @@ NAMESPACE {
 
   //to be called when a specific type is moved to the new position ptr
   template<typename T>
-    void onMove(T* ptr) {
+    void _on_move(T* ptr) {
     HasOnMove<T>::eval(*ptr);
   }
 
@@ -158,7 +158,7 @@ NAMESPACE {
       elements = Alloc::realloc(elements, tot_length*sizeof(T));
       if (old_elements != elements) {
 	for (T& elem : *this) {
-	  onMove(&elem);
+	  _on_move(&elem);
 	}
       }
     }
@@ -201,7 +201,7 @@ NAMESPACE {
       if (used_length > 1) {
 	it->~T();
 	memcpy((void*)it,(void*)(end()-1),sizeof(T));
-        onMove(it);
+        _on_move(it);
 	--used_length;
       } else {
 	clear();
@@ -223,7 +223,7 @@ NAMESPACE {
 	      (void*)pos,
 	      (SizeType)((char*)end()-(char*)pos));
       for (Iterator it=pos+1; it<end(); ++it) {
-	onMove(it);
+	_on_move(it);
       }
       return new(pos) T(item);
     }
@@ -245,7 +245,7 @@ NAMESPACE {
 	      (void*)pos,
 	      (SizeType)((char*)end()-(char*)pos));
       for (Iterator it=pos+1; it<end(); ++it) {
-	onMove(it);
+	_on_move(it);
       }
       return new(pos) U(args...);
     }

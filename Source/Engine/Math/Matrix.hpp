@@ -225,9 +225,9 @@ NAMESPACE {
 
     static inline Mat4 translate(Vec3<T> trans) {
       T d[16] = {1, 0, 0, 0,
-	     0, 1, 0, 0,
-	     0, 0, 1, 0,
-	     trans.x(), trans.y(), trans.z(), 1};
+		 0, 1, 0, 0,
+		 0, 0, 1, 0,
+		 trans.x(), trans.y(), trans.z(), 1};
       return Mat4(d);
     }
 

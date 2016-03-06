@@ -6,10 +6,10 @@
 
 NAMESPACE {
 
-  struct Player : GameObject {
+  struct Player : DynamicObject {
     
     Player(Engine* engine, Vec3f pos)
-      : GameObject(engine, pos) {
+      : DynamicObject(engine, pos) {
       $rttiConstruct("Player");
       ptr = this;
       init();
@@ -17,9 +17,9 @@ NAMESPACE {
     void init();
     ~Player();
 
-    static ChildTransform* camera;
+    static ChildObject* camera;
     static Pointer<Player> ptr;
-    static TransformBasic camera_diff;
+    static Transform camera_diff;
     static f32 cam_speed;
     static f32 cam_rot_speed;
     static Asset<BonedMeshBase> mesh;

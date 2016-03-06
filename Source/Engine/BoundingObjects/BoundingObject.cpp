@@ -26,27 +26,15 @@ NAMESPACE {
   DefineManifoldFunc::DefineManifoldFunc(BoundingObject::Type a,
 					 BoundingObject::Type b,
 					 ManifoldFunc func) {
-    /*for (u8 x = BoundingObject::AABB; x < BoundingObject::LAST; ++x) {
-      for (u8 y = BoundingObject::AABB; y < BoundingObject::LAST; ++y) {
-	printf("%u, %u: ", x, y);
-	if (BoundingObject::manifold_functions[x][y]) {
-	  printf("Yes!\n");
-	} else {
-	  printf("No :(\n");
-	}
-      }
-    }
-    printf("\n");*/
     BoundingObject::manifold_functions[a][b] = func;
-    //BoundingObject::manifold_functions[b][a] = func;
-      /*[a,b](BoundingObject* oa, BoundingObject* ob, Manifold* m)->bool {
-      if (!BoundingObject::manifold_functions[a][b](oa, ob, m)) {
-	return false;
-      } else {
-	m->normal = - m->normal;
-	return true;
-      }
-      };*/
+    /*BoundingObject::manifold_functions[b][a] = ([](BoundingObject* oa, BoundingObject* ob, Manifold* m) -> bool {
+	if (!BoundingObject::manifold_functions[ob->type][oa->type](ob, oa, m)) {
+	  return false;
+	} else {
+	  m->normal = - m->normal;
+	  return true;
+	} 
+	});*/
   }
 
   BoundingObject::BoundingObject(BoundingObject::Type _type)
@@ -72,9 +60,7 @@ NAMESPACE {
     return 0;
   }
   
-  BoundingObject* BoundingObject::transform(TransformBasic t) {
-    return new BoundingObject(*this);
-  }
+  void BoundingObject::transform(Transform t) {}
 
   $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
   COLLIDE_FUNC(NONE, $(entry), { return true; });

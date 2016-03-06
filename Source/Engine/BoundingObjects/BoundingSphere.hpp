@@ -14,7 +14,7 @@ NAMESPACE {
     BoundingSphere(Array<BasicMeshData>& data);
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    virtual BoundingObject* transform(TransformBasic t);
+    virtual void transform(Transform t);
     
   };
 

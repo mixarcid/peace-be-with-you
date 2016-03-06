@@ -38,8 +38,7 @@ NAMESPACE {
 
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
-    //return value must be deleted manually
-    virtual BoundingObject* transform(TransformBasic t);
+    virtual void transform(Transform t);
     virtual void render(RenderContext c) {}
 
     static TestCollisionFunc

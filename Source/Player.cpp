@@ -7,11 +7,11 @@
 
 NAMESPACE {
 
-  ChildTransform* Player::camera = NULL;
+  ChildObject* Player::camera = NULL;
   Pointer<Player> Player::ptr;
-  TransformBasic Player::camera_diff(Vec3f(0,10,0),
-				     Quaternionf
-				     (0,0,degreesToRadians(180)));
+  Transform Player::camera_diff(Vec3f(0,10,0),
+				Quaternionf
+				(0,0,degreesToRadians(180)));
   f32 Player::cam_speed(1);
   f32 Player::cam_rot_speed(0.001);
   Asset<BonedMeshBase> Player::mesh("SubjectB:Subject");
@@ -20,14 +20,14 @@ NAMESPACE {
 
     tight_object.set(mesh.get()->getTightBoundingObject());
     loose_object.set(mesh.get()->getLooseBoundingObject());
-    
+    getTightBoundingObject()->transform(getTransform());
+    getLooseBoundingObject()->transform(getTransform());
 
     addComponent(new BonedMesh(Player::mesh.get()));
-    addComponent(new PhysicsComp(this,
-				 Material(985, 0.1, 0.5, 0.4)));
-    
-    camera = addChildTransform(&engine->graphics.cam,
-			       camera_diff);
+    addComponent(new DynamicPhysicsComp((Pointer<DynamicObject>)this,
+					Material(985, 0.1, 0.5, 0.4)));
+    camera = addChild((Pointer<DynamicObject>)engine->graphics.cam,
+		      camera_diff);
     
     Input::addCursorPosCallback
       ("Main",
@@ -47,9 +47,9 @@ NAMESPACE {
 	Quaternionf qy(-y_tot*cam_rot_speed,0,0);
 	Quaternionf qx(0,0,-x_tot*cam_rot_speed);
 
-	Player::ptr->moveChildTransformAbs
-	  (Player::camera, TransformBasic::combine
-	   (TransformBasic(Vec3f(0,0,0), qy), camera_diff));
+	Player::ptr->moveChildAbs
+	  (Player::camera, Transform::combine
+	   (Transform(Vec3f(0,0,0), qy), camera_diff));
 	Player::ptr->rotAbs(qx);
 	  
 	prev_x = x;
@@ -84,7 +84,7 @@ NAMESPACE {
 	dir.normalize();
 	Vec3f right = Vec3f::cross(dir, Vec3f(0,0,1));
 
-	Pointer<PhysicsComp> phys = Player::ptr->getComponent<PhysicsComp>();
+	Pointer<DynamicPhysicsComp> phys = Player::ptr->getComponent<DynamicPhysicsComp>();
 	
 	switch(key) {
 	case GLFW_KEY_W:
@@ -117,7 +117,7 @@ NAMESPACE {
 
   Player::~Player() {
     delete getComponent<RenderableComp>();
-    delete getComponent<PhysicsComp>();
+    delete getComponent<DynamicPhysicsComp>();
   }
 
 }
