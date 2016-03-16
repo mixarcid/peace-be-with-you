@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <initializer_list>
 #include <string.h>
 #include "Types.hpp"
@@ -33,6 +34,8 @@ NAMESPACE {
     using Hash = std::hash<Key>;
   template <typename A, typename B>
     using Pair = typename std::pair<A, B>;
+  template <typename T>
+    using UnorderedSet = std::unordered_set<T>;
   template <typename T>
     using InitList = typename std::initializer_list<T>;
 

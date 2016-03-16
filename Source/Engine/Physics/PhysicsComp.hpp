@@ -86,7 +86,8 @@ NAMESPACE {
       : StaticPhysicsComp((Pointer<GameObject>&)object, mat),
 	veloc(vi),
 	prev_veloc(FLT_MAX, FLT_MAX, FLT_MAX),
-	force(Vec3f(0,0,0)) {
+	force(Vec3f(0,0,0)),
+	moving_object_handle(-1) {
       onMove(object);
       $rttiConstruct("DynamicPhysicsComp");
     }

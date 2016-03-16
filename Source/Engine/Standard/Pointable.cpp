@@ -7,16 +7,11 @@ NAMESPACE {
   }
 
   Pointable::Pointable(Pointable&& p) {
-    /*for (Pointer<Pointable>* pointer : p.pointers) {
-      *pointer = this;
-    }
-    ensureCorrect();
-    p.pointers.clear();*/
   }
 
   Pointable::~Pointable() {
     for (Pointer<Pointable>* pointer : pointers) {
-      *pointer = NULL;
+      pointer->data = NULL;
     }
   }
   
@@ -33,25 +28,18 @@ NAMESPACE {
   }
   
   void Pointable::setPointer(IndexType index, Pointer<Pointable>* ptr) {
-    ensureCorrect();
     pointers[index] = ptr;
     ensureCorrect();
   }
   
   void Pointable::removePointer(IndexType index, Pointer<Pointable>* ptr) {
     ensureCorrect();
-    for (auto& p : pointers) {
-      Log::message("before: %p", p);
-    }
     debugAssert(pointers[index] == ptr, "Ack");
     pointers.removeAndReplace(pointers.begin() + index);
     if (index < pointers.size()) {
       pointers[index]->index = index;
     }
     ensureCorrect();
-    for (auto& p : pointers) {
-      Log::message("after: %p", p);
-    }
   }
 
   void Pointable::_on_move() {
@@ -65,11 +53,13 @@ NAMESPACE {
   }
 
   void Pointable::ensureCorrect() {
+#ifdef PEACE_POINTER_DEBUG
     u8 n = 0;
     for (Pointer<Pointable>* pointer : pointers) {
       debugAssert(pointer->index == (n++),
-		  "Incorrect index!");
+		  "Error in Pointable class");
     }
+#endif
   }
 
 }

@@ -55,8 +55,8 @@ NAMESPACE {
   }
 
   void DynamicPhysicsComp::update(Pointer<DynamicObject>& object, f32 dt) {
-      veloc += force*mass_data.inv_mass*dt;
-      object->transRel(veloc*dt);
+    veloc += force*mass_data.inv_mass*dt;
+    object->transRel(veloc*dt);
   }
 
   void DynamicPhysicsComp::applyImpulse(Vec3f j) {

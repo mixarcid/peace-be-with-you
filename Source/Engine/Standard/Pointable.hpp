@@ -27,7 +27,7 @@ NAMESPACE {
     void setPointer(IndexType index, Pointer<Pointable>* ptr);
     void removePointer(IndexType index, Pointer<Pointable>* ptr);
     void _on_move();
-    void ensureCorrect();
+    inline void ensureCorrect();
 
   };
 
@@ -42,9 +42,7 @@ NAMESPACE {
       if (data) {
 	index = data->addPointer((Pointer<Pointable>*)this);
       }
-      if (*this) {
-	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-      }
+      ensureCorrect();
     }
 
     Pointer(const Pointer& ptr)
@@ -52,9 +50,7 @@ NAMESPACE {
       if (data) {
         index = data->addPointer((Pointer<Pointable>*)this);
       }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+      ensureCorrect();
     }
 
     Pointer(Pointer&& ptr)
@@ -63,50 +59,32 @@ NAMESPACE {
       if (data) {
         data->setPointer(index, (Pointer<Pointable>*)this);
       }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+      ensureCorrect();
       ptr.data = NULL;
     }
-
-    /*template <typename U>
-    explicit Pointer(const Pointer<U>& ptr)
-      : data((T*)ptr.data) {
-      if (data) {
-	index = data->addPointer((Pointer<Pointable>*)this);
-      }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
-    }
-
-    template <typename U>
-    explicit Pointer(Pointer<U>&& ptr)
-      : data((T*)ptr.data),
-	index(ptr.index) {
-      if (data) {
-	data->setPointer(index, (Pointer<Pointable>*)this);
-      }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
-      ptr.data = NULL;
-      }*/
-
   
     ~Pointer() {
-      if (*this) {
-	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-      }
+      ensureCorrect();
       if (*this) {
         data->removePointer(index, (Pointer<Pointable>*)this);
       }
     }
-    
-    Pointer& operator=(const Pointer& ptr) {
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+
+    void _on_move() {
+      data->setPointer(index, (Pointer<Pointable>*)this);
+      ensureCorrect();
+    }
+
+    inline void ensureCorrect() {
+#ifdef PEACE_POINTER_DEBUG
+      if (*this) {
+	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+      }
+#endif
+    }
+
+        Pointer& operator=(const Pointer& ptr) {
+      ensureCorrect();
       if (*this) {
         data->removePointer(index);
       }
@@ -114,23 +92,12 @@ NAMESPACE {
       if (data) {
 	index = data->addPointer((Pointer<Pointable>*)this);
       }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+      ensureCorrect();
       return *this;
     }
 
-    void _on_move() {
-      data->setPointer(index, (Pointer<Pointable>*)this);
-      if (*this) {
-	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-      }
-    }
-
     Pointer& operator=(Pointer&& ptr) {
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+      ensureCorrect();
       if (*this) {
 	data->removePointer(index, (Pointer<Pointable>*) &ptr);
       }
@@ -140,9 +107,7 @@ NAMESPACE {
         data->setPointer(index, (Pointer<Pointable>*)this);
 	ptr.data = NULL;
       }
-      	if (*this) {
-	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
-	}
+      ensureCorrect();
       return *this;
     }
 

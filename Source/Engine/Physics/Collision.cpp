@@ -85,7 +85,6 @@ NAMESPACE {
     CollisionMessage b_msg(b_obj);
     a_obj->message(&b_msg);
     b_obj->message(&a_msg);
-    Log::message("!!");
     return true;
   }
 
