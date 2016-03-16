@@ -10,6 +10,8 @@ NAMESPACE {
 
   struct Pointable : BaseRTTI {
 
+    typedef Array<Pointer<Pointable>*>::SizeType IndexType;
+
     Array<Pointer<Pointable>*> pointers;
 
     Pointable() {}
@@ -21,7 +23,11 @@ NAMESPACE {
     void operator=(const Pointable& p);
     void operator=(Pointable&& p);
 
+    IndexType addPointer(Pointer<Pointable>* ptr);
+    void setPointer(IndexType index, Pointer<Pointable>* ptr);
+    void removePointer(IndexType index, Pointer<Pointable>* ptr);
     void _on_move();
+    void ensureCorrect();
 
   };
 
@@ -29,91 +35,118 @@ NAMESPACE {
     struct Pointer {
 
     T* data;
-    Array<Pointer<Pointable>*>::Iterator it;
+    Pointable::IndexType index;
 
     Pointer(T* _data = NULL)
-      : data(_data),
-	it(NULL) {
+      : data(_data) {
       if (data) {
-	it = data->pointers.push_back((Pointer<Pointable>*)this);
+	index = data->addPointer((Pointer<Pointable>*)this);
+      }
+      if (*this) {
+	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
       }
     }
 
     Pointer(const Pointer& ptr)
-      : data(ptr.data),
-	it(NULL) {
+      : data(ptr.data) {
       if (data) {
-	it = data->pointers.push_back((Pointer<Pointable>*)this);
+        index = data->addPointer((Pointer<Pointable>*)this);
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
     }
 
     Pointer(Pointer&& ptr)
       : data(ptr.data),
-	it(ptr.it) {
+        index(ptr.index) {
       if (data) {
-	*it = (Pointer<Pointable>*) this;
+        data->setPointer(index, (Pointer<Pointable>*)this);
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       ptr.data = NULL;
     }
 
-    template <typename U>
+    /*template <typename U>
     explicit Pointer(const Pointer<U>& ptr)
-      : data((T*)ptr.data),
-	it(NULL) {
+      : data((T*)ptr.data) {
       if (data) {
-	it = data->pointers.push_back((Pointer<Pointable>*)this);
+	index = data->addPointer((Pointer<Pointable>*)this);
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
     }
 
     template <typename U>
     explicit Pointer(Pointer<U>&& ptr)
       : data((T*)ptr.data),
-	it(ptr.it) {
+	index(ptr.index) {
       if (data) {
-	*it = (Pointer<Pointable>*) this;
+	data->setPointer(index, (Pointer<Pointable>*)this);
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       ptr.data = NULL;
-    }
+      }*/
+
   
     ~Pointer() {
       if (*this) {
-	auto p1 = data;
-	auto p2 = &(p1->pointers);
-	p2->removeAndReplace(it);
+	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+      }
+      if (*this) {
+        data->removePointer(index, (Pointer<Pointable>*)this);
       }
     }
     
     Pointer& operator=(const Pointer& ptr) {
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       if (*this) {
-	(data)->pointers.removeAndReplace(it);
+        data->removePointer(index);
       }
       data = ptr.data;
       if (data) {
-	it = data->pointers.push_back((Pointer<Pointable>*)this);
-      } else {
-	it = NULL;
+	index = data->addPointer((Pointer<Pointable>*)this);
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       return *this;
     }
 
     void _on_move() {
-      *it = (Pointer<Pointable>*)this;
+      data->setPointer(index, (Pointer<Pointable>*)this);
+      if (*this) {
+	debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+      }
     }
 
     Pointer& operator=(Pointer&& ptr) {
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       if (*this) {
-	data->pointers.removeAndReplace(it);
+	data->removePointer(index, (Pointer<Pointable>*) &ptr);
       }
       data = ptr.data;
       if (data) {
-	it = ptr.it;
-        *it = (Pointer<Pointable>*) this;
+	index = ptr.index;
+        data->setPointer(index, (Pointer<Pointable>*)this);
 	ptr.data = NULL;
       }
+      	if (*this) {
+	  debugAssert((data)->pointers[index] == (Pointer<Pointable>*)this, "Ack!");
+	}
       return *this;
     }
 
-    bool operator==(Pointer b) {
+    bool operator==(const Pointer& b) {
       return data == b.data;
     }
     
@@ -134,8 +167,8 @@ NAMESPACE {
     }
 
     template <typename U>
-    explicit operator U*() const {
-      return (U*) data;
+    explicit operator Pointer<U>&() {
+      return *((Pointer<U>*)this);
     }
   
     T& operator*() const {
@@ -149,11 +182,13 @@ NAMESPACE {
 		  "You are trying to dereference a NULL pointer");
       return (T*) data;
     }
+
+    static Pointer<T> null;
     
   };
 
-  template<>
-    void _on_move(Pointer<Pointable>** ptr);
+  template<typename T>
+    Pointer<T> Pointer<T>::null;
   
   template <typename T>
     inline TypeId typeId(Pointer<T> object) {

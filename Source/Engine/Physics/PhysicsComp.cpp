@@ -35,7 +35,7 @@ NAMESPACE {
 				 f32 cof_dynamic)
     : Material(1, 0, cof_static, cof_dynamic) {}
 
-  void StaticPhysicsComp::init(Pointer<GameObject> object) {
+  void StaticPhysicsComp::init(Pointer<GameObject>& object) {
     f32 mass = object->getTightBoundingObject()->getVolume()
       * material.density;
     f32 inertia = object->getTightBoundingObject()->getInertia(mass);
@@ -54,7 +54,7 @@ NAMESPACE {
     return veloc;
   }
 
-  void DynamicPhysicsComp::update(Pointer<DynamicObject> object, f32 dt) {
+  void DynamicPhysicsComp::update(Pointer<DynamicObject>& object, f32 dt) {
       veloc += force*mass_data.inv_mass*dt;
       object->transRel(veloc*dt);
   }
@@ -63,16 +63,24 @@ NAMESPACE {
     veloc += j*mass_data.inv_mass;
   }
 
-  void DynamicPhysicsComp::onMove(Pointer<DynamicObject> object) {
-    if (!moving_object_handle) {
-      moving_object_handle = object->engine->physics.moving_objects.emplace_back
-	(object, this);
+  void DynamicPhysicsComp::onMove(Pointer<DynamicObject>& object) {
+    if (moving_object_handle == -1) {
+      moving_object_handle = Engine::engine->physics.moving_objects.size();
+      Engine::engine->physics.moving_objects.emplace_back
+	(object);
     }
   }
-  void DynamicPhysicsComp::onStop(Pointer<DynamicObject> object) {
-    if (moving_object_handle) {
-      object->engine->physics.moving_objects.removeAndReplace(moving_object_handle);
-      moving_object_handle = NULL;
+  void DynamicPhysicsComp::onStop(Pointer<DynamicObject>& object) {
+    if (moving_object_handle != -1) {
+      Engine::engine->physics.moving_objects.removeAndReplace
+	(&Engine::engine->physics.moving_objects[moving_object_handle]);
+      if (moving_object_handle <
+	  Engine::engine->physics.moving_objects.size()) {
+	Engine::engine->physics.moving_objects[moving_object_handle]
+	  ->getComponent<DynamicPhysicsComp>()
+	  ->moving_object_handle = moving_object_handle;
+      }
+      moving_object_handle = -1;
       veloc = Vec3f(0,0,0);
       prev_veloc = Vec3f(0,0,0);
     }
@@ -83,11 +91,6 @@ NAMESPACE {
   bool DynamicPhysicsComp::isMoving() {
     return (veloc.normSquared() > VELOC_EPSILON) &&
     ((veloc-prev_veloc).normSquared() > VELOC_CHANGE_EPSILON);
-  }
-
-  void DynamicPhysicsComp::_on_move() {
-    moving_object_handle._on_move();
-    Pointable::_on_move();
   }
   
 }

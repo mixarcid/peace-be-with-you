@@ -18,8 +18,13 @@ NAMESPACE {
   
   struct Engine {
 
+    template <typename Obj, typename Comp>
+    using ObjectCallBack = function<bool(Pointer<Obj>&, Pointer<Comp>&)>;
+
     Array<StaticObject> static_objects;
     Array<DynamicObject> dynamic_objects;
+    Grid dynamic_container;
+    
     SystemManager system_manager;
     Graphics graphics;
     Physics physics;
@@ -29,28 +34,38 @@ NAMESPACE {
     f32 dt;
     EngineFlags flags;
 
+    static Engine* engine;
+
     Engine();
     ~Engine();
 
-    void init();
+    static void init();
+    static void terminate();
 
     //GameObjects MUST be created using only these methods
     template <typename T, typename... Args>
-    Pointer<T> emplaceStatic(Args... args) {
-      return Pointer<T>(static_objects.emplace_back<T>(this, args...));
+    static Pointer<T> emplaceStatic(Args... args) {
+      return Pointer<T>(engine->static_objects.emplace_back<T>(args...));
     }
     template <typename T, typename... Args>
-    Pointer<T> emplaceDynamic(Args... args) {
-      return Pointer<T>(dynamic_objects.emplace_back<T>(this, args...));
+    static Pointer<T> emplaceDynamic(Args... args) {
+      Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
+      ret->handle = engine->dynamic_container.insert
+	((Pointer<GameObject>&) ret);
+      return Pointer<T>((Pointer<T>&)ret);
     }
 
     template <typename T>
-    void removeStatic(Pointer<T> handle) {
-      static_objects.removeAndReplace(Pointer<StaticObject>(handle));
+    static void removeStatic(Pointer<T>& handle) {
+      engine->static_objects.removeAndReplace
+	((Pointer<StaticObject>&)handle);
     }
     template <typename T>
-    void removeDynamic(Pointer<T> handle) {
-      dynamic_objects.removeAndReplace(Pointer<DynamicObject>(handle));
+    static void removeDynamic(Pointer<T>& handle) {
+      engine->dynamic_container.remove
+	((Pointer<DynamicObject>&)handle, handle->handle);
+      engine->dynamic_objects.removeAndReplace
+        ((Pointer<DynamicObject>&) handle);
     }
 
     /*
@@ -61,29 +76,51 @@ NAMESPACE {
       the traversal will immediately stop if the callback returns false
     */
     template <typename T>
-    void traverseStatic(BoundingObject* bound,
-			function<bool(StaticComponentPair<T>)> callback) {
-      for (StaticObject& obj : static_objects) {
-	Pointer<T> comp = obj.getComponent<T>();
-	if (comp && !callback(StaticComponentPair<T>(&obj, comp))) {
+    static void traverseStatic
+    (BoundingObject* bound,
+     ObjectCallBack<StaticObject,T> callback) {
+      for (StaticObject& obj : engine->static_objects) {
+	Pointer<StaticObject> obj_p(&obj);
+	Pointer<T>& comp = obj.getComponent<T>();
+	if (comp && !callback(obj_p, comp)) {
 	  break;
 	}
       }
     }
     
     template <typename T>
-    void traverseDynamic(BoundingObject* bound,
-			 function<bool(DynamicComponentPair<T>)> callback) {
-      for (DynamicObject& obj : dynamic_objects) {
-	Pointer<T> comp = obj.getComponent<T>();
-	if (comp && !callback(DynamicComponentPair<T>(&obj, comp))) {
+    static void traverseDynamic
+    (BoundingObject* bound,
+     ObjectCallBack<DynamicObject,T> callback) {
+      for (DynamicObject& obj : engine->dynamic_objects) {
+	Pointer<DynamicObject> obj_p(&obj);
+	Pointer<T>& comp = obj.getComponent<T>();
+	if (comp && !callback(obj_p, comp)) {
 	  break;
 	}
       }
     }
+
+    template <typename T>
+    static void traverseNeighbors
+    (Pointer<DynamicObject>& obj,
+     ObjectCallBack<DynamicObject,T> callback) {
+      engine->dynamic_container.traverseNeighbors
+	((Pointer<GameObject>&) obj,
+	 obj->handle,
+	 [callback](Pointer<GameObject>& b) -> bool {
+	  Pointer<T>& comp = b->getComponent<T>();
+	  if (comp && !callback((Pointer<DynamicObject>&)b, comp)) {
+	    return false;
+	  }
+	  return true;
+	});
+    }
+
+    static void registerMove(Pointer<DynamicObject>& obj);
     
-    void loop();
-    void begin();
+    static void loop();
+    static void begin();
     
   };
 

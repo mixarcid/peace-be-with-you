@@ -20,11 +20,13 @@ NAMESPACE {
 
     PEACE_ENUM(BoundingObjectType,
 	       AABB,
+	       AABB2D,
 	       SPHERE,
 	       OBB,
 	       GROUND,
 	       FRUSTUM,
 	       NONE,
+	       ALL,
 	       LAST);
     typedef BoundingObjectType Type;
     
@@ -36,6 +38,7 @@ NAMESPACE {
     bool intersects(BoundingObject* b);
     bool intersects(BoundingObject* b, Manifold* man);
 
+    virtual Vec3f getCenter();
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
     virtual void transform(Transform t);

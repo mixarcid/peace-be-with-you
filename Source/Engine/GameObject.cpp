@@ -1,20 +1,31 @@
 #include "GameObject.hpp"
 #include "PhysicsComp.hpp"
+#include "Engine.hpp"
 
 NAMESPACE {
 
-  GameObject::GameObject(Engine* _engine,
-			 Vec3f trans,
+  GameObject::GameObject(Vec3f trans,
 			 Quaternionf rot)
-    : Transform(trans, rot), engine(_engine) {}
+    : transform(trans, rot) {}
 
   Transform GameObject::getTransform() {
-    return Transform(this->trans, this->rot);
+    return transform;
   }
 
   void GameObject::setTransform(Transform t) {
-    this->trans = t.trans;
-    this->rot = t.rot;
+    transform = t;
+  }
+
+  Vec3f GameObject::getTrans() {
+    return transform.getTrans();
+  }
+  
+  Quaternionf GameObject::getRot() {
+    return transform.getRot();
+  }
+
+  Mat4f GameObject::getMat() {
+    return transform.getMat();
   }
 
   BoundingObject* GameObject::getTightBoundingObject() {
@@ -25,17 +36,26 @@ NAMESPACE {
     return loose_object.getBoundingObject();
   }
 
-  ChildObject::ChildObject(Transform _diff,
-			   Pointer<DynamicObject> _obj)
-    : diff(_diff), obj(_obj) {}
+  StaticObject::StaticObject(Vec3f trans,
+			     Quaternionf rot)
+    : GameObject(trans, rot) {}
   
+
+  ChildObject::ChildObject(Transform _diff,
+			   Pointer<DynamicObject>& _obj)
+    : diff(_diff), obj(_obj) {}
+
+  DynamicObject::DynamicObject(Vec3f trans,
+			       Quaternionf rot)
+    : GameObject(trans, rot) {}
+    
   void DynamicObject::transRel(Vec3f trans) {
     transAbs(getTrans() + trans);
   } 
   
   void DynamicObject::transAbs(Vec3f trans) {
     Transform diff(trans - getTrans());
-    this->trans = trans;
+    transform.trans = trans;
     getTightBoundingObject()->transform(diff);
     getLooseBoundingObject()->transform(diff);
     onMove();
@@ -47,13 +67,16 @@ NAMESPACE {
   
   void DynamicObject::rotAbs(Quaternionf rot) {
     Transform diff(Vec3f(0,0,0), rot*(getRot().conjugate()));
-    this->rot = rot;
+    transform.rot = rot;
     getTightBoundingObject()->transform(diff);
     getLooseBoundingObject()->transform(diff);
     onMove();
   }
   
   void DynamicObject::onMove() {
+
+    Pointer<DynamicObject> obj(this);
+    Engine::registerMove(obj);
     
     for (const ChildObject& t : children) {
       Transform trans(Transform::combine(getTransform(), t.diff));
@@ -61,15 +84,15 @@ NAMESPACE {
       t.obj->onMove();
     }
 	
-    Pointer<DynamicPhysicsComp> phys
+    Pointer<DynamicPhysicsComp>& phys
       = getComponent<DynamicPhysicsComp>();
     if (phys) {
-      phys->onMove(this);
+      phys->onMove(obj);
     }
   }
 
   ChildObject* DynamicObject::addChild
-    (Pointer<DynamicObject> child,
+    (Pointer<DynamicObject>& child,
      Transform diff) {
     child->setTransform(Transform::combine(getTransform(), diff));
     child->onMove();
@@ -86,7 +109,7 @@ NAMESPACE {
   }
   
   void DynamicObject::moveChildRel(ChildObject* child,
-				      Transform diff) {
+				   Transform diff) {
     moveChildAbs
       (child, Transform::combine(child->diff, diff));
   }

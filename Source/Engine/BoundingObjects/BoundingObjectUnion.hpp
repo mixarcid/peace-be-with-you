@@ -6,6 +6,7 @@
 #include "BoundingOBB.hpp"
 #include "BoundingGround.hpp"
 #include "BoundingFrustum.hpp"
+#include "BoundingAABB2D.hpp"
 
 NAMESPACE {
   
@@ -14,9 +15,10 @@ NAMESPACE {
     //This code is hideous
     typedef BoundingOBB BoundingObb;
     typedef BoundingAABB BoundingAabb;
+    typedef BoundingAABB2D BoundingAabb2d;
     
     union {
-      FOR(entry in getEnumEntries("BoundingObjectType")[:-2]);
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
       Bounding$(className(entry)) obj_$(entry);
       END_FOR;
       BoundingObject object;

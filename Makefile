@@ -4,7 +4,7 @@ CXX= clang++
 PREPROCESS= cpp
 EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti -Wno-unused-command-line-argument
-DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused
+DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused -O0
 RELEASE_FLAGS= -Ofast
 INCLUDE= $(shell find Source -type d | sed 's/[^\ ]*[^\ ]/-I&/g')
 INCLUDE+= -IThirdParty/include

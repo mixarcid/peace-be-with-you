@@ -8,8 +8,8 @@ NAMESPACE {
 
   struct Player : DynamicObject {
     
-    Player(Engine* engine, Vec3f pos)
-      : DynamicObject(engine, pos) {
+    Player(Vec3f pos)
+      : DynamicObject(pos) {
       $rttiConstruct("Player");
       ptr = this;
       init();

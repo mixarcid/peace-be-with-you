@@ -15,6 +15,7 @@ NAMESPACE {
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
     virtual void transform(Transform t);
+    virtual Vec3f getCenter();
     
   };
 

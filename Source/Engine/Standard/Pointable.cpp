@@ -4,15 +4,14 @@
 NAMESPACE {
 
   Pointable::Pointable(const Pointable& p) {
-    
   }
 
   Pointable::Pointable(Pointable&& p) {
-    for (Pointer<Pointable>* pointer : p.pointers) {
+    /*for (Pointer<Pointable>* pointer : p.pointers) {
       *pointer = this;
-      pointers.push_back(pointer);
     }
-    p.pointers.clear();
+    ensureCorrect();
+    p.pointers.clear();*/
   }
 
   Pointable::~Pointable() {
@@ -22,32 +21,55 @@ NAMESPACE {
   }
   
   void Pointable::operator=(const Pointable& p) {
-    
   }
 
   void Pointable::operator=(Pointable&& p) {
-    /*for (Pointer<Pointable>* pointer : pointers) {
-      *pointer = NULL;
+  }
+
+  Pointable::IndexType Pointable::addPointer(Pointer<Pointable>* ptr) {
+    ensureCorrect();
+    pointers.push_back(ptr);
+    return (pointers.size() - 1);
+  }
+  
+  void Pointable::setPointer(IndexType index, Pointer<Pointable>* ptr) {
+    ensureCorrect();
+    pointers[index] = ptr;
+    ensureCorrect();
+  }
+  
+  void Pointable::removePointer(IndexType index, Pointer<Pointable>* ptr) {
+    ensureCorrect();
+    for (auto& p : pointers) {
+      Log::message("before: %p", p);
     }
-    pointers.clear();
-    for (Pointer<Pointable>* pointer : p.pointers) {
-      pointer->data = this;
-      pointers.push_back(pointer);
+    debugAssert(pointers[index] == ptr, "Ack");
+    pointers.removeAndReplace(pointers.begin() + index);
+    if (index < pointers.size()) {
+      pointers[index]->index = index;
     }
-    p.pointers.clear();*/
+    ensureCorrect();
+    for (auto& p : pointers) {
+      Log::message("after: %p", p);
+    }
   }
 
   void Pointable::_on_move() {
+    ensureCorrect();
     for (Pointer<Pointable>** pointer = this->pointers.begin();
-	 pointer < this->pointers.end();
+	 pointer != this->pointers.end();
 	 ++pointer) {
       (*pointer)->data = this;
     }
+    ensureCorrect();
   }
 
-  template<>
-    void _on_move(Pointer<Pointable>** ptr) {
-    (*ptr)->it = ptr;
+  void Pointable::ensureCorrect() {
+    u8 n = 0;
+    for (Pointer<Pointable>* pointer : pointers) {
+      debugAssert(pointer->index == (n++),
+		  "Incorrect index!");
+    }
   }
 
 }

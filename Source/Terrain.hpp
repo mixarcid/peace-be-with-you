@@ -8,8 +8,8 @@ NAMESPACE {
   struct TerrainChunk : StaticObject {
     
     //pos: the back-left corner of the chunk. The z-value will always be 0.
-    TerrainChunk(Engine* engine, Vec3f pos)
-      : StaticObject(engine, pos) {
+    TerrainChunk(Vec3f pos)
+      : StaticObject(pos) {
       $rttiConstruct("TerrainChunk");
       init();
     }
@@ -21,10 +21,9 @@ NAMESPACE {
 
   struct Terrain {
 
-    Engine* engine;
     Pointer<StaticObject> ground_object;
 
-    Terrain(Engine* _engine);
+    Terrain();
     ~Terrain();
     //size in chunks
     void generate(Vec3f pos, Vec2u size);

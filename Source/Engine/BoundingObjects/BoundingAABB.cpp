@@ -26,6 +26,10 @@ NAMESPACE {
     RenderableShape::CUBE.render(c);
   }
   
+  Vec3f BoundingAABB::getCenter() {
+    return center;
+  }
+  
   COLLIDE_FUNC(AABB, AABB, {
 
       BoundingAABB* a = (BoundingAABB*) oa;

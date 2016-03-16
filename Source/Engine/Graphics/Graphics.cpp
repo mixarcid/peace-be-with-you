@@ -38,7 +38,7 @@ NAMESPACE {
   }
 
   static inline bool renderFunc(Graphics* graphics,
-				Pointer<GameObject> obj,
+				Pointer<GameObject>& obj,
 				RenderableComp* comp,
 				RenderContext c,
 				Mat4f model,
@@ -87,16 +87,20 @@ NAMESPACE {
 
     u32 objects_rendered = 0;
     engine->traverseStatic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered](StaticComponentPair<RenderableComp> obj) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>)obj.obj, obj.comp, c, model, frustum)) {
+      (&frustum, [this, c, model, frustum, &objects_rendered]
+       (Pointer<StaticObject>& obj, Pointer<RenderableComp>& comp) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>&)obj,
+		       comp, c, model, frustum)) {
 	  ++objects_rendered;
 	}
 	return true;
       });
     
     engine->traverseDynamic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered](DynamicComponentPair<RenderableComp> obj) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>)obj.obj, obj.comp, c, model, frustum)) {
+      (&frustum, [this, c, model, frustum, &objects_rendered]
+       (Pointer<DynamicObject>& obj, Pointer<RenderableComp>& comp) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>&)obj,
+		       comp, c, model, frustum)) {
 	  ++objects_rendered;
 	}
 	return true;

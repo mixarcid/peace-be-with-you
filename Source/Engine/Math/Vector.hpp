@@ -13,6 +13,21 @@ NAMESPACE {
       memset(this, 0, sizeof(Vec));
     }
 
+    template <typename U>
+    inline Vec(Vec<U, N> b) {
+      for (u8 i=0; i<N; ++i) {
+	data[i] = b.data[i];
+      }
+    }
+
+    template <typename U>
+    inline Vec(Vec<U, N-1> vec, T val) {
+      for (u8 i=0; i<N-1; ++i) {
+	data[i] = vec.data[i];
+      }
+      data[N-1] = val;
+    }
+
     inline T normSquared() const {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {
@@ -153,6 +168,16 @@ NAMESPACE {
     }
   };
 
+  template<typename T, typename U, u8 N>
+    inline bool operator==(const Vec<T, N> a,
+			   const Vec<U, N> b) {
+    for (u8 n=0; n<N; ++n) {
+      if (a.data[n] != b.data[n]) return false;
+    }
+    return true;
+  }
+
+
   template <typename T, const u8 N>
     inline String to_string(const Vec<T,N> v) {
     String ret = "<";
@@ -177,11 +202,15 @@ NAMESPACE {
     struct Vec2 : Vec<T,2> {
 
     using Vec<T,2>::Vec;
-
+    
     inline Vec2(Vec<T,2> init) {
       memcpy(this, &init, sizeof(Vec2));
     }
-
+    
+    inline operator Vec<T,2>() const {
+      return *((Vec<T,2>)this);
+    }
+    
     inline Vec2() : Vec<T,2>::Vec() {}
 
     inline Vec2(T x, T y) {
@@ -215,6 +244,10 @@ NAMESPACE {
 
     inline Vec3(Vec<T,3> init) {
       memcpy(this, &init, sizeof(Vec3));
+    }
+
+    inline operator Vec<T,3>() const {
+      return *((Vec<T,3>)this);
     }
 
     inline Vec3() : Vec<T,3>::Vec() {}
@@ -292,6 +325,10 @@ NAMESPACE {
 
     inline Vec4(Vec<T,4> init) {
       memcpy(this, &init, sizeof(Vec4));
+    }
+
+    inline operator Vec<T,4>() const {
+      return *((Vec<T,4>)this);
     }
 
     inline Vec4() : Vec<T,4>::Vec() {}

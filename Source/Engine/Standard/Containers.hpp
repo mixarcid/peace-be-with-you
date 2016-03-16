@@ -11,8 +11,26 @@
 
 NAMESPACE {
 
+  template <typename Key>
+    size_t customHash(Key k);
+  
+}
+
+namespace std {
+  template <typename Key>
+  struct hash {
+    size_t operator()(const Key& k) const {
+      return peace::customHash(k);
+    }
+  };
+}
+
+NAMESPACE {
+
   template <typename Key, typename Val>
     using HashMap = typename std::unordered_map<Key, Val>;
+  template <typename Key>
+    using Hash = std::hash<Key>;
   template <typename A, typename B>
     using Pair = typename std::pair<A, B>;
   template <typename T>
@@ -88,18 +106,18 @@ NAMESPACE {
     typedef u32 SizeType;
     typedef T* Iterator;
 
-    void*  elements;
+    T*  elements;
     SizeType tot_length;
     SizeType used_length;
 
     Array(SizeType _length=8)
-      : elements(Alloc::malloc(_length*sizeof(T))),
+      : elements((T*)Alloc::malloc(_length*sizeof(T))),
 	tot_length(_length),
 	used_length(0) {
     }
 
     Array(InitList<T> list)
-      : elements(Alloc::malloc(list.size()*sizeof(T))),
+      : elements((T*)Alloc::malloc(list.size()*sizeof(T))),
 	tot_length(list.size()),
 	used_length(0) {
       for (const T& elem : list) {
@@ -108,7 +126,7 @@ NAMESPACE {
     }
 
     Array(const Array& arr)
-      : elements(Alloc::malloc(arr.tot_length*sizeof(T))),
+      : elements((T*)Alloc::malloc(arr.tot_length*sizeof(T))),
 	tot_length(arr.tot_length),
 	used_length(0) {
       for (T& elem : arr) {
@@ -133,11 +151,11 @@ NAMESPACE {
     }
 
     Iterator begin() const {
-      return (T*) elements;
+      return elements;
     }
 
     Iterator end() const {
-      return (T*) elements + used_length;
+      return elements + used_length;
     }
 
     T& front() const {
@@ -152,10 +170,12 @@ NAMESPACE {
       return used_length;
     }
 
-    void reserve(SizeType size) {
-      tot_length = size;
-      void* old_elements = elements;
-      elements = Alloc::realloc(elements, tot_length*sizeof(T));
+    void reserve(SizeType new_size) {
+      debugAssert(new_size >= used_length,
+		  "Array::reserve called with new size less than old size");
+      tot_length = new_size;
+      T* old_elements = elements;
+      elements = (T*)Alloc::realloc(elements, tot_length*sizeof(T));
       if (old_elements != elements) {
 	for (T& elem : *this) {
 	  _on_move(&elem);
@@ -168,7 +188,7 @@ NAMESPACE {
 	reserve(2*tot_length);
       }
       SizeType offset = (used_length++);
-      T* ret = (T*) elements + offset;
+      T* ret = elements + offset;
       return ret;
     }
 
@@ -198,10 +218,15 @@ NAMESPACE {
     }
 
     void removeAndReplace(Iterator it) {
+      debugAssert(it >= begin() && it < end(),
+		  "Invalid Iterator passed to "
+		  "Array::insert");
       if (used_length > 1) {
 	it->~T();
-	memcpy((void*)it,(void*)(end()-1),sizeof(T));
-        _on_move(it);
+	if (it != end()-1) {
+	  memcpy((void*)it,(void*)(end()-1),sizeof(T));
+	  _on_move(it);
+	}
 	--used_length;
       } else {
 	clear();

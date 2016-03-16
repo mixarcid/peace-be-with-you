@@ -16,41 +16,47 @@ NAMESPACE {
     u32 num_checks = 0;
     u32 num_collisions = 0;
 
-    for (DynamicComponentPairP<DynamicPhysicsComp> obj : moving_objects) {
+    for (auto& obj : moving_objects) {
 
+      auto& comp = obj->getComponent<DynamicPhysicsComp>();
+      
       engine->traverseStatic<StaticPhysicsComp>
-	(obj.obj->getLooseBoundingObject(),
-	 [obj, &num_checks, &num_collisions](StaticComponentPair<StaticPhysicsComp> obj2) -> bool {
+	(obj->getLooseBoundingObject(),
+	 [&obj, &comp, &num_checks, &num_collisions]
+	 (Pointer<StaticObject>& obj2,
+	  Pointer<StaticPhysicsComp>& comp2) -> bool {
 	  ++num_checks;
-	  if (resolveCollision(obj, obj2)) {
+	  if (resolveCollision(obj, comp, obj2, comp2)) {
 	    ++num_collisions;
 	  }
 	  return true;
 	});
-      engine->traverseDynamic<DynamicPhysicsComp>
-	(obj.obj->getLooseBoundingObject(),
-	 [obj, &num_checks, &num_collisions](DynamicComponentPair<DynamicPhysicsComp> obj2) -> bool {
+      engine->traverseNeighbors<DynamicPhysicsComp>
+	(obj,
+	 [&obj, &comp, &num_checks, &num_collisions]
+	 (Pointer<DynamicObject>& obj2,
+	  Pointer<DynamicPhysicsComp>& comp2) -> bool {
 	  ++num_checks;
-	  if (resolveCollision(obj, obj2)) {
+	  if (resolveCollision(obj, comp, obj2, comp2)) {
 	    ++num_collisions;
 	  }
 	  return true;
 	});
 
-      obj.comp->force = gravity*obj.comp->mass_data.mass;
+      comp->force = gravity*comp->mass_data.mass;
       //Log::message(to_string(obj.comp->veloc));
-      obj.comp->update(obj.obj, dt);
+      comp->update(obj, dt);
       
       if (counter % 2 == 0) {
-	if (!obj.comp->isMoving()) {
-	  obj.comp->onStop(obj.obj);
+	if (!comp->isMoving()) {
+	  comp->onStop(obj);
 	}
-	obj.comp->prev_veloc = obj.comp->veloc;
+	comp->prev_veloc = comp->veloc;
       }
 
     }
-    Log::message("collision checks: %u", num_checks);
-    Log::message("collisions: %u", num_collisions);
+    //Log::message("collision checks: %u", num_checks);
+    //Log::message("collisions: %u", num_collisions);
   }
   
 }

@@ -4,7 +4,7 @@
 NAMESPACE {
   
   Mat3f Camera::getCoord() {
-    return rot.mat3();
+    return getRot().mat3();
   }
 
   Mat4f Camera::getView() {

@@ -11,7 +11,8 @@ NAMESPACE {
     getTightBoundingObject()->transform(getTransform());
     getLooseBoundingObject()->transform(getTransform());
     addComponent(mesh.get());
-    addComponent(new DynamicPhysicsComp(this, material, veloc));
+    Pointer<DynamicObject> obj(this);
+    addComponent(new DynamicPhysicsComp(obj, material, veloc));
   }
 
   MonkeyHead::~MonkeyHead() {

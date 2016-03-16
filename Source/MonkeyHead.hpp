@@ -9,8 +9,8 @@ NAMESPACE {
 
   struct MonkeyHead : DynamicObject {
 
-    MonkeyHead(Engine* engine, Vec3f pos, Vec3f veloc)
-      : DynamicObject(engine, pos) {
+    MonkeyHead(Vec3f pos, Vec3f veloc)
+      : DynamicObject(pos) {
       $rttiConstruct("MonkeyHead");
       init(veloc);
     }

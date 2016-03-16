@@ -24,9 +24,9 @@ NAMESPACE {
     getLooseBoundingObject()->transform(getTransform());
 
     addComponent(new BonedMesh(Player::mesh.get()));
-    addComponent(new DynamicPhysicsComp((Pointer<DynamicObject>)this,
-					Material(985, 0.1, 0.5, 0.4)));
-    camera = addChild((Pointer<DynamicObject>)engine->graphics.cam,
+    Pointer<DynamicObject> obj(this);
+    addComponent(new DynamicPhysicsComp(obj,Material(985, 0.1, 0.5, 0.4)));
+    camera = addChild((Pointer<DynamicObject>&)Engine::engine->graphics.cam,
 		      camera_diff);
     
     Input::addCursorPosCallback
@@ -65,7 +65,7 @@ NAMESPACE {
 	    act == GLFW_PRESS) {
 	  Vec3f dir = -(Player::ptr->getRot()*Vec3f(0,1,0));
 	  dir.normalize();
-	  auto p = Player::ptr->engine->emplaceDynamic
+	  auto p = Engine::emplaceDynamic
 	    <MonkeyHead>(Player::ptr->getTrans()+dir*5, dir*20);
 	  p->rotAbs(Player::ptr->getRot());
 	}

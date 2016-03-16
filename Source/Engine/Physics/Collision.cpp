@@ -4,7 +4,7 @@
 NAMESPACE {
 
   const static f32 COLLISION_POS_CORRECTION = 0.9;
-  const static f32 VN_DEAD_SPACE = 0.001;
+  const static f32 VN_DEAD_SPACE = 0.01;
 
   template <typename Obj, typename Comp, bool Static>
     static inline bool collisionHelper(DynamicObject* a_obj,
@@ -59,7 +59,10 @@ NAMESPACE {
     //friction stuff
     rv = b_comp->getVeloc() - a_comp->getVeloc();
     Vec3f t = rv - (m.normal*Vec3f::dot(rv, m.normal));
+    
+    if (t.normSquared() < 0.01) return true;
     t.normalize();
+    
     f32 jt = -Vec3f::dot(rv, t) /
       (a_comp->mass_data.inv_mass +
        b_comp->mass_data.inv_mass);
@@ -73,29 +76,32 @@ NAMESPACE {
 	     a_comp->material.cof_dynamic)/2;
       f_impulse = -t*j*cof;
     }
-    //Log::message(to_string(f_impulse) + to_string(impulse));
+    
     a_comp->applyImpulse(f_impulse);
     if (!Static) {
       b_comp->applyImpulse(-f_impulse);
     }
-	
     CollisionMessage a_msg(a_obj);
     CollisionMessage b_msg(b_obj);
     a_obj->message(&b_msg);
     b_obj->message(&a_msg);
-
+    Log::message("!!");
     return true;
   }
 
-  bool resolveCollision(DynamicComponentPair<DynamicPhysicsComp> a,
-			DynamicComponentPair<DynamicPhysicsComp> b) {
+  bool resolveCollision(Pointer<DynamicObject>& a_obj,
+			Pointer<DynamicPhysicsComp>& a_comp,
+			Pointer<DynamicObject>& b_obj,
+			Pointer<DynamicPhysicsComp>& b_comp) {
     return collisionHelper<DynamicObject, DynamicPhysicsComp, false>
-      (a.obj, a.comp, b.obj, b.comp);
+      (a_obj, a_comp, b_obj, b_comp);
   }
 
-  bool resolveCollision(DynamicComponentPair<DynamicPhysicsComp> a,
-			StaticComponentPair<StaticPhysicsComp> b) {
+  bool resolveCollision(Pointer<DynamicObject>& a_obj,
+			Pointer<DynamicPhysicsComp>& a_comp,
+			Pointer<StaticObject>& b_obj,
+			Pointer<StaticPhysicsComp>& b_comp) {
     return collisionHelper<StaticObject, StaticPhysicsComp, false>
-      (a.obj, a.comp, b.obj, b.comp);
+      (a_obj, a_comp, b_obj, b_comp);
   }
 }

@@ -27,14 +27,16 @@ NAMESPACE {
 					 BoundingObject::Type b,
 					 ManifoldFunc func) {
     BoundingObject::manifold_functions[a][b] = func;
-    /*BoundingObject::manifold_functions[b][a] = ([](BoundingObject* oa, BoundingObject* ob, Manifold* m) -> bool {
-	if (!BoundingObject::manifold_functions[ob->type][oa->type](ob, oa, m)) {
-	  return false;
-	} else {
-	  m->normal = - m->normal;
-	  return true;
-	} 
-	});*/
+    if (a != b) {
+      BoundingObject::manifold_functions[b][a] = ([](BoundingObject* oa, BoundingObject* ob, Manifold* m) -> bool {
+	  if (!BoundingObject::manifold_functions[ob->type][oa->type](ob, oa, m)) {
+	    return false;
+	  } else {
+	    m->normal = - m->normal;
+	    return true;
+	  } 
+	});
+    }
   }
 
   BoundingObject::BoundingObject(BoundingObject::Type _type)
@@ -52,6 +54,10 @@ NAMESPACE {
     return manifold_functions[type][b->type](this, b, man);
   }
 
+  Vec3f BoundingObject::getCenter() {
+    PEACE_UNIMPLIMENTED(Vec3f());
+  }
+  
   f32 BoundingObject::getVolume() {
     return 0;
   }
@@ -63,6 +69,9 @@ NAMESPACE {
   void BoundingObject::transform(Transform t) {}
 
   $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
-  COLLIDE_FUNC(NONE, $(entry), { return true; });
+  COLLIDE_FUNC(NONE, $(entry), { return false; });
+  $endfor;
+  $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
+  COLLIDE_FUNC(ALL, $(entry), { return true; });
   $endfor;
 }

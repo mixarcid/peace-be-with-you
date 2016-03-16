@@ -18,6 +18,7 @@ NAMESPACE {
     virtual f32 getInertia(f32 mass);
     virtual void transform(Transform t);
     virtual void render(RenderContext c);
+    virtual Vec3f getCenter();
     
   };
   

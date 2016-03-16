@@ -10,8 +10,8 @@ NAMESPACE {
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
-  const u8 MID_REDUCTION = 4;
-  const u8 SMALL_REDUCTION = 8;
+  const u8 MID_REDUCTION = 2;
+  const u8 SMALL_REDUCTION = 4;
 
   Asset<Texture> Terrain::texture("Terrain");
   Array<TerrainRenderable> Terrain::chunk_meshes;
@@ -38,7 +38,7 @@ NAMESPACE {
     return normal.normalized();
   }
 
-  Terrain::Terrain(Engine* _engine) : engine(_engine) {
+  Terrain::Terrain() {
 
     Array<u32> mesh_elems_small;
     Array<u32> mesh_elems_mid;
@@ -106,7 +106,7 @@ NAMESPACE {
 
   void Terrain::generate(Vec3f pos, Vec2u size) {
 
-    ground_object = engine->emplaceStatic<StaticObject>(pos);
+    ground_object = Engine::emplaceStatic<StaticObject>(pos);
     ground_object->addComponent
       (new StaticPhysicsComp(ground_object, material));
     
@@ -151,6 +151,9 @@ NAMESPACE {
 	
       });
     ground_object->tight_object.set(&bound);
+
+    BoundingObject all(BoundingObject::ALL);
+    ground_object->loose_object.set(&all);
     
     for (u32 chunk_x = 0; chunk_x < size.x(); ++chunk_x) {
       for (u32 chunk_y = 0; chunk_y < size.y(); ++chunk_y) {
@@ -159,12 +162,14 @@ NAMESPACE {
 	  (chunk_x*(CHUNK_SIZE-2*CHUNK_STEP),
 	   chunk_y*(CHUNK_SIZE-2*CHUNK_STEP));
 	
-	Pointer<TerrainChunk> c = engine->emplaceStatic<TerrainChunk>
-	  (Vec3f(position.x(), position.y(), offset.z()));
+	Pointer<TerrainChunk> c(Engine::emplaceStatic<TerrainChunk>
+				(Vec3f(position.x(),
+				       position.y(),
+				       offset.z())));
 	//Log::message(to_string(position));
 	
-	Pointer<TerrainRenderable> mesh = Pointer<TerrainRenderable>
-	  (c->getComponent<RenderableComp>());
+	Pointer<TerrainRenderable>& mesh = (Pointer<TerrainRenderable>&)
+	  c->getComponent<RenderableComp>();
 	mesh->data.reserve(sqr(CHUNK_RES));
 
 	f32 max_z = -FLT_MAX;

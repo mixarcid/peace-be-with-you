@@ -1,5 +1,6 @@
 #include "BoundingOBB.hpp"
 #include "BoundingAABB.hpp"
+#include "BoundingAABB2D.hpp"
 #include "Manifold.hpp"
 #include "RenderableShape.hpp"
 
@@ -67,6 +68,24 @@ NAMESPACE {
        Mat4f::scale(halves));
     RenderableShape::CUBE.render(c);
   }
+
+  Vec3f BoundingOBB::getCenter() {
+    return center;
+  }
+
+  COLLIDE_FUNC(AABB2D, OBB, {
+
+      BoundingAABB2D* a = (BoundingAABB2D*) oa;
+      BoundingOBB* b = (BoundingOBB*) ob;
+
+      Vec2f point = b->getClosestPoint
+	(Vec3f(a->center, 0)).xy();
+      Vec2f rel = point-(a->center);
+      
+      if (abs(rel.x()) > a->halves.x()) return false;
+      if (abs(rel.y()) > a->halves.y()) return false;
+      return true;
+    });
   
   CONTAINED_IN_FUNC(OBB, AABB, {
 
@@ -74,8 +93,8 @@ NAMESPACE {
       BoundingAABB* aabb = (BoundingAABB*) ob;
 
       for (u8 x=0; x<2; ++x) {
-	for (u8 y=0; x<2; ++x) {
-	  for (u8 z=0; x<2; ++x) {
+	for (u8 y=0; y<2; ++y) {
+	  for (u8 z=0; z<2; ++z) {
 	  
 	    Vec3f unoriented_vert(x ? obb->halves.x() : -obb->halves.x(),
 				  y ? obb->halves.y() : -obb->halves.y(),
@@ -86,6 +105,31 @@ NAMESPACE {
 	    if (abs(rel_center.x()) > aabb->halves.x() ||
 		abs(rel_center.y()) > aabb->halves.y() ||
 		abs(rel_center.z()) > aabb->halves.z()) return false;
+	  
+	  }
+	}
+      }
+      return true;
+      
+    });
+
+  CONTAINED_IN_FUNC(OBB, AABB2D, {
+
+      BoundingOBB* obb = (BoundingOBB*) oa;
+      BoundingAABB2D* aabb = (BoundingAABB2D*) ob;
+
+      for (u8 x=0; x<2; ++x) {
+	for (u8 y=0; y<2; ++y) {
+	  for (u8 z=0; z<2; ++z) {
+	  
+	    Vec3f unoriented_vert(x ? obb->halves.x() : -obb->halves.x(),
+				  y ? obb->halves.y() : -obb->halves.y(),
+				  z ? obb->halves.z() : -obb->halves.z());
+	    Vec3f vert = obb->center + (obb->coord*unoriented_vert);
+	    Vec2f rel_center = aabb->center - vert.xy();
+	  
+	    if (abs(rel_center.x()) > aabb->halves.x() ||
+		abs(rel_center.y()) > aabb->halves.y()) return false;
 	  
 	  }
 	}

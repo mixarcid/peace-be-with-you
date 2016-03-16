@@ -57,6 +57,10 @@ NAMESPACE {
     center += t.trans;
   }
 
+  Vec3f BoundingSphere::getCenter() {
+    return center;
+  }
+
   //thanks, nerdinand from StackOverFlow
   COLLIDE_FUNC(SPHERE, AABB, {
 

@@ -11,6 +11,7 @@ NAMESPACE {
 
     BoundingAABB() {}
     BoundingAABB(Vec3f _center, Vec3f _halves);
+    virtual Vec3f getCenter();
     virtual f32 getVolume();
     virtual f32 getInertia(f32 mass);
     //current algorithm doesn't hadnle rotations
