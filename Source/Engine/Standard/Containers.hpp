@@ -103,11 +103,13 @@ NAMESPACE {
     HasOnMove<T>::eval(*ptr);
   }
 
-  template <typename T, typename Alloc=GameAllocator>
+  template <typename T,
+	    typename _SizeType = u32,
+	    typename Alloc = GameAllocator>
     struct Array {
 
-    typedef u32 SizeType;
     typedef T* Iterator;
+    typedef _SizeType SizeType;
 
     T*  elements;
     SizeType tot_length;
@@ -223,7 +225,7 @@ NAMESPACE {
     void removeAndReplace(Iterator it) {
       debugAssert(it >= begin() && it < end(),
 		  "Invalid Iterator passed to "
-		  "Array::insert");
+		  "Array::removeAndReplace");
       if (used_length > 1) {
 	it->~T();
 	if (it != end()-1) {

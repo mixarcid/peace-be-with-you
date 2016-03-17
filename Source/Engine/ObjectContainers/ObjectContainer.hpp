@@ -16,7 +16,10 @@ NAMESPACE {
   };
 
   struct GameObject;
+  struct DynamicObject;
+  struct StaticObject;
 
-  typedef function<bool(Pointer<GameObject>&)> ContainerCallback;
+  template <typename Obj>
+    using ContainerCallback = function<bool(Pointer<Obj>&)>;
 
 }

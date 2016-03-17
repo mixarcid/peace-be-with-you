@@ -13,27 +13,28 @@ NAMESPACE {
 
     struct Handle {
       Vec2i corner;
-      u8 neighbors;
+      i8 indexes[4];
     };
 
-    HashMap<Vec2i, Array<Pointer<GameObject>>> objects;
+    HashMap<Vec2i, Array<Pointer<DynamicObject>, u8>> objects;
     const f32 CELL_SIZE;
     const f32 CELL_HALF;
 
     Grid(const f32 _CELL_SIZE)
       : CELL_SIZE(_CELL_SIZE),
 	CELL_HALF(_CELL_SIZE/2) {}
-    Handle insert(Pointer<GameObject>& obj);
-    Handle update(Pointer<GameObject>& obj, Handle h);
-    void remove(Pointer<GameObject>& obj, Handle h);
+    void insert(Pointer<DynamicObject>& obj);
+    void update(Pointer<DynamicObject>& obj);
+    void remove(Pointer<DynamicObject>& obj);
     //traversal ends when/if callback returns false
     void traverse(BoundingObject* bound,
-		  ContainerCallback callback);
-    void traverseNeighbors(Pointer<GameObject>& obj,
-			   Handle h,
-			   ContainerCallback callback);
+		  ContainerCallback<DynamicObject> callback);
+    void traverseNeighbors(Pointer<DynamicObject>& obj,
+			   ContainerCallback<DynamicObject> callback);
 
-    Vec2i _getCorner(Pointer<GameObject>& obj);
+    inline Vec2i _getCorner(Pointer<DynamicObject>& obj);
+    inline void _insert(Pointer<DynamicObject>& obj, Vec2i corner);
+    inline void _remove(Pointer<DynamicObject>& obj, Vec2i corner);
 
   };
 

@@ -50,8 +50,7 @@ NAMESPACE {
     template <typename T, typename... Args>
     static Pointer<T> emplaceDynamic(Args... args) {
       Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
-      ret->handle = engine->dynamic_container.insert
-	((Pointer<GameObject>&) ret);
+      engine->dynamic_container.insert((Pointer<DynamicObject>&) ret);
       return Pointer<T>((Pointer<T>&)ret);
     }
 
@@ -63,7 +62,7 @@ NAMESPACE {
     template <typename T>
     static void removeDynamic(Pointer<T>& handle) {
       engine->dynamic_container.remove
-	((Pointer<DynamicObject>&)handle, handle->handle);
+	((Pointer<DynamicObject>&)handle);
       engine->dynamic_objects.removeAndReplace
         ((Pointer<DynamicObject>&) handle);
     }
@@ -106,9 +105,8 @@ NAMESPACE {
     (Pointer<DynamicObject>& obj,
      ObjectCallBack<DynamicObject,T> callback) {
       engine->dynamic_container.traverseNeighbors
-	((Pointer<GameObject>&) obj,
-	 obj->handle,
-	 [callback](Pointer<GameObject>& b) -> bool {
+	(obj,
+	 [callback](Pointer<DynamicObject>& b) -> bool {
 	  Pointer<T>& comp = b->getComponent<T>();
 	  if (comp && !callback((Pointer<DynamicObject>&)b, comp)) {
 	    return false;

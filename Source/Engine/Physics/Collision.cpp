@@ -7,10 +7,10 @@ NAMESPACE {
   const static f32 VN_DEAD_SPACE = 0.01;
 
   template <typename Obj, typename Comp, bool Static>
-    static inline bool collisionHelper(DynamicObject* a_obj,
-				       DynamicPhysicsComp* a_comp,
-				       Obj* b_obj,
-				       Comp* b_comp) {
+    static inline bool collisionHelper(Pointer<DynamicObject>& a_obj,
+				       Pointer<DynamicPhysicsComp>& a_comp,
+				       Pointer<Obj>& b_obj,
+				       Pointer<Comp>& b_comp) {
     if (b_comp == a_comp) return false;
     
     BoundingObject* a_bound = a_obj->getLooseBoundingObject();

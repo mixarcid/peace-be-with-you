@@ -56,8 +56,7 @@ NAMESPACE {
   }
 
   void Engine::registerMove(Pointer<DynamicObject>& obj) {
-    obj->handle = engine->dynamic_container.update
-      ((Pointer<GameObject>&)obj, obj->handle);
+    engine->dynamic_container.update(obj);
   }
   
   void Engine::loop() {
@@ -71,6 +70,7 @@ NAMESPACE {
     engine->dt = (f32)
       (engine->cur_time.getMilliseconds()
        - engine->prev_time.getMilliseconds())/1000;
+    Log::message("Dynamic objects: %u", engine->dynamic_objects.size());
     engine->physics.update();
     engine->graphics.render();
     gl::checkError();
@@ -90,23 +90,8 @@ NAMESPACE {
       num_frames = 0;
       last_second = engine->cur_time;
     }
-    //Log::message("FPS: %f", fps);
+    Log::message("FPS: %f", fps);
     engine->prev_time = engine->cur_time;
-
-    /*Log::message("Dynamic objects:");
-    for (auto& elem : engine->dynamic_container.objects) {
-      Log::message(to_string(elem.first));
-      for (auto& obj : elem.second) {
-	Log::message("  %p, %p", obj.data, obj.it);
-      }
-    }
-
-      Log::message("------");
-    for (auto& obj : engine->dynamic_objects) {
-      Log::message(to_string(obj.pointers.size()) + ", "
-		   + to_string(obj.handle.neighbors));
-		   }*/
-    
   }
 
   void Engine::begin() {

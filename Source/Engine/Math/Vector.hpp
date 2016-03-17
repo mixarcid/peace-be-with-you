@@ -177,6 +177,15 @@ NAMESPACE {
     return true;
   }
 
+  template<typename T, typename U, u8 N>
+    inline bool operator!=(const Vec<T, N> a,
+			   const Vec<U, N> b) {
+    for (u8 n=0; n<N; ++n) {
+      if (a.data[n] != b.data[n]) return true;
+    }
+    return false;
+  }
+
 
   template <typename T, const u8 N>
     inline String to_string(const Vec<T,N> v) {
