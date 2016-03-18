@@ -20,7 +20,7 @@ NAMESPACE {
 	  Shader::TEX_COORD});
   }
 
-  static const f32 DIST_MULTIPLIER_LARGE = 0.1;
+  static const f32 DIST_MULTIPLIER_LARGE = 0.05;
   static const f32 DIST_MULTIPLIER_SMALL = 1.5;
   void TerrainRenderable::render(RenderContext c) {
     Shader::setFlags(RenderableComp::shader_flags);

@@ -65,15 +65,6 @@ NAMESPACE {
       glBufferData(GL_ARRAY_BUFFER, length, arr.begin(),
       		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
-    
-    //the new array must be the same size as before
-    template <typename T>
-    void rebindArray(Array<T>& arr, bool dynamic) {
-      debugAssert(!(this->flags & PEACE_GL_UNINITIALIZED),
-		  "You must initialize a VBO before binding it");
-      glBufferData(GL_ARRAY_BUFFER, length, arr.begin(),
-		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-    }
     void draw(GLenum mode = gl::getDrawMode());
 
   };

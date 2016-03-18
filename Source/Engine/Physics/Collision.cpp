@@ -11,7 +11,6 @@ NAMESPACE {
 				       Pointer<DynamicPhysicsComp>& a_comp,
 				       Pointer<Obj>& b_obj,
 				       Pointer<Comp>& b_comp) {
-    if (b_comp == a_comp) return false;
     
     BoundingObject* a_bound = a_obj->getLooseBoundingObject();
     BoundingObject* b_bound = b_bound = b_obj->getLooseBoundingObject();
@@ -81,8 +80,8 @@ NAMESPACE {
     if (!Static) {
       b_comp->applyImpulse(-f_impulse);
     }
-    CollisionMessage a_msg(a_obj);
-    CollisionMessage b_msg(b_obj);
+    CollisionMessage a_msg((Pointer<GameObject>&)a_obj);
+    CollisionMessage b_msg((Pointer<GameObject>&)b_obj);
     a_obj->message(&b_msg);
     b_obj->message(&a_msg);
     return true;

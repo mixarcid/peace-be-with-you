@@ -55,8 +55,8 @@ NAMESPACE {
       }
 
     }
-    Log::message("collision checks: %u", num_checks);
-    Log::message("collisions: %u", num_collisions);
+    //Log::message("collision checks: %u", num_checks);
+    //Log::message("collisions: %u", num_collisions);
   }
   
 }

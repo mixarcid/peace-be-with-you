@@ -70,7 +70,7 @@ NAMESPACE {
     engine->dt = (f32)
       (engine->cur_time.getMilliseconds()
        - engine->prev_time.getMilliseconds())/1000;
-    Log::message("Dynamic objects: %u", engine->dynamic_objects.size());
+    //Log::message("Dynamic objects: %u", engine->dynamic_objects.size());
     engine->physics.update();
     engine->graphics.render();
     gl::checkError();
@@ -89,8 +89,8 @@ NAMESPACE {
       fps = num_frames;
       num_frames = 0;
       last_second = engine->cur_time;
+      Log::message("FPS: %f", fps);
     }
-    Log::message("FPS: %f", fps);
     engine->prev_time = engine->cur_time;
   }
 

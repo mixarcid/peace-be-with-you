@@ -343,7 +343,7 @@ NAMESPACE {
     if (!(settings & SHADER_PLAIN)) {
       for (GlobalShaderUniform* uniform : GlobalShaderUniform::uniforms[flags]) {
 	if (uniform->buffer_id != -1) {
-	  uniform->initBuffer(id, uniform->name, uniform->size);
+	  uniform->initOrKeep(id);
 	} else {
 	  uniform->id = glGetUniformLocation(id, uniform->name.c_str());
 	}
