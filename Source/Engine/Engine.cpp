@@ -71,9 +71,23 @@ NAMESPACE {
       (engine->cur_time.getMilliseconds()
        - engine->prev_time.getMilliseconds())/1000;
     //Log::message("Dynamic objects: %u", engine->dynamic_objects.size());
-    engine->physics.update();
-    engine->graphics.render();
+    
+    u32 num_checks = 0;
+    u32 num_collisions = 0;
+
+    engine->physics.updateVsStatic(&num_checks, &num_collisions);
+    engine->graphics.initRender();
+    engine->graphics.renderDynamic();
+
+    Thread dyn([&num_checks, &num_collisions]() {
+	engine->physics.updateVsDynamic(&num_checks, &num_collisions);
+      });
+    
+    engine->graphics.renderStatic();
+    engine->graphics.finalizeRender();
     gl::checkError();
+    
+    dyn.join();
 
     glfwPollEvents();
 
@@ -89,7 +103,7 @@ NAMESPACE {
       fps = num_frames;
       num_frames = 0;
       last_second = engine->cur_time;
-      Log::message("FPS: %f", fps);
+      Log::message("FPS: %f, col. checks: %u, collisions: %u", fps, num_checks, num_collisions);
     }
     engine->prev_time = engine->cur_time;
   }

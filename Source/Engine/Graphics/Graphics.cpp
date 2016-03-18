@@ -41,11 +41,10 @@ NAMESPACE {
 				Pointer<GameObject>& obj,
 				RenderableComp* comp,
 				RenderContext c,
-				Mat4f model,
-				BoundingFrustum frustum) {
+				Mat4f model) {
     
     BoundingObject* bound = obj->getLooseBoundingObject();
-    if (!frustum.intersects(bound)) {
+    if (!graphics->frustum.intersects(bound)) {
       return false;
     }
     
@@ -65,9 +64,8 @@ NAMESPACE {
     
     return true;
   }
-  
-  void Graphics::render() {
 
+  void Graphics::initRender() {
     renderer.prepare();
 
     Shader::UNI_DIR_LIGHTS
@@ -76,40 +74,56 @@ NAMESPACE {
     Shader::UNI_AMBIENT.registerVal(ambient);
 
     Mat4f view_proj = cam->getProj()*cam->getView();
-    BoundingFrustum frustum(view_proj);
+    frustum = BoundingFrustum(view_proj);
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
+    
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+  }
+  
+  void Graphics::renderDynamic() {
+    
+    Mat4f model;
+    RenderContext c;
+    c.dt = engine->dt;
+
+    engine->traverseDynamic<RenderableComp>
+      (&frustum, [this, c, model]
+       (Pointer<DynamicObject>& obj, Pointer<RenderableComp>& comp) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>&)obj,
+		       comp, c, model)) {
+	}
+	return true;
+      });
+    
+  }
+  
+  void Graphics::renderStatic() {
+    
+    Mat4f model;
+    RenderContext c;
+    c.dt = engine->dt;
+
+    engine->traverseStatic<RenderableComp>
+      (&frustum, [this, c, model]
+       (Pointer<StaticObject>& obj, Pointer<RenderableComp>& comp) -> bool {
+	if (renderFunc(this, (Pointer<GameObject>&)obj,
+		       comp, c, model)) {
+	}
+	return true;
+      });
+    
+  }
+  
+  void Graphics::finalizeRender() {
+
     Mat4f model;
     RenderContext c;
     c.dt = engine->dt;
     
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-
-    u32 objects_rendered = 0;
-    engine->traverseStatic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered]
-       (Pointer<StaticObject>& obj, Pointer<RenderableComp>& comp) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>&)obj,
-		       comp, c, model, frustum)) {
-	  ++objects_rendered;
-	}
-	return true;
-      });
-    
-    engine->traverseDynamic<RenderableComp>
-      (&frustum, [this, c, model, frustum, &objects_rendered]
-       (Pointer<DynamicObject>& obj, Pointer<RenderableComp>& comp) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>&)obj,
-		       comp, c, model, frustum)) {
-	  ++objects_rendered;
-	}
-	return true;
-      });
-    
-    //Log::message("Objects rendered: %u", objects_rendered);
     renderer.finalize();
 
-    view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),
+    Mat4f view_proj = Mat4f::scale(Vec3f(1.0f/win_size.x(),
 				   1.0f/win_size.y(),
 				   1));
     Shader::UNI_VIEW_PROJ.registerVal(view_proj);
@@ -122,6 +136,6 @@ NAMESPACE {
     }
 
     glfwSwapBuffers(window);
-    
   }
+  
 }

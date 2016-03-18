@@ -27,6 +27,7 @@ NAMESPACE {
     GLFWwindow* window;
     Pointer<Camera> cam;
     Renderer renderer;
+    BoundingFrustum frustum;
     Vec2i win_size;
     f32 ambient;
     GraphicsFlags flags;
@@ -43,7 +44,11 @@ NAMESPACE {
 		  "lights to scene");
       dir_lights.emplace_back(args...);
     }
-    void render();
+    
+    void initRender();
+    void renderDynamic();
+    void renderStatic();
+    void finalizeRender();
 
   };
 

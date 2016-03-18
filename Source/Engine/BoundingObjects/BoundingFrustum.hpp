@@ -8,6 +8,7 @@ NAMESPACE {
 
     Vec4f planes[6];
 
+    BoundingFrustum() {}
     BoundingFrustum(Mat4f view_proj);
     
   };
