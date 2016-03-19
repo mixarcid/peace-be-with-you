@@ -103,7 +103,10 @@ NAMESPACE {
       fps = num_frames;
       num_frames = 0;
       last_second = engine->cur_time;
-      Log::message("FPS: %f, col. checks: %u, collisions: %u", fps, num_checks, num_collisions);
+      Log::message("FPS: %f", fps);
+      Log::message("#collision checks: %u", num_checks);
+      Log::message("#collisions: %u", num_collisions);
+      Log::message("#dynamic objects: %u", engine->dynamic_objects.size());
     }
     engine->prev_time = engine->cur_time;
   }
