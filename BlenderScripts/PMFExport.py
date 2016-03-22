@@ -67,7 +67,7 @@ class PMFFile:
 
             uv_layer = bm.loops.layers.uv.active
             if uv_layer is None:
-                raise Exception("No UV Layer!")
+                raise Exception("No UV Layer! in " + mesh.name)
 
             armature = mesh_obj.find_armature()
             if armature is None or armature.animation_data is None:

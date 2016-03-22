@@ -9,12 +9,12 @@ NAMESPACE {
 
   ChildObject* Player::camera = NULL;
   Pointer<Player> Player::ptr;
-  Transform Player::camera_diff(Vec3f(0,10,0),
+  Transform Player::camera_diff(Vec3f(0,10,5),
 				Quaternionf
 				(0,0,degreesToRadians(180)));
   f32 Player::cam_speed(1);
   f32 Player::cam_rot_speed(0.001);
-  Asset<BonedMeshBase> Player::mesh("SubjectB:Subject");
+  Asset<StaticMesh> Player::mesh("Granny:Granny");
   
   void Player::init() {
 
@@ -23,7 +23,7 @@ NAMESPACE {
     getTightBoundingObject()->transform(getTransform());
     getLooseBoundingObject()->transform(getTransform());
 
-    addComponent(new BonedMesh(Player::mesh.get()));
+    addComponent(Player::mesh.get());
     Pointer<DynamicObject> obj(this);
     addComponent(new DynamicPhysicsComp(obj,Material(985, 0.1, 0.5, 0.4)));
     camera = addChild((Pointer<DynamicObject>&)Engine::engine->graphics.cam,
@@ -47,9 +47,14 @@ NAMESPACE {
 	Quaternionf qy(-y_tot*cam_rot_speed,0,0);
 	Quaternionf qx(0,0,-x_tot*cam_rot_speed);
 
+	Vec3f z_correct(0,0,camera_diff.getTrans().z());
+
 	Player::ptr->moveChildAbs
 	  (Player::camera, Transform::combine
-	   (Transform(Vec3f(0,0,0), qy), camera_diff));
+	   (Transform(z_correct),
+	    Transform(Vec3f(0,0,0), qy),
+	    camera_diff,
+	    Transform(-z_correct)));
 	Player::ptr->rotAbs(qx);
 	  
 	prev_x = x;
@@ -116,7 +121,7 @@ NAMESPACE {
   }
 
   Player::~Player() {
-    delete getComponent<RenderableComp>();
+    //delete getComponent<RenderableComp>();
     delete getComponent<DynamicPhysicsComp>();
   }
 

@@ -16,8 +16,8 @@ NAMESPACE {
     GroundDataFunc dataAtPoint;
 
     BoundingGround(GroundDataFunc func);
-    virtual f32 getVolume();
-    virtual f32 getInertia(f32 mass);
+    f32 getVolume();
+    f32 getInertia(f32 mass);
     
   };
 

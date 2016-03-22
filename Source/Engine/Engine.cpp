@@ -9,6 +9,10 @@ NAMESPACE {
 
   Engine::Engine()
     : dynamic_container(20.0f),
+    static_container(BoundingAABB2D
+		     (Vec2f(0,0),
+		      Vec2f(1024,1024)),
+		     8),
     graphics(this),
     physics(this),
     dt(0),
@@ -104,9 +108,9 @@ NAMESPACE {
       num_frames = 0;
       last_second = engine->cur_time;
       Log::message("FPS: %f", fps);
-      Log::message("#collision checks: %u", num_checks);
+	/*Log::message("#collision checks: %u", num_checks);
       Log::message("#collisions: %u", num_collisions);
-      Log::message("#dynamic objects: %u", engine->dynamic_objects.size());
+      Log::message("#dynamic objects: %u", engine->dynamic_objects.size());*/
     }
     engine->prev_time = engine->cur_time;
   }

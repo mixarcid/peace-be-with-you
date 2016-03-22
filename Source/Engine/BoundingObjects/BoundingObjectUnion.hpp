@@ -11,11 +11,6 @@
 NAMESPACE {
   
   struct BoundingObjectUnion {
-
-    //This code is hideous
-    typedef BoundingOBB BoundingObb;
-    typedef BoundingAABB BoundingAabb;
-    typedef BoundingAABB2D BoundingAabb2d;
     
     union {
       FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);

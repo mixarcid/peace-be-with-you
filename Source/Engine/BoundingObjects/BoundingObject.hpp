@@ -33,16 +33,15 @@ NAMESPACE {
     Type type;
     
     BoundingObject(Type _type = NONE);
-    virtual ~BoundingObject() {}
     bool isContainedIn(BoundingObject* b);
     bool intersects(BoundingObject* b);
     bool intersects(BoundingObject* b, Manifold* man);
 
-    virtual Vec3f getCenter();
-    virtual f32 getVolume();
-    virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
-    virtual void render(RenderContext c) {}
+    Vec3f getCenter();
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    void transform(Transform t);
+    void render(RenderContext c);
 
     static TestCollisionFunc
     contained_in_functions[LAST][LAST];

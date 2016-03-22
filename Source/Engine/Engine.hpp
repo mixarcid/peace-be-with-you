@@ -5,6 +5,7 @@
 #include "Graphics.hpp"
 #include "Physics.hpp"
 #include "Function.hpp"
+#include "QuadTree.hpp"
 
 NAMESPACE {
 
@@ -24,6 +25,7 @@ NAMESPACE {
     Array<StaticObject> static_objects;
     Array<DynamicObject> dynamic_objects;
     Grid dynamic_container;
+    QuadTree static_container;
     
     SystemManager system_manager;
     Graphics graphics;
@@ -45,20 +47,29 @@ NAMESPACE {
     //GameObjects MUST be created using only these methods
     template <typename T, typename... Args>
     static Pointer<T> emplaceStatic(Args... args) {
-      return Pointer<T>(engine->static_objects.emplace_back<T>(args...));
+      Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
+      engine->static_container.insert(ret);
+      return Pointer<T>((Pointer<T>&)ret);
     }
+
     template <typename T, typename... Args>
-    static Pointer<T> emplaceDynamic(Args... args) {
-      Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
-      engine->dynamic_container.insert((Pointer<DynamicObject>&) ret);
+    static Pointer<T> emplaceStaticNoRegister(Args... args) {
+      Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
       return Pointer<T>((Pointer<T>&)ret);
     }
 
     template <typename T>
-    static void removeStatic(Pointer<T>& handle) {
-      engine->static_objects.removeAndReplace
-	((Pointer<StaticObject>&)handle);
+    static void registerStatic(Pointer<T>& obj) {
+      engine->static_container.insert((Pointer<StaticObject>&)obj);
     }
+    
+    template <typename T, typename... Args>
+    static Pointer<T> emplaceDynamic(Args... args) {
+      Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
+      engine->dynamic_container.insert(ret);
+      return Pointer<T>((Pointer<T>&)ret);
+    }
+    
     template <typename T>
     static void removeDynamic(Pointer<T>& handle) {
       engine->dynamic_container.remove
@@ -78,13 +89,14 @@ NAMESPACE {
     static void traverseStatic
     (BoundingObject* bound,
      ObjectCallBack<StaticObject,T> callback) {
-      for (StaticObject& obj : engine->static_objects) {
-	Pointer<StaticObject> obj_p(&obj);
-	Pointer<T>& comp = obj.getComponent<T>();
-	if (comp && !callback(obj_p, comp)) {
-	  break;
-	}
-      }
+      engine->static_container.traverse
+	(bound, [callback](Pointer<StaticObject>& b) -> bool {
+	  Pointer<T>& comp = b->getComponent<T>();
+	  if (comp && !callback(b, comp)) {
+	    return false;
+	  }
+	  return true;
+	});
     }
     
     template <typename T>
@@ -108,7 +120,7 @@ NAMESPACE {
 	(obj,
 	 [callback](Pointer<DynamicObject>& b) -> bool {
 	  Pointer<T>& comp = b->getComponent<T>();
-	  if (comp && !callback((Pointer<DynamicObject>&)b, comp)) {
+	  if (comp && !callback(b, comp)) {
 	    return false;
 	  }
 	  return true;

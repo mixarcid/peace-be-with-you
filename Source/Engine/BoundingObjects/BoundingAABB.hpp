@@ -11,13 +11,15 @@ NAMESPACE {
 
     BoundingAABB() {}
     BoundingAABB(Vec3f _center, Vec3f _halves);
-    virtual Vec3f getCenter();
-    virtual f32 getVolume();
-    virtual f32 getInertia(f32 mass);
+    Vec3f getCenter();
+    f32 getVolume();
+    f32 getInertia(f32 mass);
     //current algorithm doesn't hadnle rotations
-    virtual void transform(Transform t);
-    virtual void render(RenderContext c);
+    void transform(Transform t);
+    void render(RenderContext c);
     
   };
+
+  typedef BoundingAABB BoundingAabb;
 
 }

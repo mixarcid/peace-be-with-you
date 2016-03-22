@@ -1,4 +1,5 @@
 #include "BoundingObject.hpp"
+#include "BoundingObjectUnion.hpp"
 #include "Manifold.hpp"
 
 NAMESPACE {
@@ -55,23 +56,81 @@ NAMESPACE {
   }
 
   Vec3f BoundingObject::getCenter() {
-    PEACE_UNIMPLIMENTED(Vec3f());
+    switch(this->type) {
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
+    case BoundingObject::$(entry):
+      return ((Bounding$(className(entry))*)this)->getCenter();
+      END_FOR;
+    case BoundingObject::NONE:
+    case BoundingObject::ALL:
+    case BoundingObject::LAST:
+      return Vec3f();
+    }
   }
   
   f32 BoundingObject::getVolume() {
-    return 0;
+    switch(this->type) {
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
+    case BoundingObject::$(entry):
+      return ((Bounding$(className(entry))*)this)->getVolume();
+      END_FOR;
+    case BoundingObject::NONE:
+    case BoundingObject::ALL:
+    case BoundingObject::LAST:
+      return 0;
+    }
   }
 
   f32 BoundingObject::getInertia(f32 mass) {
-    return 0;
+    switch(this->type) {
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
+    case BoundingObject::$(entry):
+      return ((Bounding$(className(entry))*)this)->getInertia(mass);
+      END_FOR;
+    case BoundingObject::NONE:
+    case BoundingObject::ALL:
+    case BoundingObject::LAST:
+      return 0;
+    }
   }
-  
-  void BoundingObject::transform(Transform t) {}
+ 
+  void BoundingObject::transform(Transform t) {
+    switch(this->type) {
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
+    case BoundingObject::$(entry):
+      ((Bounding$(className(entry))*)this)->transform(t);
+      break;
+      END_FOR;
+    case BoundingObject::NONE:
+    case BoundingObject::ALL:
+    case BoundingObject::LAST:
+      break;
+    }
+  }
+
+  void BoundingObject::render(RenderContext c) {
+    switch(this->type) {
+      FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
+    case BoundingObject::$(entry):
+      ((Bounding$(className(entry))*)this)->render(c);
+      break;
+      END_FOR;
+    case BoundingObject::NONE:
+    case BoundingObject::ALL:
+    case BoundingObject::LAST:
+      break;
+    }
+  }
 
   $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
   COLLIDE_FUNC(NONE, $(entry), { return false; });
   $endfor;
+  
   $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
   COLLIDE_FUNC(ALL, $(entry), { return true; });
+  $endfor;
+
+  $for(entry in getEnumEntries("BoundingObjectType")[:-1]);
+  CONTAINED_IN_FUNC(ALL, $(entry), { return false; });
   $endfor;
 }

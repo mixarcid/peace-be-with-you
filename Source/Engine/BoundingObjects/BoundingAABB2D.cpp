@@ -53,6 +53,26 @@ NAMESPACE {
       return true;
     });
 
+  CONTAINED_IN_FUNC(AABB2D, AABB2D, {
+      
+      BoundingAABB2D* a = (BoundingAABB2D*) oa;
+      BoundingAABB2D* b = (BoundingAABB2D*) ob;
+    
+      return ((abs(a->center.x() - b->center.x())
+	       < (a->halves.x() + b->halves.x())) &&
+	      (abs(a->center.y() - b->center.y())
+	       < (a->halves.y() + b->halves.y())));
+    });
+
+  CONTAINED_IN_FUNC(AABB, AABB2D, {
+      
+      BoundingAABB* a = (BoundingAABB*) oa;
+      BoundingAABB2D* b = (BoundingAABB2D*) ob;
+
+      BoundingAABB2D test(b->center, b->halves - a->halves.xy());
+      return test.pointInside(a->center.xy());
+    });
+
   COLLIDE_FUNC(AABB2D, AABB2D, {
 
       BoundingAABB2D* a = (BoundingAABB2D*) oa;

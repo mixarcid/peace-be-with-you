@@ -3,10 +3,10 @@
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 600.0f;
+  const f32 Terrain::CHUNK_SIZE = 300.0f;
   //width of the chunk in vertices
   //must be power of 2 plus 2 (not entirely sure why)
-  const u32 Terrain::CHUNK_RES = 258;
+  const u32 Terrain::CHUNK_RES = 130;//258;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
@@ -106,7 +106,7 @@ NAMESPACE {
 
   void Terrain::generate(Vec3f pos, Vec2u size) {
 
-    ground_object = Engine::emplaceStatic<StaticObject>(pos);
+    ground_object = Engine::emplaceStaticNoRegister<StaticObject>(pos);
     ground_object->addComponent
       (new StaticPhysicsComp(ground_object, material));
     
@@ -141,19 +141,43 @@ NAMESPACE {
 	  x_chunk_index*rel_div;
 	f32 rel_y = rel_pos.y() -
 	  y_chunk_index*rel_div;
-	u32 x_mesh_index = rel_x/CHUNK_STEP;
-	u32 y_mesh_index = rel_y/CHUNK_STEP;
+	u32 x_mesh_index = rel_x;
+	u32 y_mesh_index = rel_y;
+	f32 rem_x = rel_x - x_mesh_index;
+	f32 rem_y = rel_y - y_mesh_index;
+
+	x_mesh_index /= CHUNK_STEP;
+	y_mesh_index /= CHUNK_STEP;
 	
-	BasicMeshData d = rend->data
+	BasicMeshData d[4];
+	d[0] = rend->data
 	  [x_mesh_index*CHUNK_RES + y_mesh_index];
-	*norm = d.norm;
-	return d.pos.z();
+	d[1] = rend->data
+	  [(x_mesh_index + 1)*CHUNK_RES + y_mesh_index];
+	d[2] = rend->data
+	  [(x_mesh_index)*CHUNK_RES + y_mesh_index + 1];
+	d[3] = rend->data
+	  [(x_mesh_index + 1)*CHUNK_RES + y_mesh_index + 1];
+
+	BasicMeshData d_avg_x[2];
+	d_avg_x[0].norm = d[0].norm*(1-rem_x) + d[2].norm*(rem_x);
+	d_avg_x[1].norm = d[1].norm*(1-rem_x) + d[3].norm*(rem_x);
+	d_avg_x[0].pos.z() = d[0].pos.z()*(1-rem_x) + d[2].pos.z()*(rem_x);
+	d_avg_x[1].pos.z() = d[1].pos.z()*(1-rem_x) + d[3].pos.z()*(rem_x);
+
+	BasicMeshData d_avg;
+	d_avg.norm = d_avg_x[0].norm*(1-rem_y) + d_avg_x[1].norm*(rem_y);
+	d_avg.pos.z() = d_avg_x[0].pos.z()*(1-rem_y) + d_avg_x[1].pos.z()*(rem_y);
+	
+	*norm = d_avg.norm;
+	return d_avg.pos.z();
 	
       });
     ground_object->tight_object.set(&bound);
 
     BoundingObject all(BoundingObject::ALL);
     ground_object->loose_object.set(&all);
+    Engine::registerStatic(ground_object);
     
     for (u32 chunk_x = 0; chunk_x < size.x(); ++chunk_x) {
       for (u32 chunk_y = 0; chunk_y < size.y(); ++chunk_y) {
@@ -162,7 +186,7 @@ NAMESPACE {
 	  (chunk_x*(CHUNK_SIZE-2*CHUNK_STEP),
 	   chunk_y*(CHUNK_SIZE-2*CHUNK_STEP));
 	
-	Pointer<TerrainChunk> c(Engine::emplaceStatic<TerrainChunk>
+	Pointer<TerrainChunk> c(Engine::emplaceStaticNoRegister<TerrainChunk>
 				(Vec3f(position.x(),
 				       position.y(),
 				       offset.z())));
@@ -192,12 +216,16 @@ NAMESPACE {
 	  }
 	}
 
-	BoundingAABB aabb(Vec3f(0,0,(max_z + min_z)/2),
+	BoundingAABB aabb(Vec3f(-CHUNK_STEP,
+				-CHUNK_STEP,
+				(max_z + min_z)/2),
 			  Vec3f(CHUNK_SIZE-2*CHUNK_STEP,
 				CHUNK_SIZE-2*CHUNK_STEP,
 				max_z - min_z)/2);
 	c->loose_object.set(&aabb);
 	c->getLooseBoundingObject()->transform(c->getTransform());
+	c->tight_object.set(c->getLooseBoundingObject());
+	Engine::registerStatic(c);
 
 	//Time to compute some normals!
 	for (u16 x = 0; x < CHUNK_RES; ++x) {

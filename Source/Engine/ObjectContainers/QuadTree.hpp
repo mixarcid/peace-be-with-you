@@ -1,54 +1,42 @@
-/*#pragma once
+#pragma once
 
 #include "Pointable.hpp"
 #include "BoundingAABB2D.hpp"
 #include "ObjectContainer.hpp"
 
 NAMESPACE {
-
-  struct GameObject;
   
   struct QuadTree {
 
     typedef i32 SizeType;
 
-    struct Handle {
-      SizeType node_index;
-      Array<Pointer<GameObject>>::SizeType obj_index;
-    };
-
     struct Node {
 
-      Array<Pointer<GameObject>> objects;
+      Array<Pointer<StaticObject>> objects;
       BoundingAABB2D bound;
-      SizeType parent;
       SizeType children[4];
 
-      Node(BonedAABB2D _bound, SizeType _parent);
-      Handle addObject(SizeType index);
+      Node(BoundingAABB2D _bound);
+      inline void _force_insert(QuadTree* tree, Pointer<StaticObject>& obj, u8 depth);
+      void insert(QuadTree* tree, Pointer<StaticObject>& obj, u8 depth);
       bool traverse(QuadTree* tree,
 		    BoundingObject* obj_bound,
-		    function<bool(Pointer<GameObject>)> callback);
+		    ContainerCallback<StaticObject> callback);
        
     };
 
     Array<Node> nodes;
-    Node root;
+    const u8 MAX_DEPTH;
 
-    QuadTree(BoundingAABB2D bound);
-    
-    Handle insert(Pointer<GameObject> obj);
-    //Handle update(Handle handle);
-    //void remove(Handle handle);
-    //traversal ends when/if callback returns false
+    QuadTree(BoundingAABB2D bound, const u8 _MAX_DEPTH);
+
+    void insert(Pointer<StaticObject>& obj);
     void traverse(BoundingObject* bound,
-		  function<bool(Pointer<GameObject>)> callback);
-
-    Node* _getNode(SizeType index);
-    u8 _getChildIndex(BoundingObject* bound);
-    SizeType _insertHelper(Node* node,
-			   Pointer<GameObject> obj);
+		  ContainerCallback<StaticObject> callback);
 
   };
 
-  }*/
+  String to_string(QuadTree& tree, QuadTree::Node& node, String delim);
+  String to_string(QuadTree& tree);
+
+}

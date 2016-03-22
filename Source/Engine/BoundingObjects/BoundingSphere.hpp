@@ -12,10 +12,11 @@ NAMESPACE {
 
     BoundingSphere() {}
     BoundingSphere(Array<BasicMeshData>& data);
-    virtual f32 getVolume();
-    virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
-    virtual Vec3f getCenter();
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    void transform(Transform t);
+    Vec3f getCenter();
+    void render(RenderContext c) {}
     
   };
 

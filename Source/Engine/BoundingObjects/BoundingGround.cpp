@@ -53,6 +53,7 @@ NAMESPACE {
 	    (point.xy(), &man->normal) - point.z();
 	  if (man->penetration > 0.0f) {
 	    man->normal = -man->normal;
+	    man->penetration *= abs(man->normal.z());
 	    return true;
 	  }
 	}

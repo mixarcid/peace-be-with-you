@@ -14,12 +14,14 @@ NAMESPACE {
     BoundingOBB() {}
     BoundingOBB(Array<BasicMeshData>& data);
     Vec3f getClosestPoint(Vec3f point);
-    virtual f32 getVolume();
-    virtual f32 getInertia(f32 mass);
-    virtual void transform(Transform t);
-    virtual void render(RenderContext c);
-    virtual Vec3f getCenter();
+    f32 getVolume();
+    f32 getInertia(f32 mass);
+    void transform(Transform t);
+    void render(RenderContext c);
+    Vec3f getCenter();
     
   };
+
+  typedef BoundingOBB BoundingObb;
   
 }

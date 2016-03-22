@@ -13,8 +13,10 @@ NAMESPACE {
     BoundingAABB2D(Vec2f _center, Vec2f _halves);
     Vec2f getClosestPoint(Vec2f point);
     bool pointInside(Vec2f point);
-    virtual Vec3f getCenter();
+    Vec3f getCenter();
     
   };
+
+  typedef BoundingAABB2D BoundingAabb2d;
 
 }

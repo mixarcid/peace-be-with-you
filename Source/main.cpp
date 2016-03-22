@@ -54,13 +54,13 @@ i32 main() {
       ->veloc = Vec3f(0,10,0);
     Engine::emplaceDynamic<MonkeyHead>(Vec3f(0,1,30),
 				       Vec3f(0,10,0));
+    //Log::message(to_string(Engine::engine->static_container));
     Engine::begin();
     //printf("%d vs %d\n", (i32) 1 & 255, (i32) -1.01 & 255);
     
     /*} catch(Exception e) {
     Log::error(e.what());
     }*/
-
     Log::message("Peace Be With You shut down sucessfully");
     Engine::terminate();
   return EXIT_SUCCESS;
