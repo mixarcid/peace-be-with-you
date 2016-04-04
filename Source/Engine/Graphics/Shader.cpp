@@ -5,35 +5,59 @@
 #include "Light.hpp"
 
 NAMESPACE {
-
-  const static ShaderTypeInfo SHADER_TYPES[TYPE_LAST] = {
+  
+  const static ShaderTypeInfo SHADER_TYPES[SHADER_TYPE_LAST] = {
     ShaderTypeInfo(GL_FLOAT, 1, sizeof(f32)),
     ShaderTypeInfo(GL_UNSIGNED_INT, 1, sizeof(u32)),
     ShaderTypeInfo(GL_FLOAT, 2, 2*sizeof(f32)),
     ShaderTypeInfo(GL_FLOAT, 3, 3*sizeof(f32)),
     ShaderTypeInfo(GL_FLOAT, 4, 4*sizeof(f32)),
+    ShaderTypeInfo(GL_INT, 2, 2*sizeof(i32)),
+    ShaderTypeInfo(GL_INT, 3, 3*sizeof(i32)),
+    ShaderTypeInfo(GL_INT, 4, 4*sizeof(i32)),
+    ShaderTypeInfo(GL_UNSIGNED_INT, 2, 2*sizeof(u32)),
+    ShaderTypeInfo(GL_UNSIGNED_INT, 3, 3*sizeof(u32)),
     ShaderTypeInfo(GL_UNSIGNED_INT, 4, 4*sizeof(u32)),
-    ShaderTypeInfo(GL_SHORT, 2, 2*sizeof(i16))
+    ShaderTypeInfo(GL_SHORT, 2, 2*sizeof(i16)),
+    ShaderTypeInfo(GL_SHORT, 3, 3*sizeof(i16)),
+    ShaderTypeInfo(GL_SHORT, 4, 4*sizeof(i16)),
+    ShaderTypeInfo(GL_UNSIGNED_SHORT, 2, 2*sizeof(u16)),
+    ShaderTypeInfo(GL_UNSIGNED_SHORT, 3, 3*sizeof(u16)),
+    ShaderTypeInfo(GL_UNSIGNED_SHORT, 4, 4*sizeof(u16)),
+    ShaderTypeInfo(GL_BYTE, 2, 2*sizeof(i8)),
+    ShaderTypeInfo(GL_BYTE, 3, 3*sizeof(i8)),
+    ShaderTypeInfo(GL_BYTE, 4, 4*sizeof(i8)),
+    ShaderTypeInfo(GL_UNSIGNED_BYTE, 2, 2*sizeof(u8)),
+    ShaderTypeInfo(GL_UNSIGNED_BYTE, 3, 3*sizeof(u8)),
+    ShaderTypeInfo(GL_UNSIGNED_BYTE, 4, 4*sizeof(u8))
   };
 
   Array<GlobalShaderVar*> GlobalShaderVar::vars[SHADER_ALL_FLAGS+1];
   Array<GlobalShaderUniform*> GlobalShaderUniform::uniforms[SHADER_ALL_FLAGS+1];
   
   const GlobalShaderVar Shader::POSITION
-    ("inPosition", SHADER_3D, 0, TYPE_VECTOR3F);
+    ("inPosition", SHADER_3D, 0, SHADER_TYPE_VECTOR3F);
   const GlobalShaderVar Shader::COLOR
-    ("inColor", SHADER_USE_COLOR, 1, TYPE_VECTOR4F);
+    ("inColor", SHADER_USE_COLOR, 1, SHADER_TYPE_VECTOR4F);
   const GlobalShaderVar Shader::TEX_COORD
-    ("inTexCoord", SHADER_USE_TEXTURE, 2, TYPE_VECTOR2F);
+    ("inTexCoord", SHADER_USE_TEXTURE, 2, SHADER_TYPE_VECTOR2F);
   const GlobalShaderVar Shader::NORMAL
-    ("inNormal", SHADER_USE_NORMAL, 3, TYPE_VECTOR3F);
+    ("inNormal", SHADER_USE_NORMAL, 3, SHADER_TYPE_VECTOR3F);
   const GlobalShaderVar Shader::BONE_INDEXES0
-    ("inBoneIndexes0", SHADER_SKELETAL, 4, TYPE_VECTOR4U);
+    ("inBoneIndexes0", SHADER_SKELETAL, 4, SHADER_TYPE_VECTOR4U,
+     SHADER_VAR_KEEP_INT);
   const GlobalShaderVar Shader::BONE_WEIGHTS0
-    ("inBoneWeights0", SHADER_SKELETAL, 5, TYPE_VECTOR4F);
+    ("inBoneWeights0", SHADER_SKELETAL, 5, SHADER_TYPE_VECTOR4F);
   const GlobalShaderVar Shader::POSITION_2D_SHORT
-    ("inPosition2d", SHADER_2D, 6, TYPE_VECTOR2S);
-
+    ("inPosition2d", SHADER_2D, 6, SHADER_TYPE_VECTOR2S);
+  const GlobalShaderVar Shader::HEIGHT
+    ("inHeight", SHADER_TERRAIN, 7, SHADER_TYPE_F32);
+  const GlobalShaderVar Shader::POSITION_TERRAIN
+    ("inPositionTerrain", SHADER_TERRAIN, 8, SHADER_TYPE_VECTOR2F);
+  const GlobalShaderVar Shader::BIOME_DATA
+    ("inBiomeData", SHADER_TERRAIN, 9, SHADER_TYPE_VECTOR4UB,
+     SHADER_VAR_NORMALIZE);
+  
   GlobalShaderUniform Shader::UNI_TEXTURE
     ("uniTexture", SHADER_USE_TEXTURE, sizeof(i32), 0, false);
   GlobalShaderUniform Shader::UNI_MODEL
@@ -48,7 +72,9 @@ NAMESPACE {
     ("uniAmbient", SHADER_3D, sizeof(f32));
   GlobalShaderUniform Shader::UNI_COLOR
     ("uniColor", SHADER_2D, sizeof(Vec4f));
-
+  GlobalShaderUniform Shader::UNI_BILLBOARD_CENTER
+    ("uniBillboardCenter", SHADER_BILLBOARD, sizeof(Vec3f));
+  
   Shader* Shader::cur_shader = NULL;
 
   const u8 Shader::MAX_BONES;
@@ -103,9 +129,12 @@ NAMESPACE {
 
   ShaderVar::ShaderVar() {}
 
-  ShaderVar::ShaderVar(i32 var_id, ShaderTypeName var_type) {
+  ShaderVar::ShaderVar(i32 var_id,
+		       ShaderTypeName var_type,
+		       ShaderVarFlags _flags)
+    : flags(_flags) {
     id = var_id;
-    debugAssert(var_type < TYPE_LAST,
+    debugAssert(var_type < SHADER_TYPE_LAST,
 		"ShaderVarType index out of bounds");
     info = &SHADER_TYPES[var_type];
   }
@@ -174,9 +203,10 @@ NAMESPACE {
   GlobalShaderVar::GlobalShaderVar(String _name,
 				   ShaderFlags flags,
 				   i32 var_id,
-				   ShaderTypeName var_type)
-    : ShaderVar(var_id, var_type), name(_name) {
-    for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
+				   ShaderTypeName var_type,
+				   ShaderVarFlags var_flags)
+    : ShaderVar(var_id, var_type, var_flags), name(_name) {
+    for (u16 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
       if (mask & flags) {
 	vars[mask].push_back(this);
       }
@@ -192,7 +222,7 @@ NAMESPACE {
     name(_name),
     size(_size),
     flags(UNIFORM_UNINITIALIZED) {
-      for (u8 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
+      for (u16 mask=SHADER_NO_FLAGS+1; mask<SHADER_ALL_FLAGS+1; ++mask) {
 	if (mask & flags) {
 	  uniforms[mask].push_back(this);
 	}
@@ -218,8 +248,11 @@ NAMESPACE {
   }
 
   void Shader::init(const String vert, const String frag) {
+
+    vert_full_name = DIR_SHADERS + vert + DIR_VERT_EXTENSION;
+    frag_full_name = DIR_SHADERS + frag + DIR_FRAG_EXTENSION;
     
-    for (u8 i=0; i<SHADER_ALL_FLAGS+1; ++i) {
+    for (u16 i=0; i<SHADER_ALL_FLAGS+1; ++i) {
       flag_ids[i] = -1;
     }
 
@@ -231,11 +264,9 @@ NAMESPACE {
     }
 
     vert_str = vert_header + "\n"
-      + getFileContents((DIR_SHADERS + vert
-			 + DIR_VERT_EXTENSION));
+      + getFileContents(vert_full_name);
     frag_str = frag_header + "\n"
-      + getFileContents((DIR_SHADERS + frag +
-			 DIR_FRAG_EXTENSION));
+      + getFileContents(frag_full_name);
 
     if (settings & SHADER_PLAIN) {
       localSetFlags(SHADER_NO_FLAGS);
@@ -301,11 +332,17 @@ NAMESPACE {
     glGetShaderInfoLog(vert_id, MAX_LOG_SIZE, NULL, c_shader_log);
     String shader_log = c_shader_log;
     fatalAssert(shader_log.length() == 0,
-		"%s", c_shader_log);
+		"Vertex shader %s failed to compile with flags 0x%x:\n%s",
+		vert_full_name.c_str(),
+		shade_flags,
+		c_shader_log);
     glGetShaderInfoLog(frag_id, MAX_LOG_SIZE, NULL, c_shader_log);
     shader_log = c_shader_log;
     fatalAssert(shader_log.length() == 0,
-		"%s", c_shader_log);
+		"Fragment shader %s failed to compile with flags 0x%x:\n%s",
+		frag_full_name.c_str(),
+		shade_flags,
+		c_shader_log);
 
     id = glCreateProgram();
     glAttachShader(id, vert_id);

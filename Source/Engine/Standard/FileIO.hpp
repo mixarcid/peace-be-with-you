@@ -24,7 +24,7 @@ NAMESPACE {
     const TestEndian ENDIAN;
 
     template <typename T>
-    T byteReverse(T val) {
+    T byteReverse(T& val) {
       //Thanks, Michael Manner from Stack Overflow
       T data = val;
       unsigned char* lo = (unsigned char*) &data;
@@ -52,8 +52,37 @@ NAMESPACE {
 
       return data;
     }
-    
-    String readString(FILE* file);
-    
+
+    template <typename T>
+    void writeLittleEndian(FILE* file, T obj) {
+      T data = ENDIAN.isLittle ? obj : fio::byteReverse(obj);
+      fwrite(&data, sizeof(T), 1, file);
+    }
   }
+
+  template <typename T>
+    void loadMany(FILE* file, T* a) {
+    load(file, a);
+  }
+
+  template <typename T, typename... Args>
+    void loadMany(FILE* file, T* a, Args... rest) {
+    load(file, a);
+    loadMany(file, rest...);
+  }
+
+  template <typename T>
+    void saveMany(FILE* file, T& a) {
+    save(file, a);
+  }
+
+  template <typename T, typename... Args>
+    void saveMany(FILE* file, T& a, Args... rest) {
+    save(file, a);
+    saveMany(file, rest...);
+  }
+
+  void load(FILE* file, String* s);
+  void save(FILE* file, String& s);
+    
 }

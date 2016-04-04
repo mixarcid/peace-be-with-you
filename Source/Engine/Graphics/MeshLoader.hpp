@@ -4,7 +4,6 @@
 #include "String.hpp"
 #include "Containers.hpp"
 #include "BonedMesh.hpp"
-#include "Assets.hpp"
 
 NAMESPACE {
 

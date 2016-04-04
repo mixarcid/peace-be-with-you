@@ -10,14 +10,26 @@ NAMESPACE {
     tex(*Terrain::texture.get()) {}
 
   void TerrainRenderable::init() {
+    
     Shader::setFlags(RenderableComp::shader_flags);
     vao.init();
     vao.use();
-    vbo.init();
-    vbo.bindArray(data, false);
-    vao.registerVars({Shader::POSITION,
-	  Shader::NORMAL,
-	  Shader::TEX_COORD});
+
+    Terrain::pos_buffer.use();
+    vao.registerVars({Shader::POSITION_TERRAIN});
+
+    height_vbo.init();
+    height_vbo.bindArray(height_data, false);
+    vao.registerVars({Shader::HEIGHT});
+
+    normal_vbo.init();
+    normal_vbo.bindArray(normal_data, false);
+    vao.registerVars({Shader::NORMAL});
+
+    biome_vbo.init();
+    biome_vbo.bindArray(biome_data, false);
+    vao.registerVars({Shader::BIOME_DATA});
+    
   }
 
   static const f32 DIST_MULTIPLIER_LARGE = 0.05;

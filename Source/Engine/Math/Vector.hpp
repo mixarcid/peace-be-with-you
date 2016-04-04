@@ -85,19 +85,23 @@ NAMESPACE {
       *this = sub(*this, b);
     }
 
-    inline Vec operator*(const T b) const {
+    template<typename U>
+    inline Vec operator*(const U b) const {
       return mul(*this, b);
     }
-
-    inline Vec operator/(const T b) const {
+    
+    template<typename U>
+    inline Vec operator/(const U b) const {
       return div(*this, b);
     }
 
-    inline void operator*=(const T b) {
+    template<typename U>
+    inline void operator*=(const U b) {
       *this = mul(*this, b);
     }
 
-    inline void operator/=(const T b) {
+    template<typename U>
+    inline void operator/=(const U b) {
       *this = div(*this, b);
     }
 
@@ -108,7 +112,8 @@ NAMESPACE {
       return true;
     }
 
-    static inline Vec mul(const Vec a, const T b) {
+    template<typename U>
+    static inline Vec mul(const Vec a, const U b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
 	ret.data[i] = a.data[i]*b;
@@ -116,7 +121,8 @@ NAMESPACE {
       return ret;
     }
 
-    static inline Vec div(const Vec a, const T b) {
+    template<typename U>
+    static inline Vec div(const Vec a, const U b) {
       Vec ret;
       for (u8 i=0; i<N; ++i) {
 	ret.data[i] = a.data[i]/b;
@@ -427,14 +433,29 @@ NAMESPACE {
   typedef Vec2<f32> Vec2f;
   typedef Vec3<f32> Vec3f;
   typedef Vec4<f32> Vec4f;
-  typedef Vec2<u32> Vec2u;
-  typedef Vec3<u32> Vec3u;
-  typedef Vec4<u32> Vec4u;
-  typedef Vec2<i16> Vec2s;
-  typedef Vec3<i16> Vec3s;
-  typedef Vec4<i16> Vec4s;
+
   typedef Vec2<i32> Vec2i;
   typedef Vec3<i32> Vec3i;
   typedef Vec4<i32> Vec4i;
+  
+  typedef Vec2<u32> Vec2u;
+  typedef Vec3<u32> Vec3u;
+  typedef Vec4<u32> Vec4u;
+  
+  typedef Vec2<i16> Vec2s;
+  typedef Vec3<i16> Vec3s;
+  typedef Vec4<i16> Vec4s;
+
+  typedef Vec2<u16> Vec2us;
+  typedef Vec3<u16> Vec3us;
+  typedef Vec4<u16> Vec4us;
+
+  typedef Vec2<i8> Vec2b;
+  typedef Vec3<i8> Vec3b;
+  typedef Vec4<i8> Vec4b;
+
+  typedef Vec2<u8> Vec2ub;
+  typedef Vec3<u8> Vec3ub;
+  typedef Vec4<u8> Vec4ub;  
   
 }

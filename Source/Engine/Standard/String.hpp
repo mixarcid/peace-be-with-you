@@ -18,4 +18,5 @@ NAMESPACE {
     String to_string(T* p) {
     return str::format("%p", p);
   }
+  
 }

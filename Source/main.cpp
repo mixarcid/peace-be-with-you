@@ -9,19 +9,21 @@ using namespace peace;
 i32 main() {
   
   Engine::init();
-      
-  //try {
 
-  Engine::engine->graphics.ambient = 0;
-  Engine::engine->graphics.emplaceDirLight(Vec3f(-1,-1,1),
-				    Vec3f(1,1,1));
+#ifndef N_DEBUG
+  try {
+#endif
+
+    Engine::engine->graphics.ambient = 0;
+    Engine::engine->graphics.emplaceDirLight(Vec3f(-1,-1,1),
+					     Vec3f(1,1,1));
     
     Input::setManager("Main");
     Input::addFlags("Main", INPUT_CURSOR_DISABLED);
     Input::addKeyCallback
       ("Main",
        [](GLFWwindow* win, i32 key,
-	i32 code, i32 act, i32 mods) {
+	  i32 code, i32 act, i32 mods) {
 	switch(key) {
 	case GLFW_KEY_ESCAPE:
 	  Engine::engine->flags &= ~ENGINE_RUNNING;
@@ -47,22 +49,26 @@ i32 main() {
       });
 
     Terrain terrain;
-    terrain.generate(Vec3f(0,0,0),Vec2u(5,5));
+    terrain.generate("Test",Vec3f(0,0,0),Vec2u(20,20));
+    terrain.loadFile("Test");
+    for (u32 chunk_x = 0; chunk_x < terrain.size.x(); ++chunk_x) {
+      for (u32 chunk_y = 0; chunk_y < terrain.size.y(); ++chunk_y) {
+	terrain.loadChunk(Vec2u(chunk_x,chunk_y));
+      }
+    }
     
     Engine::emplaceDynamic<Player>(Vec3f(0,0,30));
-    Player::ptr->getComponent<DynamicPhysicsComp>()
-      ->veloc = Vec3f(0,10,0);
-    Engine::emplaceDynamic<MonkeyHead>(Vec3f(0,1,30),
-				       Vec3f(0,10,0));
     //Log::message(to_string(Engine::engine->static_container));
     Engine::begin();
-    //printf("%d vs %d\n", (i32) 1 & 255, (i32) -1.01 & 255);
-    
-    /*} catch(Exception e) {
+
+#ifndef N_DEBUG
+  } catch(Exception e) {
     Log::error(e.what());
-    }*/
-    Log::message("Peace Be With You shut down sucessfully");
-    Engine::terminate();
+  }
+#endif
+  
+  Log::message("Peace Be With You shut down sucessfully");
+  Engine::terminate();
   return EXIT_SUCCESS;
   
 }

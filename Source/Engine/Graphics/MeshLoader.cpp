@@ -3,6 +3,8 @@
 #include "FileIO.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
+#include "Assets.hpp"
+#include "VectorIO.hpp"
 
 NAMESPACE {
 
@@ -10,7 +12,7 @@ NAMESPACE {
   DEFINE_ASSET_LOADER(BonedMeshBase);
 
   //PMF header stuff
-  const char PMF_VERSION = 0x04;
+  const static char PMF_VERSION = 0x04;
   
   enum PMFMeshType : char {
     PMF_TYPE_STATIC_NO_TEXTURE = 0,
@@ -18,27 +20,6 @@ NAMESPACE {
       PMF_TYPE_BONED_TEXTURE = 2
       };
 
-  Vec3f readVec3f(FILE* file) {
-    f32 x = fio::readLittleEndian<f32>(file);
-    f32 y = fio::readLittleEndian<f32>(file);
-    f32 z = fio::readLittleEndian<f32>(file);
-    return Vec3f(x,y,z);
-  }
-
-  Vec2f readVec2f(FILE* file) {
-    f32 x = fio::readLittleEndian<f32>(file);
-    f32 y = fio::readLittleEndian<f32>(file);
-    return Vec2f(x,y);
-  }
-
-  Quaternionf readQuaternionf(FILE* file) {
-    f32 w = fio::readLittleEndian<f32>(file);
-    f32 x = fio::readLittleEndian<f32>(file);
-    f32 y = fio::readLittleEndian<f32>(file);
-    f32 z = fio::readLittleEndian<f32>(file);
-    return Quaternionf(x,y,z,w);
-  }
-    
   void loadStaticMesh(String name, FILE* file, Texture tex) {
  
     auto inserted = AssetLoader<StaticMesh>::
@@ -59,9 +40,12 @@ NAMESPACE {
 
     for (u32 index = 0; index < num_verts; ++index) {
 
-      Vec3f pos = readVec3f(file);
-      Vec3f norm = readVec3f(file);
-      Vec2f tex_coord = readVec2f(file);
+      Vec3f pos;
+      load(file, &pos);
+      Vec3f norm;
+      load(file, &norm);
+      Vec2f tex_coord;
+      load(file, &tex_coord);
       tex_coord.y() = 1 - tex_coord.y();
       mesh_data.push_back(BasicMeshData(pos, norm, tex_coord));
       
@@ -84,7 +68,7 @@ NAMESPACE {
 #endif
   }
   
-    void loadBonedMesh(String name, FILE* file, Texture tex) {
+  void loadBonedMesh(String name, FILE* file, Texture tex) {
 
     PEACE_GL_CHECK_ERROR;
 
@@ -108,9 +92,12 @@ NAMESPACE {
     
     for (u32 index = 0; index < num_verts; ++index) {
 
-      Vec3f pos = readVec3f(file);
-      Vec3f norm = readVec3f(file);
-      Vec2f tex_coord = readVec2f(file);
+      Vec3f pos;
+      load(file, &pos);
+      Vec3f norm;
+      load(file, &norm);
+      Vec2f tex_coord;
+      load(file, &tex_coord);
       tex_coord.y() = 1 - tex_coord.y();
       
       u8 vert_num_bones = fio::readLittleEndian<u8>(file);
@@ -144,8 +131,10 @@ NAMESPACE {
     mesh.bones.reserve(num_bones);
     
     for (u32 i = 0; i < num_bones; ++i) {
-      Vec3f trans = readVec3f(file);
-      Quaternionf rot = readQuaternionf(file);
+      Vec3f trans;
+      load(file, &trans);
+      Quaternionf rot;
+      load(file, &rot);
       mesh.bones.push_back(Bone(trans, rot));
     }
 
@@ -154,7 +143,8 @@ NAMESPACE {
 
     for (u32 i = 0; i < num_actions; ++i) {
       
-      String name = fio::readString(file);
+      String name;
+      load(file, &name);
       auto inserted = mesh.animations.insert(Pair<String, BonedAnimationBase>
 					     (name, BonedAnimationBase()));
       BonedAnimationBase& base = inserted.first->second;
@@ -168,8 +158,10 @@ NAMESPACE {
 	KeyFrame frame(time, num_bones);
 
 	for (u32 i = 0; i < num_bones; ++i) {
-	  Vec3f trans = readVec3f(file);
-	  Quaternionf rot = readQuaternionf(file);
+	  Vec3f trans;
+	  load(file, &trans);
+	  Quaternionf rot;
+	  load(file, &rot);
 	  frame.bones.push_back(Bone(trans,
 				     rot));
 	}
@@ -184,10 +176,10 @@ NAMESPACE {
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded BonedMesh %s", name.c_str());
 #endif
-  }
+    }
 
- void loadPMF(String filename) {
-   PEACE_GL_CHECK_ERROR;
+  void loadPMF(String filename) {
+    PEACE_GL_CHECK_ERROR;
     String full_name = (DIR_MODELS + filename
 			+ DIR_MODEL_EXTENSION);
     
@@ -198,7 +190,7 @@ NAMESPACE {
     char sig[3];
     fread(sig, sizeof(char), 3, file);
     fatalAssert(sig[0] == 'P' && sig[1] == 'M' && sig[2] == 'F',
-		"Incorrect signature for model %s",
+		"Incorrect file signature for model %s",
 		full_name.c_str());
     
     char ver;
@@ -217,7 +209,8 @@ NAMESPACE {
     for (u32 mesh_index = 0;
 	 mesh_index < num_meshes; ++mesh_index) {
 
-      String mesh_name = fio::readString(file);
+      String mesh_name;
+      load(file, &mesh_name);
       String final_name = filename + ":" + mesh_name;
 
       //Log::message("Mesh name: " + mesh_name);
@@ -233,10 +226,10 @@ NAMESPACE {
 			" no longer supported");
 	break;
       case PMF_TYPE_STATIC_TEXTURE:
-        loadStaticMesh(final_name, file, *model_texture);
+	loadStaticMesh(final_name, file, *model_texture);
 	break;
       case PMF_TYPE_BONED_TEXTURE:
-        loadBonedMesh(final_name, file, *model_texture);
+	loadBonedMesh(final_name, file, *model_texture);
 	break;
       default:
 	Log::fatalError("Unable to determine type of"
@@ -248,37 +241,37 @@ NAMESPACE {
 
     fclose(file);
     
- }
+  }
 
- void loadModelFromMeshName(String mesh_name) {
-   size_t index = mesh_name.find(":");
-   debugAssert(index != -1,
-	       "Your mesh name is incorrectly formatted; "
-	       "all mesh names must have the format "
-	       "\"Filename:Meshname\"");
-   loadPMF(mesh_name.substr(0,index));
- }
+  void loadModelFromMeshName(String mesh_name) {
+    size_t index = mesh_name.find(":");
+    debugAssert(index != -1,
+		"Your mesh name is incorrectly formatted; "
+		"all mesh names must have the format "
+		"\"Filename:Meshname\"");
+    loadPMF(mesh_name.substr(0,index));
+  }
 
- template<>
-   StaticMesh* loadAsset<StaticMesh>(String name) {
-   loadModelFromMeshName(name);
-   auto found = AssetLoader<StaticMesh>::loaded_assets.find(name);
-   debugAssert(found != AssetLoader<StaticMesh>::loaded_assets.end(),
-	       "Something went wrong while loading the StaticMesh %s. "
-	       "Perhaps it doesn't exist?",
-	       name.c_str());
-   return &found->second;
- }
+  template<>
+    StaticMesh* loadAsset<StaticMesh>(String name) {
+    loadModelFromMeshName(name);
+    auto found = AssetLoader<StaticMesh>::loaded_assets.find(name);
+    debugAssert(found != AssetLoader<StaticMesh>::loaded_assets.end(),
+		"Something went wrong while loading the StaticMesh %s. "
+		"Perhaps it doesn't exist?",
+		name.c_str());
+    return &found->second;
+  }
  
- template<>
-   BonedMeshBase* loadAsset<BonedMeshBase>(String name) {
-   loadModelFromMeshName(name);
-   auto found = AssetLoader<BonedMeshBase>::loaded_assets.find(name);
-   debugAssert(found != AssetLoader<BonedMeshBase>::loaded_assets.end(),
-	       "Something went wrong while loading the BonedMesh %s. "
-	       "Perhaps it doesn't exist?",
-	       name.c_str());
-   return &found->second;
- }
+  template<>
+    BonedMeshBase* loadAsset<BonedMeshBase>(String name) {
+    loadModelFromMeshName(name);
+    auto found = AssetLoader<BonedMeshBase>::loaded_assets.find(name);
+    debugAssert(found != AssetLoader<BonedMeshBase>::loaded_assets.end(),
+		"Something went wrong while loading the BonedMesh %s. "
+		"Perhaps it doesn't exist?",
+		name.c_str());
+    return &found->second;
+  }
   
 }

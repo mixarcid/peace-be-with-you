@@ -57,11 +57,8 @@ NAMESPACE {
       
       BoundingAABB2D* a = (BoundingAABB2D*) oa;
       BoundingAABB2D* b = (BoundingAABB2D*) ob;
-    
-      return ((abs(a->center.x() - b->center.x())
-	       < (a->halves.x() + b->halves.x())) &&
-	      (abs(a->center.y() - b->center.y())
-	       < (a->halves.y() + b->halves.y())));
+      BoundingAABB2D test(b->center, b->halves - a->halves);
+      return test.pointInside(a->center);
     });
 
   CONTAINED_IN_FUNC(AABB, AABB2D, {

@@ -48,12 +48,11 @@ NAMESPACE {
 
 	for (u8 s = 0; s < 2; ++s) {
 	  Vec3f point = a->center - (s ? proj : -proj);
-	  //Log::message(to_string(point));
 	  man->penetration = b->dataAtPoint
 	    (point.xy(), &man->normal) - point.z();
 	  if (man->penetration > 0.0f) {
 	    man->normal = -man->normal;
-	    man->penetration *= abs(man->normal.z());
+	    //man->penetration *= abs(man->normal.z());
 	    return true;
 	  }
 	}

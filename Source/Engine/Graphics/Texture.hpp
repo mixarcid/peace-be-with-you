@@ -3,8 +3,8 @@
 #include "GL.hpp"
 #include "Standard.hpp"
 #include "String.hpp"
-#include "Assets.hpp"
 #include "GLObject.hpp"
+#include "Assets.hpp"
 
 NAMESPACE {
 

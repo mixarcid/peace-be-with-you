@@ -19,8 +19,8 @@ $extend(getEnumEntries)
   Log::fatalError("unimplimented function %s", __func__);	\
   return ret;
 
-#define PEACE_ENUM(name, ...)		\
-  $peaceEnum(#name, #__VA_ARGS__)
+#define PEACE_ENUM(name, size, ...)		\
+  $peaceEnum(#name, #__VA_ARGS__, size)
 
 #define PEACE_DEFINE_BITFLAGS(name, size, ...)	\
   $peaceEnum(#name, #__VA_ARGS__, size);			\

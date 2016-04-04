@@ -113,6 +113,7 @@ NAMESPACE {
 	    /*BonedMesh* mesh = (Pointer<BonedMesh>)
 	      Player::ptr->getComponent<RenderableComp>();
 	      mesh->startAnimation("Walk");*/
+	    Player::ptr->transRel(Vec3f(0,0,0.01));
 	    phys->veloc+=Vec3f(0,0,20);
 	  }
 	  break;

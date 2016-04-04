@@ -11,10 +11,16 @@
 #define DIR_SHADER_HEADER DIR_SHADERS "Header"
 #define DIR_MODELS DIR_ASSETS "Models" DIR_SEP
 
+#define DIR_DATA "Data" DIR_SEP
+#define DIR_TERRAIN DIR_DATA "Terrain" DIR_SEP
+#define DIR_WORLDS DIR_DATA "Worlds" DIR_SEP
+
 #define DIR_VERT_EXTENSION ".vs"
 #define DIR_FRAG_EXTENSION ".fs"
 #define DIR_MODEL_EXTENSION ".pmf"
 #define DIR_TEXTURE_EXTENSION ".png"
+#define DIR_TERRAIN_EXTENSION ".ter"
+#define DIR_WORLD_EXTENSION ".wld"
 
 #ifndef N_DEBUG
 #define PEACE_LOG_LOADED_ASSETS

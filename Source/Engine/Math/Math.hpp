@@ -34,4 +34,13 @@ NAMESPACE {
     return abs(a - b) < T(0.000001);
   }
 
+  template <typename T>
+    inline T pow(T val, u32 num) {
+    T ret = 1;
+    for (u32 i=0; i<num; ++i) {
+      ret *= val;
+    }
+    return ret;
+  }
+
 }

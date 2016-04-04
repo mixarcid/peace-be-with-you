@@ -13,6 +13,10 @@ in vec2 tex;
 in vec3 normal;
 #endif
 
+#ifdef SHADER_TERRAIN
+in vec4 biome_data;
+#endif
+
 in vec3 pos;
 
 void main() {
@@ -37,21 +41,37 @@ void main() {
     } else if (intensity > 0.25f) {
       intensity = 0.4f;
     } else {
-      intensity = 0.0f;
+      intensity = 0.2f;
     }
     light_color += uniDirLights[i].color*intensity;
   }
   outColor *= vec4(light_color, 1);
 #endif
 #endif
-  
+
 #ifdef SHADER_USE_COLOR
   outColor *= color;
 #endif
-#ifdef SHADER_USE_TEXTURE
+  
+#if defined(SHADER_USE_TEXTURE) && !defined(SHADER_TERRAIN)
   outColor *= texture(uniTexture, tex);
 #endif
 
+#ifdef SHADER_TERRAIN
+  
+  vec2 tex_coords[4];
+  tex_coords[0] = tex;
+  tex_coords[1] = tex - vec2(0.25,0);
+  tex_coords[2] = tex - vec2(0,0.25);
+  tex_coords[3] = tex - vec2(0.25,0.25);
+
+  vec3 color = vec3(0,0,0);
+  for (uint n = 0u; n < 4u; ++n) {
+    color += biome_data[n]*(texture(uniTexture, tex_coords[n]).xyz);
+  }
+  outColor.xyz *= color;
+#endif
+  
 #ifdef SHADER_2D
   outColor *= uniColor;
 #endif

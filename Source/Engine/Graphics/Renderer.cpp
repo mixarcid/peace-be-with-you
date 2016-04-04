@@ -17,7 +17,7 @@ NAMESPACE {
     first_shade.use();
     PEACE_GL_CHECK_ERROR;
     
-    screen_coord = second_shade.getVar("screenCoord", TYPE_VECTOR2F);
+    screen_coord = second_shade.getVar("screenCoord", SHADER_TYPE_VECTOR2F);
     diffuse_uniform = second_shade.getUniform("diffuse", 0);
     normal_uniform = second_shade.getUniform("normal", 1);
     screen_quad.init(screen_coord);

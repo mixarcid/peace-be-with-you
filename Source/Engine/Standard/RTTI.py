@@ -34,7 +34,7 @@ def registerRttiStruct():
     class_id = cur_class_id
     cur_class_name = ""
     cur_class_id = 0;
-    return "template <> inline TypeId typeId<%s>() { return %d; }" % (classname, class_id)
+    return "template <> inline constexpr TypeId typeId<%s>() { return %d; }" % (classname, class_id)
 )
 
 $extend(rttiConstruct)

@@ -68,6 +68,7 @@ NAMESPACE {
   void Graphics::initRender() {
     renderer.prepare();
 
+    Shader::setFlags(SHADER_ALL_FLAGS);
     Shader::UNI_DIR_LIGHTS
       .registerArray(dir_lights.begin(),
 		     Shader::MAX_DIR_LIGHTS);

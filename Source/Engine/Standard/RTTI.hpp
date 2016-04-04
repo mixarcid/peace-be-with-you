@@ -35,7 +35,7 @@ NAMESPACE {
   }
 
   template <typename T>
-    inline TypeId typeId() {
+    inline constexpr TypeId typeId() {
     return 0;
   }
   

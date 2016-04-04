@@ -13,3 +13,4 @@ StaticPhysicsComp 12
 DynamicPhysicsComp 13
 Camera 14
 CameraComp 15
+TerrainGround 16

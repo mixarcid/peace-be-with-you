@@ -48,24 +48,40 @@ NAMESPACE {
       data[3] = c1*c2*c3 + s1*s2*s3;
     }
 
-    inline T x() const {
+    inline T& x() {
       return data[0];
     }
 
-    inline T y() const {
+    inline T& y() {
       return data[1];
     }
 
-    inline T z() const {
+    inline T& z() {
       return data[2];
     }
 
-    inline T w() const {
+    inline T& w() {
+      return data[3];
+    }
+
+    inline T cx() const {
+      return data[0];
+    }
+
+    inline T cy() const {
+      return data[1];
+    }
+
+    inline T cz() const {
+      return data[2];
+    }
+
+    inline T cw() const {
       return data[3];
     }
 
     inline T norm() const {
-      return sqrt(sqr(x()) + sqr(y()) + sqr(z()) + sqr(w()));
+      return sqrt(sqr(cx()) + sqr(y()) + sqr(cz()) + sqr(cw()));
     }
 
     inline void normalize() {
@@ -77,20 +93,20 @@ NAMESPACE {
     }
 
     inline Quaternion conjugate() const {
-      return Quaternion(-x(), -y(), -z(), w());
+      return Quaternion(-cx(), -cy(), -cz(), cw());
     }
 
     inline Mat3<T> mat3() const {
       
-      f32 x2 = x() * x();
-      f32 y2 = y() * y();
-      f32 z2 = z() * z();
-      f32 xy = x() * y();
-      f32 xz = x() * z();
-      f32 yz = y() * z();
-      f32 wx = w() * x();
-      f32 wy = w() * y();
-      f32 wz = w() * z();
+      f32 x2 = cx() * cx();
+      f32 y2 = cy() * cy();
+      f32 z2 = cz() * cz();
+      f32 xy = cx() * cy();
+      f32 xz = cx() * cz();
+      f32 yz = cy() * cz();
+      f32 wx = cw() * cx();
+      f32 wy = cw() * cy();
+      f32 wz = cw() * cz();
       
       T data[16] = {
 	1 - 2 * (y2 + z2), 2 * (xy + wz), 2 * (xz - wy),
@@ -143,55 +159,57 @@ NAMESPACE {
     }
 
     static inline Quaternion add(const Quaternion a, const Quaternion b) {
-      return Quaternion(a.x() + b.x(),
-			a.y() + b.y(),
-			a.z() + b.z(),
-			a.w() + b.w());
+      return Quaternion(a.cx() + b.cx(),
+			a.cy() + b.cy(),
+			a.cz() + b.cz(),
+			a.cw() + b.cw());
     }
 
     static inline Quaternion sub(const Quaternion a, const Quaternion b) {
-      return Quaternion(a.x() - b.x(),
-			a.y() - b.y(),
-			a.z() - b.z(),
-			a.w() - b.w());
+      return Quaternion(a.cx() - b.cx(),
+			a.cy() - b.cy(),
+			a.cz() - b.cz(),
+			a.cw() - b.cw());
     }
 
     static inline Quaternion mul(const Quaternion a, const T scal) {
-      return Quaternion(a.x()*scal, a.y()*scal, a.z()*scal, a.w()*scal);
+      return Quaternion(a.cx()*scal, a.cy()*scal, a.cz()*scal, a.cw()*scal);
     }
     
     static inline Quaternion div(const Quaternion a, const T scal) {
-      return Quaternion(a.x()/scal, a.y()/scal, a.z()/scal, a.w()/scal);
+      return Quaternion(a.cx()/scal, a.cy()/scal, a.cz()/scal, a.cw()/scal);
     }
 
     static inline Quaternion mul(const Quaternion a, const  Quaternion b) {
-      return Quaternion(a.w()*b.x() + a.x()*b.w() + a.y()*b.z() - a.z()*b.y(),
-			a.w()*b.y() + a.y()*b.w() + a.z()*b.x() - a.x()*b.z(),
-			a.w()*b.z() + a.z()*b.w() + a.x()*b.y() - a.y()*b.x(),
-			a.w()*b.w() - a.x()*b.x() - a.y()*b.y() - a.z()*b.z());
+      return Quaternion(a.cw()*b.cx() + a.cx()*b.cw() + a.cy()*b.cz() - a.cz()*b.cy(),
+			a.cw()*b.cy() + a.cy()*b.cw() + a.cz()*b.cx() - a.cx()*b.cz(),
+			a.cw()*b.cz() + a.cz()*b.cw() + a.cx()*b.cy() - a.cy()*b.cx(),
+			a.cw()*b.cw() - a.cx()*b.cx() - a.cy()*b.cy() - a.cz()*b.cz());
     }
 
     static inline Vec3<T> rotate(const Quaternion q, const Vec3<T> vec) {
       
       Vec3<T> vn = vec;//.normalized();
-      Quaternion vec_q(vn.x(), vn.y(), vn.z(), 0);
+      Quaternion vec_q(vn.cx(), vn.cy(), vn.cz(), 0);
       Quaternion res = vec_q * q.conjugate();
       res *= q;
-      return Vec3<T>(res.x(), res.y(), res.z());
+      return Vec3<T>(res.cx(), res.cy(), res.cz());
       
     }
 
-    static inline Quaternion lerp(Quaternion a, Quaternion b, T h) {
+    static inline Quaternion lerp(const Quaternion a,
+				  const Quaternion b, T h) {
       debugAssert(h >= 0.0 && h <= 1.0,
 		  "H must be between 0 and 1 for Quaternion lerp");
       return a*(1-h) + b*h;
     }
 
-    static inline Quaternion slerp(Quaternion a, Quaternion b, T h) {
+    static inline Quaternion slerp(const Quaternion a,
+				   const Quaternion b, T h) {
       
       debugAssert(h > 0.0 && h < 1.0,
 		  "H must be between 0 and 1 for Quaternion slerp");
-      T cos_half_angle = a.x()*b.x() + a.y()*b.y() + a.z()*b.z() + a.w()*b.w();
+      T cos_half_angle = a.cx()*b.cx() + a.cy()*b.cy() + a.cz()*b.cz() + a.cw()*b.cw();
       
       if (abs(cos_half_angle) >= 1.0f) {
 	return a;
@@ -202,25 +220,25 @@ NAMESPACE {
       T r1 = sin((1 - h) * half_angle)/sin_half_angle;
       T r2 = sin(h * half_angle)/sin_half_angle;
       
-      return Quaternion(a.x()*r1 + b.x()*r2,
-			a.y()*r1 + b.y()*r2,
-			a.z()*r1 + b.z()*r2,
-			a.w()*r1 + b.w()*r2);
+      return Quaternion(a.cx()*r1 + b.cx()*r2,
+			a.cy()*r1 + b.cy()*r2,
+			a.cz()*r1 + b.cz()*r2,
+			a.cw()*r1 + b.cw()*r2);
     }
 
   };
   
   template <typename T>
-    inline String to_string(Quaternion<T> q) {
-    return to_string(q.w()) + " + "
-      + to_string(q.x()) + "i + "
-      + to_string(q.y()) + "j + "
-      + to_string(q.z()) + "k";
+    inline String to_string(const Quaternion<T> q) {
+    return to_string(q.cw()) + " + "
+      + to_string(q.cx()) + "i + "
+      + to_string(q.cy()) + "j + "
+      + to_string(q.cz()) + "k";
   }
 
   template <>
-    inline String to_string(Quaternion<f32> q) {
-    return str::format("%1.3f + %1.3fi + %1.3fj + %1.3fk", q.w(),q.x(),q.y(),q.z());
+    inline String to_string(const Quaternion<f32> q) {
+    return str::format("%1.3f + %1.3fi + %1.3fj + %1.3fk", q.cw(),q.cx(),q.cy(),q.cz());
   }
 
 

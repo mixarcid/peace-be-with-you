@@ -79,7 +79,7 @@ NAMESPACE {
     
     for (u8 n=0; n<4; ++n) {
       if (children[n] != 0 &&
-	  obj_bound->intersects(&tree->nodes[children[n]].bound) &&
+	  //obj_bound->intersects(&tree->nodes[children[n]].bound) &&
 	  !tree->nodes[children[n]].traverse(tree, obj_bound, callback)) {
 	return false;
       }
@@ -93,7 +93,16 @@ NAMESPACE {
   }
   
   void QuadTree::insert(Pointer<StaticObject>& obj) {
-    nodes[0].insert(this, obj, 0);
+    if (obj->getLooseBoundingObject()->
+	isContainedIn(&nodes[0].bound)) {
+      nodes[0].insert(this, obj, 0);
+    } else {
+      OutOfBoundsMessage msg;
+      obj->message(&msg);
+      if (msg.should_insert) {
+	nodes[0].objects.emplace_back(obj);
+      }
+    }
   }
   
   void QuadTree::traverse(BoundingObject* bound,

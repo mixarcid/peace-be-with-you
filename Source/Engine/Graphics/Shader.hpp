@@ -10,6 +10,14 @@
 NAMESPACE {
 
   struct Texture;
+
+   /*
+    SHADER_TYPE_CONVERT_TO_INT and SHADER_TYPE_NORMALIZED are bitflags that can
+    be used with any integral type that specify how the application should send
+    the data to the GPU: KEEP_AS_INT ensures that the type is not converted to a
+    floating point value, while NORMALIZED specifies that, if it is converted, it
+    will be normalized to a value between -1 and 1
+   */
   
   struct ShaderTypeInfo {
     
@@ -17,32 +25,53 @@ NAMESPACE {
     i32 elem_num;
     size_t size; //total size of the object in bytes
 
-    ShaderTypeInfo(GLenum type_elem, i32 num_elem,
+    ShaderTypeInfo(GLenum type_elem,
+		   i32 num_elem,
 		   size_t total_size);
   };
+  
+  PEACE_ENUM(ShaderTypeName, 8,
+	     SHADER_TYPE_F32,
+	     SHADER_TYPE_U32,
+	     SHADER_TYPE_VECTOR2F,
+	     SHADER_TYPE_VECTOR3F,
+	     SHADER_TYPE_VECTOR4F,
+	     SHADER_TYPE_VECTOR2I,
+	     SHADER_TYPE_VECTOR3I,
+	     SHADER_TYPE_VECTOR4I,
+	     SHADER_TYPE_VECTOR2U,
+	     SHADER_TYPE_VECTOR3U,
+	     SHADER_TYPE_VECTOR4U,
+	     SHADER_TYPE_VECTOR2S,
+	     SHADER_TYPE_VECTOR3S,
+	     SHADER_TYPE_VECTOR4S,
+	     SHADER_TYPE_VECTOR2US,
+	     SHADER_TYPE_VECTOR3US,
+	     SHADER_TYPE_VECTOR4US,
+	     SHADER_TYPE_VECTOR2B,
+	     SHADER_TYPE_VECTOR3B,
+	     SHADER_TYPE_VECTOR4B,
+	     SHADER_TYPE_VECTOR2UB,
+	     SHADER_TYPE_VECTOR3UB,
+	     SHADER_TYPE_VECTOR4UB,
+	     SHADER_TYPE_LAST);
 
-  /* TYPE_VECTOR4U represents a 4-dimensional unsigned int vector that becomes
-     a uvec in glsl. TYPE_VECTOR(N)S represents a N-dimensional short vector
-     that becomes a regular vec is glsl. Yeah, it's stupid and hacky, but so 
-     far it works */
-  enum ShaderTypeName {
-    TYPE_F32,
-    TYPE_U32,
-    TYPE_VECTOR2F,
-    TYPE_VECTOR3F,
-    TYPE_VECTOR4F,
-    TYPE_VECTOR4U,
-    TYPE_VECTOR2S,
-    TYPE_LAST
-  };
+  PEACE_DEFINE_BITFLAGS(ShaderVarFlags, 8,
+			SHADER_VAR_NO_FLAGS = 0x00,
+			SHADER_VAR_KEEP_INT = 0x01,
+			SHADER_VAR_NORMALIZE = 0x02);
   
   struct ShaderVar {
-    
-    i32 id;
+
     const ShaderTypeInfo* info;
+    i32 id;
+    ShaderVarFlags flags;
 
     ShaderVar();
-    ShaderVar(i32 var_id, ShaderTypeName var_type);
+    ShaderVar(i32 var_id,
+	      ShaderTypeName var_type,
+	      ShaderVarFlags _flags =
+	      SHADER_VAR_NO_FLAGS);
   };
 
   struct ShaderUniform {
@@ -112,8 +141,10 @@ NAMESPACE {
 			SHADER_SKELETAL = 0x08,
 		        SHADER_2D = 0x10,
 			SHADER_3D = 0x20,
-			SHADER_LAST_FLAG = 0x21,
-			SHADER_ALL_FLAGS = 0x3f);
+			SHADER_TERRAIN = 0x40,
+			SHADER_BILLBOARD = 0x80,
+			SHADER_LAST_FLAG = 0x81,
+			SHADER_ALL_FLAGS = 0xff);
 
   /*
     SHADER_PLAIN is used to define a plain old shader,
@@ -132,7 +163,9 @@ NAMESPACE {
     GlobalShaderVar(String _name,
 		    ShaderFlags flags,
 		    i32 var_id,
-		    ShaderTypeName var_type);
+		    ShaderTypeName var_type,
+		    ShaderVarFlags var_flags =
+		    SHADER_VAR_NO_FLAGS);
     static Array<GlobalShaderVar*> vars[SHADER_ALL_FLAGS+1];
     
   };
@@ -163,6 +196,8 @@ NAMESPACE {
     ShaderSettings settings;
     ShaderFlags flags;
     i32 flag_ids[SHADER_ALL_FLAGS+1];
+    String vert_full_name;
+    String frag_full_name;
     String vert_str;
     String frag_str;
 
@@ -187,6 +222,9 @@ NAMESPACE {
     const static GlobalShaderVar NORMAL;
     const static GlobalShaderVar BONE_INDEXES0;
     const static GlobalShaderVar BONE_WEIGHTS0;
+    const static GlobalShaderVar HEIGHT;
+    const static GlobalShaderVar POSITION_TERRAIN;
+    const static GlobalShaderVar BIOME_DATA;
 
     static GlobalShaderUniform UNI_TEXTURE;
     static GlobalShaderUniform UNI_MODEL;
@@ -195,6 +233,7 @@ NAMESPACE {
     static GlobalShaderUniform UNI_DIR_LIGHTS;
     static GlobalShaderUniform UNI_AMBIENT;
     static GlobalShaderUniform UNI_COLOR;
+    static GlobalShaderUniform UNI_BILLBOARD_CENTER;
 
     static Shader* cur_shader;
 

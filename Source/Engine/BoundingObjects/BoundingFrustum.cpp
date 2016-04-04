@@ -56,7 +56,7 @@ NAMESPACE {
 	b->center + b->halves
       };
 
-      for (u8 n=0; n<6; ++n) {
+      for (u8 n=2; n<6; ++n) {
 	
 	Vec4f plane = a->planes[n];
 
@@ -67,7 +67,10 @@ NAMESPACE {
 	  (plane.xy(),
 	   Vec2f(aabb_bounds[px].x(),
 		 aabb_bounds[py].y()));
-	if (dot < -plane.w()) return false;
+	if (dot < -plane.w()) {
+	  //Log::message("%u, %f, %f", n, dot, plane.w());
+	  return false;
+	}
       }
       return true;
     });

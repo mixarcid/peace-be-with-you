@@ -18,7 +18,7 @@ NAMESPACE {
 
   struct BoundingObject {
 
-    PEACE_ENUM(BoundingObjectType,
+    PEACE_ENUM(BoundingObjectType, 8,
 	       AABB,
 	       AABB2D,
 	       SPHERE,

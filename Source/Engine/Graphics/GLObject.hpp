@@ -58,13 +58,12 @@ NAMESPACE {
     void init();
     template <typename T>
     void bindArray(Array<T>& arr, bool dynamic) {
-      debugAssert(!(this->flags & PEACE_GL_UNINITIALIZED),
-		  "You must initialize a VBO before binding it");
+      use();
       length = arr.size()*sizeof(T);
-      glBindBuffer(GL_ARRAY_BUFFER, id);
       glBufferData(GL_ARRAY_BUFFER, length, arr.begin(),
       		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
+    void use();
     void draw(GLenum mode = gl::getDrawMode());
 
   };

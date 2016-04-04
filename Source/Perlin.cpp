@@ -63,6 +63,11 @@ NAMESPACE {
   }
   
   f32 Perlin::getValue(Vec2f input) {
+
+    debugAssert(input.x() > 0 &&
+		input.y() > 0,
+		"Perlin::getValue has strange discontinuties at x = 0 "
+		"and y = 0; only use positive numbers");
     
     i16 xi = (i16) input.x() & SEED_MAX_VAL;
     i16 yi = (i16) input.y() & SEED_MAX_VAL;

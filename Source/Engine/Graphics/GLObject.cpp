@@ -69,8 +69,7 @@ NAMESPACE {
 
     for (u32 n=0; n<vars.size(); ++n) {
       glEnableVertexAttribArray(vars[n].id);
-      if (vars[n].info->elem_type == GL_UNSIGNED_INT
-	  || vars[n].info->elem_type == GL_INT) {
+      if (vars[n].flags & SHADER_VAR_KEEP_INT) {
 	glVertexAttribIPointer(vars[n].id,
 			       vars[n].info->elem_num,
 			       vars[n].info->elem_type,
@@ -80,7 +79,7 @@ NAMESPACE {
 	glVertexAttribPointer(vars[n].id,
 			      vars[n].info->elem_num,
 			      vars[n].info->elem_type,
-			      GL_FALSE,
+			      vars[n].flags & SHADER_VAR_NORMALIZE,
 			      total_size,
 			      (void*) offsets[n]);
       }
@@ -98,6 +97,12 @@ NAMESPACE {
     if (PEACE_GL_SHOULD_DELETE) {
       glDeleteBuffers(1, &this->id);
     }
+  }
+
+  void VBO::use() {
+    debugAssert(!(this->flags & PEACE_GL_UNINITIALIZED),
+		"You must initialize a VBO before using it");
+    glBindBuffer(GL_ARRAY_BUFFER, id);
   }
 
   void VBO::draw(GLenum mode) {

@@ -35,7 +35,7 @@ in vec3 inNormal;
 in vec4 inColor;
 #endif
 
-#ifdef SHADER_USE_TEXTURE
+#if defined(SHADER_USE_TEXTURE) && !defined(SHADER_TERRAIN)
 in vec2 inTexCoord;
 #endif
 
@@ -43,6 +43,13 @@ in vec2 inTexCoord;
 in uvec4 inBoneIndexes0;
 in vec4 inBoneWeights0;
 #endif
+
+#ifdef SHADER_TERRAIN
+in float inHeight;
+in vec2 inPositionTerrain;
+in vec4 inBiomeData;
+#endif
+
 
 layout(std140) uniform _uniModel {
   mat4 uniModel;
@@ -54,4 +61,8 @@ layout(std140) uniform _uniViewProj {
 
 layout(std140) uniform _uniBones {
   Bone uniBones[MAX_BONES];
+};
+
+layout(std140) uniform _uniBillBoardCenter {
+  vec3 uniBillboardCenter;
 };

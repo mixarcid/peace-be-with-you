@@ -11,7 +11,7 @@ NAMESPACE {
     : dynamic_container(20.0f),
     static_container(BoundingAABB2D
 		     (Vec2f(0,0),
-		      Vec2f(1024,1024)),
+		      Vec2f(10000,10000)),
 		     8),
     graphics(this),
     physics(this),

@@ -13,6 +13,7 @@ NAMESPACE {
     : RenderableReg(SHADER_USE_COLOR | SHADER_3D), color(_color) {}
   
   void RenderableShape::render(RenderContext c) {
+    Shader::setFlags(RenderableComp::shader_flags);
     this->vao.use();
     this->ebo.draw(GL_LINES);
   }

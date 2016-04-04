@@ -6,7 +6,7 @@
 
 NAMESPACE {
 
-  //to be send to objects when they are spacially of the bounds
+  //to be send to objects when they are out of the bounds
   //of the QuadTree, Grid, or other spacial container.
   //when the object is messaged, it changes should_insert to true
   //if it wants to be inserted regardless
