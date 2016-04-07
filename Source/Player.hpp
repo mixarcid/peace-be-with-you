@@ -3,7 +3,6 @@
 #include "GameObject.hpp"
 #include "MeshLoader.hpp"
 
-
 NAMESPACE {
 
   struct Player : DynamicObject {

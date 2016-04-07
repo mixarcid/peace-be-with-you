@@ -21,7 +21,11 @@ NAMESPACE {
 				       BoundingObject::Type b,
 				       TestCollisionFunc func) {
     BoundingObject::collide_functions[a][b] = func;
-    BoundingObject::collide_functions[b][a] = func;
+    if (a != b) {
+      BoundingObject::collide_functions[b][a] = ([](BoundingObject* oa, BoundingObject* ob) -> bool {
+	  return BoundingObject::collide_functions[ob->type][oa->type](ob, oa);
+	});
+    }
   }
 
   DefineManifoldFunc::DefineManifoldFunc(BoundingObject::Type a,

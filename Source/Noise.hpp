@@ -17,12 +17,12 @@ NAMESPACE {
   struct FrankNoise {
 
     Perlin perlin;
-    Mat2f rot;
+    Mat2d rot;
 
     FrankNoise();
-    f32 getValue(Vec2f point);
-    //equivalent to 0.5 + 0.5*(getValue(point))
-    f32 getPositive(Vec2f point);
+    f32 getValue(Vec2f point, i32 index = 0);
+    //equivalent to 0.5 + 0.5*(getValue(point, index))
+    f32 getPositive(Vec2f point, i32 index = 0);
     
   };
   

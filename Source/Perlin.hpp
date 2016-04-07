@@ -13,7 +13,7 @@ NAMESPACE {
     u16 seed[512];
 
     Perlin();
-    f32 getValue(Vec2f input);
+    f64 getValue(Vec2d input);
     
   };
 

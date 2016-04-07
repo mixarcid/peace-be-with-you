@@ -10,10 +10,13 @@ NAMESPACE {
     }
   }
 
-  void QuadTree::Node::_force_insert(QuadTree* tree,
-				     Pointer<StaticObject>& obj,
-				     u8 depth) {
+  void forceInsert(QuadTree::SizeType node,
+		   QuadTree* tree,
+		   Pointer<StaticObject>& obj,
+		   u8 depth) {
+    
     BoundingObject* obj_bound = obj->getLooseBoundingObject();
+    BoundingAABB2D bound = tree->nodes[node].bound;
     
     Vec2f rel_center =
       (obj_bound->getCenter().xy() -
@@ -36,52 +39,52 @@ NAMESPACE {
 			       child_halves);
     
     if (obj_bound->isContainedIn(&child_bound) && depth < tree->MAX_DEPTH) {
-      if (children[child_index] == 0) {
-	children[child_index] = tree->nodes.size();
+      if (tree->nodes[node].children[child_index] == 0) {
+	tree->nodes[node].children[child_index] = tree->nodes.size();
         tree->nodes.emplace_back(child_bound);
       }
-      tree->nodes[children[child_index]].insert(tree, obj, depth+1);
+      QuadTree::Node::insert
+	(tree->nodes[node].children[child_index], tree, obj, depth+1);
     } else {
-      objects.emplace_back(obj);
+      tree->nodes[node].objects.emplace_back(obj);
     }
   }
 
-  void QuadTree::Node::insert(QuadTree* tree,
+  void QuadTree::Node::insert(SizeType node,
+			      QuadTree* tree,
 			      Pointer<StaticObject>& obj,
 			      u8 depth) {
-    u32 s = objects.size();
+    u32 s = tree->nodes[node].objects.size();
     switch(s) {
     case 0:
-      objects.emplace_back(obj);
+      tree->nodes[node].objects.emplace_back(obj);
       break;
-      /*case 1:
-      {
-	Pointer<StaticObject> tmp = objects[0];
-	objects.clear();
-	_force_insert(tree, tmp, depth);
-	}*/
     default:
-      _force_insert(tree, obj, depth);
+      forceInsert(node, tree, obj, depth);
       break;
     }
   }
 
   bool QuadTree::Node::traverse
-    (QuadTree* tree,
+    (SizeType node,
+     QuadTree* tree,
      BoundingObject* obj_bound,
      ContainerCallback<StaticObject> callback) {
 
-    for (auto& obj : objects) {
+    for (auto& obj : tree->nodes[node].objects) {
       if (!callback(obj)) {
 	return false;
       }
     }
     
     for (u8 n=0; n<4; ++n) {
-      if (children[n] != 0 &&
-	  //obj_bound->intersects(&tree->nodes[children[n]].bound) &&
-	  !tree->nodes[children[n]].traverse(tree, obj_bound, callback)) {
-	return false;
+      SizeType child = tree->nodes[node].children[n];
+      if (child != 0 &&
+	  obj_bound->intersects(&tree->nodes[child].bound)) {
+	//Log::message(to_string(child));
+	if (!traverse(child, tree, obj_bound, callback)) {
+	  return false;
+	}
       }
     }
     return true;
@@ -94,8 +97,8 @@ NAMESPACE {
   
   void QuadTree::insert(Pointer<StaticObject>& obj) {
     if (obj->getLooseBoundingObject()->
-	isContainedIn(&nodes[0].bound)) {
-      nodes[0].insert(this, obj, 0);
+	isContainedIn(&(nodes[0].bound))) {
+      Node::insert(0, this, obj, 0);
     } else {
       OutOfBoundsMessage msg;
       obj->message(&msg);
@@ -107,7 +110,7 @@ NAMESPACE {
   
   void QuadTree::traverse(BoundingObject* bound,
 			  ContainerCallback<StaticObject> callback) {
-    nodes[0].traverse(this, bound, callback);
+    Node::traverse(0, this, bound, callback);
   }
 
   String to_string(QuadTree& tree, QuadTree::Node& node, String delim) {

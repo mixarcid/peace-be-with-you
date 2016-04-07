@@ -122,7 +122,6 @@ NAMESPACE {
   }
 
   Player::~Player() {
-    //delete getComponent<RenderableComp>();
     delete getComponent<DynamicPhysicsComp>();
   }
 

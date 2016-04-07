@@ -272,5 +272,9 @@ NAMESPACE {
   typedef Mat2<f32> Mat2f;
   typedef Mat3<f32> Mat3f;
   typedef Mat4<f32> Mat4f;
+
+  typedef Mat2<f64> Mat2d;
+  typedef Mat3<f64> Mat3d;
+  typedef Mat4<f64> Mat4d;
   
 }

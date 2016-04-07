@@ -26,7 +26,7 @@ NAMESPACE {
       if (dist < -halves[i]) {
 	dist = -halves[i];
       }
-      ret.data[i] += dist;
+      ret[i] += dist;
     }
     return ret;
   }

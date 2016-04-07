@@ -17,11 +17,14 @@ NAMESPACE {
       SizeType children[4];
 
       Node(BoundingAABB2D _bound);
-      inline void _force_insert(QuadTree* tree, Pointer<StaticObject>& obj, u8 depth);
-      void insert(QuadTree* tree, Pointer<StaticObject>& obj, u8 depth);
-      bool traverse(QuadTree* tree,
-		    BoundingObject* obj_bound,
-		    ContainerCallback<StaticObject> callback);
+      static void insert(SizeType node,
+			 QuadTree* tree,
+			 Pointer<StaticObject>& obj,
+			 u8 depth);
+      static bool traverse(SizeType node,
+			   QuadTree* tree,
+			   BoundingObject* obj_bound,
+			   ContainerCallback<StaticObject> callback);
        
     };
 

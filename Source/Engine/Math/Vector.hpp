@@ -434,6 +434,10 @@ NAMESPACE {
   typedef Vec3<f32> Vec3f;
   typedef Vec4<f32> Vec4f;
 
+  typedef Vec2<f64> Vec2d;
+  typedef Vec3<f64> Vec3d;
+  typedef Vec4<f64> Vec4d;
+
   typedef Vec2<i32> Vec2i;
   typedef Vec3<i32> Vec3i;
   typedef Vec4<i32> Vec4i;

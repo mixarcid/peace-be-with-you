@@ -54,6 +54,7 @@ NAMESPACE {
 		  Vec2u _size);
     void loadFile(String filename);
     void loadChunk(Vec2u index);
+    f32 heightAtPoint(Vec2f p, Vec3f* norm);
 
     static Asset<Texture> texture;
     static Array<TerrainRenderable> chunk_meshes;

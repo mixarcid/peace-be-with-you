@@ -79,7 +79,8 @@ NAMESPACE {
     u32 num_checks = 0;
     u32 num_collisions = 0;
 
-    engine->physics.updateVsStatic(&num_checks, &num_collisions);
+    //engine->physics.updateVsStatic(&num_checks, &num_collisions);
+    // Log::message("Static collision checks: %u", num_checks);
     engine->graphics.initRender();
     engine->graphics.renderDynamic();
 
@@ -88,10 +89,16 @@ NAMESPACE {
       });
     
     engine->graphics.renderStatic();
-    engine->graphics.finalizeRender();
-    gl::checkError();
-    
     dyn.join();
+
+    Thread stat([&num_checks, &num_collisions]() {
+	engine->physics.updateVsStatic(&num_checks, &num_collisions);
+      });
+    
+    engine->graphics.finalizeRender();
+    stat.join();
+    
+    gl::checkError();
 
     glfwPollEvents();
 

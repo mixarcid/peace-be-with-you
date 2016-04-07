@@ -15,20 +15,24 @@ NAMESPACE {
     }
     return ret;
   }
-
+ 
   FrankNoise::FrankNoise() {
-    f32 cost = rand()/(f32)RAND_MAX;
-    f32 sint = sqrt(1 - cost*cost);
-    f32 arr[4] = {cost, sint, -sint, cost};
-    rot = Mat2f(arr);
+    f64 cost = rand()/(f64)RAND_MAX;
+    f64 sint = sqrt(1 - cost*cost);
+    f64 arr[4] = {cost, sint, -sint, cost};
+    rot = Mat2d(arr);
   }
 
-  const static Vec2f PERLIN_OFFSET(1000.0f,2000.0f);
-  f32 FrankNoise::getValue(Vec2f point) {
-    return perlin.getValue(rot*point + PERLIN_OFFSET);
+  const static Vec2d PERLIN_OFFSET(1000000.0,2000000.0);
+  f32 FrankNoise::getValue(Vec2f point, i32 index) {
+    Mat2d r = rot;
+    for (i32 i=0; i<index; ++i) {
+      r *= rot;
+    }
+    return perlin.getValue(rot*Vec2d(point) + PERLIN_OFFSET*(index+1));
   }
   
-  f32 FrankNoise::getPositive(Vec2f point) {
-    return 0.5 + 0.5*getValue(point);
+    f32 FrankNoise::getPositive(Vec2f point, i32 index) {
+      return 0.5 + 0.5*getValue(point, index);
   }
 }

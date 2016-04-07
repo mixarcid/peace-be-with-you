@@ -3,17 +3,17 @@
 
 NAMESPACE {
 
-  f32 lerp(f32 a, f32 b, f32 t) {
+  f64 lerp(f64 a, f64 b, f64 t) {
     /*debugAssert(t>0 && t<1,
       "t must be between 0 and 1 for lerp");*/
     return a + t*(b-a);
   }
   
-  f32 perlinFade(f32 t) {
+  f64 perlinFade(f64 t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
 
-  f32 perlinGrad(i16 hash, f32 x, f32 y) {
+  f64 perlinGrad(i16 hash, f64 x, f64 y) {
    switch(hash & 0xf) {
    case 0x0: return  x + y;
    case 0x1: return -x + y;
@@ -62,7 +62,7 @@ NAMESPACE {
     
   }
   
-  f32 Perlin::getValue(Vec2f input) {
+  f64 Perlin::getValue(Vec2d input) {
 
     debugAssert(input.x() > 0 &&
 		input.y() > 0,
@@ -71,10 +71,10 @@ NAMESPACE {
     
     i16 xi = (i16) input.x() & SEED_MAX_VAL;
     i16 yi = (i16) input.y() & SEED_MAX_VAL;
-    f32 xf = input.x() - floor(input.x());
-    f32 yf = input.y() - floor(input.y());
-    f32 u = perlinFade(xf);
-    f32 v = perlinFade(yf);
+    f64 xf = input.x() - floor(input.x());
+    f64 yf = input.y() - floor(input.y());
+    f64 u = perlinFade(xf);
+    f64 v = perlinFade(yf);
 
     i16 aa, ab, ba, bb;
     aa = seed[seed[xi]+yi];
@@ -82,7 +82,7 @@ NAMESPACE {
     ba = seed[seed[xi+1]+yi];
     bb = seed[seed[xi+1]+yi+1];
 
-    f32 x1, x2;
+    f64 x1, x2;
     x1 = lerp(perlinGrad(aa, xf, yf), 
 	      perlinGrad(ba, xf-1, yf),
 	      u);

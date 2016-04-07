@@ -48,7 +48,6 @@ NAMESPACE {
     for (auto& obj : moving_objects) {
 
       auto& comp = obj->getComponent<DynamicPhysicsComp>();
-      
       engine->traverseStatic<StaticPhysicsComp>
 	(obj->getLooseBoundingObject(),
 	 [&obj, &comp, &num_checks, &num_collisions]

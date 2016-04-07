@@ -4,13 +4,14 @@
 #include "FileIO.hpp"
 #include "VectorIO.hpp"
 #include "Interp.hpp"
+#include "Tree.hpp"
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 50;//300.0f;
+  const f32 Terrain::CHUNK_SIZE = 150.0f;
   //width of the chunk in vertices
   //must be power of 2 minus 1
-  const u32 Terrain::CHUNK_RES = 17;//127;
+  const u32 Terrain::CHUNK_RES = 33;//65;//127;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
@@ -52,59 +53,7 @@ NAMESPACE {
     
     BoundingGround bound
       ([ter](Vec2f p, Vec3f* norm) -> f32 {
-	
-	Vec2f rel_pos = p - ter->chunk_pos_offset.xy() +
-	  Vec2f(Terrain::CHUNK_SIZE,Terrain::CHUNK_SIZE)/2;
-	const f32 rel_div = (Terrain::CHUNK_SIZE-Terrain::CHUNK_STEP);
-	i32 x_chunk_index = rel_pos.x()/rel_div;
-	i32 y_chunk_index = rel_pos.y()/rel_div;
-	
-	if (rel_pos.cx() < 0 ||
-	    rel_pos.cy() < 0 ||
-	    x_chunk_index >= ter->size.cx() ||
-	    y_chunk_index >= ter->size.cy()) {
-	  return -FLT_MAX;
-	}
-	
-	TerrainRenderable* rend = &Terrain::chunk_meshes
-	  [x_chunk_index*ter->size.cx() + y_chunk_index];
-
-	f32 rel_x = rel_pos.x() -
-	  x_chunk_index*rel_div;
-	f32 rel_y = rel_pos.y() -
-	  y_chunk_index*rel_div;
-	u32 x_mesh_index = rel_x;
-	u32 y_mesh_index = rel_y;
-	Vec2f rem(rel_x - x_mesh_index,
-		  rel_y - y_mesh_index);
-
-	x_mesh_index /= Terrain::CHUNK_STEP;
-	y_mesh_index /= Terrain::CHUNK_STEP;
-	
-	f32 heights[4];
-	Vec3f norms[4];
-	
-	heights[0] = rend->height_data
-	  [x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
-	heights[1] = rend->height_data
-	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
-	heights[2] = rend->height_data
-	  [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
-        heights[3] = rend->height_data
-	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
-	
-	norms[0] = rend->normal_data
-	  [x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
-	norms[1] = rend->normal_data
-	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
-	norms[2] = rend->normal_data
-	  [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
-        norms[3] = rend->normal_data
-	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
-	
-	*norm = biLerp(rem, norms);
-	return biLerp(rem, heights);
-	
+	return ter->heightAtPoint(p, norm);
       });
     tight_object.set(&bound);
 
@@ -234,7 +183,8 @@ NAMESPACE {
 
     TerrainGenerator gen(pos,
 			 size*CHUNK_SIZE,
-			 size/2);
+			 size*2,
+			 Vec2f(CHUNK_STEP, CHUNK_STEP));
     u32 n = 0;
     Array<Vec3f> data;
     data.reserve(sqr(CHUNK_RES));
@@ -314,6 +264,13 @@ NAMESPACE {
 	    Vec3f norm = computeNormal(pos, points);
 	    save(file, norm);
 	  }
+	}
+
+	Array<TreeData> trees = gen.getChunkTrees();
+	fio::writeLittleEndian(file, trees.size());
+	for (TreeData tree : trees) {
+	  save(file, tree.pos);
+	  fio::writeLittleEndian(file, tree.type);
 	}
 
 	//aabb center and halves
@@ -427,6 +384,15 @@ NAMESPACE {
       }
     }
 
+    u32 num_trees = fio::readLittleEndian<u32>(file);
+    for (u32 n=0; n<num_trees; ++n) {
+      Vec2f pos;
+      load(file, &pos);
+      f32 height = heightAtPoint(pos, NULL);
+      Engine::emplaceStatic<Tree>
+	(fio::readLittleEndian<TreeType>(file), Vec3f(pos, height));
+    }
+
     BoundingAABB aabb;
     load(file, &aabb.center);
     load(file, &aabb.halves);
@@ -436,6 +402,61 @@ NAMESPACE {
 
     mesh->init();
     
+  }
+
+  f32 Terrain::heightAtPoint(Vec2f p, Vec3f* norm) {
+	
+    Vec2f rel_pos = p - chunk_pos_offset.xy() +
+      Vec2f(Terrain::CHUNK_SIZE,Terrain::CHUNK_SIZE)/2;
+    const f32 rel_div = (Terrain::CHUNK_SIZE-Terrain::CHUNK_STEP);
+    i32 x_chunk_index = rel_pos.x()/rel_div;
+    i32 y_chunk_index = rel_pos.y()/rel_div;
+	
+    if (rel_pos.cx() < 0 ||
+	rel_pos.cy() < 0 ||
+	x_chunk_index >= size.cx() ||
+	y_chunk_index >= size.cy()) {
+      return -FLT_MAX;
+    }
+	
+    TerrainRenderable* rend = &Terrain::chunk_meshes
+      [x_chunk_index*size.cx() + y_chunk_index];
+
+    f32 rel_x = rel_pos.x() -
+      x_chunk_index*rel_div;
+    f32 rel_y = rel_pos.y() -
+      y_chunk_index*rel_div;
+    u32 x_mesh_index = rel_x;
+    u32 y_mesh_index = rel_y;
+    Vec2f rem(rel_x - x_mesh_index,
+	      rel_y - y_mesh_index);
+
+    x_mesh_index /= Terrain::CHUNK_STEP;
+    y_mesh_index /= Terrain::CHUNK_STEP;
+	
+    f32 heights[4];
+    heights[0] = rend->height_data
+      [x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
+    heights[1] = rend->height_data
+      [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
+    heights[2] = rend->height_data
+      [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
+    heights[3] = rend->height_data
+      [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+
+    if (norm) {
+      Vec3f norms[4];
+      norms[0] = rend->normal_data
+	[x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
+      norms[1] = rend->normal_data
+	[(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
+      norms[2] = rend->normal_data
+	[(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
+      norms[3] = rend->normal_data
+	[(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+      *norm = biLerp(rem, norms);
+    }
+    return biLerp(rem, heights);
   }
   
 }

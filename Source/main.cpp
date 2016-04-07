@@ -49,7 +49,7 @@ i32 main() {
       });
 
     Terrain terrain;
-    terrain.generate("Test",Vec3f(0,0,0),Vec2u(20,20));
+    terrain.generate("Test",Vec3f(0,0,0),Vec2u(7,7));
     terrain.loadFile("Test");
     for (u32 chunk_x = 0; chunk_x < terrain.size.x(); ++chunk_x) {
       for (u32 chunk_y = 0; chunk_y < terrain.size.y(); ++chunk_y) {
