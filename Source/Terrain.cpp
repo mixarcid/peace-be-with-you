@@ -8,7 +8,7 @@
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 150.0f;
+  const f32 Terrain::CHUNK_SIZE = 100.0f;
   //width of the chunk in vertices
   //must be power of 2 minus 1
   const u32 Terrain::CHUNK_RES = 33;//65;//127;
@@ -181,10 +181,14 @@ NAMESPACE {
       fio::writeLittleEndian<u64>(file, val);
     }
 
-    TerrainGenerator gen(pos,
+    TerrainGenerator gen(this,
+			 pos,
 			 size*CHUNK_SIZE,
 			 size*2,
-			 Vec2f(CHUNK_STEP, CHUNK_STEP));
+			 Vec2f(CHUNK_SIZE,
+			       CHUNK_SIZE),
+			 Vec2f(CHUNK_STEP,
+			       CHUNK_STEP));
     u32 n = 0;
     Array<Vec3f> data;
     data.reserve(sqr(CHUNK_RES));
@@ -202,6 +206,7 @@ NAMESPACE {
 
 	f32 max_z = -FLT_MAX;
 	f32 min_z = FLT_MAX;
+	
         for (u16 x = 0; x < CHUNK_RES; ++x) {
 	  for (u16 y = 0; y < CHUNK_RES; ++y) {
 
@@ -222,6 +227,8 @@ NAMESPACE {
 	}
 
 	//Time to compute some normals!
+	Array<Vec3f> norms;
+	norms.reserve(CHUNK_RES*CHUNK_RES);
 	for (u16 x = 0; x < CHUNK_RES; ++x) {
 	  for (u16 y = 0; y < CHUNK_RES; ++y) {
 
@@ -262,15 +269,9 @@ NAMESPACE {
 				(position + p));
 	    }
 	    Vec3f norm = computeNormal(pos, points);
+	    norms.push_back(norm);
 	    save(file, norm);
 	  }
-	}
-
-	Array<TreeData> trees = gen.getChunkTrees();
-	fio::writeLittleEndian(file, trees.size());
-	for (TreeData tree : trees) {
-	  save(file, tree.pos);
-	  fio::writeLittleEndian(file, tree.type);
 	}
 
 	//aabb center and halves
@@ -283,6 +284,28 @@ NAMESPACE {
 			     max_z - min_z)/2;
 	save(file, halves);
 
+	Array<TreeData> trees = gen.getChunkTrees();
+	Array<TreeData> new_trees(trees.size());
+	for (u32 n=0; n<trees.size(); ++n) {
+
+	  TreeData* tree = &trees[n];
+	  Vec2f local_pos = tree->pos -
+	    center.xy() +
+	    Vec2f(Terrain::CHUNK_SIZE,
+		  Terrain::CHUNK_SIZE)/2;
+	  Vec2u indexes = local_pos/CHUNK_STEP;
+	  Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
+
+	  if (norm.z() > 0.8) {
+	    new_trees.push_back(trees[n]);
+	  }
+	}
+	
+	fio::writeLittleEndian(file, new_trees.size());
+	for (TreeData tree : new_trees) {
+	  save(file, tree.pos);
+	  fio::writeLittleEndian(file, tree.type);
+	}
 	
 	u64 cur_pos = ftell(file);
 	fseek(file, chunk_table_pos + (n*sizeof(u64)), SEEK_SET);
@@ -384,15 +407,6 @@ NAMESPACE {
       }
     }
 
-    u32 num_trees = fio::readLittleEndian<u32>(file);
-    for (u32 n=0; n<num_trees; ++n) {
-      Vec2f pos;
-      load(file, &pos);
-      f32 height = heightAtPoint(pos, NULL);
-      Engine::emplaceStatic<Tree>
-	(fio::readLittleEndian<TreeType>(file), Vec3f(pos, height));
-    }
-
     BoundingAABB aabb;
     load(file, &aabb.center);
     load(file, &aabb.halves);
@@ -401,6 +415,15 @@ NAMESPACE {
     Engine::registerStatic(c);
 
     mesh->init();
+
+    u32 num_trees = fio::readLittleEndian<u32>(file);
+    for (u32 n=0; n<num_trees; ++n) {
+      Vec2f pos;
+      load(file, &pos);
+      f32 height = heightAtPoint(pos, NULL);
+      Engine::emplaceStatic<Tree>
+	(fio::readLittleEndian<TreeType>(file), Vec3f(pos, height));
+    }
     
   }
 
@@ -428,8 +451,8 @@ NAMESPACE {
       y_chunk_index*rel_div;
     u32 x_mesh_index = rel_x;
     u32 y_mesh_index = rel_y;
-    Vec2f rem(rel_x - x_mesh_index,
-	      rel_y - y_mesh_index);
+    Vec2f rem(/*1 -*/ (rel_x - x_mesh_index),
+	      /*1 -*/ (rel_y - y_mesh_index));
 
     x_mesh_index /= Terrain::CHUNK_STEP;
     y_mesh_index /= Terrain::CHUNK_STEP;

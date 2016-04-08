@@ -32,7 +32,7 @@ NAMESPACE {
 	       "Unable to load image %s", full_name);
     PEACE_GL_CHECK_ERROR;
     glTexImage2D(GL_TEXTURE_2D,
-		 0, GL_RGBA, width, height,
+		 0, GL_SRGB_ALPHA, width, height,
 		 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     PEACE_GL_CHECK_ERROR;
     glGenerateMipmap(GL_TEXTURE_2D);

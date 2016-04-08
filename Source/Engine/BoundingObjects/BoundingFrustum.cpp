@@ -67,8 +67,7 @@ NAMESPACE {
 	  (plane.xy(),
 	   Vec2f(aabb_bounds[px].x(),
 		 aabb_bounds[py].y()));
-	if (dot < -plane.w()) {
-	  //Log::message("%u, %f, %f", n, dot, plane.w());
+	if (dot < -0.99*plane.w()) {
 	  return false;
 	}
       }

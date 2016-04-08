@@ -369,7 +369,7 @@ NAMESPACE {
 	norm = Vec3f::cross(b->coord.col((axis-6)/3),
 			    a->coord.col((axis-6)%3));
 	//Log::message(to_string(norm.norm()));
-	if (norm.norm() < 0.1) {
+	if (norm.norm() < 0.001) {
 	  pen = face_pen;
 	  //Log::message("!!!!!!!!!!!!!!");
 	  if (face_axis < 3) {

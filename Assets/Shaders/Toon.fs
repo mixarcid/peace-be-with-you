@@ -63,5 +63,6 @@ void main() {
   } else {
     s = texture(diffuse,texCoord).xyz;
   }
-  outColor = vec4(s,1);//vec4(texture(normal, texCoord));
+  vec3 gamma = vec3(1.0/2.2);
+  outColor = vec4(pow(s, gamma), 1);//vec4(texture(normal, texCoord));
 }

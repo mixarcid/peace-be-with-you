@@ -59,6 +59,12 @@ NAMESPACE {
     case 0:
       tree->nodes[node].objects.emplace_back(obj);
       break;
+      /*case 1:
+      {
+	Pointer<StaticObject> tmp = tree->nodes[node].objects[0];
+	tree->nodes[node].objects.clear();
+	forceInsert(node, tree, tmp, depth);
+	}*/
     default:
       forceInsert(node, tree, obj, depth);
       break;

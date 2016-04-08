@@ -13,14 +13,27 @@ NAMESPACE {
     BIOME_OCEAN
   };
 
+  struct TerrainGenerator;
+
   struct BiomeCenter {
 
+    TerrainGenerator* gen;
     Vec2f center;
+    f32 height;
+    u32 rand_seed;
     BiomeType biome;
     FrankNoise noise;
 
-    BiomeCenter(Vec2f _center, BiomeType _biome)
-      : center(_center), biome(_biome) {}
+    BiomeCenter(TerrainGenerator* _gen,
+		Vec2f _center,
+		f32 _height,
+		u32 _rand_seed,
+		BiomeType _biome)
+      : gen(_gen),
+	center(_center),
+	height(_height),
+	rand_seed(_rand_seed),
+	biome(_biome) {}
 
     f32 dataAtPoint(Vec2f pos,
 		    BiomeData* biome_data = NULL);
@@ -45,8 +58,11 @@ NAMESPACE {
 	step(Vec2f(size.x()/res.x(), size.y()/res.y())) {}
   };
 
+  struct Terrain;
+
   struct TerrainGenerator {
-    
+
+    Terrain* ter;
     Array<BiomeCenter> biome_centers;
     BiomeCenter* closest_biome_centers[4];
     
@@ -62,9 +78,11 @@ NAMESPACE {
     
     FrankNoise noise[5];
     
-    TerrainGenerator(Vec3f _pos,
+    TerrainGenerator(Terrain* _ter,
+		     Vec3f _pos,
 		     Vec2f _size,
 		     Vec2u _num_biomes,
+		     Vec2f chunk_size,
 		     Vec2f _internal_step);
     void setChunkCenter(Vec2f chunk_center);
     f32 dataAtPoint(Vec2f point,
