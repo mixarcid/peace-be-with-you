@@ -17,7 +17,7 @@ NAMESPACE {
     f32 getVolume();
     f32 getInertia(f32 mass);
     void transform(Transform t);
-    void render(RenderContext c);
+    Pointer<RenderableComp> getRenderable(Mat4f* model);
     Vec3f getCenter();
     
   };

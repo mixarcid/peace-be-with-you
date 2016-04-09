@@ -30,7 +30,6 @@ NAMESPACE {
   }
   
   void StaticMesh::render(RenderContext c) {
-    Shader::setFlags(RenderableComp::shader_flags);
     Shader::UNI_TEXTURE.registerTexture(tex);
     RenderableReg::render(c);
   }

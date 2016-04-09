@@ -17,6 +17,8 @@ out vec4 biome_data;
 out vec3 pos;
 
 void main() {
+
+  mat4 model = uniModel[gl_InstanceID];
   
 #ifdef SHADER_USE_COLOR
   color = inColor;
@@ -27,7 +29,7 @@ void main() {
 #endif
   
 #ifdef SHADER_USE_NORMAL
-  normal = normalize(transpose(inverse(mat3(uniModel))) * inNormal);
+  normal = normalize(transpose(inverse(mat3(model))) * inNormal);
 #endif
 
 #ifdef SHADER_3D
@@ -54,7 +56,7 @@ void main() {
 
 #ifdef SHADER_BILLBOARD
   vec4 center_world =
-    uniModel*vec4(uniBillboardCenter,1);
+    model*vec4(uniBillboardCenter,1);
   vec3 cam_right = vec3(uniViewProj[0][0],
 			uniViewProj[1][0],
 			uniViewProj[2][0]);
@@ -73,23 +75,20 @@ void main() {
   const float TERRAIN_CHUNK_STEP
     = (TERRAIN_CHUNK_SIZE / float(TERRAIN_CHUNK_RES));
   
-  gl_Position = uniViewProj*uniModel*vec4(inPositionTerrain,inHeight,1);
+  gl_Position = uniViewProj*(model)*vec4(inPositionTerrain,inHeight,1);
   tex = 20*(inPositionTerrain/(TERRAIN_CHUNK_SIZE*2)+1);
   tex = 0.25*(tex - floor(tex));
   biome_data = inBiomeData;
 #endif
   
 #ifdef SHADER_2D
-  vec4 t = (uniModel*uniViewProj)[0];
-  gl_Position = uniModel*uniViewProj*vec4(inPosition2d,0,1);
-  gl_PointSize = 100;
-#else
-  gl_PointSize = 10;//gl_Position.z < 1 ? 25 : 25/gl_Position.z;
+  vec4 t = (model*uniViewProj)[0];
+  gl_Position = (model)*uniViewProj*vec4(inPosition2d,0,1);
 #endif
 
 #if defined(SHADER_3D) && !defined(SHADER_TERRAIN)
-  gl_Position = uniViewProj*uniModel*vec4(position,1);
+  gl_Position = uniViewProj*(model)*vec4(position,1);
 #endif
-  
+  gl_PointSize = 100/sqrt(gl_Position.z);
   pos = gl_Position.xyz;
 }

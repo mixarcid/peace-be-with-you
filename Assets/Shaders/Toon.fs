@@ -1,5 +1,8 @@
 uniform sampler2D diffuse;
 uniform sampler2D normal;
+uniform sampler2D offset;
+uniform sampler2D depth;
+
 in vec2 texCoord;
 out vec4 outColor;
 
@@ -18,8 +21,21 @@ vec4 sobel(sampler2D tex, vec2 coord, vec2 d) {
   return sqrt(sx * sx + sy * sy);
 }
 
+vec4 boxBlur(sampler2D tex, vec2 coord, vec2 d) {
+  vec4 reg = texture(tex, vec2(coord.x, coord.y));
+  vec4 top = texture(tex, vec2(coord.x, coord.y + d.y));
+  vec4 bottom = texture(tex, vec2(coord.x, coord.y - d.y));
+  vec4 left = texture(tex, vec2(coord.x - d.x, coord.y));
+  vec4 right = texture(tex, vec2(coord.x + d.x, coord.y));
+  vec4 topLeft = texture(tex, vec2(coord.x - d.x, coord.y + d.y));
+  vec4 topRight = texture(tex, vec2(coord.x + d.x, coord.y + d.y));
+  vec4 bottomLeft = texture(tex, vec2(coord.x - d.x, coord.y - d.y));
+  vec4 bottomRight = texture(tex, vec2(coord.x + d.x, coord.y - d.y));
+  return (reg+top+bottom+left+right+topLeft+topRight+bottomLeft+bottomRight)/9;
+}
+
 float rand(float num) {
-  return fract(sin(num) * 43758.5453) - 0.5;
+  return fract(sin(num) * 4374358.5453) - 0.5;
 }
 
 float interp(float a, float b, float x) {
@@ -55,14 +71,14 @@ void main() {
     (0.2, 0.6,
      0.3, 0.5);
   float seed = dot(texCoord, vec2(12.9898,78.233))*0.5;
-  vec2 offset = vec2(noise(seed), noise(seed+8327))*0.005;
-  vec3 s = sobel(normal, texCoord + offset, d).xyz;
-  if (length(s) > 0.9) {
-    float l = 1 - length(s);
-    s = vec3(l,l,l);
-  } else {
-    s = texture(diffuse,texCoord).xyz;
-  }
+  vec2 o = boxBlur(offset, texCoord, d).xy - vec2(0.5);
+  vec3 s = sobel(normal, texCoord + o*0.05, d).xyz;
+  vec3 ret = texture(diffuse, texCoord).xyz;
+  /*if (length(s) > 1.4) {
+    float l = (s.x + s.y + s.z)*(2/3.0);
+    ret = vec3(1) - vec3(l,l,l);
+    }*/
   vec3 gamma = vec3(1.0/2.2);
-  outColor = vec4(pow(s, gamma), 1);//vec4(texture(normal, texCoord));
+  //ret = vec3(o, 0);
+  outColor = vec4(pow(ret, gamma), 1);//vec4(texture(normal, texCoord));
 }

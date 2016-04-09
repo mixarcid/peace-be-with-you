@@ -3,6 +3,7 @@
 #include "Shader.hpp"
 #include "FBO.hpp"
 #include "ScreenQuad.hpp"
+#include "Texture.hpp"
 
 NAMESPACE {
 
@@ -15,10 +16,15 @@ NAMESPACE {
     ShaderVar screen_coord;
     ShaderUniform diffuse_uniform;
     ShaderUniform normal_uniform;
+    ShaderUniform offset_uniform;
+    ShaderUniform depth_uniform;
 
     FBO g_buffer;
     Texture diffuse;
     Texture normal;
+    Texture offset;
+    Texture depth;
+    Texture paint;
 
     Vec2i window_size;
 
@@ -29,7 +35,7 @@ NAMESPACE {
     void prepare();
     //call after
     void finalize();
-    
+
   };
 
 }

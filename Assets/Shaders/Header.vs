@@ -1,4 +1,6 @@
 const uint MAX_BONES = 50u;
+const uint MAX_MODEL_MATS = 1000u;
+
 struct Bone {
   vec3 trans;
   vec4 rot;
@@ -52,7 +54,7 @@ in vec4 inBiomeData;
 
 
 layout(std140) uniform _uniModel {
-  mat4 uniModel;
+  mat4 uniModel[MAX_MODEL_MATS];
 };
 
 layout(std140) uniform _uniViewProj {

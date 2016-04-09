@@ -193,6 +193,7 @@ NAMESPACE {
   struct Shader {
 
     u32 id;
+    u32 cur_tex_id;
     ShaderSettings settings;
     ShaderFlags flags;
     i32 flag_ids[SHADER_ALL_FLAGS+1];
@@ -208,8 +209,15 @@ NAMESPACE {
     void _use_no_check();
     void localSetFlags(ShaderFlags shade_flags);
     
+    u32 newTextureId();
+    
     ShaderVar getVar(String name, ShaderTypeName type);
     ShaderUniform getUniform(String name, u32 num=0);
+    
+    inline ShaderUniform getTexUniform(String name) {
+      return getUniform(name, newTextureId());
+    }
+    
     ShaderUniform getUniformBuffer(String name,
 				   u32 size,
 				   u32 num=0);
@@ -234,12 +242,14 @@ NAMESPACE {
     static GlobalShaderUniform UNI_AMBIENT;
     static GlobalShaderUniform UNI_COLOR;
     static GlobalShaderUniform UNI_BILLBOARD_CENTER;
+    static GlobalShaderUniform UNI_PAINT;
 
     static Shader* cur_shader;
 
     const static u8 MAX_BONES = 50;
     const static u8 MAX_BONES_PER_VERTEX = 4;
     const static u8 MAX_DIR_LIGHTS = 1;
+    const static u32 MAX_MODEL_MATS = 1000;
 
     const static Vec4f DEFAULT_COLOR;
     

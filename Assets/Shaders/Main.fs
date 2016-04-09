@@ -1,5 +1,7 @@
 out vec4 outColor;
 out vec3 outNormal;
+out vec2 outOffset;
+//out vec3 outDepth;
 
 #ifdef SHADER_USE_COLOR
 flat in vec4 color;
@@ -75,5 +77,13 @@ void main() {
 #ifdef SHADER_2D
   outColor *= uniColor;
 #endif
-  
+
+#ifdef SHADER_USE_TEXTURE
+  outOffset = texture(uniPaint, vec2(0.5) + 0.5*norm.xy).xy;
+#else
+  outOffset = vec2(0.5,0.5);
+#endif
+
+  //outDepth = vec3(gl_FragCoord);
+
 }

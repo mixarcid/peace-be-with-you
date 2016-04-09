@@ -15,7 +15,9 @@ NAMESPACE {
     glGenTextures(1, &this->id);
   }
   
-  void Texture::loadFromFile(String filename) {
+  void Texture::loadFromFile(String filename,
+			     TextureFlags flags,
+			     GLenum format) {
     PEACE_GL_CHECK_ERROR;
     i32 width, height;
     String full_name_str = DIR_TEXTURES + filename
@@ -23,6 +25,24 @@ NAMESPACE {
     const char* full_name = full_name_str.c_str();
 
     use();
+
+    i32 channels = SOIL_LOAD_AUTO;
+    GLenum internal_format = format;
+    
+    switch (format) {
+    case GL_RGB:
+      channels = SOIL_LOAD_RGB;
+      if (!(flags & TEXTURE_NO_GAMMA)) {
+	internal_format = GL_SRGB;
+      }
+      break;
+    case GL_RGBA:
+      channels = SOIL_LOAD_RGBA;
+      if (!(flags & TEXTURE_NO_GAMMA)) {
+	internal_format = GL_SRGB_ALPHA;
+      }
+      break;
+    }
     
     unsigned char* image =
       SOIL_load_image(full_name, &width, &height,
@@ -32,8 +52,8 @@ NAMESPACE {
 	       "Unable to load image %s", full_name);
     PEACE_GL_CHECK_ERROR;
     glTexImage2D(GL_TEXTURE_2D,
-		 0, GL_SRGB_ALPHA, width, height,
-		 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		 0, internal_format, width, height,
+		 0, format, GL_UNSIGNED_BYTE, image);
     PEACE_GL_CHECK_ERROR;
     glGenerateMipmap(GL_TEXTURE_2D);
     PEACE_GL_CHECK_ERROR;
@@ -60,10 +80,10 @@ NAMESPACE {
 
   }
 
-  void Texture::createEmpty(Vec2i size) {
+  void Texture::createEmpty(Vec2i size, GLenum format) {
     use();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x(), size.y(),
-		 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x(), size.y(),
+		 0, format, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,

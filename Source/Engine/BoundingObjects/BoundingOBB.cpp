@@ -61,12 +61,11 @@ NAMESPACE {
     return ret;
   }
 
-  void BoundingOBB::render(RenderContext c) {
-    Shader::UNI_MODEL.registerVal
-      (Mat4f::translate(center) *
-       Mat4f(coord) *
-       Mat4f::scale(halves));
-    RenderableShape::CUBE.render(c);
+  Pointer<RenderableComp> BoundingOBB::getRenderable(Mat4f* model) {
+    *model = (Mat4f::translate(center) *
+	      Mat4f(coord) *
+	      Mat4f::scale(halves));
+    return (RenderableComp*) &RenderableShape::CUBE;
   }
 
   Vec3f BoundingOBB::getCenter() {

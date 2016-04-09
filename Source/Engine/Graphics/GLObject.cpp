@@ -105,10 +105,10 @@ NAMESPACE {
     glBindBuffer(GL_ARRAY_BUFFER, id);
   }
 
-  void VBO::draw(GLenum mode) {
+  void VBO::draw(u32 instances, GLenum mode) {
     debugAssert(!(this->flags & PEACE_GL_UNINITIALIZED),
 		"You must initialize a VBO before drawing with it");
-    glDrawArrays(mode, 0, length);
+    glDrawArraysInstanced(mode, 0, length, instances);
   }
 
   EBO::EBO() : length(0) {}
@@ -134,11 +134,11 @@ NAMESPACE {
 		 dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   }
   
-  void EBO::draw(GLenum mode) {
+  void EBO::draw(u32 instances, GLenum mode) {
     debugAssert(!(this->flags & PEACE_GL_UNINITIALIZED),
 		"You must initialize an EBO before drawing with it");
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-    glDrawElements(mode, length, GL_UNSIGNED_INT, NULL);
+    glDrawElementsInstanced(mode, length, GL_UNSIGNED_INT, NULL, instances);
   }
 
 }

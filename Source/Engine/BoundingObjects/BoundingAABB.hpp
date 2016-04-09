@@ -16,7 +16,7 @@ NAMESPACE {
     f32 getInertia(f32 mass);
     //current algorithm doesn't hadnle rotations
     void transform(Transform t);
-    void render(RenderContext c);
+    Pointer<RenderableComp> getRenderable(Mat4f* model);
     
   };
 

@@ -24,3 +24,5 @@ layout(std140) uniform _uniColor {
   vec4 uniColor;
 };
 #endif
+
+uniform sampler2D uniPaint;

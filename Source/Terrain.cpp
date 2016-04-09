@@ -8,10 +8,10 @@
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 100.0f;
+  const f32 Terrain::CHUNK_SIZE = 300.0f;//100.0f;
   //width of the chunk in vertices
   //must be power of 2 minus 1
-  const u32 Terrain::CHUNK_RES = 33;//65;//127;
+  const u32 Terrain::CHUNK_RES = 127;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 

@@ -35,17 +35,17 @@ NAMESPACE {
   static const f32 DIST_MULTIPLIER_LARGE = 0.02;
   static const f32 DIST_MULTIPLIER_SMALL = 1.5;
   void TerrainRenderable::render(RenderContext c) {
-    Shader::setFlags(RenderableComp::shader_flags);
     Shader::UNI_TEXTURE.registerTexture(tex);
     vao.use();
-    if (c.dist > DIST_MULTIPLIER_LARGE
+    f32 dist = c.dist.norm();
+    if (dist > DIST_MULTIPLIER_LARGE
 	*sqr(Terrain::CHUNK_SIZE)) {
-      Terrain::elem_buffer_small.draw();
-    } else if (c.dist > DIST_MULTIPLIER_SMALL
+      Terrain::elem_buffer_small.draw(c.instances);
+    } else if (dist > DIST_MULTIPLIER_SMALL
 	       *Terrain::CHUNK_SIZE) {
-      Terrain::elem_buffer_mid.draw();
+      Terrain::elem_buffer_mid.draw(c.instances);
     } else {
-      Terrain::elem_buffer_large.draw();
+      Terrain::elem_buffer_large.draw(c.instances);
     }
   }
 

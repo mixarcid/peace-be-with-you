@@ -47,7 +47,6 @@ NAMESPACE {
   }
 
   void GUIElem::render(RenderContext c) {
-    Shader::setFlags(RenderableComp::shader_flags);
     tex->use();
     RenderableReg::render(c);
   }

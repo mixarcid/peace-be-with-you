@@ -19,11 +19,10 @@ NAMESPACE {
     center += t.trans;
   }
 
-  void BoundingAABB::render(RenderContext c) {
-    Shader::UNI_MODEL.registerVal
-      (Mat4f::translate(center) *
-       Mat4f::scale(halves));
-    RenderableShape::CUBE.render(c);
+  Pointer<RenderableComp> BoundingAABB::getRenderable(Mat4f* model) {
+    *model = (Mat4f::translate(center) *
+	      Mat4f::scale(halves));
+    return (RenderableComp*) &RenderableShape::CUBE;
   }
   
   Vec3f BoundingAABB::getCenter() {

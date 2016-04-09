@@ -34,7 +34,7 @@ NAMESPACE {
 
   Array<GlobalShaderVar*> GlobalShaderVar::vars[SHADER_ALL_FLAGS+1];
   Array<GlobalShaderUniform*> GlobalShaderUniform::uniforms[SHADER_ALL_FLAGS+1];
-  
+    
   const GlobalShaderVar Shader::POSITION
     ("inPosition", SHADER_3D, 0, SHADER_TYPE_VECTOR3F);
   const GlobalShaderVar Shader::COLOR
@@ -58,10 +58,12 @@ NAMESPACE {
     ("inBiomeData", SHADER_TERRAIN, 9, SHADER_TYPE_VECTOR4UB,
      SHADER_VAR_NORMALIZE);
   
+  const u8 GLOBAL_TEXTURES = 1;
+  
   GlobalShaderUniform Shader::UNI_TEXTURE
     ("uniTexture", SHADER_USE_TEXTURE, sizeof(i32), 0, false);
   GlobalShaderUniform Shader::UNI_MODEL
-    ("uniModel", ~SHADER_NO_FLAGS, sizeof(Mat4f));
+    ("uniModel", ~SHADER_NO_FLAGS, MAX_MODEL_MATS*sizeof(Mat4f));
   GlobalShaderUniform Shader::UNI_VIEW_PROJ
     ("uniViewProj", ~SHADER_NO_FLAGS, sizeof(Mat4f));
   GlobalShaderUniform Shader::UNI_BONES
@@ -74,11 +76,14 @@ NAMESPACE {
     ("uniColor", SHADER_2D, sizeof(Vec4f));
   GlobalShaderUniform Shader::UNI_BILLBOARD_CENTER
     ("uniBillboardCenter", SHADER_BILLBOARD, sizeof(Vec3f));
+  GlobalShaderUniform Shader::UNI_PAINT
+    ("uniPaint", SHADER_ALL_FLAGS, sizeof(i32), 1, false);
   
   Shader* Shader::cur_shader = NULL;
 
   const u8 Shader::MAX_BONES;
   const u8 Shader::MAX_BONES_PER_VERTEX;
+  const u32 Shader::MAX_MODEL_MATS;
 
   const Vec4f Shader::DEFAULT_COLOR(1,1,1,1);
   
@@ -167,6 +172,7 @@ NAMESPACE {
 		   NULL,
 		   GL_DYNAMIC_DRAW);
     }
+    PEACE_GL_CHECK_ERROR;
   }
 
   void ShaderUniform::keepBuffer(u32 shader_id,
@@ -239,7 +245,9 @@ NAMESPACE {
   }
 
   Shader::Shader(ShaderSettings _settings)
-    : settings(_settings | SHADER_UNINITIALIZED), flags(SHADER_NO_FLAGS) {}
+    : cur_tex_id(SHADER_PLAIN ? 0 : GLOBAL_TEXTURES),
+    settings(_settings | SHADER_UNINITIALIZED),
+    flags(SHADER_NO_FLAGS) {}
 
   Shader::~Shader() {
     if (!(settings & SHADER_UNINITIALIZED)) {
@@ -431,5 +439,9 @@ NAMESPACE {
     debugAssert(cur_shader != NULL,
 		"You must use a shader before setting flags");
     cur_shader->localSetFlags(flags);
+  }
+
+  u32 Shader::newTextureId() {
+    return cur_tex_id++;
   }
 }

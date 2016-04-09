@@ -64,7 +64,8 @@ NAMESPACE {
       		   dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
     void use();
-    void draw(GLenum mode = gl::getDrawMode());
+    void draw(u32 instances = 1,
+	      GLenum mode = gl::getDrawMode());
 
   };
 
@@ -80,7 +81,8 @@ NAMESPACE {
     //the new array must be the same size as before
     /*void rebindArray(Array<u32> arr, bool dynamic,
       u32 index = 0);*/
-    void draw(GLenum mode = gl::getDrawMode());
+    void draw(u32 instances = 1,
+	      GLenum mode = gl::getDrawMode());
 
   };
   

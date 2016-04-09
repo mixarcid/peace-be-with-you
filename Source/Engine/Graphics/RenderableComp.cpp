@@ -13,9 +13,8 @@ NAMESPACE {
   }
   
   void RenderableReg::render(RenderContext c) {
-    Shader::setFlags(RenderableComp::shader_flags);
     vao.use();
-    ebo.draw();
+    ebo.draw(c.instances);
   }
 
 }

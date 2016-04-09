@@ -7,20 +7,22 @@
 NAMESPACE {
 
   struct RenderContext {
+    u32 instances;
     f32 dt;
-    f32 dist;
+    Vec3f dist;
   };
 
   struct RenderableComp : Component {
 
     ShaderFlags shader_flags;
 
+    virtual void render(RenderContext c) = 0;
+    
     RenderableComp(ShaderFlags _shader_flags)
       : shader_flags(_shader_flags) {
       $rttiConstruct("RenderableComp");
     }
-    virtual void render(RenderContext c) = 0;
-    
+      
   };
   $registerRttiStruct();
   

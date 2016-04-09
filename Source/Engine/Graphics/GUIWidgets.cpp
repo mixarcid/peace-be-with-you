@@ -167,7 +167,6 @@ NAMESPACE {
   }
   
   void GUIBasicTextBox::render(RenderContext c) {
-    Shader::setFlags(RenderableComp::shader_flags);
     Shader::UNI_COLOR.registerVal(color);
     tex->use();
     RenderableReg::render(c);

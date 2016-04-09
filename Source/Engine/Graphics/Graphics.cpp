@@ -39,34 +39,47 @@ NAMESPACE {
 
   static inline bool renderFunc(Graphics* graphics,
 				Pointer<GameObject>& obj,
-				RenderableComp* comp,
-				RenderContext c,
-				Mat4f model) {
+				RenderableComp* comp) {
     
     BoundingObject* bound = obj->getLooseBoundingObject();
     if (!graphics->frustum.intersects(bound)) {
       return false;
     }
-    
-    Vec3f dist = graphics->cam->getTrans() - obj->getTrans();
-    c.dist = dist.norm();
-    Mat4f comb = model*obj->getMat();
-    Shader::UNI_MODEL.registerVal(comb);
-    comp->render(c);
 
+    Vec3f dist = graphics->cam->getTrans() - obj->getTrans();
+    Mat4f model = obj->getMat();
+    graphics->_addRenderable(comp, model, dist);
+    
     if (graphics->flags & GRAPHICS_RENDER_BOUNDING_LOOSE) {
-      bound->render(c);
+      RenderableComp* p = bound->getRenderable(&model);
+      if (p) {
+	graphics->_addRenderable(p, model, dist);
+      }
     }
     if (graphics->flags & GRAPHICS_RENDER_BOUNDING_TIGHT) {
       bound = obj->getTightBoundingObject();
-      bound->render(c);
+      RenderableComp* p = bound->getRenderable(&model);
+      if (p) {
+	graphics->_addRenderable(p, model, dist);
+      }
     }
-    
     return true;
+  }
+  
+  void Graphics::_addRenderable(RenderableComp* c,
+				Mat4f model,
+				Vec3f dist) {
+    _renderables[c].dist = dist;
+    if (_renderables[c].mats.back().size() >=
+	       Shader::MAX_MODEL_MATS) {
+      _renderables[c].mats.emplace_back();
+    }
+    _renderables[c].mats.back().push_back(model);
   }
 
   void Graphics::initRender() {
     renderer.prepare();
+    _renderables.clear();
 
     Shader::setFlags(SHADER_ALL_FLAGS);
     Shader::UNI_DIR_LIGHTS
@@ -84,15 +97,10 @@ NAMESPACE {
   
   void Graphics::renderDynamic() {
     
-    Mat4f model;
-    RenderContext c;
-    c.dt = engine->dt;
-
     engine->traverseDynamic<RenderableComp>
-      (&frustum, [this, c, model]
+      (&frustum, [this]
        (Pointer<DynamicObject>& obj, Pointer<RenderableComp>& comp) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>&)obj,
-		       comp, c, model)) {
+	if (renderFunc(this, (Pointer<GameObject>&)obj, comp)) {
 	}
 	return true;
       });
@@ -101,15 +109,10 @@ NAMESPACE {
   
   void Graphics::renderStatic() {
     
-    Mat4f model;
-    RenderContext c;
-    c.dt = engine->dt;
-
     engine->traverseStatic<RenderableComp>
-      (&frustum, [this, c, model]
+      (&frustum, [this]
        (Pointer<StaticObject>& obj, Pointer<RenderableComp>& comp) -> bool {
-	if (renderFunc(this, (Pointer<GameObject>&)obj,
-		       comp, c, model)) {
+	if (renderFunc(this, (Pointer<GameObject>&)obj, comp)) {
 	}
 	return true;
       });
@@ -121,6 +124,21 @@ NAMESPACE {
     Mat4f model;
     RenderContext c;
     c.dt = engine->dt;
+
+    for (auto& pair : _renderables) {
+      RenderableComp* rend = pair.first;
+      c.dist = pair.second.dist;
+      for (auto& arr : pair.second.mats) {
+	c.instances = arr.size();
+	PEACE_GL_CHECK_ERROR;
+	Shader::setFlags(rend->shader_flags);
+	PEACE_GL_CHECK_ERROR;
+	Shader::UNI_MODEL.registerArray(arr);
+	PEACE_GL_CHECK_ERROR;
+	rend->render(c);
+	PEACE_GL_CHECK_ERROR;
+      }
+    }
     
     renderer.finalize();
 

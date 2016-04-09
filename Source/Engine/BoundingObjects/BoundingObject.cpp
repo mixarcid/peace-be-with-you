@@ -112,17 +112,16 @@ NAMESPACE {
     }
   }
 
-  void BoundingObject::render(RenderContext c) {
+  Pointer<RenderableComp> BoundingObject::getRenderable(Mat4f* model) {
     switch(this->type) {
       FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
     case BoundingObject::$(entry):
-      ((Bounding$(className(entry))*)this)->render(c);
-      break;
+      return ((Bounding$(className(entry))*)this)->getRenderable(model);
       END_FOR;
     case BoundingObject::NONE:
     case BoundingObject::ALL:
     case BoundingObject::LAST:
-      break;
+      return Pointer<RenderableComp>::null;
     }
   }
 
