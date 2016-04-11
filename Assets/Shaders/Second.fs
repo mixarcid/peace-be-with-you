@@ -21,7 +21,7 @@ vec4 sobel(sampler2D tex, vec2 coord, vec2 d) {
   return sqrt(sx * sx + sy * sy);
 }
 
-vec4 boxBlur(sampler2D tex, vec2 coord, vec2 d) {
+vec4 convolve(sampler2D tex, vec2 coord, vec2 d, mat3 mat) {
   vec4 reg = texture(tex, vec2(coord.x, coord.y));
   vec4 top = texture(tex, vec2(coord.x, coord.y + d.y));
   vec4 bottom = texture(tex, vec2(coord.x, coord.y - d.y));
@@ -31,8 +31,11 @@ vec4 boxBlur(sampler2D tex, vec2 coord, vec2 d) {
   vec4 topRight = texture(tex, vec2(coord.x + d.x, coord.y + d.y));
   vec4 bottomLeft = texture(tex, vec2(coord.x - d.x, coord.y - d.y));
   vec4 bottomRight = texture(tex, vec2(coord.x + d.x, coord.y - d.y));
-  return (reg+top+bottom+left+right+topLeft+topRight+bottomLeft+bottomRight)/9;
-}
+  return ((topLeft*mat[0][0] + top*mat[1][0] + topRight*mat[2][0] +
+	   left*mat[0][1] + reg*mat[1][1] + right*mat[2][1] +
+	   bottomLeft*mat[0][2] + bottom*mat[1][2] + bottomRight*mat[2][2])
+	  / float(9));
+	  }
 
 float rand(float num) {
   return fract(sin(num) * 4374358.5453) - 0.5;
@@ -67,18 +70,42 @@ void main() {
 
   vec2 res = textureSize(normal,0);
   vec2 d = vec2(1/res.x, 1/res.y);
-  mat2 m = mat2
-    (0.2, 0.6,
-     0.3, 0.5);
-  float seed = dot(texCoord, vec2(12.9898,78.233))*0.5;
-  vec2 o = boxBlur(offset, texCoord, d).xy - vec2(0.5);
-  vec3 s = sobel(normal, texCoord + o*0.05, d).xyz;
-  vec3 ret = texture(diffuse, texCoord).xyz;
-  /*if (length(s) > 1.4) {
-    float l = (s.x + s.y + s.z)*(2/3.0);
-    ret = vec3(1) - vec3(l,l,l);
-    }*/
-  vec3 gamma = vec3(1.0/2.2);
-  //ret = vec3(o, 0);
-  outColor = vec4(pow(ret, gamma), 1);//vec4(texture(normal, texCoord));
+
+  float cur_depth = texture(depth, texCoord).r;
+  float depths[4];
+  depths[0] = texture(depth, texCoord + vec2(-d.x, -d.x)).r;
+  depths[1] = texture(depth, texCoord + vec2(-d.x, d.y)).r;
+  depths[2] = texture(depth, texCoord + vec2(d.x, -d.y)).r;
+  depths[3] = texture(depth, texCoord + vec2(d.x, d.y)).r;
+  float max_depth = max(max(max(depths[0], depths[1]), depths[2]), depths[3]);
+
+  vec2 off = vec2(1,1);
+  if (depths[0] == max_depth) {
+    off *= vec2(-d.x, -d.y);
+  } else if(depths[1] == max_depth) {
+    off *= vec2(-d.x, d.y);
+  } else if(depths[2] == max_depth) {
+    off *= vec2(d.x, -d.y);
+  } else if(depths[3] == max_depth) {
+    off *= vec2(d.x, d.y);
+  }
+
+  vec2 brush =  texture(offset, texCoord).rg - vec2(0.5);
+  off *= brush*15*cur_depth;
+  vec3 ret;
+  if (texture(depth, texCoord - off).r < texture(depth, texCoord).r) {
+    ret = texture(diffuse, texCoord).rgb;
+  } else {
+    ret = texture(diffuse, texCoord - off).rgb;
+  }
+  float sn = length(sobel(normal, texCoord, d).rgb);
+  float sd = sobel(depth, texCoord, d).r;
+  
+ if (sn*0.9 + sd*0.1 > cur_depth*1.8) {
+    ret = vec3(0);
+ }
+ //ret = vec3(sn*0.5 + sd*0.5);
+ vec3 gamma = vec3(1.0/2.2);
+ //ret = vec3(o, 0);
+ outColor = vec4(pow(ret, gamma), 1);//vec4(texture(normal, texCoord));
 }

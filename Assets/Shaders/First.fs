@@ -1,7 +1,7 @@
 out vec4 outColor;
 out vec3 outNormal;
 out vec2 outOffset;
-//out vec3 outDepth;
+out float outDepth;
 
 #ifdef SHADER_USE_COLOR
 flat in vec4 color;
@@ -84,6 +84,6 @@ void main() {
   outOffset = vec2(0.5,0.5);
 #endif
 
-  //outDepth = vec3(gl_FragCoord);
+  outDepth = gl_FragCoord.z;//gl_FragCoord);
 
 }
