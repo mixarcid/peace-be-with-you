@@ -78,7 +78,7 @@ NAMESPACE {
   }
 
   void Graphics::initRender() {
-    renderer.prepare();
+    renderer.prepare(back_color);
     _renderables.clear();
 
     Shader::setFlags(SHADER_ALL_FLAGS);

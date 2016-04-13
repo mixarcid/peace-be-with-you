@@ -18,7 +18,7 @@ NAMESPACE {
   const u8 MID_REDUCTION = 2;
   const u8 SMALL_REDUCTION = 4;
 
-  Asset<Texture> Terrain::texture("TestTerrain");
+  Asset<Texture> Terrain::texture("Terrain");
   Array<TerrainRenderable> Terrain::chunk_meshes;
   EBO Terrain::elem_buffer_large;
   EBO Terrain::elem_buffer_mid;

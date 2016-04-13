@@ -41,7 +41,7 @@ NAMESPACE {
     void init(Vec2i win_size);
     void onWindowResize(Vec2i win_size);
     //call before rendering 3d objects
-    void prepare();
+    void prepare(Vec4f back_color);
     //call after
     void finalize();
 

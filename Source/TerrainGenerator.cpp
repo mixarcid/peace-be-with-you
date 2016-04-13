@@ -61,15 +61,15 @@ NAMESPACE {
 	f32 val = Noise::fractal
 	  ([this](Vec2f in, i32 index) -> f32 {
 	    f32 val = noise.getValue(in, index);
-	    if (abs(val) < 0.1) {
-	      val = val*val/0.1;
+	    if (abs(val) < 0.15) {
+	      val = val*val/0.15;
 	    } else {
 	      val = abs(val);
 	    }
 	    return 0.7 - val;
-	  }, pos/200, 5, 2.0, 0.5);
+	  }, pos/500, 5, 2.0, 0.5);
 	
-        ret += 50*val;
+        ret += 100*val;
 
 	if (biome_data) {
 
@@ -80,7 +80,7 @@ NAMESPACE {
 	  //Log::message(to_string(snow_level));
 	  if (snow_level > 255) snow_level = 255;
 	  if (snow_level < 50) snow_level = 0;
-	  biome_data->snow_level = snow_level;
+	  biome_data->snow_level = 0;//snow_level;
 	  biome_data->rock_level = 255 -
 	    biome_data->snow_level;
 	}
@@ -166,7 +166,7 @@ NAMESPACE {
 	    height = SEA_LEVEL + (rand()/(f32)RAND_MAX - 0.5)*5;
 	  } else {
 	    biome = BIOME_MOUNTAIN;
-	    height = SEA_LEVEL - 20 + (rand()/(f32)RAND_MAX - 0.5)*10;
+	    height = SEA_LEVEL - 50 + (rand()/(f32)RAND_MAX - 0.5)*50;
 	  }
 
 	  biome_centers.emplace_back(this, center, height, ++seed, biome);

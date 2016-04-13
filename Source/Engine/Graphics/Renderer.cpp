@@ -52,9 +52,9 @@ NAMESPACE {
 		"The G Buffer is not complete");
   }
   
-  void Renderer::prepare() {
+  void Renderer::prepare(Vec4f back_color) {
     first_shade.use();
-    g_buffer.clearTargets({Vec4f(1,1,1,1), Vec4f(1,0,0,1), Vec4f(0,0,0,1), Vec4f(0.5,0.5,0,1)});
+    g_buffer.clearTargets({back_color, Vec4f(1,0,0,1), Vec4f(0,0,0,1), Vec4f(0.5,0.5,0,1)});
     g_buffer.use();
     glViewport(0,0,window_size.x(),window_size.y());
     Shader::UNI_PAINT.registerTexture(paint);

@@ -76,8 +76,24 @@ void main() {
     = (TERRAIN_CHUNK_SIZE / float(TERRAIN_CHUNK_RES));
   
   gl_Position = uniViewProj*(model)*vec4(inPositionTerrain,inHeight,1);
-  tex = 20*(inPositionTerrain/(TERRAIN_CHUNK_SIZE*2)+1);
-  tex = 0.25*(tex - floor(tex));
+  tex = 20*(inPositionTerrain/(TERRAIN_CHUNK_SIZE*2));// - TERRAIN_CHUNK_STEP));
+  /*if (tex.x > TERRAIN_CHUNK_STEP*TERRAIN_CHUNK_RES/2.0) tex.x -= TERRAIN_CHUNK_STEP;
+  if (tex.y > TERRAIN_CHUNK_STEP*TERRAIN_CHUNK_RES/2.0) tex.y -= TERRAIN_CHUNK_STEP;
+  tex *= 20;*/
+  float step = 0.25*TERRAIN_CHUNK_STEP/20.0;
+  ivec2 itex = ivec2(floor(tex));
+  tex = (0.25-step)*(tex - itex);
+  tex += step;
+  /*float offset = float(TERRAIN_CHUNK_STEP)/float(20);
+  offset -= floor(offset);
+  offset *= 0.25;
+  tex.x = tex.x > 0.25 ? 0.5 - tex.x + offset : tex.x;
+  tex.y = tex.y > 0.25 ? 0.5 - tex.y + offset : tex.y;
+  tex.x = tex.x > 0.25 ? 0.5 - tex.x : tex.x;
+  tex.y = tex.y > 0.25 ? 0.5 - tex.y : tex.y;*/
+  if (itex.x % 2) tex.x = 0.25 - tex.x; //tex.x += step;
+  if (itex.y % 2) tex.y = 0.25 - tex.y; //tex.y += step;
+  
   biome_data = inBiomeData;
 #endif
   

@@ -43,6 +43,7 @@ NAMESPACE {
     BoundingFrustum frustum;
     Vec2i win_size;
     f32 ambient;
+    Vec4f back_color;
     GraphicsFlags flags;
 
     Graphics(Engine* _engine);

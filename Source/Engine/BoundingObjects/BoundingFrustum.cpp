@@ -49,9 +49,9 @@ NAMESPACE {
       BoundingFrustum* a = (BoundingFrustum*) oa;
       BoundingAABB2D* b = (BoundingAABB2D*) ob;
 
-      //BoundingAABB c(Vec3f(b->center, 0), Vec3f(b->halves, 10000));
-      //return c.intersects(a);
-      Vec2f aabb_bounds[2] = {
+      BoundingAABB c(Vec3f(b->center, 0), Vec3f(b->halves, 10000));
+      return c.intersects(a);
+      /*Vec2f aabb_bounds[2] = {
 	b->center - b->halves,
 	b->center + b->halves
       };
@@ -67,11 +67,11 @@ NAMESPACE {
 	  (plane.xy(),
 	   Vec2f(aabb_bounds[px].x(),
 		 aabb_bounds[py].y()));
-	if (dot < -0.99*plane.w()) {
+	if (dot < -plane.w()) {
 	  return false;
 	}
       }
-      return true;
+      return true;*/
     });
 
   COLLIDE_FUNC(FRUSTUM, SPHERE, {
