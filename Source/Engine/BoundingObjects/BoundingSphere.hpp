@@ -11,6 +11,8 @@ NAMESPACE {
     f32 radius;
 
     BoundingSphere() {}
+    BoundingSphere(Vec3f _center, f32 _radius)
+      : center(_center), radius(_radius) {}
     BoundingSphere(Array<BasicMeshData>& data);
     f32 getVolume();
     f32 getInertia(f32 mass);

@@ -42,8 +42,9 @@ NAMESPACE {
   
 
   ChildObject::ChildObject(Transform _diff,
-			   Pointer<DynamicObject>& _obj)
-    : diff(_diff), obj(_obj) {}
+			   Pointer<DynamicObject>& _obj,
+			   ChildObjectType _type)
+    : obj(_obj), diff(_diff), type(_type) {}
 
   DynamicObject::DynamicObject(Vec3f trans,
 			       Quaternionf rot)
@@ -79,8 +80,17 @@ NAMESPACE {
     Engine::registerMove(obj);
     
     for (const ChildObject& t : children) {
-      Transform trans(Transform::combine(getTransform(), t.diff));
-      t.obj->setTransform(trans);
+      switch(t.type) {
+      case CHILD_OBJECT_REGULAR:
+	{
+	  Transform trans(Transform::combine(getTransform(), t.diff));
+	  t.obj->setTransform(trans);
+	  break;
+	}
+      case CHILD_OBJECT_TRANSLATE:
+	t.obj->transAbs(getTrans() + t.diff.trans);
+	break;
+      }
       t.obj->onMove();
     }
 	
@@ -93,10 +103,18 @@ NAMESPACE {
 
   ChildObject* DynamicObject::addChild
     (Pointer<DynamicObject>& child,
-     Transform diff) {
-    child->setTransform(Transform::combine(getTransform(), diff));
+     Transform diff,
+     ChildObjectType type) {
+    switch(type) {
+    case CHILD_OBJECT_REGULAR:
+      child->setTransform(Transform::combine(getTransform(), diff));
+      break;
+    case CHILD_OBJECT_TRANSLATE:
+      child->transAbs(getTrans() + diff.trans);
+      break;
+    }
     child->onMove();
-    return children.push_back(ChildObject(diff, child));
+    return children.emplace_back(diff, child, type);
   }
   
 

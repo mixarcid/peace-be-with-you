@@ -4,6 +4,7 @@
 #include "FileIO.hpp"
 #include "VectorIO.hpp"
 #include "Interp.hpp"
+#include "Water.hpp"
 #include "Tree.hpp"
 
 NAMESPACE {
@@ -359,6 +360,9 @@ NAMESPACE {
     chunk_table_pos = ftell(file);
 
     ground_object = Engine::emplaceStatic<TerrainGround>(pos, this);
+    Engine::emplaceStatic<Water>
+      (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL),
+       Vec2f(10000, 10000));
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded terrain %s",
 		 filename.c_str());

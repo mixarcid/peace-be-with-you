@@ -143,8 +143,9 @@ NAMESPACE {
 			SHADER_3D = 0x20,
 			SHADER_TERRAIN = 0x40,
 			SHADER_BILLBOARD = 0x80,
-			SHADER_LAST_FLAG = 0x81,
-			SHADER_ALL_FLAGS = 0xff);
+			SHADER_WATER = 0x100,
+			SHADER_LAST_FLAG = 0x101,
+			SHADER_ALL_FLAGS = 0x1ff);
 
   /*
     SHADER_PLAIN is used to define a plain old shader,

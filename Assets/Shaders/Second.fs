@@ -104,8 +104,7 @@ void main() {
  if (sn*0.9 + sd*0.1 > cur_depth*1.8) {
     ret = vec3(0);
  }
- //ret = vec3(sn*0.5 + sd*0.5);
+ //ret = texture(normal, texCoord).rgb;
  vec3 gamma = vec3(1.0/2.2);
- //ret = vec3(o, 0);
  outColor = vec4(pow(ret, gamma), 1);//vec4(texture(normal, texCoord));
 }

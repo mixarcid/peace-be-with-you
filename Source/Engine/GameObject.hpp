@@ -60,13 +60,19 @@ NAMESPACE {
 
   struct DynamicObject;
 
+  PEACE_ENUM(ChildObjectType, 8,
+	     CHILD_OBJECT_REGULAR,
+	     CHILD_OBJECT_TRANSLATE);
+
   struct ChildObject  {
-    
-    Transform diff;
+
     Pointer<DynamicObject> obj;
+    Transform diff;
+    ChildObjectType type;
 
     ChildObject(Transform _diff,
-		Pointer<DynamicObject>& _obj);
+		Pointer<DynamicObject>& _obj,
+		ChildObjectType _type);
     
   };
 
@@ -86,7 +92,8 @@ NAMESPACE {
     void rotRel(Quaternionf rot);
     void rotAbs(Quaternionf rot);
     ChildObject* addChild(Pointer<DynamicObject>& child,
-			  Transform diff);
+			  Transform diff,
+			  ChildObjectType type = CHILD_OBJECT_REGULAR);
     void moveChildAbs(ChildObject* child,
 		      Transform diff);
     void moveChildRel(ChildObject* child,

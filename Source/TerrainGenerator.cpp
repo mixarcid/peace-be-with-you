@@ -7,7 +7,7 @@ NAMESPACE {
 
   const u8 TerrainGenerator::NUM_BIOME_TYPES = 5;
   const f32 TerrainGenerator::SEA_FLOOR_HEIGHT = -10;
-  const f32 TerrainGenerator::SEA_LEVEL = 20;
+  const f32 TerrainGenerator::SEA_LEVEL = 0;
 
   
   //const f32 INTERP_FACTOR = 10;
@@ -61,13 +61,13 @@ NAMESPACE {
 	f32 val = Noise::fractal
 	  ([this](Vec2f in, i32 index) -> f32 {
 	    f32 val = noise.getValue(in, index);
-	    if (abs(val) < 0.15) {
-	      val = val*val/0.15;
+	    if (abs(val) < 0.1) {
+	      val = val*val/0.1;
 	    } else {
 	      val = abs(val);
 	    }
 	    return 0.7 - val;
-	  }, pos/500, 5, 2.0, 0.5);
+	  }, pos/300, 5, 2.0, 0.5);
 	
         ret += 100*val;
 
@@ -76,11 +76,11 @@ NAMESPACE {
 	  f32 snow_level = Noise::fractal
 	    ([this](Vec2f in, i32 index) -> f32 {
 	      return noise.getPositive(in, index+6);
-	    }, pos/50, 3)*20 + ret - 10;
+	    }, pos/50, 3)*20 + ret - 50;
 	  //Log::message(to_string(snow_level));
 	  if (snow_level > 255) snow_level = 255;
 	  if (snow_level < 50) snow_level = 0;
-	  biome_data->snow_level = 0;//snow_level;
+	  biome_data->snow_level = snow_level;
 	  biome_data->rock_level = 255 -
 	    biome_data->snow_level;
 	}

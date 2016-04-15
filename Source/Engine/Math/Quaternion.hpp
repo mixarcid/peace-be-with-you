@@ -28,9 +28,9 @@ NAMESPACE {
     inline Quaternion(Vec3<T> axis, T angle) {
       T half = angle/2;
       T s = sin(half);
-      data[0] = axis.x * s;
-      data[1] = axis.y * s;
-      data[2] = axis.z * s;
+      data[0] = axis.x() * s;
+      data[1] = axis.y() * s;
+      data[2] = axis.z() * s;
       data[3] = cos(half);
     }
 
@@ -81,7 +81,7 @@ NAMESPACE {
     }
 
     inline T norm() const {
-      return sqrt(sqr(cx()) + sqr(y()) + sqr(cz()) + sqr(cw()));
+      return sqrt(sqr(cx()) + sqr(cy()) + sqr(cz()) + sqr(cw()));
     }
 
     inline void normalize() {

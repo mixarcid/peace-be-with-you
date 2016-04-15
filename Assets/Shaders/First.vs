@@ -34,6 +34,7 @@ void main() {
 
 #ifdef SHADER_3D
   vec3 position = inPosition;
+  pos = position;
 #endif
   
 #ifdef SHADER_SKELETAL
@@ -106,5 +107,4 @@ void main() {
   gl_Position = uniViewProj*(model)*vec4(position,1);
 #endif
   gl_PointSize = 100/sqrt(gl_Position.z);
-  pos = gl_Position.xyz;
 }

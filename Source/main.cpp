@@ -3,6 +3,7 @@
 #include "MonkeyHead.hpp"
 #include "Input.hpp"
 #include "Terrain.hpp"
+#include "Sun.hpp"
 
 using namespace peace;
 
@@ -15,8 +16,6 @@ i32 main() {
 #endif
 
     Engine::engine->graphics.ambient = 0;
-    Engine::engine->graphics.emplaceDirLight(Vec3f(-1,-1,1),
-					     Vec3f(1,1,1));
     
     Input::setManager("Main");
     Input::addFlags("Main", INPUT_CURSOR_DISABLED);
@@ -58,6 +57,8 @@ i32 main() {
     }
     
     Engine::emplaceDynamic<Player>(Vec3f(0,0,30));
+    Engine::emplaceDynamic<Sun>()->init((Pointer<DynamicObject>&)Player::ptr);
+				
     Engine::engine->graphics.back_color = Vec4f(0.3, 0.3, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));
     Engine::begin();

@@ -15,6 +15,10 @@ in vec2 tex;
 in vec3 normal;
 #endif
 
+#if defined(SHADER_USE_NORMAL) || defined(SHADER_WATER)
+#define HAS_NORMAL
+#endif
+
 #ifdef SHADER_TERRAIN
 in vec4 biome_data;
 #endif
@@ -24,8 +28,12 @@ in vec3 pos;
 void main() {
 
   outColor = vec4(1,1,1,1);
+
+#ifdef SHADER_WATER
+  vec3 normal = vec3(0,0,1);
+#endif
   
-#ifdef SHADER_USE_NORMAL
+#ifdef HAS_NORMAL
   
   outNormal = normal;
   vec3 norm = normalize(normal);
@@ -49,6 +57,8 @@ void main() {
   }
   outColor *= vec4(light_color, 1);
 #endif
+#else
+  outNormal = vec3(0,0,0);
 #endif
 
 #ifdef SHADER_USE_COLOR
@@ -57,6 +67,10 @@ void main() {
   
 #if defined(SHADER_USE_TEXTURE) && !defined(SHADER_TERRAIN)
   outColor *= texture(uniTexture, tex);
+#endif
+
+#ifdef SHADER_WATER
+  outColor *= vec4(0.1,0.1,1,1);
 #endif
 
 #ifdef SHADER_TERRAIN
@@ -78,7 +92,7 @@ void main() {
   outColor *= uniColor;
 #endif
 
-#ifdef SHADER_USE_TEXTURE
+#ifdef HAS_NORMAL
   outOffset = texture(uniPaint, vec2(0.5) + 0.5*norm.xy).xy;
 #else
   outOffset = vec2(0.5,0.5);
