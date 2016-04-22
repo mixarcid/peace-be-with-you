@@ -8,9 +8,12 @@
 using namespace peace;
 
 i32 main() {
+
+  f32 far_dist = 500;
   
   Engine::init();
-
+  Engine::engine->graphics.initCamera(degreesToRadians(60), 2.5, far_dist);
+  
 #ifndef N_DEBUG
   try {
 #endif
@@ -25,7 +28,7 @@ i32 main() {
 	  i32 code, i32 act, i32 mods) {
 	switch(key) {
 	case GLFW_KEY_ESCAPE:
-	  Engine::engine->flags &= ~ENGINE_RUNNING;
+	  Engine::stop();
 	  break;
 	case GLFW_KEY_1:
 	  gl::setGraphicsMode(PEACE_GL_TRIANGLES);
@@ -48,16 +51,16 @@ i32 main() {
       });
 
     Terrain terrain;
-    //terrain.generate("Test",Vec3f(0,0,0),Vec2u(7,7));
-    terrain.loadFile("Test");
-    for (u32 chunk_x = 0; chunk_x < terrain.size.x(); ++chunk_x) {
-      for (u32 chunk_y = 0; chunk_y < terrain.size.y(); ++chunk_y) {
+    //terrain.generate("Test2",Vec3f(0,0,0),Vec2u(5,5));
+    terrain.loadFile("Test2");
+    for (u32 chunk_x = 0; chunk_x < 5; ++chunk_x) {
+      for (u32 chunk_y = 0; chunk_y < 5; ++chunk_y) {
 	terrain.loadChunk(Vec2u(chunk_x,chunk_y));
       }
     }
     
     Engine::emplaceDynamic<Player>(Vec3f(0,0,30));
-    Engine::emplaceDynamic<Sun>()->init((Pointer<DynamicObject>&)Player::ptr);
+    Engine::emplaceDynamic<Sun>(far_dist-50)->init();
 				
     Engine::engine->graphics.back_color = Vec4f(0.3, 0.3, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));

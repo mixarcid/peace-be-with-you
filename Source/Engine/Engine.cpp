@@ -9,16 +9,20 @@ NAMESPACE {
 
   Engine::Engine()
     : dynamic_container(20.0f),
-    static_container(BoundingAABB2D
-		     (Vec2f(0,0),
-		      Vec2f(10000,10000)),
-		     8),
+    static_containers{
+    QuadTree(BoundingAABB2D
+	     (Vec2f(0,0),
+	      Vec2f(10000,10000)),
+	     8),
+      QuadTree(BoundingAABB2D
+	       (Vec2f(0,0),
+		Vec2f(10000,10000)),
+	       8)},
     graphics(this),
     physics(this),
     dt(0),
-    flags(ENGINE_NO_FLAGS) {
-      //dynamic_objects.reserve(200);
-    }
+    cam_move_radius(100),
+    flags(ENGINE_NO_FLAGS) {}
 
   Engine::~Engine() {
     if (flags * ENGINE_ASSETS_LOADED) {
@@ -59,14 +63,52 @@ NAMESPACE {
     delete engine;
   }
 
+  QuadTree* Engine::getStaticContainer(bool cur_container) {
+    QuadTree* ret;
+    flag_mutex.lock();
+    if (engine->flags & ENGINE_CONTAINER_FIRST) {
+      ret = &static_containers[cur_container];
+    } else {
+      ret = &static_containers[!cur_container];
+    }
+    flag_mutex.unlock();
+    return ret;
+  }
+  
+  void Engine::swapContainers() {
+    flag_mutex.lock();
+    engine->flags ^= ENGINE_CONTAINER_FIRST;
+    engine->flags |= ENGINE_CONTAINER_SWAP;
+    flag_mutex.unlock();
+  }
+
+  
   void Engine::registerMove(Pointer<DynamicObject>& obj) {
     engine->dynamic_container.update(obj);
+  }
+
+  void Engine::_container_update() {
+    while(true) {
+      flag_mutex.lock();
+      bool should_break =
+	!(engine->flags & ENGINE_CONTAINER_SWAP);
+      flag_mutex.unlock();
+      if (should_break) break;
+    }
+    getStaticContainer(false)->clear();
+    for (StaticObject& obj : static_objects) {
+      Pointer<StaticObject> p(&obj);
+      registerStatic(p, false);
+    }
+    swapContainers();
   }
   
   void Engine::loop() {
 
     if (glfwWindowShouldClose(engine->window)) {
+      engine->flag_mutex.lock();
       engine->flags &= ~ENGINE_RUNNING;
+      engine->flag_mutex.unlock();
       return;
     }
     
@@ -128,10 +170,52 @@ NAMESPACE {
 
     engine->prev_time.makeCurrent();
     engine->cur_time.makeCurrent();
-      
-    while(engine->flags & ENGINE_RUNNING) {
-      loop();
+
+    if (engine->graphics.cam) {
+      engine->prev_cam_pos = engine->graphics.cam->getTrans().xy();
     }
+
+    Thread container_thread
+      ([]() {
+	while(true) {
+
+	  engine->flag_mutex.lock();
+	  bool should_break =
+	    !(engine->flags & ENGINE_RUNNING);
+	  engine->flag_mutex.unlock();
+	  if (should_break) break;
+	  
+	  if (engine->graphics.cam) {
+	    Vec2f cam_pos = engine->graphics.cam->getTrans().xy();
+	    if ((cam_pos - engine->prev_cam_pos).norm() >
+		engine->cam_move_radius) {
+	      //Log::message("Begun container update");
+	      engine->_container_update();	      
+	      engine->prev_cam_pos = cam_pos;
+	      //Log::message("Finished container update");
+	    }
+	  }
+	}
+      });
+      
+    while(true) {
+      engine->flag_mutex.lock();
+      bool should_break =
+	!(engine->flags & ENGINE_RUNNING);
+      engine->flag_mutex.unlock();
+      if (should_break) break;
+      loop();
+      engine->flag_mutex.lock();
+      engine->flags &= ~ENGINE_CONTAINER_SWAP;
+      engine->flag_mutex.unlock();
+    }
+    container_thread.join();
+  }
+
+  void Engine::stop() {
+    engine->flag_mutex.lock();
+    engine->flags &= ~ENGINE_RUNNING;
+    engine->flag_mutex.unlock();
   }
 
   

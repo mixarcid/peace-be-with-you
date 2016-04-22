@@ -36,6 +36,7 @@ NAMESPACE {
     void insert(Pointer<StaticObject>& obj);
     void traverse(BoundingObject* bound,
 		  ContainerCallback<StaticObject> callback);
+    void clear();
 
   };
 

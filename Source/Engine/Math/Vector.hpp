@@ -28,6 +28,14 @@ NAMESPACE {
       data[N-1] = val;
     }
 
+    inline T normManhattan() const {
+      T ret = 0;
+      for (u8 i=0; i<N; ++i) {
+	ret += (*this).data[i];
+      }
+      return ret;
+    }
+
     inline T normSquared() const {
       T ret = 0;
       for (u8 i=0; i<N; ++i) {

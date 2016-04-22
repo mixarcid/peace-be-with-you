@@ -36,6 +36,7 @@ NAMESPACE {
 	biome(_biome) {}
 
     f32 dataAtPoint(Vec2f pos,
+		    Vec2f new_pos,
 		    BiomeData* biome_data = NULL);
     bool treeAtPoint(Vec2f pos, TreeType* type);
     
@@ -82,7 +83,7 @@ NAMESPACE {
 		     Vec3f _pos,
 		     Vec2f _size,
 		     Vec2u _num_biomes,
-		     Vec2f chunk_size,
+		     Vec2f _chunk_size,
 		     Vec2f _internal_step);
     void setChunkCenter(Vec2f chunk_center);
     f32 dataAtPoint(Vec2f point,

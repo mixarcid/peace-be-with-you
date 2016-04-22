@@ -9,7 +9,7 @@ NAMESPACE {
 
   ChildObject* Player::camera = NULL;
   Pointer<Player> Player::ptr;
-  Transform Player::camera_diff(Vec3f(0,10,5),
+  Transform Player::camera_diff(Vec3f(0,0,5),
 				Quaternionf
 				(0,0,degreesToRadians(180)));
   f32 Player::cam_speed(1);
@@ -44,7 +44,7 @@ NAMESPACE {
 	x_tot += dx;
 	y_tot += dy;
 	
-	Quaternionf qy(-y_tot*cam_rot_speed,0,0);
+	Quaternionf qy(y_tot*cam_rot_speed,0,0);
 	Quaternionf qx(0,0,-x_tot*cam_rot_speed);
 
 	Vec3f z_correct(0,0,camera_diff.getTrans().z());

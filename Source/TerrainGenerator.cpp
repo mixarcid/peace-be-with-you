@@ -24,15 +24,21 @@ NAMESPACE {
   }
 
   inline f32 grassFunc(BiomeCenter* c, Vec2f pos) {
-    return c->noise.getValue(pos/100);
+    //return c->noise.getValue(pos/100);
+    return Noise::fractal
+      ([c](Vec2f in, i32 index) -> f32 {
+	return c->noise.getValue(in, index);
+      }, pos/200, 2);
   }
 
   Vec2f PERLIN_OFFSET = Vec2f(1000, 2000);
   
   f32 BiomeCenter::dataAtPoint(Vec2f pos,
+			       Vec2f new_pos,
 			       BiomeData* biome_data) {
 
-    f32 ret = height;
+    f32 ret = 0;
+    srand(rand_seed);
     
     switch(biome) {
       
@@ -41,7 +47,7 @@ NAMESPACE {
       if (biome_data) {
 	biome_data->sand_level = 255;
       }
-      ret += 5*noise.getValue(pos/30);
+      ret += height + 5*noise.getValue(pos/30);
       break;
 
     case BIOME_GRASSLAND:
@@ -49,7 +55,7 @@ NAMESPACE {
       if (biome_data) {
 	biome_data->grass_level = 255;
       }
-      ret += 20*grassFunc(this, pos);
+      ret += height + 20*grassFunc(this, pos);
       break;
 
     case BIOME_JUNGLE:
@@ -66,23 +72,35 @@ NAMESPACE {
 	    } else {
 	      val = abs(val);
 	    }
-	    return 0.7 - val;
-	  }, pos/300, 5, 2.0, 0.5);
+	    return 0.5 - val;
+	  }, pos/500, 7, 2.0, 0.5);
+
+	Vec2f center_dist = (new_pos - center);
+	center_dist.x() = 0.5*abs(center_dist.x()/(gen->step.x()/(1.414*2.0)));
+	center_dist.y() = 0.5*abs(center_dist.y()/(gen->step.y()/(1.414*2.0)));
+	center_dist = Vec2f(1,1) - center_dist;
+	//Log::message(to_string(center_dist));
+	//center_dist = Vec2f(1.0,1.0) - center_dist;
 	
-        ret += 100*val;
-
+        ret += 75*val + 0.75*(center_dist.normManhattan())*height;
+	//Log::message(to_string(ret));
 	if (biome_data) {
-
-	  f32 snow_level = Noise::fractal
-	    ([this](Vec2f in, i32 index) -> f32 {
-	      return noise.getPositive(in, index+6);
-	    }, pos/50, 3)*20 + ret - 50;
-	  //Log::message(to_string(snow_level));
-	  if (snow_level > 255) snow_level = 255;
-	  if (snow_level < 50) snow_level = 0;
-	  biome_data->snow_level = snow_level;
-	  biome_data->rock_level = 255 -
-	    biome_data->snow_level;
+	  if (ret > 200.0 + TerrainGenerator::SEA_LEVEL) {
+	    biome_data->snow_level = 255;
+	  } else if (ret < 150) {
+	    biome_data->rock_level = 255;
+	  } else {
+	    f32 snow_level = Noise::fractal
+	      ([this](Vec2f in, i32 index) -> f32 {
+		return noise.getValue(in, index+6);
+	      }, pos/50.0, 3)*50.0 + interpFunc(interpFunc((ret-150.0)/50.0))*255.0;
+	    //Log::message(to_string(snow_level));
+	    if (snow_level > 255) snow_level = 255;
+	    if (snow_level < 0) snow_level = 0;
+	    biome_data->snow_level = snow_level;
+	    biome_data->rock_level = 255 -
+	      biome_data->snow_level;
+	  }
 	}
       }
       break;
@@ -99,12 +117,18 @@ NAMESPACE {
 
     case BIOME_GRASSLAND:
       {
-	*type = TREE_TEST;
+        ret = true;
 	f32 val =  Noise::fractal
 	  ([this](Vec2f in, i32 index) -> f32 {
 	    return noise.getValue(in);
 	  }, pos/100 + Vec2f(900, 600), 5);
-	ret = val > 0.3;
+	if (val > 0.6) {
+	  *type = TREE_PINE;
+	} else if (val > 0.3) {
+	  *type = TREE_ELM;
+	} else {
+	  ret = false;
+	}
 	break;
       }
 
@@ -116,12 +140,18 @@ NAMESPACE {
     
     return ret;
   }
+
+  struct BiomeCenterData {
+    Vec2f center;
+    f32 height;
+    BiomeType biome;
+  };
   
   TerrainGenerator::TerrainGenerator(Terrain* _ter,
 				     Vec3f _pos,
 				     Vec2f _size,
 				     Vec2u _num_biomes,
-				     Vec2f chunk_size,
+				     Vec2f _chunk_size,
 				     Vec2f _internal_step)
     : ter(_ter),
     pos(_pos),
@@ -133,47 +163,53 @@ NAMESPACE {
     pos_offset(pos.xy() -
 	       (Vec2f((num_biomes.x()-1)*step.x(),
 		      (num_biomes.y()-1)*step.y())/2)),
-    tree_grid(Vec2u(chunk_size/10), chunk_size) {
+    tree_grid(Vec2u(_chunk_size/25), _chunk_size) {
 
-    Log::message(to_string(tree_grid.res) + to_string(tree_grid.step));
+    //Log::message(to_string(tree_grid.res) + to_string(tree_grid.step));
       
-      //maximum radius for the island
-      f32 max_radius = (size.x()/2)*0.5;
-      Time t;
-      t.makeCurrent();
-      u32 seed = t.getMilliseconds();
-      srand(seed);
+    //maximum radius for the island
+    f32 max_radius = (size.x()/2)*0.9;
+    Time t;
+    t.makeCurrent();
+    u32 seed = t.getMilliseconds();
+    srand(seed);
 
-      biome_centers.reserve((num_biomes.x()+4)*(num_biomes.y()+4));
+    u32 size = (num_biomes.x()+4)*(num_biomes.y()+4);
+    Array<BiomeCenterData> biome_data(size);
+    biome_centers.reserve(size);
       
-      //create grid specifying biome centers
-      for (i32 x = -2; x < (i32)num_biomes.x() + 2; ++x) {
-	for (i32 y = -2; y < (i32)num_biomes.y() + 2; ++y) {
-	
-	  Vec2f center = pos_offset +
-	    Vec2f(step.x()*x, step.y()*y);
-	  f32 height = 0;
-	  
-	  //Log::message(to_string(center));
-	  //Log::message(to_string(center.norm()));
-	  BiomeType biome;
-	  if ((center - pos.xy()).norm() > max_radius) {
-	    biome = BIOME_OCEAN;
-	    height = SEA_FLOOR_HEIGHT + (rand()/(f32)RAND_MAX - 0.5)*5;
-	  } else if ((center - pos.xy()).norm() >
-		     max_radius/2) {
-	    biome = BIOME_GRASSLAND;
-	    height = SEA_LEVEL + (rand()/(f32)RAND_MAX - 0.5)*5;
-	  } else {
-	    biome = BIOME_MOUNTAIN;
-	    height = SEA_LEVEL - 50 + (rand()/(f32)RAND_MAX - 0.5)*50;
-	  }
+    //create grid specifying biome centers
+    for (i32 x = -2; x < (i32)num_biomes.x() + 2; ++x) {
+      for (i32 y = -2; y < (i32)num_biomes.y() + 2; ++y) {
 
-	  biome_centers.emplace_back(this, center, height, ++seed, biome);
+	BiomeCenterData d;
+        d.center = pos_offset +
+	  Vec2f(step.x()*x, step.y()*y);
+        d.height = 0;
 	
+	if ((d.center - pos.xy()).norm() > max_radius) {
+	  d.biome = BIOME_OCEAN;
+	  d.height = SEA_FLOOR_HEIGHT + (rand()/(f32)RAND_MAX - 0.5)*5;
+	} else if ((d.center - pos.xy()).norm() >
+		   max_radius/2) {
+	  d.biome = BIOME_GRASSLAND;
+	  d.height = SEA_LEVEL + (rand()/(f32)RAND_MAX)*10 + 10;
+	} else {
+	  d.biome = BIOME_MOUNTAIN;
+	  //Log::message("mountain");
+	  d.height = SEA_LEVEL + 30 + (rand()/(f32)RAND_MAX)*20;
+	  //Log::message(to_string(d.height));
 	}
+	
+	biome_data.push_back(d);
       }
     }
+
+    for (BiomeCenterData d : biome_data) {
+      biome_centers.emplace_back(this, d.center, d.height, ++seed, d.biome);
+    }
+    
+  }
 
   void TerrainGenerator::setChunkCenter(Vec2f chunk_center) {
     tree_grid.center = chunk_center;
@@ -220,7 +256,7 @@ NAMESPACE {
     for (u8 n=0; n<4; ++n) {
       BiomeData b;
       heights[n] = closest_biome_centers[n]
-	->dataAtPoint(point, biome_data ? &b : NULL);
+	->dataAtPoint(point, new_point, biome_data ? &b : NULL);
       biome_array[n] = b.levels;
     }
 
@@ -247,7 +283,7 @@ NAMESPACE {
       noise_factor.x()*trans_noise.x();
     rem.y() = (1-noise_factor.y())*rem.y() +
       noise_factor.y()*trans_noise.y();
-      rem = interpFunc(rem);
+    rem = interpFunc(rem);
 
     rem.x() = rem.x() < 0.0 ? 0.0 : rem.x();
     rem.x() = rem.x() > 1.0 ? 1.0 : rem.x();
@@ -288,7 +324,7 @@ NAMESPACE {
 	BiomeCenter* c = closest_biome_centers[index];
 	TreeType type;
 
-	Vec2f offset = -tree_grid.step/4 + Vec2f
+	Vec2f offset = -tree_grid.step/5.0 + Vec2f
 	    ((rand()/(f32)RAND_MAX)
 	     *tree_grid.step.x(),
 	     (rand()/(f32)RAND_MAX)
@@ -297,8 +333,10 @@ NAMESPACE {
 	Vec2f p = point + offset;
 	Vec2f new_pos_grid = rel_pos_grid + offset;
 	
-	if (new_pos_grid.x() < tree_grid.size.x() &&
-	    new_pos_grid.y() < tree_grid.size.y() &&
+	if (new_pos_grid.x() < tree_grid.size.x()-1 &&
+	    new_pos_grid.x() > 0 &&
+	    new_pos_grid.y() < tree_grid.size.y()-1 &&
+	    new_pos_grid.y() > 0 &&
 	    c->treeAtPoint(p, &type)) {
 	  chunk_trees.emplace_back(p, type);
 	}

@@ -16,11 +16,13 @@ NAMESPACE {
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
+  const u32 Terrain::CHUNKS_IN_VIEW = 4;
+  
   const u8 MID_REDUCTION = 2;
   const u8 SMALL_REDUCTION = 4;
 
   Asset<Texture> Terrain::texture("Terrain");
-  Array<TerrainRenderable> Terrain::chunk_meshes;
+  HashMap<Vec2u, TerrainRenderable> Terrain::chunk_meshes;
   EBO Terrain::elem_buffer_large;
   EBO Terrain::elem_buffer_mid;
   EBO Terrain::elem_buffer_small;
@@ -30,8 +32,8 @@ NAMESPACE {
 
   const StaticMaterial TerrainGround::MATERIAL(0.7, 0.6);
   
-  void TerrainChunk::init() {
-    addComponent(Terrain::chunk_meshes.emplace_back());
+  void TerrainChunk::init(Vec2u index) {
+    addComponent(&Terrain::chunk_meshes[index]);
   }
 
   TerrainChunk::~TerrainChunk() {}
@@ -296,8 +298,9 @@ NAMESPACE {
 		  Terrain::CHUNK_SIZE)/2;
 	  Vec2u indexes = local_pos/CHUNK_STEP;
 	  Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
-
-	  if (norm.z() > 0.8) {
+	  f32 height = data[indexes.x()*CHUNK_RES + indexes.y()].z();
+	  
+	  if (height > TerrainGenerator::SEA_LEVEL && norm.z() > 0.8) {
 	    new_trees.push_back(trees[n]);
 	  }
 	}
@@ -363,8 +366,10 @@ NAMESPACE {
     Engine::emplaceStatic<Water>
       (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL),
        Vec2f(10000, 10000));
+    chunk_meshes.reserve(sqr(CHUNKS_IN_VIEW+1));
+    
 #ifdef PEACE_LOG_LOADED_ASSETS
-    Log::message("Loaded terrain %s",
+    Log::message("Loaded Terrain %s",
 		 filename.c_str());
 #endif
   }
@@ -385,7 +390,8 @@ NAMESPACE {
     Pointer<TerrainChunk> c(Engine::emplaceStaticNoRegister<TerrainChunk>
 			     (Vec3f(position.x(),
 				    position.y(),
-				    chunk_pos_offset.z())));
+				    chunk_pos_offset.z()),
+			      index));
     //Log::message(to_string(position));
     
     Pointer<TerrainRenderable>& mesh = (Pointer<TerrainRenderable>&)
@@ -431,28 +437,36 @@ NAMESPACE {
     
   }
 
-  f32 Terrain::heightAtPoint(Vec2f p, Vec3f* norm) {
-	
+  Vec2u Terrain::chunkAtPoint(Vec2f p) {
     Vec2f rel_pos = p - chunk_pos_offset.xy() +
       Vec2f(Terrain::CHUNK_SIZE,Terrain::CHUNK_SIZE)/2;
     const f32 rel_div = (Terrain::CHUNK_SIZE-Terrain::CHUNK_STEP);
-    i32 x_chunk_index = rel_pos.x()/rel_div;
-    i32 y_chunk_index = rel_pos.y()/rel_div;
-	
-    if (rel_pos.cx() < 0 ||
-	rel_pos.cy() < 0 ||
-	x_chunk_index >= size.cx() ||
-	y_chunk_index >= size.cy()) {
-      return -FLT_MAX;
+    return Vec2u(rel_pos.x()/rel_div, rel_pos.y()/rel_div);
+  }
+  
+  f32 Terrain::heightAtPoint(Vec2f p, Vec3f* norm) {
+    
+    Vec2f rel_pos = p - chunk_pos_offset.xy() +
+      Vec2f(Terrain::CHUNK_SIZE,Terrain::CHUNK_SIZE)/2;
+    const f32 rel_div = (Terrain::CHUNK_SIZE-Terrain::CHUNK_STEP);
+    Vec2u chunk_index =  Vec2u(rel_pos.x()/rel_div, rel_pos.y()/rel_div);
+
+    auto it = Terrain::chunk_meshes.find(chunk_index);
+    if (rel_pos.x() < 0 ||
+	rel_pos.y() < 0 ||
+	/*chunk_index.x() >= size.x() ||
+	  chunk_index.y() >= size.y() ||*/
+        it == chunk_meshes.end()) {
+      if (norm) *norm = Vec3f(0,0,1);
+      return TerrainGenerator::SEA_FLOOR_HEIGHT;
     }
-	
-    TerrainRenderable* rend = &Terrain::chunk_meshes
-      [x_chunk_index*size.cx() + y_chunk_index];
+    
+    TerrainRenderable* rend = &it->second;
 
     f32 rel_x = rel_pos.x() -
-      x_chunk_index*rel_div;
+      chunk_index.x()*rel_div;
     f32 rel_y = rel_pos.y() -
-      y_chunk_index*rel_div;
+      chunk_index.y()*rel_div;
     u32 x_mesh_index = rel_x;
     u32 y_mesh_index = rel_y;
     Vec2f rem(/*1 -*/ (rel_x - x_mesh_index),

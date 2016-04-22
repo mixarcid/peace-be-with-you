@@ -49,6 +49,9 @@ NAMESPACE {
     Graphics(Engine* _engine);
     
     void init(GLFWwindow* _window);
+    void initCamera(f32 _fovy,
+		    f32 _near,
+		    f32 _far);
     
     template <typename... Args>
     void emplaceDirLight(Args... args) {

@@ -1,13 +1,12 @@
 #include "Sun.hpp"
-#include "Graphics.hpp"
-#include "Player.hpp"
 #include "Engine.hpp"
 
 NAMESPACE {
 
+  f32 Sun::player_dist;
   Asset<Texture> Sun::texture("Sun");
 
-  void Sun::init(Pointer<DynamicObject>& player) {
+  void Sun::init() {
 
     Vec3f trans(1,1,1);
     trans.normalize();
@@ -21,7 +20,7 @@ NAMESPACE {
     q.normalize();
     rotAbs(q);
     Pointer<DynamicObject> t(this);
-    player->addChild(t, Transform(fin*1000), CHILD_OBJECT_TRANSLATE);
+    Engine::engine->graphics.cam->addChild(t, Transform(fin*player_dist), CHILD_OBJECT_TRANSLATE);
     
   }
   

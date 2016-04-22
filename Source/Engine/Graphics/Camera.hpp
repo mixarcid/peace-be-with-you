@@ -30,9 +30,9 @@ NAMESPACE {
   
   struct Camera : DynamicObject {
     
-    Camera(f32 _fovy = degreesToRadians(60),
-	   f32 _near = 1,
-	   f32 _far = 5000)
+    Camera(f32 _fovy,
+	   f32 _near,
+	   f32 _far)
       : DynamicObject(Vec3f()) {
       $rttiConstruct("Camera");
       addComponent(new CameraComp(_fovy, _near, _far));

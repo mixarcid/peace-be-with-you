@@ -119,6 +119,12 @@ NAMESPACE {
     Node::traverse(0, this, bound, callback);
   }
 
+  void QuadTree::clear() {
+    BoundingAABB2D bound = nodes[0].bound;
+    nodes.clear();
+    nodes.emplace_back(bound);
+  }
+
   String to_string(QuadTree& tree, QuadTree::Node& node, String delim) {
     
     String ret = "\n" + delim;

@@ -15,8 +15,6 @@ NAMESPACE {
     window = _window;
     glfwGetWindowSize(window, &win_size.x(), &win_size.y());
     renderer.init(win_size);
-    cam = engine->emplaceDynamic<Camera>();
-    cam->setAspect(win_size);
 
     RenderableShape::init();
     
@@ -27,6 +25,15 @@ NAMESPACE {
 #endif
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+  }
+
+  void Graphics::initCamera(f32 _fovy,
+			    f32 _near,
+			    f32 _far) {
+    cam = engine->emplaceDynamic<Camera>
+      (degreesToRadians(60), 2.5, 500);
+    cam->setAspect(win_size);
+   
     Input::addWindowResizeCallback
       ([this](GLFWwindow* win, i32 x, i32 y) {
 	if (win == window) {

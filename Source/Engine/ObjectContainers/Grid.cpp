@@ -1,13 +1,8 @@
 #include "Grid.hpp"
 #include "GameObject.hpp"
+#include "VectorHash.hpp"
 
 NAMESPACE {
-
-  template<>
-    size_t customHash(Vec2i vec) {
-    return ((Hash<u32>()(vec.x())) ^
-	    (Hash<u32>()(vec.y()) << 1));
-  }
 
   void Grid::insert(Pointer<DynamicObject>& obj) {
     if (obj->getLooseBoundingObject()->type == BoundingObject::NONE) {
@@ -110,7 +105,8 @@ NAMESPACE {
 	
       auto obj_it = objects.find(cell);
       debugAssert(obj_it != objects.end(),
-		  "Something's gone wrong with the Grid...");
+		  "Something's gone wrong with the Grid... "
+		  "Have you updated an object before inserting it?");
       auto& arr = obj_it->second;
 	
       if (arr.size() == 1) {

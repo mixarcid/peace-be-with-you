@@ -8,6 +8,8 @@ NAMESPACE {
   enum TreeType {
 
     TREE_TEST,
+    TREE_ELM,
+    TREE_PINE,
     TREE_LAST
 
   };

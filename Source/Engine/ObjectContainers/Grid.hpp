@@ -6,9 +6,6 @@
 
 NAMESPACE {
 
-  template<>
-    size_t customHash(Vec2i vec);
-
   struct Grid {
 
     struct Handle {

@@ -92,8 +92,12 @@ void main() {
   outColor *= uniColor;
 #endif
 
-#ifdef HAS_NORMAL
-  outOffset = texture(uniPaint, vec2(0.5) + 0.5*norm.xy).xy;
+#ifdef SHADER_USE_NORMAL
+  /*#ifdef SHADER_WATER
+  outOffset = texture(uniPaint, pos.xy/50.0).xy;
+  #else*/
+  outOffset = texture(uniPaint, norm.xy*0.5).xy;
+  //#endif
 #else
   outOffset = vec2(0.5,0.5);
 #endif

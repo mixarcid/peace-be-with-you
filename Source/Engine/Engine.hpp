@@ -15,7 +15,11 @@ NAMESPACE {
 			ENGINE_NO_FLAGS = 0x00,
 			ENGINE_RUNNING = 0x01,
 			ENGINE_GRAPHICS_INIT = 0x02,
-			ENGINE_ASSETS_LOADED = 0x04);
+			ENGINE_ASSETS_LOADED = 0x04,
+			//whether to use the first static container buffer
+			//or the second
+			ENGINE_CONTAINER_FIRST = 0x08,
+			ENGINE_CONTAINER_SWAP = 0x10);
   
   struct Engine {
 
@@ -24,8 +28,10 @@ NAMESPACE {
 
     Array<StaticObject> static_objects;
     Array<DynamicObject> dynamic_objects;
+    
     Grid dynamic_container;
-    QuadTree static_container;
+    QuadTree static_containers[2];
+    Mutex dynamic_mutex;
     
     SystemManager system_manager;
     Graphics graphics;
@@ -34,6 +40,11 @@ NAMESPACE {
     Time cur_time;
     Time prev_time;
     f32 dt;
+
+    Vec2f prev_cam_pos;
+    f32 cam_move_radius;
+
+    Mutex flag_mutex;
     EngineFlags flags;
 
     static Engine* engine;
@@ -41,17 +52,22 @@ NAMESPACE {
     Engine();
     ~Engine();
 
+    void _container_update();
+
     static void init();
     static void terminate();
 
-    //GameObjects MUST be created using only these methods
-    template <typename T, typename... Args>
-    static Pointer<T> emplaceStatic(Args... args) {
-      Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
-      engine->static_container.insert(ret);
-      return Pointer<T>((Pointer<T>&)ret);
-    }
+    QuadTree* getStaticContainer(bool cur_container);
+    void swapContainers();
 
+    static void registerMove(Pointer<DynamicObject>& obj);
+
+    static void loop();
+    static void begin();
+    static void stop();
+
+    //GameObjects MUST be created using only these methods
+    
     template <typename T, typename... Args>
     static Pointer<T> emplaceStaticNoRegister(Args... args) {
       Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
@@ -59,8 +75,15 @@ NAMESPACE {
     }
 
     template <typename T>
-    static void registerStatic(Pointer<T>& obj) {
-      engine->static_container.insert((Pointer<StaticObject>&)obj);
+    static void registerStatic(Pointer<T>& obj, bool cur_container = true) {
+      engine->getStaticContainer(cur_container)->insert((Pointer<StaticObject>&)obj);
+    }
+
+    template <typename T, typename... Args>
+    static Pointer<T> emplaceStatic(Args... args) {
+      Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
+      registerStatic(ret);
+      return Pointer<T>((Pointer<T>&)ret);
     }
     
     template <typename T, typename... Args>
@@ -89,7 +112,7 @@ NAMESPACE {
     static void traverseStatic
     (BoundingObject* bound,
      ObjectCallBack<StaticObject,T> callback) {
-      engine->static_container.traverse
+      engine->getStaticContainer(true)->traverse
 	(bound, [callback](Pointer<StaticObject>& b) -> bool {
 	  Pointer<T>& comp = b->getComponent<T>();
 	  if (comp && !callback(b, comp)) {
@@ -126,11 +149,6 @@ NAMESPACE {
 	  return true;
 	});
     }
-
-    static void registerMove(Pointer<DynamicObject>& obj);
-    
-    static void loop();
-    static void begin();
     
   };
 
