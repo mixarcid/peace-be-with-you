@@ -28,10 +28,14 @@ NAMESPACE {
 
     Array<StaticObject> static_objects;
     Array<DynamicObject> dynamic_objects;
+    Mutex static_arr_mutex;
+
+    Array<function<void()>> scene_callbacks;
+    Array<function<void()>> synchronized_callbacks;
+    Mutex synchronized_mutex;
     
     Grid dynamic_container;
     QuadTree static_containers[2];
-    Mutex dynamic_mutex;
     
     SystemManager system_manager;
     Graphics graphics;
@@ -70,7 +74,9 @@ NAMESPACE {
     
     template <typename T, typename... Args>
     static Pointer<T> emplaceStaticNoRegister(Args... args) {
+      engine->static_arr_mutex.lock();
       Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
+      engine->static_arr_mutex.unlock();
       return Pointer<T>((Pointer<T>&)ret);
     }
 
@@ -81,8 +87,10 @@ NAMESPACE {
 
     template <typename T, typename... Args>
     static Pointer<T> emplaceStatic(Args... args) {
+      engine->static_arr_mutex.lock();
       Pointer<StaticObject> ret(engine->static_objects.emplace_back<T>(args...));
       registerStatic(ret);
+      engine->static_arr_mutex.unlock();
       return Pointer<T>((Pointer<T>&)ret);
     }
     
@@ -100,7 +108,14 @@ NAMESPACE {
       engine->dynamic_objects.removeAndReplace
         ((Pointer<DynamicObject>&) handle);
     }
-
+    
+    template <typename T>
+    static void removeStatic(Pointer<T> handle) {
+      engine->static_arr_mutex.lock();
+      engine->static_objects.removeAndReplace
+        ((Pointer<StaticObject>&) handle);
+      engine->static_arr_mutex.unlock();
+    }
     /*
       note that these methods do NOT check bound for intersecting
       with the object before calling callback

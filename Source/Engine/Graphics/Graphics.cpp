@@ -31,7 +31,7 @@ NAMESPACE {
 			    f32 _near,
 			    f32 _far) {
     cam = engine->emplaceDynamic<Camera>
-      (degreesToRadians(60), 2.5, 500);
+      (_fovy, _near, _far);
     cam->setAspect(win_size);
    
     Input::addWindowResizeCallback

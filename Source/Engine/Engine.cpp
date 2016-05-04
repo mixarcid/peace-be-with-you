@@ -8,7 +8,8 @@ NAMESPACE {
   Engine* Engine::engine;
 
   Engine::Engine()
-    : dynamic_container(20.0f),
+    : synchronized_callbacks(50),
+    dynamic_container(20.0f),
     static_containers{
     QuadTree(BoundingAABB2D
 	     (Vec2f(0,0),
@@ -88,6 +89,7 @@ NAMESPACE {
   }
 
   void Engine::_container_update() {
+    
     while(true) {
       flag_mutex.lock();
       bool should_break =
@@ -95,11 +97,24 @@ NAMESPACE {
       flag_mutex.unlock();
       if (should_break) break;
     }
+    
     getStaticContainer(false)->clear();
+    for (auto& callback : scene_callbacks) {
+      callback();
+    }
+
+    while(true) {
+      engine->synchronized_mutex.lock();
+      bool should_break = (engine->synchronized_callbacks.size() == 0);
+      engine->synchronized_mutex.unlock();
+      if (should_break) break;
+    }
+
     for (StaticObject& obj : static_objects) {
       Pointer<StaticObject> p(&obj);
       registerStatic(p, false);
     }
+    
     swapContainers();
   }
   
@@ -124,6 +139,19 @@ NAMESPACE {
     //engine->physics.updateVsStatic(&num_checks, &num_collisions);
     // Log::message("Static collision checks: %u", num_checks);
     engine->graphics.initRender();
+
+    Engine::engine->synchronized_mutex.lock();
+    if (engine->synchronized_callbacks.size() > 0) {
+      function<void()>* fun = engine->synchronized_callbacks.begin();
+      if (fun != engine->synchronized_callbacks.end()) {
+	function<void()> f = *fun;
+	f();
+	engine->synchronized_callbacks.removeAndReplace(fun);
+      }
+    }
+    Engine::engine->synchronized_mutex.unlock();
+      
+    
     engine->graphics.renderDynamic();
 
     Thread dyn([&num_checks, &num_collisions]() {
@@ -189,22 +217,23 @@ NAMESPACE {
 	    Vec2f cam_pos = engine->graphics.cam->getTrans().xy();
 	    if ((cam_pos - engine->prev_cam_pos).norm() >
 		engine->cam_move_radius) {
-	      //Log::message("Begun container update");
-	      engine->_container_update();	      
+	      engine->_container_update();
 	      engine->prev_cam_pos = cam_pos;
-	      //Log::message("Finished container update");
 	    }
 	  }
 	}
       });
       
     while(true) {
+      
       engine->flag_mutex.lock();
       bool should_break =
 	!(engine->flags & ENGINE_RUNNING);
       engine->flag_mutex.unlock();
       if (should_break) break;
+      
       loop();
+      
       engine->flag_mutex.lock();
       engine->flags &= ~ENGINE_CONTAINER_SWAP;
       engine->flag_mutex.unlock();

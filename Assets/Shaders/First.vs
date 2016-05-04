@@ -71,7 +71,7 @@ void main() {
 
 #ifdef SHADER_TERRAIN
 
-  const float TERRAIN_CHUNK_SIZE = 300.0f;
+  const float TERRAIN_CHUNK_SIZE = 500.0f;
   const uint TERRAIN_CHUNK_RES = 127;
   const float TERRAIN_CHUNK_STEP
     = (TERRAIN_CHUNK_SIZE / float(TERRAIN_CHUNK_RES));
@@ -81,7 +81,7 @@ void main() {
   /*if (tex.x > TERRAIN_CHUNK_STEP*TERRAIN_CHUNK_RES/2.0) tex.x -= TERRAIN_CHUNK_STEP;
   if (tex.y > TERRAIN_CHUNK_STEP*TERRAIN_CHUNK_RES/2.0) tex.y -= TERRAIN_CHUNK_STEP;
   tex *= 20;*/
-  float step = 0.25*TERRAIN_CHUNK_STEP/20.0;
+  float step = 0.25*TERRAIN_CHUNK_STEP/50.0;
   ivec2 itex = ivec2(floor(tex));
   tex = (0.25-step)*(tex - itex);
   tex += step;

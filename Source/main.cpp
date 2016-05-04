@@ -9,7 +9,7 @@ using namespace peace;
 
 i32 main() {
 
-  f32 far_dist = 500;
+  f32 far_dist = 2000;
   
   Engine::init();
   Engine::engine->graphics.initCamera(degreesToRadians(60), 2.5, far_dist);
@@ -49,22 +49,18 @@ i32 main() {
 	  break;
 	}
       });
-
-    Terrain terrain;
-    //terrain.generate("Test2",Vec3f(0,0,0),Vec2u(5,5));
-    terrain.loadFile("Test2");
-    for (u32 chunk_x = 0; chunk_x < 5; ++chunk_x) {
-      for (u32 chunk_y = 0; chunk_y < 5; ++chunk_y) {
-	terrain.loadChunk(Vec2u(chunk_x,chunk_y));
-      }
-    }
     
     Engine::emplaceDynamic<Player>(Vec3f(0,0,30));
-    Engine::emplaceDynamic<Sun>(far_dist-50)->init();
+    Engine::emplaceDynamic<Sun>(far_dist-750)->init();
+
+    Terrain terrain;
+    //terrain.generate("Test",Vec3f(0,0,0),Vec2u(15,15));
+    terrain.loadFile("Test");
 				
     Engine::engine->graphics.back_color = Vec4f(0.3, 0.3, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));
     Engine::begin();
+    Log::message("Peace Be With You shut down sucessfully");
 
 #ifndef N_DEBUG
   } catch(Exception e) {
@@ -72,7 +68,6 @@ i32 main() {
   }
 #endif
   
-  Log::message("Peace Be With You shut down sucessfully");
   Engine::terminate();
   return EXIT_SUCCESS;
   

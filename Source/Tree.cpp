@@ -8,7 +8,8 @@ NAMESPACE {
   Asset<StaticMesh> Tree::meshes[TREE_LAST] = {
     Asset<StaticMesh>("TestTree:0"),
     Asset<StaticMesh>("Elm:0"),
-    Asset<StaticMesh>("Pine:0")
+    Asset<StaticMesh>("Pine:0"),
+    Asset<StaticMesh>("Willow:0")
   };
 
   void Tree::init(TreeType type, u8 num) {

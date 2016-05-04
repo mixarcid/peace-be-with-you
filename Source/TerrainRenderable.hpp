@@ -10,8 +10,8 @@ NAMESPACE {
     struct {
       u8 grass_level;
       u8 rock_level;
-      u8 snow_level;
       u8 sand_level;
+      u8 snow_level;
     };
     Vec4ub levels;
 

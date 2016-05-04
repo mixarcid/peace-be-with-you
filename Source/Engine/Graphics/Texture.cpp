@@ -46,7 +46,7 @@ NAMESPACE {
     
     unsigned char* image =
       SOIL_load_image(full_name, &width, &height,
-		      0, SOIL_LOAD_RGBA);
+		      0, channels);
 
     fatalAssert(image != NULL,
 	       "Unable to load image %s", full_name);

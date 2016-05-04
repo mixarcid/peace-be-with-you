@@ -1,4 +1,5 @@
 #pragma once
+#include "Random.hpp"
 #include "Noise.hpp"
 #include "TerrainRenderable.hpp"
 #include "Tree.hpp"
@@ -22,6 +23,7 @@ NAMESPACE {
     f32 height;
     u32 rand_seed;
     BiomeType biome;
+    Random rand;
     FrankNoise noise;
 
     BiomeCenter(TerrainGenerator* _gen,
@@ -35,8 +37,8 @@ NAMESPACE {
 	rand_seed(_rand_seed),
 	biome(_biome) {}
 
-    f32 dataAtPoint(Vec2f pos,
-		    Vec2f new_pos,
+    f32 dataAtPoint(Vec2f old_pos,
+		    Vec2f pos,
 		    BiomeData* biome_data = NULL);
     bool treeAtPoint(Vec2f pos, TreeType* type);
     
@@ -74,6 +76,7 @@ NAMESPACE {
     Vec2f internal_step;
     Vec2f pos_offset;
 
+    Vec2i prev_grid_pos;
     TreeGrid tree_grid;
     Array<TreeData> chunk_trees;
     
@@ -90,9 +93,14 @@ NAMESPACE {
 		    BiomeData* biome_data = NULL);
     Array<TreeData> getChunkTrees();
 
+    static Random global_random;
+    
     static const u8 NUM_BIOME_TYPES;
     static const f32 SEA_FLOOR_HEIGHT;
     static const f32 SEA_LEVEL;
+    static const f32 SNOW_TOP_LEVEL;
+    static const f32 SNOW_BOTTOM_LEVEL;
+    static const f32 SNOW_LEVEL_DIFF;
   };
 
 }

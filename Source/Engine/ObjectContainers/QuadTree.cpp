@@ -78,7 +78,7 @@ NAMESPACE {
      ContainerCallback<StaticObject> callback) {
 
     for (auto& obj : tree->nodes[node].objects) {
-      if (!callback(obj)) {
+      if (obj && !callback(obj)) {
 	return false;
       }
     }

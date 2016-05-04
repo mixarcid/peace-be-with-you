@@ -10,6 +10,7 @@ NAMESPACE {
     TREE_TEST,
     TREE_ELM,
     TREE_PINE,
+    TREE_WILLOW,
     TREE_LAST
 
   };

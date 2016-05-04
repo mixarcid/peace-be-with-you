@@ -71,8 +71,10 @@ NAMESPACE {
     }
 
     void _on_move() {
-      data->setPointer(index, (Pointer<Pointable>*)this);
-      ensureCorrect();
+      if (data) {
+	data->setPointer(index, (Pointer<Pointable>*)this);
+	ensureCorrect();
+      }
     }
 
     inline void ensureCorrect() {
@@ -83,10 +85,10 @@ NAMESPACE {
 #endif
     }
 
-        Pointer& operator=(const Pointer& ptr) {
+    Pointer& operator=(const Pointer& ptr) {
       ensureCorrect();
       if (*this) {
-        data->removePointer(index);
+        data->removePointer(index, (Pointer<Pointable>*) &ptr);
       }
       data = ptr.data;
       if (data) {

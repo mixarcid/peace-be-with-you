@@ -2,18 +2,31 @@
 
 #include "Engine.hpp"
 #include "TerrainRenderable.hpp"
+#include "Tree.hpp"
 
 NAMESPACE {
+
+  struct TerrainChunkComp : Component {
+
+    Array<Pointer<Tree>> trees;
+    
+    TerrainChunkComp() {
+      $rttiConstruct("TerrainChunkComp");
+    }
+    
+  };
+  $registerRttiStruct();
 
   struct TerrainChunk : StaticObject {
     
     //pos: the back-left corner of the chunk. The z-value will always be 0.
-    TerrainChunk(Vec3f pos, Vec2u index)
+    TerrainChunk(Vec3f pos)
       : StaticObject(pos) {
       $rttiConstruct("TerrainChunk");
-      init(index);
+      init();
     }
-    void init(Vec2u index);
+    void init();
+    void removeTrees();
     ~TerrainChunk();
     
   };
@@ -53,12 +66,16 @@ NAMESPACE {
 		  Vec3f pos,
 		  Vec2u _size);
     void loadFile(String filename);
-    void loadChunk(Vec2u index);
+    void loadChunk(Vec2u index, bool cur_scene);
     Vec2u chunkAtPoint(Vec2f p);
     f32 heightAtPoint(Vec2f p, Vec3f* norm);
 
+    void _scene_update(bool cur_scene);
+
     static Asset<Texture> texture;
-    static HashMap<Vec2u, TerrainRenderable> chunk_meshes;
+    static Array<TerrainRenderable> chunk_meshes;
+    static HashMap<Vec2u, Pointer<TerrainChunk>> chunks;
+    static Mutex chunk_mutex;
     static EBO elem_buffer_large;
     static EBO elem_buffer_mid;
     static EBO elem_buffer_small;

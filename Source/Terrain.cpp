@@ -5,24 +5,25 @@
 #include "VectorIO.hpp"
 #include "Interp.hpp"
 #include "Water.hpp"
-#include "Tree.hpp"
 
 NAMESPACE {
 
-  const f32 Terrain::CHUNK_SIZE = 300.0f;//100.0f;
+  const f32 Terrain::CHUNK_SIZE = 500.0f;//100.0f;
   //width of the chunk in vertices
   //must be power of 2 minus 1
   const u32 Terrain::CHUNK_RES = 127;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
-  const u32 Terrain::CHUNKS_IN_VIEW = 4;
+  const u32 Terrain::CHUNKS_IN_VIEW = 5;
   
   const u8 MID_REDUCTION = 2;
   const u8 SMALL_REDUCTION = 4;
 
   Asset<Texture> Terrain::texture("Terrain");
-  HashMap<Vec2u, TerrainRenderable> Terrain::chunk_meshes;
+  Array<TerrainRenderable> Terrain::chunk_meshes;
+  HashMap<Vec2u, Pointer<TerrainChunk>> Terrain::chunks;
+  Mutex Terrain::chunk_mutex;
   EBO Terrain::elem_buffer_large;
   EBO Terrain::elem_buffer_mid;
   EBO Terrain::elem_buffer_small;
@@ -32,11 +33,28 @@ NAMESPACE {
 
   const StaticMaterial TerrainGround::MATERIAL(0.7, 0.6);
   
-  void TerrainChunk::init(Vec2u index) {
-    addComponent(&Terrain::chunk_meshes[index]);
+  void TerrainChunk::init() {
+    addComponent(new TerrainChunkComp());
   }
 
-  TerrainChunk::~TerrainChunk() {}
+  void TerrainChunk::removeTrees() {
+    auto& comp = getComponent<TerrainChunkComp>();
+    if (comp) {
+      for (auto& tree : comp->trees) {
+	Engine::removeStatic(tree);
+      }
+    }
+  }
+
+  TerrainChunk::~TerrainChunk() {
+    auto& rend = getComponent<RenderableComp>();
+    if (rend) {
+      Terrain::chunk_meshes.removeAndReplace
+	((Pointer<TerrainRenderable>&)rend);
+    }
+    auto& comp = getComponent<TerrainChunkComp>();
+    delete comp;
+  }
 
   Vec3f computeNormal(Vec3f point,
 		      Vec3f adjacent_points[4]) {
@@ -187,7 +205,7 @@ NAMESPACE {
     TerrainGenerator gen(this,
 			 pos,
 			 size*CHUNK_SIZE,
-			 size*2,
+			 size/4,
 			 Vec2f(CHUNK_SIZE,
 			       CHUNK_SIZE),
 			 Vec2f(CHUNK_STEP,
@@ -296,12 +314,14 @@ NAMESPACE {
 	    center.xy() +
 	    Vec2f(Terrain::CHUNK_SIZE,
 		  Terrain::CHUNK_SIZE)/2;
-	  Vec2u indexes = local_pos/CHUNK_STEP;
-	  Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
-	  f32 height = data[indexes.x()*CHUNK_RES + indexes.y()].z();
+	  if (local_pos.x() > 0 && local_pos.y() > 0) {
+	    Vec2u indexes = local_pos/CHUNK_STEP;
+	    Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
+	    f32 height = data[indexes.x()*CHUNK_RES + indexes.y()].z();
 	  
-	  if (height > TerrainGenerator::SEA_LEVEL && norm.z() > 0.8) {
-	    new_trees.push_back(trees[n]);
+	    if (height > TerrainGenerator::SEA_LEVEL && norm.z() > 0.8) {
+	      new_trees.push_back(trees[n]);
+	    }
 	  }
 	}
 	
@@ -366,7 +386,13 @@ NAMESPACE {
     Engine::emplaceStatic<Water>
       (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL),
        Vec2f(10000, 10000));
-    chunk_meshes.reserve(sqr(CHUNKS_IN_VIEW+1));
+    chunks.reserve(sqr(2*CHUNKS_IN_VIEW+1));
+
+    _scene_update(true);
+    Engine::engine->scene_callbacks.push_back
+      ([this]() {
+	_scene_update(false);
+      });
     
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded Terrain %s",
@@ -374,7 +400,7 @@ NAMESPACE {
 #endif
   }
 
-  void Terrain::loadChunk(Vec2u index) {
+  void Terrain::loadChunk(Vec2u index, bool cur_scene) {
 
     debugAssert(file,
 		"You must generate or load a terrain "
@@ -387,15 +413,17 @@ NAMESPACE {
     Vec2f position;
     load(file, &position);
 	
-    Pointer<TerrainChunk> c(Engine::emplaceStaticNoRegister<TerrainChunk>
-			     (Vec3f(position.x(),
-				    position.y(),
-				    chunk_pos_offset.z()),
-			      index));
-    //Log::message(to_string(position));
+    Pointer<TerrainChunk> c
+      (Engine::emplaceStaticNoRegister<TerrainChunk>
+       (Vec3f(position.x(),
+	      position.y(),
+	      chunk_pos_offset.z())));
     
-    Pointer<TerrainRenderable>& mesh = (Pointer<TerrainRenderable>&)
-      c->getComponent<RenderableComp>();
+    //Log::message(to_string(position));
+
+    Pointer<TerrainRenderable> mesh = chunk_meshes.emplace_back();
+      /*= (Pointer<TerrainRenderable>&)
+	c->getComponent<RenderableComp>();*/
     mesh->height_data.reserve(sqr(CHUNK_RES));
 
     for (u16 x = 0; x < CHUNK_RES; ++x) {
@@ -422,19 +450,43 @@ NAMESPACE {
     load(file, &aabb.halves);
     c->loose_object.set(&aabb);
     c->tight_object.set(c->getLooseBoundingObject());
-    Engine::registerStatic(c);
-
-    mesh->init();
 
     u32 num_trees = fio::readLittleEndian<u32>(file);
+    Array<TreeData> tree_data(num_trees);
+ 
     for (u32 n=0; n<num_trees; ++n) {
       Vec2f pos;
       load(file, &pos);
-      f32 height = heightAtPoint(pos, NULL);
-      Engine::emplaceStatic<Tree>
-	(fio::readLittleEndian<TreeType>(file), Vec3f(pos, height));
+      tree_data.emplace_back(pos, fio::readLittleEndian<TreeType>(file));
     }
     
+    Engine::registerStatic(c, cur_scene);
+    
+    function<void()> fun = [this, index, c, mesh,
+			    tree_data, cur_scene]() {
+      chunk_mutex.lock();
+      chunks[index] = c;
+      chunk_mutex.unlock();
+      mesh->init();
+      c->addComponent<TerrainRenderable>(mesh);
+      auto& comp = c->getComponent<TerrainChunkComp>();
+      comp->trees.reserve(tree_data.size());
+      for (auto& tree : tree_data) {
+        Pointer<Tree> p = Engine::emplaceStaticNoRegister<Tree>
+	  (tree.type, Vec3f
+	   (tree.pos, heightAtPoint(tree.pos, NULL)));
+	Engine::registerStatic(p, cur_scene);
+	comp->trees.push_back(p);
+      }
+    };
+    
+    if (cur_scene) {
+      fun();
+    } else {
+      Engine::engine->synchronized_mutex.lock();
+      Engine::engine->synchronized_callbacks.push_back(fun);
+      Engine::engine->synchronized_mutex.unlock();
+    }
   }
 
   Vec2u Terrain::chunkAtPoint(Vec2f p) {
@@ -451,18 +503,24 @@ NAMESPACE {
     const f32 rel_div = (Terrain::CHUNK_SIZE-Terrain::CHUNK_STEP);
     Vec2u chunk_index =  Vec2u(rel_pos.x()/rel_div, rel_pos.y()/rel_div);
 
-    auto it = Terrain::chunk_meshes.find(chunk_index);
+    chunk_mutex.lock();
+    auto it = Terrain::chunks.find(chunk_index);
     if (rel_pos.x() < 0 ||
 	rel_pos.y() < 0 ||
 	/*chunk_index.x() >= size.x() ||
 	  chunk_index.y() >= size.y() ||*/
-        it == chunk_meshes.end()) {
+        it == chunks.end()) {
       if (norm) *norm = Vec3f(0,0,1);
+      chunk_mutex.unlock();
       return TerrainGenerator::SEA_FLOOR_HEIGHT;
     }
+    chunk_mutex.unlock();
     
-    TerrainRenderable* rend = &it->second;
-
+    Pointer<TerrainRenderable>& rend =
+		      (Pointer<TerrainRenderable>&)
+		      it->second->getComponent<RenderableComp>();
+    chunk_mutex.unlock();
+    
     f32 rel_x = rel_pos.x() -
       chunk_index.x()*rel_div;
     f32 rel_y = rel_pos.y() -
@@ -498,6 +556,74 @@ NAMESPACE {
       *norm = biLerp(rem, norms);
     }
     return biLerp(rem, heights);
+  }
+
+  void Terrain::_scene_update(bool cur_scene) {
+    
+    Vec2i chunk = chunkAtPoint(Engine::engine->graphics.cam->getTrans().xy());
+    bool should_load = true;//cur_scene;
+
+    Array<Vec2u> erase_chunks;
+    chunk_mutex.lock();
+    auto it = chunks.begin();
+    chunk_mutex.unlock();
+    
+    while (true) {
+
+      chunk_mutex.lock();
+      if (it == chunks.end()) break;
+      if (abs(chunk.x() - (i32) it->first.cx())
+	  > (i32) CHUNKS_IN_VIEW ||
+	  abs(chunk.y() - (i32) it->first.cy())
+	  > (i32) CHUNKS_IN_VIEW) {
+        erase_chunks.push_back(it->first);
+	//should_load = true;
+      }
+      chunk_mutex.unlock();
+      ++it;
+    }
+    chunk_mutex.unlock();
+    
+    if (should_load) {
+
+      for (Vec2u v : erase_chunks) {
+	
+	function<void()> fun = [v]() {
+	  chunk_mutex.lock();
+	  Pointer<TerrainChunk>& c = chunks[v];
+	  c->removeTrees();
+	  Engine::removeStatic(c);
+	  chunks.erase(v);
+	  chunk_mutex.unlock();
+	};
+	
+	if (cur_scene) {
+	  fun();
+	} else {
+	  Engine::engine->synchronized_mutex.lock();
+	  Engine::engine->synchronized_callbacks.push_back(fun);
+	  Engine::engine->synchronized_mutex.unlock();
+	}
+	
+      }
+      
+      i32 x = i32(chunk.x()) - i32(CHUNKS_IN_VIEW) - 1;
+      while (++x <= i32(chunk.x() + CHUNKS_IN_VIEW)) {
+	i32 y = i32(chunk.y()) - i32(CHUNKS_IN_VIEW) - 1;
+        while(++y <= i32(chunk.y() + CHUNKS_IN_VIEW)) {
+	  Vec2u vec(x, y);
+	  if (x > 0 && y > 0 &&
+	      x < (i32) size.x() && y < (i32) size.y()) {
+	    chunk_mutex.lock();
+	    bool should_cont = (chunks.find(vec) != chunks.end());
+	    chunk_mutex.unlock();
+	    if (should_cont) continue;
+	    loadChunk(vec, cur_scene);
+	  }
+	}
+      }
+    }
+    
   }
   
 }

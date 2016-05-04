@@ -68,7 +68,7 @@ NAMESPACE {
     case BoundingObject::NONE:
     case BoundingObject::ALL:
     case BoundingObject::LAST:
-      return Vec3f();
+      return Vec3f(0,0,0);
     }
   }
   

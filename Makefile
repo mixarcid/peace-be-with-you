@@ -1,9 +1,9 @@
 rwildcard= $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-CXX= clang++
+CXX= g++
 PREPROCESS= cpp
 EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
-CXXFLAGS= -Werror -Wall -std=c++1y -fno-rtti -Wno-unused-command-line-argument
+CXXFLAGS= -Wall -std=c++1y -fno-rtti
 DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused
 RELEASE_FLAGS= -Ofast
 INCLUDE= $(shell find Source -type d | sed 's/[^\ ]*[^\ ]/-I&/g')
@@ -37,6 +37,10 @@ LIBDIR= -LThirdParty/lib/OSX
 endif
 
 LIBS+= -lGLEW -lglfw3 -lSOIL -lpthread
+
+ifeq ($(CXX), clang++)
+CXXFLAGS+= -Wno-unused-command-line-argument
+endif
 
 debug: CXXFLAGS+= $(DEBUG_FLAGS)
 debug: $(SOURCES) $(EXECUTABLE)

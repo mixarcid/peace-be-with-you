@@ -17,3 +17,4 @@ TerrainGround 16
 Tree 17
 Water 18
 Sun 19
+TerrainChunkComp 20
