@@ -43,7 +43,7 @@ NAMESPACE {
 
       gl::init();
 
-      engine->window = gl::createWindow(Vec2s(700,700), "Peace be with You");
+      engine->window = gl::createWindow(Vec2s(1000,1000), "Peace be with You");
       Input::init(engine->window);
     
       const unsigned char* version = glGetString(GL_VERSION);

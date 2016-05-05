@@ -1,6 +1,5 @@
 uniform sampler2D diffuse;
 uniform sampler2D normal;
-uniform sampler2D offset;
 uniform sampler2D depth;
 
 in vec2 texCoord;
@@ -72,38 +71,14 @@ void main() {
   vec2 d = vec2(1/res.x, 1/res.y);
   vec3 ret;
   float cur_depth = texture(depth, texCoord).r;
-  /*float depths[4];
-  depths[0] = texture(depth, texCoord + vec2(-d.x, -d.x)).r;
-  depths[1] = texture(depth, texCoord + vec2(-d.x, d.y)).r;
-  depths[2] = texture(depth, texCoord + vec2(d.x, -d.y)).r;
-  depths[3] = texture(depth, texCoord + vec2(d.x, d.y)).r;
-  float max_depth = max(max(max(depths[0], depths[1]), depths[2]), depths[3]);
-
-  vec2 off = d;
-  if (depths[0] == max_depth) {
-    off *= vec2(-1, -1);
-  } else if(depths[1] == max_depth) {
-    off *= vec2(-1, 1);
-  } else if(depths[2] == max_depth) {
-    off *= vec2(1, -1);
-  } else if(depths[3] == max_depth) {
-    off *= vec2(1, 1);
-  }
-
-  vec2 brush =  texture(offset, texCoord).rg - vec2(0.5);
-  off *= brush*20*cur_depth;
-  if (texture(depth, texCoord - off).r < texture(depth, texCoord).r - 0.001) {
-    ret = texture(diffuse, texCoord).rgb;
-  } else {*/
-    ret = texture(diffuse, texCoord).rgb;
-    //}
+  ret = texture(diffuse, texCoord).rgb;
   float sn = length(sobel(normal, texCoord, d).rgb);
   float sd = sobel(depth, texCoord, d).r;
   
- if (sn*0.9 + sd*0.1 > cur_depth*1.8) {
+  if (sn*0.9 + sd*0.1 > cur_depth*1.8) {
     ret = vec3(0);
- }
- //ret = texture(offset, texCoord).rgb;
- vec3 gamma = vec3(1.0/2.2);
- outColor = vec4(pow(ret, gamma), 1);//vec4(texture(normal, texCoord));
+  }
+  vec3 gamma = vec3(1.0/2.2);
+  //ret = texture(depth, texCoord).xyz;
+  outColor = vec4(pow(ret, gamma), 1);
 }

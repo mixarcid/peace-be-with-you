@@ -1,9 +1,10 @@
 rwildcard= $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+UNAME= $(shell uname)
 
 ifeq ($(UNAME), Darwin)
 CXX= clang++
 else
-CXX= clang++
+CXX= g++
 endif
 
 PREPROCESS= cpp
@@ -29,8 +30,6 @@ EXPANSIONS=$(SOURCES:.cpp=.ii)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 DEPENDS=$(SOURCES:.cpp=.d)
-
-UNAME= $(shell uname)
 
 ifeq ($(UNAME), Linux)
 LIBS= -lX11 -lXxf86vm -lXcursor -lXinerama -lXrandr -lXext -lXi -lGL

@@ -1,7 +1,6 @@
 out vec4 outColor;
-out vec3 outNormal;
-out vec2 outOffset;
-out float outDepth;
+out vec4 outNormal;
+out vec4 outDepth;
 
 #ifdef SHADER_USE_COLOR
 flat in vec4 color;
@@ -35,7 +34,7 @@ void main() {
   
 #ifdef HAS_NORMAL
   
-  outNormal = normal;
+  outNormal = vec4(normal, 1);
   vec3 norm = normalize(normal);
   
 #ifdef SHADER_3D
@@ -58,7 +57,7 @@ void main() {
   outColor *= vec4(light_color, 1);
 #endif
 #else
-  outNormal = vec3(0,0,0);
+  outNormal = vec4(0,0,0,1);
 #endif
 
 #ifdef SHADER_USE_COLOR
@@ -92,16 +91,5 @@ void main() {
   outColor *= uniColor;
 #endif
 
-#ifdef SHADER_USE_NORMAL
-  /*#ifdef SHADER_WATER
-  outOffset = texture(uniPaint, pos.xy/50.0).xy;
-  #else*/
-  outOffset = texture(uniPaint, norm.xy*0.5).xy;
-  //#endif
-#else
-  outOffset = vec2(0.5,0.5);
-#endif
-
-  outDepth = gl_FragCoord.z;//gl_FragCoord);
-
+  outDepth = vec4(gl_FragCoord.z);
 }

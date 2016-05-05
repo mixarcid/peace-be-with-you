@@ -67,15 +67,18 @@ NAMESPACE {
     return normal.normalized();
   }
 
+  Terrain* global_terrain;
+  f32 ground_func(Vec2f p, Vec3f* norm) {
+    return global_terrain->heightAtPoint(p, norm);
+  }
+
   void TerrainGround::init(Terrain* ter) {
     Pointer<TerrainGround> t(this);
     addComponent(new StaticPhysicsComp
 		 ((Pointer<StaticObject>&)t, MATERIAL));
-    
-    BoundingGround bound
-      ([ter](Vec2f p, Vec3f* norm) -> f32 {
-	return 0;//ter->heightAtPoint(p, norm);
-      });
+
+    global_terrain = ter;
+    BoundingGround bound(ground_func);
     tight_object.set(&bound);
 
     BoundingObject all(BoundingObject::ALL);
