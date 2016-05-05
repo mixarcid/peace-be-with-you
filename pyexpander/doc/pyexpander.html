@@ -1,0 +1,2778 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pyexpander</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>pyexpander</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/net/aragon/srv/projects/ctl/pfeiffer/csr-home/project/pyexpander/pyexpander.py">/net/aragon/srv/projects/ctl/pfeiffer/csr-home/project/pyexpander/pyexpander.py</a></font></td></tr></table>
+    <p><tt>#&nbsp;pylint:&nbsp;disable=C0302</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="expanderparser.html">expanderparser</a><br>
+</td><td width="25%" valign=top><a href="inspect.html">inspect</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="__builtin__.html#object">__builtin__.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pyexpander.html#Block">Block</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pyexpander.html#BeginBlock">BeginBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#ForBlock">ForBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#IfBlock">IfBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#IncludeBlock">IncludeBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#PatternBlock">PatternBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#SubstBlock">SubstBlock</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pyexpander.html#WhileBlock">WhileBlock</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="BeginBlock">class <strong>BeginBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$begin&nbsp;..&nbsp;$end&nbsp;block.<br>
+&nbsp;<br>
+This&nbsp;block&nbsp;is&nbsp;simply&nbsp;a&nbsp;variable&nbsp;scope,&nbsp;so&nbsp;it&nbsp;is&nbsp;derived&nbsp;from&nbsp;<a href="#Block">Block</a>&nbsp;where<br>
+the&nbsp;constructor&nbsp;is&nbsp;called&nbsp;with&nbsp;new_scope=True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#BeginBlock">BeginBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="BeginBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, filename<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="BeginBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="BeginBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#BeginBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#BeginBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#BeginBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#BeginBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="BeginBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Block">class <strong>Block</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;that&nbsp;represents&nbsp;a&nbsp;block&nbsp;in&nbsp;the&nbsp;expander&nbsp;language.<br>
+&nbsp;<br>
+Each&nbsp;block&nbsp;has&nbsp;a&nbsp;parent-pointer,&nbsp;which&nbsp;may&nbsp;be&nbsp;None.&nbsp;Blocks&nbsp;are&nbsp;used&nbsp;to<br>
+represent&nbsp;syntactical&nbsp;blocks&nbsp;in&nbsp;the&nbsp;expander&nbsp;language.&nbsp;They&nbsp;manage&nbsp;the<br>
+global&nbsp;variable&nbsp;dictionary&nbsp;and&nbsp;some&nbsp;more&nbsp;properties&nbsp;that&nbsp;are&nbsp;needed&nbsp;during<br>
+execution&nbsp;of&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Block-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="Block-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="Block-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, new_scope<font color="#909090">=False</font>, filename<font color="#909090">=None</font>, parse_list<font color="#909090">=None</font>, external_definitions<font color="#909090">=None</font>)</dt><dd><tt>The&nbsp;<a href="#Block">Block</a>&nbsp;constructor.<br>
+&nbsp;<br>
+Properties&nbsp;of&nbsp;a&nbsp;<a href="#Block">Block</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;parse_list&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;list&nbsp;with&nbsp;parse&nbsp;objects<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;position&nbsp;in&nbsp;the&nbsp;parse_list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;start&nbsp;position&nbsp;of&nbsp;the&nbsp;block&nbsp;in&nbsp;the&nbsp;parse_list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;previous&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;previous&nbsp;block<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;True&nbsp;if&nbsp;the&nbsp;block&nbsp;is&nbsp;also&nbsp;a&nbsp;new&nbsp;scope&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;respect&nbsp;to&nbsp;global&nbsp;variables.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;if&nbsp;True,&nbsp;skip&nbsp;a&nbsp;block&nbsp;in&nbsp;the&nbsp;text&nbsp;when&nbsp;the&nbsp;code<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;interpreted<br>
+&nbsp;&nbsp;&nbsp;&nbsp;globals_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;with&nbsp;the&nbsp;current&nbsp;global&nbsp;variables&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;interpreter.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;--&nbsp;a&nbsp;list&nbsp;of&nbsp;symbols&nbsp;(names&nbsp;in&nbsp;globals_)&nbsp;that&nbsp;are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copied&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;parent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;block&nbsp;when&nbsp;the&nbsp;<a href="#Block-pop">pop</a>()&nbsp;method&nbsp;is&nbsp;called.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;name&nbsp;of&nbsp;the&nbsp;interpreted&nbsp;file,&nbsp;may&nbsp;be&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;name&nbsp;of&nbsp;the&nbsp;file&nbsp;that&nbsp;"$subst"&nbsp;would&nbsp;include,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usually&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;--&nbsp;complete&nbsp;path&nbsp;of&nbsp;template<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usually&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_parselist_cache&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parselist&nbsp;of&nbsp;the&nbsp;template,&nbsp;usually&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;is&nbsp;a&nbsp;kind&nbsp;of&nbsp;optimization<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True,parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="Block-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="Block-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="Block-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="Block-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="Block-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="Block-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#Block-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="Block-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#Block-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="Block-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="Block-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="Block-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="Block-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#Block-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="Block-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="Block-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="Block-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="Block-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="Block-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="Block-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Block-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="Block-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ForBlock">class <strong>ForBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$for&nbsp;..&nbsp;$endfor&nbsp;block.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#ForBlock">ForBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ForBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, new_scope<font color="#909090">=False</font>, value_list<font color="#909090">=None</font>, var_expr<font color="#909090">=''</font>)</dt><dd><tt>constructor&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+var_expr&nbsp;--&nbsp;the&nbsp;expression&nbsp;that&nbsp;contains&nbsp;the&nbsp;loop&nbsp;variable&nbsp;or&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;with&nbsp;the&nbsp;loop&nbsp;variables.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ForBlock-next_loop"><strong>next_loop</strong></a>(self)</dt><dd><tt>performs&nbsp;next&nbsp;loop.<br>
+&nbsp;<br>
+returns:<br>
+&nbsp;&nbsp;True&nbsp;when&nbsp;the&nbsp;loop&nbsp;is&nbsp;not&nbsp;yet&nbsp;finished.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-set_loop_var"><strong>set_loop_var</strong></a>(self)</dt><dd><tt>set&nbsp;the&nbsp;loop&nbsp;variable&nbsp;to&nbsp;a&nbsp;new&nbsp;value.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="ForBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#ForBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#ForBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#ForBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#ForBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="ForBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="IfBlock">class <strong>IfBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$if&nbsp;..&nbsp;$else&nbsp;..&nbsp;$endif&nbsp;block.<br>
+&nbsp;<br>
+An&nbsp;$if&nbsp;block&nbsp;never&nbsp;has&nbsp;a&nbsp;variable&nbsp;scope,&nbsp;so&nbsp;the&nbsp;base&nbsp;<a href="#Block">Block</a>&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;is<br>
+called&nbsp;with&nbsp;new_scope=False.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#IfBlock">IfBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="IfBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, condition<font color="#909090">=True</font>)</dt><dd><tt>constructs&nbsp;the&nbsp;$if&nbsp;block.<br>
+&nbsp;<br>
+condition&nbsp;is&nbsp;the&nbsp;boolean&nbsp;value&nbsp;of&nbsp;the&nbsp;$if&nbsp;condition.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="IfBlock-enter_elif"><strong>enter_elif</strong></a>(self, condition)</dt><dd><tt>enter&nbsp;the&nbsp;"elif"&nbsp;part&nbsp;in&nbsp;the&nbsp;if..endif&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-enter_else"><strong>enter_else</strong></a>(self)</dt><dd><tt>this&nbsp;should&nbsp;be&nbsp;called&nbsp;when&nbsp;$else&nbsp;is&nbsp;encountered.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="IfBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#IfBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#IfBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#IfBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IfBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="IfBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="IncludeBlock">class <strong>IncludeBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$include(filename)&nbsp;block.<br>
+&nbsp;<br>
+This&nbsp;block&nbsp;is&nbsp;simply&nbsp;a&nbsp;variable&nbsp;scope,&nbsp;so&nbsp;it&nbsp;is&nbsp;derived&nbsp;from&nbsp;<a href="#Block">Block</a>&nbsp;where<br>
+the&nbsp;constructor&nbsp;is&nbsp;called&nbsp;with&nbsp;new_scope=True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#IncludeBlock">IncludeBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="IncludeBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, new_scope<font color="#909090">=False</font>, filename<font color="#909090">=None</font>, include_paths<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="IncludeBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="IncludeBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#IncludeBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#IncludeBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#IncludeBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#IncludeBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="IncludeBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PatternBlock">class <strong>PatternBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$pattern(parameters)&nbsp;block.<br>
+&nbsp;<br>
+This&nbsp;block&nbsp;is&nbsp;simply&nbsp;a&nbsp;variable&nbsp;scope,&nbsp;so&nbsp;it&nbsp;is&nbsp;derived&nbsp;from&nbsp;<a href="#Block">Block</a>&nbsp;where<br>
+the&nbsp;constructor&nbsp;is&nbsp;called&nbsp;with&nbsp;new_scope=True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#PatternBlock">PatternBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="PatternBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, filename<font color="#909090">=None</font>, include_paths<font color="#909090">=None</font>, heading<font color="#909090">=None</font>, lines<font color="#909090">=None</font>)</dt><dd><tt>#&nbsp;pylint:&nbsp;disable=R0913</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PatternBlock-def_vars"><strong>def_vars</strong></a>(self)</dt><dd><tt>define&nbsp;all&nbsp;the&nbsp;given&nbsp;variables&nbsp;in&nbsp;the&nbsp;<a href="#PatternBlock">PatternBlock</a>.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>#&nbsp;pylint:&nbsp;enable=R0913</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="PatternBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#PatternBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#PatternBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#PatternBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="PatternBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SubstBlock">class <strong>SubstBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$subst(parameters)&nbsp;block.<br>
+&nbsp;<br>
+This&nbsp;block&nbsp;is&nbsp;simply&nbsp;a&nbsp;variable&nbsp;scope,&nbsp;so&nbsp;it&nbsp;is&nbsp;derived&nbsp;from&nbsp;<a href="#Block">Block</a>&nbsp;where<br>
+the&nbsp;constructor&nbsp;is&nbsp;called&nbsp;with&nbsp;new_scope=True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#SubstBlock">SubstBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="SubstBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, filename<font color="#909090">=None</font>, include_paths<font color="#909090">=None</font>, external_definitions<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="SubstBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="SubstBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#SubstBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#SubstBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#SubstBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#SubstBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="SubstBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WhileBlock">class <strong>WhileBlock</strong></a>(<a href="pyexpander.html#Block">Block</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>implements&nbsp;a&nbsp;$while&nbsp;..&nbsp;$endwhile&nbsp;block.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pyexpander.html#WhileBlock">WhileBlock</a></dd>
+<dd><a href="pyexpander.html#Block">Block</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="WhileBlock-__init__"><strong>__init__</strong></a>(self, previous<font color="#909090">=None</font>, new_scope<font color="#909090">=False</font>, while_expr<font color="#909090">=''</font>)</dt><dd><tt>constructor&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+while_expr&nbsp;--&nbsp;the&nbsp;expression&nbsp;that&nbsp;contains&nbsp;the&nbsp;loop&nbsp;variable&nbsp;or&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;with&nbsp;the&nbsp;loop&nbsp;variables.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="WhileBlock-next_loop"><strong>next_loop</strong></a>(self)</dt><dd><tt>performs&nbsp;next&nbsp;loop.<br>
+&nbsp;<br>
+returns:<br>
+&nbsp;&nbsp;True&nbsp;when&nbsp;the&nbsp;loop&nbsp;is&nbsp;not&nbsp;yet&nbsp;finished.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><a name="WhileBlock-__delitem__"><strong>__delitem__</strong></a>(self, name)</dt><dd><tt>deletes&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;pprint<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["a"]<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__']<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["c"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'c'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=200<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200<br>
+&gt;&gt;&gt;&nbsp;del&nbsp;b["os.path.myvar"]<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+AttributeError:&nbsp;'module'&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;has&nbsp;no&nbsp;attribute&nbsp;'myvar'</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>looks&nbsp;up&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse<br>
+os.path&nbsp;to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a<br>
+reference&nbsp;to&nbsp;the&nbsp;module&nbsp;"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"<br>
+dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar=100<br>
+&gt;&gt;&gt;&nbsp;b.globals_["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+100</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-__len__"><strong>__len__</strong></a>(self)</dt><dd><tt>returns&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+[]<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b["b"]=&nbsp;6<br>
+&gt;&gt;&gt;&nbsp;b.globals_.keys()<br>
+['__pyexpander_buffer',&nbsp;'__builtins__',&nbsp;'b',&nbsp;'a']<br>
+&gt;&gt;&gt;&nbsp;len(b)<br>
+4</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-__setitem__"><strong>__setitem__</strong></a>(self, name, val)</dt><dd><tt>sets&nbsp;a&nbsp;value&nbsp;in&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=&nbsp;5<br>
+&gt;&gt;&gt;&nbsp;b.globals_["a"]<br>
+5<br>
+&nbsp;<br>
+Here&nbsp;we&nbsp;show&nbsp;how&nbsp;symbols&nbsp;with&nbsp;dots&nbsp;'.'&nbsp;are&nbsp;treated.&nbsp;We&nbsp;misuse&nbsp;os.path<br>
+to&nbsp;create&nbsp;a&nbsp;variable&nbsp;os.path.myvar&nbsp;and&nbsp;store&nbsp;a&nbsp;reference&nbsp;to&nbsp;the&nbsp;module<br>
+"os"&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>&nbsp;"globals_"&nbsp;dictionary:<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;import&nbsp;os.path<br>
+&gt;&gt;&gt;&nbsp;b["os"]=&nbsp;os<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]=&nbsp;200<br>
+&gt;&gt;&gt;&nbsp;os.path.myvar<br>
+200<br>
+&gt;&gt;&gt;&nbsp;b["os.path.myvar"]<br>
+200</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-eval_"><strong>eval_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-eval_">eval_</a>("3*a")<br>
+6</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-exec_"><strong>exec_</strong></a>(self, st)</dt><dd><tt>perform&nbsp;exec&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-exec_">exec_</a>("a=1")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+1<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+2<br>
+&gt;&gt;&gt;&nbsp;b.previous["a"]<br>
+1</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-export_symbols"><strong>export_symbols</strong></a>(self, lst)</dt><dd><tt>appends&nbsp;items&nbsp;to&nbsp;the&nbsp;export_symbols&nbsp;list.<br>
+&nbsp;<br>
+This&nbsp;list&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;<a href="#WhileBlock-pop">pop</a>()&nbsp;method&nbsp;in&nbsp;order&nbsp;to&nbsp;copy&nbsp;values&nbsp;from&nbsp;the<br>
+current&nbsp;globals_&nbsp;dictionary&nbsp;to&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;previous<br>
+block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-export_symbols">export_symbols</a>(["a","b"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-export_symbols">export_symbols</a>(["d","e"])<br>
+&gt;&gt;&gt;&nbsp;b.exported_syms<br>
+['a',&nbsp;'b',&nbsp;'d',&nbsp;'e']</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-extend"><strong>extend</strong></a>(self, lst)</dt><dd><tt>adds&nbsp;items&nbsp;to&nbsp;the&nbsp;list&nbsp;of&nbsp;expander&nbsp;functions&nbsp;or&nbsp;variables.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;a=1<br>
+&gt;&gt;&gt;&nbsp;b=2<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;t(x):<br>
+...&nbsp;&nbsp;&nbsp;return&nbsp;x+1<br>
+...<br>
+&gt;&gt;&gt;&nbsp;block=&nbsp;<a href="#Block">Block</a>(parse_list=[],external_definitions=globals())<br>
+&gt;&gt;&gt;&nbsp;block.<a href="#WhileBlock-extend">extend</a>(["a","b","t"])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_vars)<br>
+set(['a',&nbsp;'b'])<br>
+&gt;&gt;&gt;&nbsp;_pr_set(block.direct_funcs)<br>
+set(['t'])</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-get_block_list"><strong>get_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;all&nbsp;blocks&nbsp;of&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-parse_elm"><strong>parse_elm</strong></a>(self)</dt><dd><tt>get&nbsp;the&nbsp;current&nbsp;parse&nbsp;element.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-parse_loop"><strong>parse_loop</strong></a>(self)</dt><dd><tt>loop&nbsp;across&nbsp;the&nbsp;items&nbsp;in&nbsp;the&nbsp;<a href="#Block">Block</a>.<br>
+&nbsp;<br>
+returns&nbsp;False&nbsp;if&nbsp;there&nbsp;is&nbsp;nothing&nbsp;more&nbsp;to&nbsp;parse&nbsp;in&nbsp;the&nbsp;current&nbsp;block.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-pop"><strong>pop</strong></a>(self)</dt><dd><tt>removes&nbsp;the&nbsp;current&nbsp;block&nbsp;and&nbsp;returns&nbsp;the&nbsp;previous&nbsp;one.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]=1<br>
+&gt;&gt;&gt;&nbsp;b["b"]=2<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;b["a"]=10<br>
+&gt;&gt;&gt;&nbsp;b["b"]=20<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-export_symbols">export_symbols</a>(["a"])<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;b.<a href="#WhileBlock-pop">pop</a>()<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["b"]<br>
+2</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-posmsg"><strong>posmsg</strong></a>(self, msg<font color="#909090">=None</font>, pos<font color="#909090">=None</font>)</dt><dd><tt>return&nbsp;a&nbsp;message&nbsp;together&nbsp;with&nbsp;a&nbsp;position.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;mainly&nbsp;used&nbsp;for&nbsp;error&nbsp;messages.&nbsp;We&nbsp;usually&nbsp;want&nbsp;to&nbsp;print<br>
+filename&nbsp;and&nbsp;the&nbsp;line&nbsp;and&nbsp;column&nbsp;number&nbsp;together&nbsp;with&nbsp;a&nbsp;message.&nbsp;This<br>
+method&nbsp;returns&nbsp;the&nbsp;given&nbsp;message&nbsp;string&nbsp;&lt;msg&gt;&nbsp;together&nbsp;with&nbsp;this<br>
+additional&nbsp;information.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-print_block_list"><strong>print_block_list</strong></a>(self)</dt><dd><tt>print&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(b,True)<br>
+&gt;&gt;&gt;&nbsp;print&nbsp;b<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-print_block_list">print_block_list</a>()<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}<br>
+<a href="#Block">Block</a>{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;template_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;template_parselist_cache:&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exported_syms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_vars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direct_funcs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;set([])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_parse_list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lst_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start_pos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0<br>
+}</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-set_substfile"><strong>set_substfile</strong></a>(self, filename, tp)</dt><dd><tt>set&nbsp;substitution&nbsp;filename.<br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;"$subst",&nbsp;"$template"&nbsp;and&nbsp;"$pattern"&nbsp;commands.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-setdefault"><strong>setdefault</strong></a>(self, name, val)</dt><dd><tt>return&nbsp;a&nbsp;value&nbsp;from&nbsp;globals,&nbsp;set&nbsp;to&nbsp;a&nbsp;default&nbsp;if&nbsp;it's&nbsp;not&nbsp;defined.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+NameError:&nbsp;name&nbsp;'a'&nbsp;is&nbsp;not&nbsp;defined&nbsp;at&nbsp;unknown&nbsp;position<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-setdefault">setdefault</a>("a",10)<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]<br>
+10<br>
+&gt;&gt;&gt;&nbsp;b["a"]=11<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-setdefault">setdefault</a>("a",10)<br>
+11</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-str_block_list"><strong>str_block_list</strong></a>(self)</dt><dd><tt>returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;all&nbsp;blocks&nbsp;in&nbsp;the&nbsp;list.<br>
+&nbsp;<br>
+The&nbsp;list&nbsp;is&nbsp;returned&nbsp;with&nbsp;the&nbsp;oldest&nbsp;block&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-str_eval"><strong>str_eval</strong></a>(self, st)</dt><dd><tt>perform&nbsp;eval&nbsp;with&nbsp;the&nbsp;globals_&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;block.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;b=&nbsp;<a href="#Block">Block</a>(parse_list=[])<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-exec_">exec_</a>("a=2")<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#WhileBlock-str_eval">str_eval</a>("3*a")<br>
+'6'</tt></dd></dl>
+
+<dl><dt><a name="WhileBlock-substfile_parselist"><strong>substfile_parselist</strong></a>(self, include_paths)</dt><dd><tt>return&nbsp;the&nbsp;parselist&nbsp;for&nbsp;a&nbsp;given&nbsp;file.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;manages&nbsp;a&nbsp;cache&nbsp;of&nbsp;that&nbsp;assigns&nbsp;filenames&nbsp;to&nbsp;parselists.<br>
+This&nbsp;can&nbsp;speed&nbsp;things&nbsp;up&nbsp;if&nbsp;a&nbsp;file&nbsp;is&nbsp;included&nbsp;several&nbsp;times.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="pyexpander.html#Block">Block</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-expand"><strong>expand</strong></a>(st, filename<font color="#909090">=None</font>, external_definitions<font color="#909090">=None</font>, allow_nobracket_vars<font color="#909090">=False</font>, include_paths<font color="#909090">=None</font>)</dt><dd><tt>returns&nbsp;the&nbsp;global&nbsp;dict.</tt></dd></dl>
+ <dl><dt><a name="-expandFile"><strong>expandFile</strong></a>(filename, external_definitions<font color="#909090">=None</font>, allow_nobracket_vars<font color="#909090">=False</font>, include_paths<font color="#909090">=None</font>)</dt><dd><tt>returns&nbsp;the&nbsp;global&nbsp;dict.</tt></dd></dl>
+ <dl><dt><a name="-find_file"><strong>find_file</strong></a>(filename, include_paths)</dt><dd><tt>find&nbsp;a&nbsp;file&nbsp;in&nbsp;a&nbsp;list&nbsp;of&nbsp;include&nbsp;paths.<br>
+&nbsp;<br>
+include_paths&nbsp;MUST&nbsp;CONTAIN&nbsp;""&nbsp;in&nbsp;order&nbsp;to&nbsp;search&nbsp;the<br>
+local&nbsp;directory.</tt></dd></dl>
+ <dl><dt><a name="-parseFile"><strong>parseFile</strong></a>(filename)</dt><dd><tt>parse&nbsp;a&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-parseString"><strong>parseString</strong></a>(st)</dt><dd><tt>parse&nbsp;a&nbsp;string.</tt></dd></dl>
+ <dl><dt><a name="-processToList"><strong>processToList</strong></a>(parse_list, filename<font color="#909090">=None</font>, external_definitions<font color="#909090">=None</font>, allow_nobracket_vars<font color="#909090">=False</font>, include_paths<font color="#909090">=None</font>)</dt><dd><tt>run&nbsp;pyexpander,&nbsp;return&nbsp;a&nbsp;list&nbsp;of&nbsp;strings.</tt></dd></dl>
+ <dl><dt><a name="-processToPrint"><strong>processToPrint</strong></a>(parse_list, filename<font color="#909090">=None</font>, external_definitions<font color="#909090">=None</font>, allow_nobracket_vars<font color="#909090">=False</font>, include_paths<font color="#909090">=None</font>)</dt><dd><tt>returns&nbsp;the&nbsp;global&nbsp;dict.</tt></dd></dl>
+</td></tr></table>
+</body></html>

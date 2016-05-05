@@ -1,0 +1,7 @@
+In this example, we use "no-bracket" variables,
+with the option "-s", expander allows to expand
+variables whose names are not enclosed in brackets.
+"x" is set to 123.$py(x=123)\
+Here it is expander without
+brackets: $x,
+here it is expanded with brackets: $(x).

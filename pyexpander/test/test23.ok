@@ -1,0 +1,6 @@
+A test of begin-end (scoping) where the commands are enclosed
+in curly brackets:
+x outside the block is 1
+here the block starts
+x is set to 2, value of x here: 2
+here the block ends, the value of x is now: 1

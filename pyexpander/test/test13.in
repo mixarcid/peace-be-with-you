@@ -1,0 +1,10 @@
+A test of begin-end (scoping):
+$py(x=1)\
+x outside the block is $(x)
+$begin\
+here the block starts
+$py(x=2)\
+x is set to 2, value of x here: $(x)
+here the block ends
+$end\
+the value of x is now: $(x)

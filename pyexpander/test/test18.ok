@@ -1,0 +1,12 @@
+Here we test the inclusion of a file:
+Set a to 0, a:0
+include the include file here:
+in include file, a before: 0
+now increase a by one, a now: 1
+after include file, a now: 1
+
+now set a again to 0, a:0
+include the same file with include_begin:
+in include file, a before: 0
+now increase a by one, a now: 1
+after include file, a now: 0

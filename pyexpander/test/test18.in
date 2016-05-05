@@ -1,0 +1,10 @@
+Here we test the inclusion of a file:
+Set a to 0,$py(a=0) a:$(a)
+include the include file here:
+$include("test18.include")\
+after include file, a now: $(a)
+
+now set a again to 0,$py(a=0) a:$(a)
+include the same file with include_begin:
+$include_begin("test18.include")\
+after include file, a now: $(a)

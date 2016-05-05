@@ -40,7 +40,7 @@ void main() {
   
 #ifdef SHADER_3D
   vec3 light_color = vec3(uniAmbient);
-  for (uint i=0; i<MAX_DIR_LIGHTS; ++i) {
+  for (int i=0; i<MAX_DIR_LIGHTS; ++i) {
     float intensity = max(0.0,
 			  dot(norm,
 			      -uniDirLights[i].dir));
@@ -82,7 +82,7 @@ void main() {
   tex_coords[3] = tex - vec2(0.25,0.25);
 
   vec3 color = vec3(0,0,0);
-  for (uint n = 0u; n < 4u; ++n) {
+  for (int n = 0; n < 4; ++n) {
     color += biome_data[n]*(texture(uniTexture, tex_coords[n]).xyz);
   }
   outColor.xyz *= color;

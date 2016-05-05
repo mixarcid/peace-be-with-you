@@ -1,0 +1,9 @@
+Here is an example with more complex python code.
+$py(
+def format(no):
+    return "%04d" % no
+   )\
+$# this is an expander comment
+$# completely ignored until EOL
+now some numbers:
+$(format(1)) $(format(2)) $(format(3))

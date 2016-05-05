@@ -319,7 +319,7 @@ NAMESPACE {
     
     FOR(entry in getEnumEntries("ShaderFlags")[:-2]);
     if (shade_flags & $(entry)) {
-      preprocess += "#define $(entry)\n";
+      preprocess += "#define @(entry)\n";
     }
     END_FOR;
     
@@ -327,7 +327,7 @@ NAMESPACE {
     String frag_source = preprocess + frag_str;
     const char* c_vert_source = vert_source.c_str();
     const char* c_frag_source = frag_source.c_str();
-
+    
     u32 vert_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert_id, 1, &c_vert_source, NULL);
     glCompileShader(vert_id);

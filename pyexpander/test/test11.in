@@ -1,0 +1,9 @@
+Here is a test of a conditional with else 
+and a false condition:
+x is set to 0,$py(x=0)
+$if(x>0)\
+x is bigger than 0, x=$(x)
+$else\
+x is less or equal to 0, x=$(x)
+$endif\
+This is the part after endif.

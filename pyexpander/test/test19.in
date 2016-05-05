@@ -1,0 +1,6 @@
+Here we test include paths.
+Set a to 0$py(a=0), a now: $(a)
+now include "test.inc" which is created only
+during the make run:
+$include("test.inc")\
+after include, a is now: $(a)

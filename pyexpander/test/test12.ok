@@ -1,0 +1,11 @@
+This is a test of if, else, elif with variations
+in the value of x.
+Set x to 1
+x is bigger than 0
+
+Set x to 0
+x is equal to 0
+
+Set x to -1
+x is less than 0
+

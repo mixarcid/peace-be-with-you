@@ -1,0 +1,30 @@
+Here is a test of evaluation of empty loops and variable scopes.  The following
+code shows a simple loop with an if block in it:
+
+$for(i in range(3))\
+i==$(i) --> \
+$if(i<1)\
+smaller than 1
+$elif(i==1)\
+equal to 1
+$else\
+bigger than 1
+$endif\
+$endfor\
+
+Now the same code but this time the loop is not executed since we do 
+\$for(j in range(0)). Since the loop is not executed the variable \$(j) is not
+defined. pyexpander *must not* evaluate the if conditions since this would lead
+to an exception. The following code should just generate empty lines:
+
+$for(j in range(0))\
+j==$(j) --> \
+$if(j<1)\
+smaller than 1
+$elif(j==1)\
+equal to 1
+$else\
+bigger than 1
+$endif\
+$endfor\
+

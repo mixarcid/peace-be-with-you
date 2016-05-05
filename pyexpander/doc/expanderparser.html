@@ -1,0 +1,789 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module expanderparser</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>expanderparser</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/net/aragon/srv/projects/ctl/pfeiffer/csr-home/project/pyexpander/expanderparser.py">/net/aragon/srv/projects/ctl/pfeiffer/csr-home/project/pyexpander/expanderparser.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="bisect.html">bisect</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="__builtin__.html#object">__builtin__.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="expanderparser.html#IndexedString">IndexedString</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#LineNumbers">LineNumbers</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedItem">ParsedItem</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedCommand">ParsedCommand</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedComment">ParsedComment</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedEval">ParsedEval</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedLiteral">ParsedLiteral</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedPureCommand">ParsedPureCommand</a>
+</font></dt><dt><font face="helvetica, arial"><a href="expanderparser.html#ParsedVar">ParsedVar</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>(<a href="exceptions.html#BaseException">exceptions.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="expanderparser.html#ParseException">ParseException</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="IndexedString">class <strong>IndexedString</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>a&nbsp;string&nbsp;together&nbsp;with&nbsp;row&nbsp;column&nbsp;information.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="IndexedString-__init__"><strong>__init__</strong></a>(self, st)</dt></dl>
+
+<dl><dt><a name="IndexedString-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="IndexedString-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="IndexedString-rowcol"><strong>rowcol</strong></a>(self, pos)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="IndexedString-st"><strong>st</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;raw&nbsp;string.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="LineNumbers">class <strong>LineNumbers</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>convert&nbsp;a&nbsp;string&nbsp;position&nbsp;to&nbsp;row&nbsp;and&nbsp;column.<br>
+&nbsp;<br>
+Here&nbsp;is&nbsp;an&nbsp;example:<br>
+&gt;&gt;&gt;&nbsp;txt='''01234<br>
+...&nbsp;67<br>
+...&nbsp;9abcd'''<br>
+&gt;&gt;&gt;&nbsp;l=<a href="#LineNumbers">LineNumbers</a>(txt)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(0)<br>
+(1,&nbsp;1)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(1)<br>
+(1,&nbsp;2)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(4)<br>
+(1,&nbsp;5)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(5)<br>
+(1,&nbsp;6)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(6)<br>
+(2,&nbsp;1)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(7)<br>
+(2,&nbsp;2)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(8)<br>
+(2,&nbsp;3)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(9)<br>
+(3,&nbsp;1)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(13)<br>
+(3,&nbsp;5)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(14)<br>
+(3,&nbsp;6)<br>
+&gt;&gt;&gt;&nbsp;l.<a href="#LineNumbers-rowcol">rowcol</a>(16)<br>
+(3,&nbsp;8)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="LineNumbers-__init__"><strong>__init__</strong></a>(self, st)</dt></dl>
+
+<dl><dt><a name="LineNumbers-rowcol"><strong>rowcol</strong></a>(self, pos)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParseException">class <strong>ParseException</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>used&nbsp;for&nbsp;Exceptions&nbsp;in&nbsp;this&nbsp;module.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParseException">ParseException</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParseException-__init__"><strong>__init__</strong></a>(self, value, pos<font color="#909090">=None</font>, rowcol<font color="#909090">=None</font>)</dt><dd><tt>#&nbsp;pylint:&nbsp;disable=W0231</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>#&nbsp;pylint:&nbsp;enable=W0231</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#ParseException-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="ParseException-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ParseException-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#ParseException-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="ParseException-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ParseException-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedCommand">class <strong>ParsedCommand</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;a&nbsp;pyexpander&nbsp;command&nbsp;with&nbsp;arguments.<br>
+&nbsp;<br>
+A&nbsp;command&nbsp;has&nbsp;the&nbsp;form&nbsp;"$name(argument1,&nbsp;argument2,&nbsp;...)".<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedCommand">ParsedCommand</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedCommand-__init__"><strong>__init__</strong></a>(self, idxst, start, end, ident)</dt></dl>
+
+<dl><dt><a name="ParsedCommand-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedCommand-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedCommand-args"><strong>args</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;arguments&nbsp;of&nbsp;the&nbsp;command.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedCommand-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedCommand-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedCommand-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedCommand-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedCommand-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedComment">class <strong>ParsedComment</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;a&nbsp;parsed&nbsp;comment.<br>
+&nbsp;<br>
+A&nbsp;comment&nbsp;in&nbsp;pyexpander&nbsp;starts&nbsp;with&nbsp;'$#'.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedComment">ParsedComment</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedComment-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedComment-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedComment-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedComment-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedComment-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedComment-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedComment-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedComment-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedEval">class <strong>ParsedEval</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;an&nbsp;pyexpander&nbsp;expression.<br>
+&nbsp;<br>
+A&nbsp;pyexpander&nbsp;expression&nbsp;has&nbsp;the&nbsp;form&nbsp;"$(expression)"&nbsp;e.g.&nbsp;"$(a+1)".&nbsp;This&nbsp;is<br>
+different&nbsp;from&nbsp;<a href="#ParsedVar">ParsedVar</a>&nbsp;where&nbsp;the&nbsp;string&nbsp;within&nbsp;the&nbsp;brackets&nbsp;is&nbsp;a&nbsp;simple<br>
+identifier.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedEval">ParsedEval</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedEval-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedEval-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedEval-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedEval-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedEval-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedEval-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedEval-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedEval-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedItem">class <strong>ParsedItem</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>base&nbsp;class&nbsp;of&nbsp;parsed&nbsp;items.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ParsedItem-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<dl><dt><a name="ParsedItem-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedItem-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedItem-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedItem-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedItem-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedItem-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedItem-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedLiteral">class <strong>ParsedLiteral</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;a&nbsp;parsed&nbsp;literal.<br>
+&nbsp;<br>
+A&nbsp;literal&nbsp;is&nbsp;a&nbsp;substring&nbsp;in&nbsp;the&nbsp;input&nbsp;that&nbsp;shouldn't&nbsp;be&nbsp;modified&nbsp;by<br>
+pyexpander.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedLiteral">ParsedLiteral</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedLiteral-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedLiteral-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedLiteral-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedLiteral-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedLiteral-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedLiteral-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedLiteral-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedLiteral-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedPureCommand">class <strong>ParsedPureCommand</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;a&nbsp;pyexpander&nbsp;command&nbsp;without&nbsp;arguments.<br>
+&nbsp;<br>
+A&nbsp;pure&nbsp;command&nbsp;has&nbsp;the&nbsp;form&nbsp;"$name".&nbsp;Such&nbsp;a&nbsp;command&nbsp;has&nbsp;no&nbsp;arguments&nbsp;which<br>
+would&nbsp;be&nbsp;enclosed&nbsp;in&nbsp;round&nbsp;brackets&nbsp;immediately&nbsp;following&nbsp;the&nbsp;name.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedPureCommand">ParsedPureCommand</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedPureCommand-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedPureCommand-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedPureCommand-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedPureCommand-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedPureCommand-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedPureCommand-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedPureCommand-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedPureCommand-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ParsedVar">class <strong>ParsedVar</strong></a>(<a href="expanderparser.html#ParsedItem">ParsedItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>class&nbsp;of&nbsp;a&nbsp;parsed&nbsp;variable.<br>
+&nbsp;<br>
+A&nbsp;variable&nbsp;in&nbsp;pyexpander&nbsp;has&nbsp;the&nbsp;form&nbsp;"$(identifier)".<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="expanderparser.html#ParsedVar">ParsedVar</a></dd>
+<dd><a href="expanderparser.html#ParsedItem">ParsedItem</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ParsedVar-__init__"><strong>__init__</strong></a>(self, idxst, start, end)</dt></dl>
+
+<hr>
+Methods inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><a name="ParsedVar-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedVar-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ParsedVar-end"><strong>end</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedVar-positions"><strong>positions</strong></a>(self)</dt><dd><tt>return&nbsp;start&nbsp;and&nbsp;end&nbsp;of&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedVar-rowcol"><strong>rowcol</strong></a>(self, pos<font color="#909090">=None</font>)</dt><dd><tt>calculate&nbsp;(row,column)&nbsp;from&nbsp;a&nbsp;string&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="ParsedVar-start"><strong>start</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>&nbsp;in&nbsp;the&nbsp;source&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="ParsedVar-string"><strong>string</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;string&nbsp;that&nbsp;represents&nbsp;the&nbsp;<a href="#ParsedItem">ParsedItem</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="expanderparser.html#ParsedItem">ParsedItem</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-parseAll"><strong>parseAll</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;everything.<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-pprint">pprint</a>(<a href="#-parseAll">parseAll</a>(idxst,pos))<br>
+...<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("abc",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+&gt;&gt;&gt;&nbsp;test("abc$xyz",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(4,&nbsp;6),&nbsp;'xyz')<br>
+&gt;&gt;&gt;&nbsp;test("abc${xyz}efg",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(5,&nbsp;7),&nbsp;'xyz')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(9,&nbsp;11),&nbsp;'efg')<br>
+&gt;&gt;&gt;&nbsp;test("abc$xyz(2*4)",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(8,&nbsp;10),&nbsp;'2*4',&nbsp;'xyz')<br>
+&gt;&gt;&gt;&nbsp;test("abc$(2*4)ab",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+('<a href="#ParsedEval">ParsedEval</a>',&nbsp;(5,&nbsp;7),&nbsp;'2*4')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(9,&nbsp;10),&nbsp;'ab')<br>
+&gt;&gt;&gt;&nbsp;test("abc\\$(2*4)ab",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'abc')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(4,&nbsp;4),&nbsp;'$')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(5,&nbsp;11),&nbsp;'(2*4)ab')<br>
+&gt;&gt;&gt;&nbsp;test("ab$func(1+2)\\\nnew&nbsp;line",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;1),&nbsp;'ab')<br>
+('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(8,&nbsp;10),&nbsp;'1+2',&nbsp;'func')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(14,&nbsp;21),&nbsp;'new&nbsp;line')<br>
+&gt;&gt;&gt;&nbsp;test("ab$func(1+2)\nnew&nbsp;line",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;1),&nbsp;'ab')<br>
+('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(8,&nbsp;10),&nbsp;'1+2',&nbsp;'func')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(12,&nbsp;20),&nbsp;'\nnew&nbsp;line')<br>
+&gt;&gt;&gt;&nbsp;test("ab$(xyz)(56)",0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;1),&nbsp;'ab')<br>
+('<a href="#ParsedVar">ParsedVar</a>',&nbsp;(4,&nbsp;6),&nbsp;'xyz')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(8,&nbsp;11),&nbsp;'(56)')<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test(r'''<br>
+...&nbsp;Some&nbsp;text&nbsp;with&nbsp;a&nbsp;macro:&nbsp;$(xy)<br>
+...&nbsp;an&nbsp;escaped&nbsp;dollar:&nbsp;\$(xy)<br>
+...&nbsp;a&nbsp;macro&nbsp;within&nbsp;letters:&nbsp;abc${xy}def<br>
+...&nbsp;a&nbsp;pyexpander&nbsp;command&nbsp;structure:<br>
+...&nbsp;$if(a=1)<br>
+...&nbsp;here<br>
+...&nbsp;$else<br>
+...&nbsp;there<br>
+...&nbsp;$endif<br>
+...&nbsp;now&nbsp;a&nbsp;continued\<br>
+...&nbsp;line<br>
+...&nbsp;from&nbsp;here:$#&nbsp;the&nbsp;rest&nbsp;is&nbsp;a&nbsp;comment<br>
+...&nbsp;now&nbsp;an&nbsp;escaped&nbsp;continued\\<br>
+...&nbsp;line<br>
+...&nbsp;''',0)<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;24),&nbsp;'\nSome&nbsp;text&nbsp;with&nbsp;a&nbsp;macro:&nbsp;')<br>
+('<a href="#ParsedVar">ParsedVar</a>',&nbsp;(27,&nbsp;28),&nbsp;'xy')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(30,&nbsp;49),&nbsp;'\nan&nbsp;escaped&nbsp;dollar:&nbsp;')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(51,&nbsp;51),&nbsp;'$')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(52,&nbsp;83),&nbsp;'(xy)\na&nbsp;macro&nbsp;within&nbsp;letters:&nbsp;abc')<br>
+('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(86,&nbsp;87),&nbsp;'xy')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(89,&nbsp;124),&nbsp;'def\na&nbsp;pyexpander&nbsp;command&nbsp;structure:\n')<br>
+('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(129,&nbsp;131),&nbsp;'a=1',&nbsp;'if')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(133,&nbsp;138),&nbsp;'\nhere\n')<br>
+('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(140,&nbsp;143),&nbsp;'else')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(144,&nbsp;150),&nbsp;'\nthere\n')<br>
+('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(152,&nbsp;156),&nbsp;'endif')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(157,&nbsp;172),&nbsp;'\nnow&nbsp;a&nbsp;continued')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(175,&nbsp;189),&nbsp;'line\nfrom&nbsp;here:')<br>
+('<a href="#ParsedComment">ParsedComment</a>',&nbsp;(192,&nbsp;214),&nbsp;'&nbsp;the&nbsp;rest&nbsp;is&nbsp;a&nbsp;comment\n')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(215,&nbsp;238),&nbsp;'now&nbsp;an&nbsp;escaped&nbsp;continued')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(239,&nbsp;239),&nbsp;'\\')<br>
+('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(241,&nbsp;246),&nbsp;'\nline\n')</tt></dd></dl>
+ <dl><dt><a name="-parseBackslash"><strong>parseBackslash</strong></a>(idxst, pos)</dt><dd><tt>parses&nbsp;a&nbsp;backslash.<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;(p,elm)=&nbsp;<a href="#-parseBackslash">parseBackslash</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;print&nbsp;"Parsed:&nbsp;%s"&nbsp;%&nbsp;elm<br>
+...&nbsp;&nbsp;&nbsp;print&nbsp;"rest&nbsp;of&nbsp;string:",&nbsp;st[p:]<br>
+...<br>
+&gt;&gt;&gt;&nbsp;test(r"\abc",0)<br>
+Parsed:&nbsp;('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;0),&nbsp;'\\')<br>
+rest&nbsp;of&nbsp;string:&nbsp;abc<br>
+&gt;&gt;&gt;&nbsp;test("\\",0)<br>
+Parsed:&nbsp;('<a href="#ParsedLiteral">ParsedLiteral</a>',&nbsp;(0,&nbsp;2),&nbsp;'\\')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("\\\rab",0)<br>
+Parsed:&nbsp;None<br>
+rest&nbsp;of&nbsp;string:&nbsp;ab<br>
+&gt;&gt;&gt;&nbsp;test("\\\nab",0)<br>
+Parsed:&nbsp;None<br>
+rest&nbsp;of&nbsp;string:&nbsp;ab<br>
+&gt;&gt;&gt;&nbsp;test("\\\r\nab",0)<br>
+Parsed:&nbsp;None<br>
+rest&nbsp;of&nbsp;string:&nbsp;ab<br>
+&gt;&gt;&gt;&nbsp;test("\\\n\nab",0)<br>
+Parsed:&nbsp;None<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+ab</tt></dd></dl>
+ <dl><dt><a name="-parseBracketed"><strong>parseBracketed</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;an&nbsp;identifier&nbsp;in&nbsp;curly&nbsp;brackets.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a,b)=&nbsp;<a href="#-parseBracketed">parseBracketed</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;st[a:b]<br>
+...<br>
+&gt;&gt;&gt;&nbsp;test(r'{abc}',0)<br>
+{abc}<br>
+&gt;&gt;&gt;&nbsp;test(r'{ab8c}',0)<br>
+{ab8c}<br>
+&gt;&gt;&gt;&nbsp;test(r'{c}',0)<br>
+{c}<br>
+&gt;&gt;&gt;&nbsp;test(r'{}',0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;command&nbsp;enclosed&nbsp;in&nbsp;curly&nbsp;brackets&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;&nbsp;test(r'{abc',0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;command&nbsp;enclosed&nbsp;in&nbsp;curly&nbsp;brackets&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;&nbsp;test(r'x{ab8c}',1)<br>
+{ab8c}</tt></dd></dl>
+ <dl><dt><a name="-parseCode"><strong>parseCode</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;python&nbsp;code,&nbsp;it&nbsp;MUST&nbsp;start&nbsp;with&nbsp;a&nbsp;'('.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a,b)=&nbsp;<a href="#-parseCode">parseCode</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;st[a:b]<br>
+...<br>
+&gt;&gt;&gt;&nbsp;test(r'(a+b)',0)<br>
+(a+b)<br>
+&gt;&gt;&gt;&nbsp;test(r'(a+(b*c))',0)<br>
+(a+(b*c))<br>
+&gt;&gt;&gt;&nbsp;test(r'(a+(b*c)+")")',0)<br>
+(a+(b*c)+")")<br>
+&gt;&gt;&gt;&nbsp;test(r"(a+(b*c)+''')''')",0)<br>
+(a+(b*c)+''')''')<br>
+&gt;&gt;&gt;&nbsp;test(r"(a+(b*c)+''')'''+#&nbsp;comment&nbsp;)\n)",0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;end&nbsp;of&nbsp;bracket&nbsp;expression&nbsp;not&nbsp;found&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&nbsp;test("(a+(b*c)+''')'''+#&nbsp;comment&nbsp;)\n)",0)<br>
+(a+(b*c)+''')'''+#&nbsp;comment&nbsp;)<br>
+)</tt></dd></dl>
+ <dl><dt><a name="-parseComment"><strong>parseComment</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;a&nbsp;python&nbsp;comment.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a,b)=&nbsp;<a href="#-parseComment">parseComment</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;repr(st[a:b])<br>
+&gt;&gt;&gt;&nbsp;test("#abc",0)<br>
+'#abc'<br>
+&gt;&gt;&gt;&nbsp;test("#abc\nef",0)<br>
+'#abc\n'<br>
+&gt;&gt;&gt;&nbsp;test("#abc\r\nef",0)<br>
+'#abc\r\n'<br>
+&gt;&gt;&gt;&nbsp;test("xy#abc",2)<br>
+'#abc'<br>
+&gt;&gt;&gt;&nbsp;test("xy#abc\nef",2)<br>
+'#abc\n'<br>
+&gt;&gt;&gt;&nbsp;test("xy#abc\nef",3)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;start&nbsp;of&nbsp;comment&nbsp;not&nbsp;found&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;4</tt></dd></dl>
+ <dl><dt><a name="-parseDollar"><strong>parseDollar</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;things&nbsp;that&nbsp;follow&nbsp;a&nbsp;dollar.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;(p,elm)=&nbsp;<a href="#-parseDollar">parseDollar</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;print&nbsp;"Parsed:&nbsp;%s"&nbsp;%&nbsp;elm<br>
+...&nbsp;&nbsp;&nbsp;print&nbsp;"rest&nbsp;of&nbsp;string:",&nbsp;st[p:]<br>
+...<br>
+&gt;&gt;&gt;&nbsp;test("$abc",0)<br>
+Parsed:&nbsp;('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(1,&nbsp;3),&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("$abc%&amp;/",0)<br>
+Parsed:&nbsp;('<a href="#ParsedPureCommand">ParsedPureCommand</a>',&nbsp;(1,&nbsp;3),&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;%&amp;/<br>
+&gt;&gt;&gt;&nbsp;test("$abc(2*3)",0)<br>
+Parsed:&nbsp;('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(5,&nbsp;7),&nbsp;'2*3',&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("&nbsp;$abc(2*sin(x))",1)<br>
+Parsed:&nbsp;('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(6,&nbsp;13),&nbsp;'2*sin(x)',&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("&nbsp;$abc(2*sin(x))bn",1)<br>
+Parsed:&nbsp;('<a href="#ParsedCommand">ParsedCommand</a>',&nbsp;(6,&nbsp;13),&nbsp;'2*sin(x)',&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;bn<br>
+&gt;&gt;&gt;&nbsp;test("&nbsp;$#&nbsp;a&nbsp;comment\nnew&nbsp;line",1)<br>
+Parsed:&nbsp;('<a href="#ParsedComment">ParsedComment</a>',&nbsp;(3,&nbsp;13),&nbsp;'&nbsp;a&nbsp;comment\n')<br>
+rest&nbsp;of&nbsp;string:&nbsp;new&nbsp;line<br>
+&gt;&gt;&gt;&nbsp;test("$(abc)",0)<br>
+Parsed:&nbsp;('<a href="#ParsedVar">ParsedVar</a>',&nbsp;(2,&nbsp;4),&nbsp;'abc')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("$(abc*2)",0)<br>
+Parsed:&nbsp;('<a href="#ParsedEval">ParsedEval</a>',&nbsp;(2,&nbsp;6),&nbsp;'abc*2')<br>
+rest&nbsp;of&nbsp;string:&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("&nbsp;$(2*x(y))abc",1)<br>
+Parsed:&nbsp;('<a href="#ParsedEval">ParsedEval</a>',&nbsp;(3,&nbsp;8),&nbsp;'2*x(y)')<br>
+rest&nbsp;of&nbsp;string:&nbsp;abc</tt></dd></dl>
+ <dl><dt><a name="-parseStringLiteral"><strong>parseStringLiteral</strong></a>(idxst, pos)</dt><dd><tt>parse&nbsp;a&nbsp;python&nbsp;string&nbsp;literal.<br>
+&nbsp;<br>
+returns&nbsp;2&nbsp;numbers,&nbsp;the&nbsp;index&nbsp;where&nbsp;the&nbsp;string&nbsp;starts&nbsp;and<br>
+the&nbsp;index&nbsp;of&nbsp;the&nbsp;first&nbsp;character&nbsp;*after*&nbsp;the&nbsp;string<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;def&nbsp;test(st,pos):<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idxst=&nbsp;<a href="#IndexedString">IndexedString</a>(st)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a,b)=&nbsp;<a href="#-parseStringLiteral">parseStringLiteral</a>(idxst,pos)<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;st[a:b]<br>
+...<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test(r'''"abc"''',0)<br>
+"abc"<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test("'''ab'c'd'''",0)<br>
+'''ab'c'd'''<br>
+&gt;&gt;&gt;&nbsp;test("'''ab'cd''''",0)<br>
+'''ab'cd'''<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test(r'''U"abc"''',0)<br>
+U"abc"<br>
+&gt;&gt;&gt;&nbsp;test(r'''xU"abc"''',1)<br>
+U"abc"<br>
+&gt;&gt;&gt;&nbsp;test(r'''xUr"abc"''',1)<br>
+Ur"abc"<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test(r'''xUr"ab\\"c"''',1)<br>
+Ur"ab\\"<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;test(r'''xUr"ab\"c"''',1)<br>
+Ur"ab\"c"<br>
+&gt;&gt;&gt;&nbsp;test(r'''xUr"ab\"c"''',0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;start&nbsp;of&nbsp;string&nbsp;expected&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;&nbsp;test(r'''"ab''',0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;end&nbsp;of&nbsp;string&nbsp;not&nbsp;found&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;&nbsp;test(r"'''ab'",0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;end&nbsp;of&nbsp;string&nbsp;not&nbsp;found&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1<br>
+&gt;&gt;&gt;&nbsp;test(r'''"ab\"''',0)<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;end&nbsp;of&nbsp;string&nbsp;not&nbsp;found&nbsp;at&nbsp;line&nbsp;1,&nbsp;col&nbsp;1</tt></dd></dl>
+ <dl><dt><a name="-pprint"><strong>pprint</strong></a>(parselist)</dt><dd><tt>pretty&nbsp;print&nbsp;a&nbsp;parselist.</tt></dd></dl>
+ <dl><dt><a name="-scanPyIdentList"><strong>scanPyIdentList</strong></a>(st)</dt><dd><tt>scan&nbsp;a&nbsp;list&nbsp;of&nbsp;python&nbsp;identifiers.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-scanPyIdentList">scanPyIdentList</a>("a,b")<br>
+['a',&nbsp;'b']<br>
+&gt;&gt;&gt;&nbsp;<a href="#-scanPyIdentList">scanPyIdentList</a>("a,b.d,&nbsp;c")<br>
+['a',&nbsp;'b.d',&nbsp;'c']<br>
+&gt;&gt;&gt;&nbsp;<a href="#-scanPyIdentList">scanPyIdentList</a>("a,b.d,&nbsp;c&amp;")<br>
+Traceback&nbsp;(most&nbsp;recent&nbsp;call&nbsp;last):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<a href="#ParseException">ParseException</a>:&nbsp;list&nbsp;of&nbsp;python&nbsp;identifiers&nbsp;expected</tt></dd></dl>
+ <dl><dt><a name="-scanPyIn"><strong>scanPyIn</strong></a>(st)</dt><dd><tt>scan&nbsp;a&nbsp;python&nbsp;"in"&nbsp;statement.<br>
+&nbsp;<br>
+Here&nbsp;are&nbsp;some&nbsp;examples:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-scanPyIn">scanPyIn</a>("&nbsp;(a,b)&nbsp;in&nbsp;k.items()&nbsp;")<br>
+('(a,b)',&nbsp;'in',&nbsp;'k.items()')</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>rx_CodePart</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_DollarFollows</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_StringLiteralStart</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_bracketed</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_csv</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_lineEnd</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_pyIdent</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_py_in</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>rx_top</strong> = &lt;_sre.SRE_Pattern object&gt;</td></tr></table>
+</body></html>

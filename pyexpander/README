@@ -1,0 +1,58 @@
+About:
+    Pyexpander is a powerful macro processing language based on python.
+    Instead of simple macro replacement it offers evaluation of arbitrary
+    python expressions and execution of python code. Pyexpander is Turing
+    Complete. 
+
+Homepage:
+    http://pyexpander.sourceforge.net/
+    and:
+    https://sourceforge.net/projects/pyexpander/
+
+Documentation:
+    Documentation is in the directory "doc". You can read it by entering
+    "file://<path-to-pyexpander>/doc/index.html" as URL in your browser.
+
+    The documenation is also available on the web at:
+    http://pyexpander.sourceforge.net/
+    
+    The sources are written ReStructuredText format. docutils
+    (http://docutils.sourceforge.net/) is used to generate html
+    documentation from this format. In the source distribution, generated
+    html documentation is already included.
+    
+Installation:
+
+You may install pyexpander from source:
+
+    Download pyexpander_[version].tar.gz from this web site
+
+    unpack with tar -xvzf pyexpander_[version].tar.gz
+    chdir pyexpander
+
+    The program uses the standard python distutils. See also
+    http://docs.python.org/install/index.html for comprehensive
+    documentation on this. If you have root permissions, you may install
+    the program with this command:
+
+    python setup.py install
+
+    If you want to install the program in a separate directory for testing,
+    you may execute these commands:
+
+    mkdir $HOME/test
+    python setup.py install --home=~/test
+    export PYTHONPATH=~/test/lib/python:$PYTHONPATH
+    export PATH=~/test/bin:$PATH
+
+You may install the rpm
+
+    download the rpm file from the directory "rpm" on this web site
+
+    sudo rpm -ivh pyexpander-[version]-1.noarch.rpm
+    
+You may install the debian package
+
+    download the deb file from the directory "deb" on this web site
+
+    sudo dpkg -i python-pyexpander_[version]-1_all.deb

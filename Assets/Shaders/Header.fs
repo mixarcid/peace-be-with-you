@@ -1,4 +1,4 @@
-const uint MAX_DIR_LIGHTS = 1;
+const int MAX_DIR_LIGHTS = 1;
 struct DirLight {
   vec3 dir;
   //float pad0[1];

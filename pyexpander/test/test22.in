@@ -1,0 +1,18 @@
+# before file command
+$template("test22.db1")\
+$py(calc="A+B")\
+$subst(
+  name="set"
+)
+$subst(
+  name="set2"
+)
+$subst("test22.db2",
+       name="rbk",
+       DTYP="lowcal")
+$pattern("test22.db2",
+         ("name","DTYP"),
+         ("rbk1","lowcal1"),
+         ("rbk2","lowcal2")
+        )
+# after file command

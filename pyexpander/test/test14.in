@@ -1,0 +1,17 @@
+Here we test nested blocks:
+$py(x=1)\
+at the start, x has a value of $(x)
+now the block begins
+$begin\
+$py(x=2)\
+here we set x to 2, value of x: $(x)
+now we start another block
+$begin\
+$py(x=3)\
+we set x to 3, value of x: $(x)
+now the inner block ends
+$end\
+value of x here: $(x)
+now the outer block ends
+$end\
+value of x here: $(x)

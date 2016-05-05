@@ -74,7 +74,7 @@ NAMESPACE {
     
     BoundingGround bound
       ([ter](Vec2f p, Vec3f* norm) -> f32 {
-	return ter->heightAtPoint(p, norm);
+	return 0;//ter->heightAtPoint(p, norm);
       });
     tight_object.set(&bound);
 

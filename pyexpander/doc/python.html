@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.10: http://docutils.sourceforge.net/" />
+<title>pyexpander for users not familiar with python</title>
+<style type="text/css">
+
+html{
+    background-color:#FFFFFF;
+    color:#000; /*T1*/
+    margin-left:8%;
+    margin-right:2%;
+    font-family:"Lucida Grande", verdana, arial, sans-serif;
+}
+hr {
+    color:#ccc; /*BO7*/
+    background-color:#ccc; /*BO7*/
+    height:1px;
+    border:none;
+    margin-left:-6%;
+}
+b {
+    color:#6E7175;
+}
+
+pre, code, tt {
+    background-color:#F6F6F6;
+    color:#7A4707; /*T6*/
+    width:100%;
+    font-size:12pt;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    color:#a00;
+}
+h2,h3, h4, h5, h6 {
+    border-color:#E9E4D2;
+    border-width:0 0 1px 0;
+    border-style:solid;
+    margin-left:-4%;
+}
+h1{
+    margin-left:-6%;
+    font-size:18pt;
+}
+h2{
+    background-color:#FDFAF1;
+}
+a:link,
+a:visited {
+       color:#0000ff; /*T5*/
+       text-decoration:none
+}
+a:hover {
+       color:#8888FF; /*T3*/
+}
+.footer {
+    color:#6E7175; /*T8*/
+    margin-left:-6%;
+}
+.backGround {
+    background-color:#FDFAF1;
+}
+.grayText {
+    color:#6E7175; /*T8*/
+}
+.grayText a:link,
+.grayText a:visited {
+}
+.grayText a:hover {
+    color:#FBF7E8; /*C3*/
+}
+html>body pre { /* hide from IE */
+	 /**/ overflow:auto !important; /* */ overflow:scroll; width:auto; /* for Mac Safari */
+}
+/* IE behavior for pre is defined in twiki.pattern.tmpl in conditional comment */
+
+ol li, ul li {
+	 line-height:1.4em; /*S1*/
+}
+
+</style>
+</head>
+<body>
+<div class="document" id="pyexpander-for-users-not-familiar-with-python">
+<h1 class="title">pyexpander for users not familiar with python</h1>
+
+<!-- This text is RST (ReStructured Text),
+see also http://docutils.sourceforge.net/rst.html -->
+<div class="section" id="introduction">
+<h1>Introduction</h1>
+<p>Pyexpander is based on the python programming language not just with respect to
+it's implementation. Expressions and statements are, in fact, python code. This
+page shows some simple use cases for pyexpander for users that do not yet know
+python. If you are interested in learning python you can find some information
+at the <a class="reference external" href="http://docs.python.org">official python documentation site</a> and at
+the <a class="reference external" href="http://docs.python.org/tutorial/index.html">Python tutorial</a>.</p>
+</div>
+<div class="section" id="comments">
+<h1>Comments</h1>
+<p>Comments in python start with a &quot;#&quot; character and extend to the end of the
+line. If you want to have several consecutive lines as a comment, each line has
+to start with a &quot;#&quot; character. Here are some examples:</p>
+<pre class="literal-block">
+$py(
+a=1 # here is a comment
+# here is a comment
+# spanning several
+# lines
+)
+</pre>
+</div>
+<div class="section" id="a-word-on-indentation">
+<h1>A word on indentation</h1>
+<p>The indentation of lines (the number of spaces they start with) is part of the
+syntax in python. This means that for python commands that span more than one
+line, indentation matters. If you get an error message like &quot;unexpected indent&quot;
+you know that the problem is the indentation of lines. As a rule of thumb,
+python statements that follow a &quot;$py&quot; command should either all be in the same
+line as the &quot;$py&quot; command and immediately follow the opening bracket or, if
+there is more than one line, all should start in column one. Here are some
+examples:</p>
+<pre class="literal-block">
+$py( a=1)     # indentation error due to the space between &quot;(&quot; and &quot;a&quot;
+$py(a=1; b=1) # correct, spaces *within* the line are allowed
+$py(a=1)      # correct
+$py(
+  a=1         # indentation error since &quot;a&quot; is not in column 1 of the line
+)
+$py(
+a=1           # correct
+)
+$py(
+a=1           # correct
+b=2
+)
+</pre>
+<p>Note that due to python indentation rules, the closing bracket &quot;)&quot; of the &quot;$py&quot;
+command should be in column 1 if it is in a line of it's own. Otherwise, with
+certain python statements, an indentation error may occur.</p>
+</div>
+<div class="section" id="defining-variables">
+<h1>Defining variables</h1>
+<p>Python variable names start with a letter or a &quot;_&quot; and may be followed by an arbitrary number of letters, digits and the &quot;_&quot; character.</p>
+<p>You define a variable by placing a variable name, a &quot;=&quot; character and a value. Here are some examples:</p>
+<pre class="literal-block">
+$py(my_number= 1)
+$py(my_var1= 2)
+</pre>
+<div class="section" id="literals">
+<h2>Literals</h2>
+<p>You often define variables with constant values, also called literals.
+Integers, floating point numbers and strings can be written the same way as in
+C. Here are some examples:</p>
+<pre class="literal-block">
+$py(my_integer=3)
+$py(my_float1=1.23)
+$py(my_float2=3.1E8)
+$py(my_string=&quot;abc&quot;)
+$py(my_line=&quot;This is a line with LF at the end.\n&quot;)
+</pre>
+</div>
+<div class="section" id="setting-more-than-one-variable">
+<h2>Setting more than one variable</h2>
+<p>Python statements are separated by a &quot;;&quot; character or by a newline character. You can define more than one variable like this:</p>
+<pre class="literal-block">
+$py(a=1; b=2; c=3)
+</pre>
+<p>or like this:</p>
+<pre class="literal-block">
+$py(
+a=1
+b=2
+c=3
+)
+</pre>
+</div>
+<div class="section" id="simple-expressions">
+<h2>Simple expressions</h2>
+<p>Simple arithmetic expressions in python are the same as in c. Here are some examples:</p>
+<pre class="literal-block">
+$py(
+a=2+4
+b=1.4-3.8
+c=3*4
+d=a*b
+e=2**4 # 2**4==16
+)
+</pre>
+</div>
+<div class="section" id="mathematical-functions">
+<h2>Mathematical functions</h2>
+<p>Common mathematical functions are in the &quot;math&quot; package in python. You have to import this package once in order to be able to use these functions. Here is an example:</p>
+<pre class="literal-block">
+$py(
+from math import * # import mathematical functions
+e= exp(1)  # exponential function
+a= sqrt(2) # square root
+)
+</pre>
+</div>
+<div class="section" id="string-expressions">
+<h2>String expressions</h2>
+<p>Strings can be concatenated with &quot;+&quot;:</p>
+<pre class="literal-block">
+$py(a=&quot;ab&quot;+&quot;cd&quot;) # now a is &quot;abcd&quot;
+</pre>
+<p>The &quot;%&quot; operator works according to the string formatting rules for the
+&quot;printf&quot; command in C. It is an infix operator, a format string must be
+followed by a &quot;%&quot; and a single value or a tuple of values. A tuple is a comma
+separated list of values enclosed in round brackets. Here are some examples:</p>
+<pre class="literal-block">
+$py(
+a= &quot;%02d&quot; % 3 # a==&quot;03&quot;
+b= &quot;%d %3.4f&quot; % (2, 123.456789) # b= &quot;2 123.4568&quot;
+)
+</pre>
+</div>
+</div>
+<div class="section" id="for-loops">
+<h1>For loops</h1>
+<p>This section describes the &quot;$for&quot; statement of pyexpander which is very close
+to the for-statement in python.</p>
+<p>For loops in python are a bit different from C. A typical loop statement
+consists of a variable or a tuple of variables, the keyword &quot;in&quot; and an
+&quot;iterable&quot; datatype, typically a list. If you simply want to have a loop
+variable starting with a number, increase by 1 at each run, and end with
+another number, you typically use the &quot;xrange&quot; function. In pure python a
+for-loop running from 0 to 3 would look like this:</p>
+<pre class="literal-block">
+for i in xrange(4):
+    print &quot;i is now:&quot;,i
+</pre>
+<p>The &quot;$for&quot; statement in pyexpander is a bit different, but the specification of
+the loop limit and loop variable are the same:</p>
+<pre class="literal-block">
+$for(i in xrange(4))
+i now: $(i)
+$endfor
+</pre>
+<p>Note the the number given to &quot;xrange&quot; is <em>not</em> part of the iteration. In the
+example above, i never has the value 4, the last value of i is 3.</p>
+<p>If &quot;xrange&quot; is provided with two numbers, the first number is the start number
+and the second number is the end number plus one.  Here is an example where i
+runs from 3 to 5:</p>
+<pre class="literal-block">
+$for(i in xrange(3,6))
+i now: $(i)
+$endfor
+</pre>
+<p>If &quot;xrange&quot; is provided with 3 numbers, the first ist the start, the second is
+the end plus the step and the third is the step. Here is an example where i
+takes the values 10, 8 and 6:</p>
+<pre class="literal-block">
+$for(i in xrange(10, 4, -2))
+i now: $(i)
+$endfor
+</pre>
+</div>
+</div>
+</body>
+</html>

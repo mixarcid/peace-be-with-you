@@ -1,0 +1,10 @@
+Here we test nested blocks:
+at the start, x has a value of 1
+now the block begins
+here we set x to 2, value of x: 2
+now we start another block
+we set x to 3, value of x: 3
+now the inner block ends
+value of x here: 2
+now the outer block ends
+value of x here: 1

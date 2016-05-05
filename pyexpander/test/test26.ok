@@ -1,0 +1,4 @@
+Here we show how symbols with dots '.' are treated. We misuse os.path to
+create a variable os.path.myvar and use this variable as a loop variable:
+one: 1
+two: 2

@@ -1,0 +1,31 @@
+# before file command
+record(calcout, "U3IV:set") {
+  field(CALC, "A+B")
+  field(INPA, "U3IV:P4:rip:cvt CPP MS")
+  field(OUT,  "U3IV:P4:rip:calcLRip.A PP MS")
+}
+
+record(calcout, "U3IV:set2") {
+  field(CALC, "A+B")
+  field(INPA, "U3IV:P4:rip:cvt CPP MS")
+  field(OUT,  "U3IV:P4:rip:calcLRip.A PP MS")
+}
+
+record(longin, "U3IV:rbk") {
+  field(DTYP, "lowcal")
+  field(SCAN, "I/O Intr")
+  field(INP, "@k L 5 3 46 46 2 10 1f4 0")
+}
+
+record(longin, "U3IV:rbk1") {
+  field(DTYP, "lowcal1")
+  field(SCAN, "I/O Intr")
+  field(INP, "@k L 5 3 46 46 2 10 1f4 0")
+}
+record(longin, "U3IV:rbk2") {
+  field(DTYP, "lowcal2")
+  field(SCAN, "I/O Intr")
+  field(INP, "@k L 5 3 46 46 2 10 1f4 0")
+}
+
+# after file command

@@ -1,0 +1,7 @@
+Here we test a line continuation:
+a backslash at the end of a line means that this
+line is concatenated with the following one.
+
+Variable "x" is set to "REPLACED" here:
+$py(x="REPLACED")\
+here x is "$(x)".

@@ -1,0 +1,11 @@
+Here we define a variable and a function:
+$py(
+a=1
+def incr(x):
+  return x+1
+   )\
+Now we use extend to extend the expander language:
+$extend(a,incr)
+Here we use a directly: $a
+Here we call incr(a) : $incr(a)
+Here we call incr(1) : $incr(1)

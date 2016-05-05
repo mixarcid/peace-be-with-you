@@ -1,0 +1,23 @@
+Here we test some for-loops:
+
+Simple loop from i=1 to 4:
+$for(i in range(1,5))\
+in loop, i=$(i)
+$endfor
+end of loop
+
+for_begin loop, this has a scope like
+begin..end, loop from i=1 to 4:
+set a to 100$py(a=100)
+$for_begin(i in range(1,5))\
+in loop, i=$(i), set a to i$py(a=i), a=$(a)
+$endfor
+end of loop
+i=$(i) a=$(a)
+
+Loop over the characters in the string "TEST":
+$py(st="TEST")\
+$for(ch in st)\
+in loop, ch=$(ch)
+$endfor\
+

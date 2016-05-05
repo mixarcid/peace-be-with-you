@@ -1,0 +1,42 @@
+Fresh installation
+------------------
+
+NOTE: CTRL+ALT will get you out of the qemu window!
+
+download a debian qemu package from:
+    http://people.debian.org/~aurel32/qemu/i386/
+start with:
+    nice qemu -m 400M -hda debian_squeeze_i386_standard.qcow2 -boot c -localtime -k de &
+
+login on the system with user:"user", password: "user"
+su -
+pw: root
+apt-get update
+apt-get install git --fix-missing
+apt-get upgrade 
+apt-get install debhelper
+git clone https://github.com/astraw/stdeb.git
+cd stdeb
+python setup.py install
+exit
+
+Update stdeb project
+--------------------
+
+cd stdeb
+git pull
+
+Update a for a new pyexpander version
+-------------------------------------
+
+start with:
+    nice qemu -m 400M -hda debian_squeeze_i386_standard.qcow2 -boot c -localtime -k de &
+
+login on the system with user:"user", password: "user"
+
+rm -rf pyexpander
+scp -r -p me@somehost:pyexpander .
+cd pyexpander
+python setup.py --command-packages=stdeb.command bdist_deb
+scp -r -p pyexpander/deb_dist me@somehost:pyexpander
+

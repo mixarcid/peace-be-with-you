@@ -1,0 +1,5 @@
+Here we test an external variable definition.
+The variable "x" is defined on the command line
+by the "--eval" option of expander. x should
+be 1,
+x is here: $(x)

@@ -1,0 +1,7 @@
+Here is a test of a conditional 
+when the if part is true:
+x is set to 1,$py(x=1)
+$if(x>0)\
+x is bigger than 0: x=$(x)
+$endif\
+This is the part after endif.

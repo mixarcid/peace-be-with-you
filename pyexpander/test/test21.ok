@@ -1,0 +1,6 @@
+Here we define a variable and a function:
+Now we use extend to extend the expander language:
+
+Here we use a directly: 1
+Here we call incr(a) : 2
+Here we call incr(1) : 2

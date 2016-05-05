@@ -1,0 +1,8 @@
+A test of begin-end (scoping) where the commands are enclosed
+in curly brackets:
+$py(x=1)\
+x outside the block is $(x)
+he${begin}re the block starts
+$py(x=2)\
+x is set to 2, value of x here: $(x)
+here the block ends, th${end}e value of x is now: $(x)

@@ -1,0 +1,5 @@
+Here we test a simple expression,
+we set x to 2,
+$py(x=2)
+x is here: $(x)
+x multiplied by 3 is: $(x*3)

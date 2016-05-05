@@ -54,7 +54,7 @@ NAMESPACE {
     static Engine* engine;
 
     Engine();
-    ~Engine();
+    ~Engine() throw();
 
     void _container_update();
 

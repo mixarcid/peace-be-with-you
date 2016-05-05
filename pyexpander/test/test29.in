@@ -1,0 +1,16 @@
+Here an even more complicated loop example:
+$py(
+class length:
+    def __init__(self, value):
+        self.value = value
+        self.unit = 'meters'
+class cuboid:
+    def __init__(self, size):
+        self.dimensions = []
+        for n in size:
+            self.dimensions.append(length(n))
+c = cuboid([4,5,6])
+)\
+$for(c.dimensions[0].value in [1,2,3])\
+$(c.dimensions[0].value)
+$endfor\

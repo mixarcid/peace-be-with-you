@@ -1,0 +1,14 @@
+Here we show how symbols with dots '.' are treated. We misuse os.path to
+create a variable os.path.myvar and use this variable as a loop variable:
+\
+$py(
+import os.path
+os.path.myvar= 0
+)\
+$for(os.path.myvar in [1,2])\
+$if(os.path.myvar==1)\
+one: $(os.path.myvar)
+$else\
+two: $(os.path.myvar)
+$endif\
+$endfor\

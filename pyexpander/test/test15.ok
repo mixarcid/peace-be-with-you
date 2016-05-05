@@ -1,0 +1,22 @@
+Now we test the nonlocal statement.
+First we set x to 1 and y to 10 and z to 100 
+x: 1, y: 10, z: 100
+now we begin a block
+we declare x and y to be nonlocal
+
+we set x to 2, y to 20 and z to 200
+
+x: 2, y: 20, z: 200
+now we start another block:
+we declare x to be nonlocal
+
+we set x to 3, y to 30 and z to 300
+
+x: 3, y: 30, z: 300
+here the inner block ends
+the values of the are variables now:
+x: 3, y: 20, z: 200
+here the outer block ends
+the values of the are variables now:
+x: 3, y: 20, z: 100
+

@@ -1,0 +1,27 @@
+Here we test some for-loops:
+
+Simple loop from i=1 to 4:
+in loop, i=1
+in loop, i=2
+in loop, i=3
+in loop, i=4
+
+end of loop
+
+for_begin loop, this has a scope like
+begin..end, loop from i=1 to 4:
+set a to 100
+in loop, i=1, set a to i, a=1
+in loop, i=2, set a to i, a=2
+in loop, i=3, set a to i, a=3
+in loop, i=4, set a to i, a=4
+
+end of loop
+i=4 a=100
+
+Loop over the characters in the string "TEST":
+in loop, ch=T
+in loop, ch=E
+in loop, ch=S
+in loop, ch=T
+

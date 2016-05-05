@@ -1,0 +1,27 @@
+Now we test the nonlocal statement.
+First we set x to 1 and y to 10 and z to 100 
+$py(x=1;y=10;z=100)\
+x: $(x), y: $(y), z: $(z)
+now we begin a block
+$begin\
+we declare x and y to be nonlocal
+$nonlocal(x,y)
+we set x to 2, y to 20 and z to 200
+$py(x=2;y=20;z=200)
+x: $(x), y: $(y), z: $(z)
+now we start another block:
+$begin\
+we declare x to be nonlocal
+$nonlocal(x)
+we set x to 3, y to 30 and z to 300
+$py(x=3;y=30;z=300)
+x: $(x), y: $(y), z: $(z)
+here the inner block ends
+$end\
+the values of the are variables now:
+x: $(x), y: $(y), z: $(z)
+here the outer block ends
+$end\
+the values of the are variables now:
+x: $(x), y: $(y), z: $(z)
+

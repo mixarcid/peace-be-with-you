@@ -1,0 +1,6 @@
+Here we test include paths.
+Set a to 0, a now: 0
+now include "test.inc" which is created only
+during the make run:
+
+after include, a is now: 1

@@ -3,6 +3,7 @@
 #include "ObjectContainer.hpp"
 #include "Vector.hpp"
 #include "BoundingFrustum.hpp"
+#include "VectorHash.hpp"
 
 NAMESPACE {
 

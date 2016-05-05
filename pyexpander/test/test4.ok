@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  "expander.py", line xxx, in <module>
+    main()
+  "expander.py", line xxx, in main
+    process_files(options,args)
+  "expander.py", line xxx, in process_files
+    options.include)
+  "pyexpander.py", line xxx, in expandFile
+    include_paths)
+  "pyexpander.py", line xxx, in processToPrint
+    include_paths)
+  "pyexpander.py", line xxx, in processToList
+    result.append(str(block[tp.string()]))
+  "pyexpander.py", line xxx, in __getitem__
+    raise NameError, "%s at %s" % (str(e),self.posmsg())
+NameError: name 'x' is not defined at file "test4.in" line xxx, col 3

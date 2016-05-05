@@ -1,0 +1,5 @@
+Here we show that the list in a for loop can even be a list of functions:
+$py(s="abcde")
+$for(f in [len, type])
+$(f(s))
+$endfor

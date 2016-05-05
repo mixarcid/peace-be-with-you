@@ -1,0 +1,10 @@
+Here a more complicated example of a loop with a class:
+$py(
+class number:
+            def __init__(self, value):
+                        self.value = value
+l = [number(4), number(5), number(6)]
+)\
+$for(l[0].value in [1,2,3])\
+$(l[0].value)
+$endfor\

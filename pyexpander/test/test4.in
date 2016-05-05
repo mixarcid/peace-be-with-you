@@ -1,0 +1,6 @@
+Here we show what happens when a 
+variable is not defined. Python raises a python exception,
+a KeyError. For testing this we redirect stderr to stdout
+and replace line numbers with "xxx" and paths to the source
+files with "":
+$(x)

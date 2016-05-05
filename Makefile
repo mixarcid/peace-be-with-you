@@ -1,8 +1,13 @@
 rwildcard= $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-CXX= g++
+ifeq ($(UNAME), Darwin)
+CXX= clang++
+else
+CXX= clang++
+endif
+
 PREPROCESS= cpp
-EXPANDER= expander.py --eval "makefile_dir=\"$(shell pwd)\""
+EXPANDER= pyexpander/expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Wall -std=c++1y -fno-rtti
 DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused
 RELEASE_FLAGS= -Ofast
@@ -32,7 +37,7 @@ LIBS= -lX11 -lXxf86vm -lXcursor -lXinerama -lXrandr -lXext -lXi -lGL
 LIBDIR= -LThirdParty/lib/Linux
 endif
 ifeq ($(UNAME), Darwin)
-LIBS= -framework UpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation
+LIBS= -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation
 LIBDIR= -LThirdParty/lib/OSX
 endif
 
@@ -57,8 +62,11 @@ $(EXECUTABLE): $(OBJECTS)
 %.o: %.ii
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c -o $@ $<
 
-%.ii: %.d
-	$(PREPROCESS) -x c++ $(CXXFLAGS) $*.cpp $(INCLUDE) | tee $*.exp | $(EXPANDER) $(INCLUDE) "/dev/stdin" > $@
+%.ii: %.exp
+	$(EXPANDER) $(INCLUDE) -f $*.exp > $*.ii
+
+%.exp: %.d
+	$(CXX) -E $(CXXFLAGS) $*.cpp $(INCLUDE) | ./pyexpander-prepare.py > $*.exp
 
 %.d: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d

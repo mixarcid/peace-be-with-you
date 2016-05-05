@@ -10,7 +10,7 @@
 #include "Exception.hpp"
 #include "Assert.hpp"
 
-NAMESPACE {
+/*NAMESPACE {
 
   template <typename Key>
     size_t customHash(Key k);
@@ -24,11 +24,15 @@ namespace std {
       return peace::customHash(k);
     }
   };
-}
+  }*/
 
 NAMESPACE {
 
-  template <typename Key, typename Val>
+  template <typename Key,
+	    typename Val,
+	    typename Hash = std::hash<Key>,
+	    typename KeyEqual = std::equal_to<Key>,
+	    typename Allocator = std::allocator< std::pair<const Key, Val>>>
     using HashMap = typename std::unordered_map<Key, Val>;
   template <typename Key>
     using Hash = std::hash<Key>;

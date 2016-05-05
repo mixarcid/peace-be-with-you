@@ -1,0 +1,5 @@
+Here is a test of a conditional 
+when the if part is true:
+x is set to 1,
+x is bigger than 0: x=1
+This is the part after endif.

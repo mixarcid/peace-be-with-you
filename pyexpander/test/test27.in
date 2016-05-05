@@ -1,0 +1,5 @@
+Here we have a case where the loop variable is part of an array:
+$py(l = [4,5,6])\
+$for(l[0] in [1,2,3])\
+$(l[0])
+$endfor\
