@@ -142,9 +142,9 @@ NAMESPACE {
 
       Engine::engine->synchronized_mutex.lock();
       if (engine->synchronized_callbacks.size() > 0) {
-	function<void()>* fun = engine->synchronized_callbacks.begin();
+	CallBack* fun = engine->synchronized_callbacks.begin();
 	if (fun != engine->synchronized_callbacks.end()) {
-	  function<void()> f = *fun;
+	  CallBack f = *fun;
 	  f();
 	  engine->synchronized_callbacks.removeAndReplace(fun);
 	}

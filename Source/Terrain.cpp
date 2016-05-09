@@ -33,6 +33,8 @@ NAMESPACE {
 
   const StaticMaterial TerrainGround::MATERIAL(0.7, 0.6);
   
+  Terrain* global_terrain;
+  
   void TerrainChunk::init() {
     addComponent(new TerrainChunkComp());
   }
@@ -67,7 +69,6 @@ NAMESPACE {
     return normal.normalized();
   }
 
-  Terrain* global_terrain;
   f32 ground_func(Vec2f p, Vec3f* norm) {
     return global_terrain->heightAtPoint(p, norm);
   }
@@ -349,6 +350,10 @@ NAMESPACE {
     
   }
 
+  void global_scene_update() {
+    global_terrain->_scene_update(false);
+  }
+
   void Terrain::loadFile(String filename) {
 
     if (file) fclose(file); file = NULL;
@@ -389,13 +394,10 @@ NAMESPACE {
     Engine::emplaceStatic<Water>
       (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL),
        Vec2f(10000, 10000));
-    chunks.reserve(sqr(2*CHUNKS_IN_VIEW+1));
+    Terrain::chunks.reserve(sqr(2*CHUNKS_IN_VIEW+1));
 
     _scene_update(true);
-    Engine::engine->scene_callbacks.push_back
-      ([this]() {
-	_scene_update(false);
-      });
+    Engine::engine->scene_callbacks.push_back(global_scene_update);
     
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Loaded Terrain %s",
@@ -403,6 +405,35 @@ NAMESPACE {
 #endif
   }
 
+  template<bool CurScene>
+    void finalize_load() {
+    global_terrain->chunk_load_mutex.lock();
+    
+    Terrain::ChunkLoadData* d = global_terrain->chunk_load_data.begin();
+    debugAssert(d != global_terrain->chunk_load_data.end(),
+		"You're trying to finalize chunk data that doesn't exist");
+    
+    Terrain::chunk_mutex.lock();
+    Log::message("%s, %p", to_string(d->index).c_str(), Terrain::chunks[d->index].data);
+    Terrain::chunks[d->index] = d->chunk;
+    Terrain::chunk_mutex.unlock();
+    
+    d->mesh->init();
+    d->chunk->addComponent<TerrainRenderable>(d->mesh);
+    auto& comp = d->chunk->getComponent<TerrainChunkComp>();
+    comp->trees.reserve(d->tree_data.size());
+    for (auto& tree : d->tree_data) {
+      Pointer<Tree> p = Engine::emplaceStaticNoRegister<Tree>
+	(tree.type, Vec3f
+	 (tree.pos, global_terrain->heightAtPoint(tree.pos, NULL)));
+      Engine::registerStatic(p, CurScene);
+      comp->trees.push_back(p);
+    }
+    
+    global_terrain->chunk_load_data.removeAndReplace(d);
+    global_terrain->chunk_load_mutex.unlock();
+  }
+  
   void Terrain::loadChunk(Vec2u index, bool cur_scene) {
 
     debugAssert(file,
@@ -464,30 +495,21 @@ NAMESPACE {
     }
     
     Engine::registerStatic(c, cur_scene);
-    
-    function<void()> fun = [this, index, c, mesh,
-			    tree_data, cur_scene]() {
-      chunk_mutex.lock();
-      chunks[index] = c;
-      chunk_mutex.unlock();
-      mesh->init();
-      c->addComponent<TerrainRenderable>(mesh);
-      auto& comp = c->getComponent<TerrainChunkComp>();
-      comp->trees.reserve(tree_data.size());
-      for (auto& tree : tree_data) {
-        Pointer<Tree> p = Engine::emplaceStaticNoRegister<Tree>
-	  (tree.type, Vec3f
-	   (tree.pos, heightAtPoint(tree.pos, NULL)));
-	Engine::registerStatic(p, cur_scene);
-	comp->trees.push_back(p);
-      }
-    };
+
+    ChunkLoadData d;
+    d.chunk = c;
+    d.mesh = mesh;
+    d.tree_data = tree_data;
+    d.index = index;
+    chunk_load_mutex.lock();
+    chunk_load_data.push_back(d);
+    chunk_load_mutex.unlock();
     
     if (cur_scene) {
-      fun();
+      finalize_load<true>();
     } else {
       Engine::engine->synchronized_mutex.lock();
-      Engine::engine->synchronized_callbacks.push_back(fun);
+      Engine::engine->synchronized_callbacks.push_back(finalize_load<false>);
       Engine::engine->synchronized_mutex.unlock();
     }
   }
@@ -512,7 +534,7 @@ NAMESPACE {
 	rel_pos.y() < 0 ||
 	/*chunk_index.x() >= size.x() ||
 	  chunk_index.y() >= size.y() ||*/
-        it == chunks.end()) {
+        it == Terrain::chunks.end()) {
       if (norm) *norm = Vec3f(0,0,1);
       chunk_mutex.unlock();
       return TerrainGenerator::SEA_FLOOR_HEIGHT;
@@ -561,25 +583,41 @@ NAMESPACE {
     return biLerp(rem, heights);
   }
 
+  void erase_chunk() {
+    global_terrain->erase_chunk_mutex.lock();
+    Vec2u* v = global_terrain->erase_chunks.begin();
+    debugAssert(v != global_terrain->erase_chunks.end(),
+		"You're trying to erase a chunk that doesn't exist");
+    Terrain::chunk_mutex.lock();
+    Pointer<TerrainChunk>& c = Terrain::chunks[*v];
+    c->removeTrees();
+    Engine::removeStatic(c);
+    Terrain::chunks.erase(*v);
+    Terrain::chunk_mutex.unlock();
+    global_terrain->erase_chunks.removeAndReplace(v);
+    global_terrain->erase_chunk_mutex.unlock();
+  }
+  
   void Terrain::_scene_update(bool cur_scene) {
     
     Vec2i chunk = chunkAtPoint(Engine::engine->graphics.cam->getTrans().xy());
     bool should_load = true;//cur_scene;
 
-    Array<Vec2u> erase_chunks;
     chunk_mutex.lock();
-    auto it = chunks.begin();
+    auto it = Terrain::chunks.begin();
     chunk_mutex.unlock();
     
     while (true) {
 
       chunk_mutex.lock();
-      if (it == chunks.end()) break;
+      if (it == Terrain::chunks.end()) break;
       if (abs(chunk.x() - (i32) it->first.cx())
 	  > (i32) CHUNKS_IN_VIEW ||
 	  abs(chunk.y() - (i32) it->first.cy())
 	  > (i32) CHUNKS_IN_VIEW) {
+	erase_chunk_mutex.lock();
         erase_chunks.push_back(it->first);
+	erase_chunk_mutex.unlock();
 	//should_load = true;
       }
       chunk_mutex.unlock();
@@ -589,22 +627,13 @@ NAMESPACE {
     
     if (should_load) {
 
-      for (Vec2u v : erase_chunks) {
-	
-	function<void()> fun = [v]() {
-	  chunk_mutex.lock();
-	  Pointer<TerrainChunk>& c = chunks[v];
-	  c->removeTrees();
-	  Engine::removeStatic(c);
-	  chunks.erase(v);
-	  chunk_mutex.unlock();
-	};
+      for (u32 n=0; n<erase_chunks.size(); ++n) {
 	
 	if (cur_scene) {
-	  fun();
+	  erase_chunk();
 	} else {
 	  Engine::engine->synchronized_mutex.lock();
-	  Engine::engine->synchronized_callbacks.push_back(fun);
+	  Engine::engine->synchronized_callbacks.push_back(erase_chunk);
 	  Engine::engine->synchronized_mutex.unlock();
 	}
 	
@@ -618,7 +647,7 @@ NAMESPACE {
 	  if (x > 0 && y > 0 &&
 	      x < (i32) size.x() && y < (i32) size.y()) {
 	    chunk_mutex.lock();
-	    bool should_cont = (chunks.find(vec) != chunks.end());
+	    bool should_cont = (Terrain::chunks.find(vec) != Terrain::chunks.end());
 	    chunk_mutex.unlock();
 	    if (should_cont) continue;
 	    loadChunk(vec, cur_scene);

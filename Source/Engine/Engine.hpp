@@ -26,12 +26,14 @@ NAMESPACE {
     template <typename Obj, typename Comp>
     using ObjectCallBack = function<bool(Pointer<Obj>&, Pointer<Comp>&)>;
 
+    typedef void (*CallBack) ();
+
     Array<StaticObject> static_objects;
     Array<DynamicObject> dynamic_objects;
     Mutex static_arr_mutex;
 
-    Array<function<void()>> scene_callbacks;
-    Array<function<void()>> synchronized_callbacks;
+    Array<CallBack> scene_callbacks;
+    Array<CallBack> synchronized_callbacks;
     Mutex synchronized_mutex;
     
     Grid dynamic_container;

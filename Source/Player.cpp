@@ -12,7 +12,7 @@ NAMESPACE {
   Transform Player::camera_diff(Vec3f(0,0,5),
 				Quaternionf
 				(0,0,degreesToRadians(180)));
-  f32 Player::cam_speed(1);
+  f32 Player::cam_speed(100);
   f32 Player::cam_rot_speed(0.001);
   Asset<StaticMesh> Player::mesh("Granny:Granny");
   
@@ -90,33 +90,51 @@ NAMESPACE {
 	Vec3f right = Vec3f::cross(dir, Vec3f(0,0,1));
 
 	Pointer<DynamicPhysicsComp> phys = Player::ptr->getComponent<DynamicPhysicsComp>();
+	f32 z = phys->veloc.z();
 	
-	switch(key) {
-	case GLFW_KEY_W:
-	  Player::ptr->transRel(dir*cam_speed);
-	  phys->veloc.x() = phys->veloc.y() = 0;
-	  break;
-	case GLFW_KEY_S:
-	  Player::ptr->transRel(-dir*cam_speed);
-	  phys->veloc.x() = phys->veloc.y() = 0;
-	  break;
-	case GLFW_KEY_A:
-	  Player::ptr->transRel(-right*cam_speed);
-	  phys->veloc.x() = phys->veloc.y() = 0;
-	  break;
-	case GLFW_KEY_D:
-	  Player::ptr->transRel(right*cam_speed);
-	  phys->veloc.x() = phys->veloc.y() = 0;
-	  break;
-	case GLFW_KEY_SPACE:
-	  if (act == GLFW_PRESS) {
+	if (act != GLFW_RELEASE) {
+	  switch(key) {
+	  case GLFW_KEY_W:
+	    phys->veloc = (dir*cam_speed);
+	    Player::ptr->onMove();
+	    phys->veloc.z() = z;
+	    break;
+	  case GLFW_KEY_S:
+	    phys->veloc = (-dir*cam_speed);
+	    Player::ptr->onMove();
+	    phys->veloc.z() = z;
+	    break;
+	  case GLFW_KEY_A:
+	    phys->veloc = (-right*cam_speed);
+	    Player::ptr->onMove();
+	    phys->veloc.z() = z;
+	    break;
+	  case GLFW_KEY_D:
+	    phys->veloc = (right*cam_speed);
+	    Player::ptr->onMove();
+	    phys->veloc.z() = z;
+	    break;
+	  case GLFW_KEY_SPACE:
 	    /*BonedMesh* mesh = (Pointer<BonedMesh>)
 	      Player::ptr->getComponent<RenderableComp>();
 	      mesh->startAnimation("Walk");*/
 	    Player::ptr->transRel(Vec3f(0,0,0.01));
 	    phys->veloc+=Vec3f(0,0,20);
+	    break;
 	  }
-	  break;
+
+	} else {
+
+	  switch(key) {
+	  case GLFW_KEY_W:
+	  case GLFW_KEY_S:
+	  case GLFW_KEY_A:
+	  case GLFW_KEY_D:
+	    phys->veloc.x() = 0;
+	    phys->veloc.y() = 0;
+	    break;
+	  }
+	  
 	}
       });
   }

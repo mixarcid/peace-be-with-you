@@ -57,7 +57,7 @@ i32 main() {
     //terrain.generate("Test",Vec3f(0,0,0),Vec2u(15,15));
     terrain.loadFile("Test");
 				
-    Engine::engine->graphics.back_color = Vec4f(0.3, 0.3, 1.0, 1.0);
+    Engine::engine->graphics.back_color = Vec4f(0.4, 0.5, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));
     Engine::begin();
     Log::message("Peace Be With You shut down sucessfully");

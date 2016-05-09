@@ -46,6 +46,7 @@ NAMESPACE {
   }
   
   void Renderer::prepare(Vec4f back_color) {
+    glDisable(GL_FRAMEBUFFER_SRGB);
     first_shade.use();
     g_buffer.clearTargets({back_color, Vec4f(0,0,0,1), Vec4f(1,0,0,1)});
     g_buffer.use();

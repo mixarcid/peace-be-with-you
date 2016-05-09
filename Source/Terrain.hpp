@@ -59,6 +59,25 @@ NAMESPACE {
     Vec3f chunk_pos_offset;
     u64 chunk_table_pos;
 
+    struct ChunkLoadData {
+      
+      Pointer<TerrainChunk> chunk;
+      Pointer<TerrainRenderable> mesh;
+      Array<TreeData> tree_data;
+      Vec2u index;
+
+      void _on_move() {
+	chunk._on_move();
+	mesh._on_move();
+      }
+      
+    };
+
+    Array<Vec2u> erase_chunks;
+    Array<ChunkLoadData> chunk_load_data;
+    Mutex erase_chunk_mutex;
+    Mutex chunk_load_mutex;
+
     Terrain();
     ~Terrain();
     //size in chunks

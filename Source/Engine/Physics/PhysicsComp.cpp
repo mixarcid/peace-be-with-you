@@ -86,8 +86,8 @@ NAMESPACE {
     }
   }
 
-  const static f32 VELOC_EPSILON = 0.01f;
-  const static f32 VELOC_CHANGE_EPSILON = 0.001f;
+  const static f32 VELOC_EPSILON = 0.001f;
+  const static f32 VELOC_CHANGE_EPSILON = 0.0001f;
   bool DynamicPhysicsComp::isMoving() {
     return (veloc.normSquared() > VELOC_EPSILON) &&
     ((veloc-prev_veloc).normSquared() > VELOC_CHANGE_EPSILON);

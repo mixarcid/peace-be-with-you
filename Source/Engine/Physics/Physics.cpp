@@ -5,7 +5,7 @@
 NAMESPACE {
 
   Physics::Physics(Engine* _engine)
-    : engine(_engine), gravity(Vec3f(0,0,-9.8)) {}
+    : engine(_engine), gravity(Vec3f(0,0,-30)) {}
 
   void Physics::updateVsDynamic(u32* num_checks, u32* num_collisions) {
 
