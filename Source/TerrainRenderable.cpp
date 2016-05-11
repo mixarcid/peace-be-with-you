@@ -32,8 +32,8 @@ NAMESPACE {
     
   }
 
-  static const f32 DIST_MULTIPLIER_LARGE = 0.02;
-  static const f32 DIST_MULTIPLIER_SMALL = 1.5;
+  static const f32 DIST_MULTIPLIER_LARGE = 0.01;
+  static const f32 DIST_MULTIPLIER_SMALL = 1.6;
   void TerrainRenderable::render(RenderContext c) {
     Shader::UNI_TEXTURE.registerTexture(tex);
     vao.use();

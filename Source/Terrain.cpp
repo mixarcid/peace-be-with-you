@@ -172,7 +172,7 @@ NAMESPACE {
     if (file) fclose(file);
   }
 
-  const static char TER_VERSION = 0x01;
+  const static char TER_VERSION = 0x02;
   const static char TER_SIG[3] = {'T', 'E', 'R'};
 
   void Terrain::generate(String filename,
@@ -206,142 +206,181 @@ NAMESPACE {
       fio::writeLittleEndian<u64>(file, val);
     }
 
-    TerrainGenerator gen(this,
-			 pos,
-			 size*CHUNK_SIZE,
-			 size/4,
-			 Vec2f(CHUNK_SIZE,
-			       CHUNK_SIZE),
-			 Vec2f(CHUNK_STEP,
-			       CHUNK_STEP));
-    u32 n = 0;
-    Array<Vec3f> data;
-    data.reserve(sqr(CHUNK_RES));
-    
-    for (u32 chunk_x = 0; chunk_x < size.x(); ++chunk_x) {
-      for (u32 chunk_y = 0; chunk_y < size.y(); ++chunk_y) {
-	data.clear();
-	u64 chunk_pos = ftell(file);
-	
-	Vec2f position = chunk_pos_offset.xy() + Vec2f
-	  (chunk_x*(CHUNK_SIZE-CHUNK_STEP),
-	   chunk_y*(CHUNK_SIZE-CHUNK_STEP));
-	save(file, position);
-	gen.setChunkCenter(position);
+    TerrainGenerator generator
+      (this,
+       pos,
+       size*CHUNK_SIZE,
+       size,//size/4,
+       Vec2f(CHUNK_SIZE,
+	     CHUNK_SIZE),
+       Vec2f(CHUNK_STEP,
+	     CHUNK_STEP));
 
-	f32 max_z = -FLT_MAX;
-	f32 min_z = FLT_MAX;
-	
-        for (u16 x = 0; x < CHUNK_RES; ++x) {
-	  for (u16 y = 0; y < CHUNK_RES; ++y) {
+    Mutex file_mutex;
 
-	    Vec2f local_pos(CHUNK_STEP*x - CHUNK_SIZE/2,
-			    CHUNK_STEP*y - CHUNK_SIZE/2);
-	    f32 height;
-	    BiomeData b;
-	    height = gen.dataAtPoint(position + local_pos, &b);
-	    max_z = height > max_z ? height : max_z;
-	    min_z = height < min_z ? height : min_z;
-	    data.push_back(Vec3f(local_pos.x(),
-				 local_pos.y(),
-				 height));
-	    fio::writeLittleEndian(file, height);
-	    save(file, b.levels); 
-	    
-	  }
-	}
+    function<void(u8)> gen_quadrant = [&](u8 quadrant) {
 
-	//Time to compute some normals!
-	Array<Vec3f> norms;
-	norms.reserve(CHUNK_RES*CHUNK_RES);
-	for (u16 x = 0; x < CHUNK_RES; ++x) {
-	  for (u16 y = 0; y < CHUNK_RES; ++y) {
+      TerrainGenerator gen(generator);
+      Vec2u begin;
+      Vec2u end;
+      begin.x() = (quadrant & 1) ? size.x()/2 : 0;
+      begin.y() = (quadrant & 2) ? size.y()/2 : 0;
+      end.x() = (quadrant & 1) ? size.x() : size.x()/2;
+      end.y() = (quadrant & 2) ? size.y() : size.y()/2;
 
-	    Vec3f pos = data[x*CHUNK_RES+y];
-	    Vec2f local_pos = pos.xy();
-	    Vec3f points[4];
-	    
-	    if (x > 0) {
-	      points[0] = data[(x-1)*CHUNK_RES+y];
-	    } else {
-	      Vec2f p(local_pos.x()-CHUNK_STEP, local_pos.y());
-	      points[0] = Vec3f(p.x(), p.y(),
-				gen.dataAtPoint
-				(position + p));
-	    }
-	    if (y > 0) {
-	      points[1] = data[x*CHUNK_RES+(y-1)];
-	    } else {
-	      Vec2f p(local_pos.x(), local_pos.y()-CHUNK_STEP);
-	      points[1] = Vec3f(p.x(), p.y(),
-				gen.dataAtPoint
-				(position + p));
-	    }
-	    if (x < CHUNK_RES-1) {
-	      points[2] = data[(x+1)*CHUNK_RES+y];
-	    } else {
-	      Vec2f p(local_pos.x()+CHUNK_STEP, local_pos.y());
-	      points[2] = Vec3f(p.x(), p.y(),
-				gen.dataAtPoint
-				(position + p));
-	    }
-	    if (y < CHUNK_RES-1) {
-	      points[3] = data[x*CHUNK_RES+(y+1)];
-	    } else {
-	      Vec2f p(local_pos.x(), local_pos.y()+CHUNK_STEP);
-	      points[3] = Vec3f(p.x(), p.y(),
-				gen.dataAtPoint
-				(position + p));
-	    }
-	    Vec3f norm = computeNormal(pos, points);
-	    norms.push_back(norm);
-	    save(file, norm);
-	  }
-	}
+      Array<Vec3f> data;
+      Array<BiomeData> b_data;
+      data.reserve(sqr(CHUNK_RES));
+      
+      for (u32 chunk_x = begin.x(); chunk_x < end.x(); ++chunk_x) {
+	for (u32 chunk_y = begin.y(); chunk_y < end.y(); ++chunk_y) {
 
-	//aabb center and halves
-	Vec3f center = Vec3f(position.x()-0.5*CHUNK_STEP,
-			     position.y()-0.5*CHUNK_STEP,
-			     (max_z + min_z)/2);
-	save(file, center);
-	Vec3f halves = Vec3f(CHUNK_SIZE-CHUNK_STEP,
-			     CHUNK_SIZE-CHUNK_STEP,
-			     max_z - min_z)/2;
-	save(file, halves);
-
-	Array<TreeData> trees = gen.getChunkTrees();
-	Array<TreeData> new_trees(trees.size());
-	for (u32 n=0; n<trees.size(); ++n) {
-
-	  TreeData* tree = &trees[n];
-	  Vec2f local_pos = tree->pos -
-	    center.xy() +
-	    Vec2f(Terrain::CHUNK_SIZE,
-		  Terrain::CHUNK_SIZE)/2;
-	  if (local_pos.x() > 0 && local_pos.y() > 0) {
-	    Vec2u indexes = local_pos/CHUNK_STEP;
-	    Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
-	    f32 height = data[indexes.x()*CHUNK_RES + indexes.y()].z();
+	  //Log::message("<%u, %u>, %u", chunk_x, chunk_y, quadrant);
 	  
-	    if (height > TerrainGenerator::SEA_LEVEL && norm.z() > 0.8) {
-	      new_trees.push_back(trees[n]);
+	  data.clear();
+	
+	  Vec2f position = chunk_pos_offset.xy() + Vec2f
+	    (chunk_x*(CHUNK_SIZE-CHUNK_STEP),
+	     chunk_y*(CHUNK_SIZE-CHUNK_STEP));
+	  gen.setChunkCenter(position);
+
+	  f32 max_z = -FLT_MAX;
+	  f32 min_z = FLT_MAX;
+	
+	  for (u16 x = 0; x < CHUNK_RES; ++x) {
+	    for (u16 y = 0; y < CHUNK_RES; ++y) {
+
+	      Vec2f local_pos(CHUNK_STEP*x - CHUNK_SIZE/2,
+			      CHUNK_STEP*y - CHUNK_SIZE/2);
+	      f32 height;
+	      BiomeData b;
+	      height = gen.dataAtPoint(position + local_pos, &b);
+	      max_z = height > max_z ? height : max_z;
+	      min_z = height < min_z ? height : min_z;
+	      data.push_back(Vec3f(local_pos.x(),
+				   local_pos.y(),
+				   height));
+	      b_data.push_back(b);
+	    
 	    }
 	  }
+
+	  //Time to compute some normals!
+	  Array<Vec3f> norms;
+	  norms.reserve(CHUNK_RES*CHUNK_RES);
+	  for (u16 x = 0; x < CHUNK_RES; ++x) {
+	    for (u16 y = 0; y < CHUNK_RES; ++y) {
+
+	      Vec3f pos = data[x*CHUNK_RES+y];
+	      Vec2f local_pos = pos.xy();
+	      Vec3f points[4];
+	    
+	      if (x > 0) {
+		points[0] = data[(x-1)*CHUNK_RES+y];
+	      } else {
+		Vec2f p(local_pos.x()-CHUNK_STEP, local_pos.y());
+		points[0] = Vec3f(p.x(), p.y(),
+				  gen.dataAtPoint
+				  (position + p));
+	      }
+	      if (y > 0) {
+		points[1] = data[x*CHUNK_RES+(y-1)];
+	      } else {
+		Vec2f p(local_pos.x(), local_pos.y()-CHUNK_STEP);
+		points[1] = Vec3f(p.x(), p.y(),
+				  gen.dataAtPoint
+				  (position + p));
+	      }
+	      if (x < CHUNK_RES-1) {
+		points[2] = data[(x+1)*CHUNK_RES+y];
+	      } else {
+		Vec2f p(local_pos.x()+CHUNK_STEP, local_pos.y());
+		points[2] = Vec3f(p.x(), p.y(),
+				  gen.dataAtPoint
+				  (position + p));
+	      }
+	      if (y < CHUNK_RES-1) {
+		points[3] = data[x*CHUNK_RES+(y+1)];
+	      } else {
+		Vec2f p(local_pos.x(), local_pos.y()+CHUNK_STEP);
+		points[3] = Vec3f(p.x(), p.y(),
+				  gen.dataAtPoint
+				  (position + p));
+	      }
+	      Vec3f norm = computeNormal(pos, points);
+	      norms.push_back(norm);
+	    }
+	  }
+
+	  //aabb center and halves
+	  Vec3f center = Vec3f(position.x()-0.5*CHUNK_STEP,
+			       position.y()-0.5*CHUNK_STEP,
+			       (max_z + min_z)/2);
+	  Vec3f halves = Vec3f(CHUNK_SIZE-CHUNK_STEP,
+			       CHUNK_SIZE-CHUNK_STEP,
+			       max_z - min_z)/2;
+
+	  Array<TreeData> trees = gen.getChunkTrees();
+	  Array<TreeData> new_trees(trees.size());
+	  for (u32 n=0; n<trees.size(); ++n) {
+
+	    TreeData* tree = &trees[n];
+	    Vec2f local_pos = tree->pos -
+	      center.xy() +
+	      Vec2f(Terrain::CHUNK_SIZE,
+		    Terrain::CHUNK_SIZE)/2;
+	    if (local_pos.x() > 0 && local_pos.y() > 0) {
+	      Vec2u indexes = local_pos/CHUNK_STEP;
+	      Vec3f norm = norms[indexes.x()*CHUNK_RES + indexes.y()];
+	      f32 height = data[indexes.x()*CHUNK_RES + indexes.y()].z();
+	  
+	      if (height > TerrainGenerator::SEA_LEVEL && norm.z() > 0.8) {
+		new_trees.push_back(trees[n]);
+	      }
+	    }
+	  }
+	  
+	  file_mutex.lock();
+	  
+	  u64 chunk_pos = ftell(file);
+	  save(file, position);
+
+	  for (u32 n=0; n<data.size(); ++n) {
+	    fio::writeLittleEndian(file, data[n].z());
+	    save(file, b_data[n].levels);
+	    save(file, norms[n]);
+	  }
+	  
+	  save(file, center);
+	  save(file, halves);
+
+	  fio::writeLittleEndian(file, new_trees.size());
+	  for (TreeData tree : new_trees) {
+	    save(file, tree.pos);
+	    fio::writeLittleEndian(file, tree.type);
+	  }
+
+	  u64 cur_pos = ftell(file);
+	  fseek(file, chunk_table_pos +
+		(chunk_x*size.y() + chunk_y)*sizeof(u64), SEEK_SET);
+	  fio::writeLittleEndian(file, chunk_pos);
+	  fseek(file, cur_pos, SEEK_SET);
+
+	  file_mutex.unlock();
 	}
-	
-	fio::writeLittleEndian(file, new_trees.size());
-	for (TreeData tree : new_trees) {
-	  save(file, tree.pos);
-	  fio::writeLittleEndian(file, tree.type);
-	}
-	
-	u64 cur_pos = ftell(file);
-	fseek(file, chunk_table_pos + (n*sizeof(u64)), SEEK_SET);
-	fio::writeLittleEndian(file, chunk_pos);
-	fseek(file, cur_pos, SEEK_SET);
-	++n;
       }
+    };
+
+    Thread t[4];
+    for (u8 q=0; q<4; ++q) {
+      t[q] = Thread(gen_quadrant, q);
     }
+    for (u8 q=0; q<4; ++q) {
+      t[q].join();
+    }
+    /*for (u8 q=0; q<4; ++q) {
+      gen_quadrant(q);
+      }*/
 
 #ifdef PEACE_LOG_LOADED_ASSETS
     Log::message("Generated terrain %s",
@@ -414,7 +453,6 @@ NAMESPACE {
 		"You're trying to finalize chunk data that doesn't exist");
     
     Terrain::chunk_mutex.lock();
-    Log::message("%s, %p", to_string(d->index).c_str(), Terrain::chunks[d->index].data);
     Terrain::chunks[d->index] = d->chunk;
     Terrain::chunk_mutex.unlock();
     
@@ -435,7 +473,6 @@ NAMESPACE {
   }
   
   void Terrain::loadChunk(Vec2u index, bool cur_scene) {
-
     debugAssert(file,
 		"You must generate or load a terrain "
 		"file before loading chunks");
@@ -465,16 +502,11 @@ NAMESPACE {
 
 	f32 height = fio::readLittleEndian<f32>(file);
 	BiomeData b;
+	Vec3f norm;
 	load(file, &b.levels);
+	load(file, &norm);
 	mesh->height_data.push_back(height);
 	mesh->biome_data.push_back(b);
-      }
-    }
-
-    for (u16 x = 0; x < CHUNK_RES; ++x) {
-      for (u16 y = 0; y < CHUNK_RES; ++y) {
-	Vec3f norm;
-	load(file, &norm);
 	mesh->normal_data.push_back(norm);
       }
     }
@@ -644,7 +676,7 @@ NAMESPACE {
 	i32 y = i32(chunk.y()) - i32(CHUNKS_IN_VIEW) - 1;
         while(++y <= i32(chunk.y() + CHUNKS_IN_VIEW)) {
 	  Vec2u vec(x, y);
-	  if (x > 0 && y > 0 &&
+	  if (x >= 0 && y >= 0 &&
 	      x < (i32) size.x() && y < (i32) size.y()) {
 	    chunk_mutex.lock();
 	    bool should_cont = (Terrain::chunks.find(vec) != Terrain::chunks.end());

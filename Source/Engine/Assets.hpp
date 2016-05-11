@@ -27,7 +27,7 @@
 #endif
 
 //helpful macro for creating AssetLoaders
-#define DEFINE_ASSET_LOADER(T)				\
+#define DEFINE_ASSET_LOADER(T)			\
   AssetLoader<T> T##AssetLoader;
 
 NAMESPACE {
@@ -48,13 +48,15 @@ NAMESPACE {
     struct AssetLoader : AssetLoaderBase {
 
     virtual void loadAll() {
-      loaded_assets.reserve(pending_assets.size());
-      for (const auto& item : pending_assets) {
-	if (loaded_assets.find(item.first) == loaded_assets.end()) {
-	  loadAsset<T>(item.first);
+      if (pending_assets) {
+	loaded_assets.reserve(pending_assets->size());
+	for (const auto& item : (*pending_assets)) {
+	  if (loaded_assets.find(item) == loaded_assets.end()) {
+	    loadAsset<T>(item);
+	  }
 	}
+	delete pending_assets;
       }
-      pending_assets.clear();
     }
 
     static T* getOrLoad(String name) {
@@ -66,16 +68,16 @@ NAMESPACE {
       }
     }
     
-    static HashMap<String, bool> pending_assets;
+    static Array<String>* pending_assets;
     static HashMap<String, T> loaded_assets;
     
   };
   
   template<typename T>
-    HashMap<String, bool> AssetLoader<T>::pending_assets;
+    Array<String>* AssetLoader<T>::pending_assets;
   template<typename T>
     HashMap<String, T> AssetLoader<T>::loaded_assets;
-
+  
   template <typename T>
     struct Asset {
 
@@ -83,7 +85,10 @@ NAMESPACE {
     T* item;
 
     Asset(String _name) : name(_name), item(NULL) {
-      AssetLoader<T>::pending_assets[name] = true;
+      if (!AssetLoader<T>::pending_assets) {
+	AssetLoader<T>::pending_assets = new Array<String>();
+      }
+      AssetLoader<T>::pending_assets->push_back(name);
     }
 
     T* get() {
@@ -96,8 +101,9 @@ NAMESPACE {
       return item;
     }
   };
-
+    
   void loadAllAssets();
   void freeAllAssets();
-  
+
 }
+    

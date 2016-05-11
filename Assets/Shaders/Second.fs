@@ -79,6 +79,6 @@ void main() {
     ret = vec3(0);
   }
   vec3 gamma = vec3(1.0/2.2);
-  //ret = texture(depth, texCoord).xyz;
+  //ret = texture(normal, texCoord).xyz;
   outColor = vec4(pow(ret, gamma), 1);
 }

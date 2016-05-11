@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  const static f32 COLLISION_POS_CORRECTION = 0.7;
+  const static f32 COLLISION_POS_CORRECTION = 0.8;
   const static f32 VN_DEAD_SPACE = 0.01;
 
   template <typename Obj, typename Comp, bool Static>
@@ -13,7 +13,7 @@ NAMESPACE {
 				       Pointer<Comp>& b_comp) {
     
     BoundingObject* a_bound = a_obj->getLooseBoundingObject();
-    BoundingObject* b_bound = b_bound = b_obj->getLooseBoundingObject();
+    BoundingObject* b_bound = b_obj->getLooseBoundingObject();
     
     if (!a_bound->intersects(b_bound)) {
       return false;

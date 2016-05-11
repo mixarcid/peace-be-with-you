@@ -54,7 +54,7 @@ i32 main() {
     Engine::emplaceDynamic<Sun>(far_dist-750)->init();
 
     Terrain terrain;
-    //terrain.generate("Test",Vec3f(0,0,0),Vec2u(15,15));
+    terrain.generate("Test",Vec3f(0,0,0),Vec2u(2,2));
     terrain.loadFile("Test");
 				
     Engine::engine->graphics.back_color = Vec4f(0.4, 0.5, 1.0, 1.0);

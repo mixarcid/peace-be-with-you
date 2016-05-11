@@ -27,6 +27,7 @@ EXECUTABLE= $(OUTDIR)peace
 endif
 
 EXPANSIONS=$(SOURCES:.cpp=.ii)
+PYEXPANSIONS=$(SOURCES:.cpp=.exp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 DEPENDS=$(SOURCES:.cpp=.d)
@@ -75,7 +76,7 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 clean:
-	@rm -f $(OBJECTS) $(EXPANSIONS) $(EXECUTABLE) $(DEPENDS)
+	@rm -f $(OBJECTS) $(EXPANSIONS) $(EXECUTABLE) $(DEPENDS) $(PYEXPANSIONS)
 
 .SUFFIXES:
 .SECONDARY:

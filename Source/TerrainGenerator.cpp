@@ -30,6 +30,12 @@ NAMESPACE {
       }, pos/200, 2);
   }
 
+  inline f32 rockFunc(BiomeCenter* c, Vec2f pos) {
+    f32 rockiness = ((f32)c->rand()/(f32)c->rand.max())*0.3;
+    f32 tmp = rockiness + (1-rockiness)*(c->noise.getValue(pos/50.0, 0)*0.5 + 0.5);
+    return interpFunc(interpFunc(interpFunc(c->noise.getValue(pos/500.0, 1)*0.5 + 0.5)*tmp));
+  };
+
   Vec2f PERLIN_OFFSET = Vec2f(1000, 2000);
   
   f32 BiomeCenter::dataAtPoint(Vec2f old_pos,
@@ -58,7 +64,32 @@ NAMESPACE {
       break;
 
     case BIOME_JUNGLE:
+      {
+	f32 rockiness = rockFunc(this, old_pos);
+	if (biome_data) {
+	  biome_data->rock_level = (rockiness*255.0);
+	  biome_data->grass_level = 255 - biome_data->rock_level;
+	}
+
+	f32 rock = Noise::fractal
+	  ([this](Vec2f in, i32 index) -> f32 {
+	    f32 val = noise.getValue(in, index);
+	    if (abs(val) < 0.1) {
+	      val = val*val/0.1;
+	    } else {
+	      val = abs(val);
+	    }
+	    return 0.5 - val;
+	  }, old_pos/100, 3, 2.0, 0.5)*20;
+
+	f32 h = Noise::fractal
+	  ([this](Vec2f in, i32 index) -> f32 {
+	    return 0.4 + 0.6*noise.getValue(in, index);
+	  }, old_pos/500.0, 3, 2.0, 0.5)*100;
+
+	ret += height + h + rockiness*rock;
       
+      }
       break;
       
     case BIOME_MOUNTAIN:
@@ -90,11 +121,13 @@ NAMESPACE {
       
     case BIOME_DESERT:
 
-      Vec2f offset = Vec2f
-	(noise.getValue(old_pos/5000, 0),
-	 noise.getValue(old_pos/5000, 1))*20;
-      f32 mag = 0.5 + 0.5*noise.getValue(old_pos/100, 2);
-      ret += height + 30*(0.5 + mag)*noise.getValue(old_pos/2000 + offset, 3);
+      f32 arr[4] = {dir.x(), dir.y(), -dir.y(), dir.x()};
+      Mat2f rot(arr);
+      Vec2f rot_pos(rot*old_pos);
+      Vec2f off_pos(rot_pos.x()*0.3, rot_pos.y()*0.7);
+      //Log::message(to_string(dir));
+      f32 mag = 1.0;//0.5 + 0.5*noise.getValue(old_pos/100.0, 1);
+      ret += height + 100*((mag)*noise.getValue(off_pos/100.0, 2)*0.5 + 0.5);
       if (biome_data) {
 	biome_data->sand_level = 255;
       }
@@ -126,6 +159,30 @@ NAMESPACE {
 	}
 	break;
       }
+
+    case BIOME_JUNGLE:
+      {
+	f32 rockiness = rockFunc(this, pos);
+	f32 val =  Noise::fractal
+	  ([this](Vec2f in, i32 index) -> f32 {
+	    return noise.getValue(in);
+	  }, pos/100 + Vec2f(900, 600), 5);
+	if (rockiness < 0.2) {
+	  if (val > 0.7) {
+	    *type = TREE_WILLOW;
+	  } else if (val > 0.5) {
+	    *type = TREE_PINE;
+	  } else if (val > 0.3) {
+	    *type = TREE_ELM;
+	  } else {
+	    ret = false;
+	  }
+	} else {
+	  ret = false;
+	}
+	break;
+      }
+      
 
     default:
       ret = false;
@@ -179,29 +236,32 @@ NAMESPACE {
         d.center = pos_offset +
 	  Vec2f(step.x()*x, step.y()*y);
         d.height = 0;
+	d.biome = BIOME_JUNGLE;
 	
-	if ((d.center - pos.xy()).norm() > max_radius) {
+	/*if ((d.center - pos.xy()).norm() > max_radius) {
 	  d.biome = BIOME_OCEAN;
 	  d.height = SEA_FLOOR_HEIGHT + (global_random()/(f32)global_random.max() - 0.5)*5;
 	} else if ((d.center - pos.xy()).norm() >
 		   max_radius/2) {
-	  /*d.biome = BIOME_GRASSLAND;
-	    d.height = SEA_LEVEL + (global_random()/(f32)global_random.max())*10 + 10;*/
+	  d.biome = BIOME_GRASSLAND;
+	    d.height = SEA_LEVEL + (global_random()/(f32)global_random.max())*10 + 10;
 	  d.biome = BIOME_DESERT;
 	  d.height = (global_random()/(f32)global_random.max())*20 + 40;
 	} else {
-	  d.biome = BIOME_MOUNTAIN;
+	  d.biome = BIOME_JUNGLE;
 	  //Log::message("mountain");
 	  d.height = SEA_LEVEL + 30 + (global_random()/(f32)global_random.max())*500;
 	  //Log::message(to_string(d.height));
-	}
+	  }*/
 	
 	biome_data.push_back(d);
       }
     }
 
     for (BiomeCenterData d : biome_data) {
-      biome_centers.emplace_back(this, d.center, d.height, ++seed, d.biome);
+      f32 f = global_random()/(f32)global_random.max();
+      Vec2f dir(f, sqrt(1.0 - f*f));
+      biome_centers.emplace_back(this, d.center, dir, d.height, ++seed, d.biome);
     }
     
   }
@@ -248,13 +308,6 @@ NAMESPACE {
 
     f32 heights[4];
     Vec4ub biome_array[4];
-    
-    for (u8 n=0; n<4; ++n) {
-      BiomeData b;
-      heights[n] = closest_biome_centers[n]
-	->dataAtPoint(new_point, new_point, biome_data ? &b : NULL);
-      biome_array[n] = b.levels;
-    }
 
     Vec2f trans_noise = Vec2f(1 + noise[3].getValue(new_point/200),
 			      1 + noise[4].getValue(new_point/200))*0.5;
@@ -284,10 +337,43 @@ NAMESPACE {
     rem.x() = rem.x() > 1.0 ? 1.0 : rem.x();
     rem.y() = rem.y() < 0.0 ? 0.0 : rem.y();
     rem.y() = rem.y() > 1.0 ? 1.0 : rem.y();
-    
-    f32 ret = biLerp(rem, heights);
-    if (biome_data) {
 
+    u8 index;
+    if (rem.x() > 0.5) {
+      if (rem.y() > 0.5) {
+	index = 0;
+      } else {
+	index = 1;
+      }
+    } else {
+      if (rem.y() > 0.5) {
+	index = 2;
+      } else {
+	index = 3; 
+      }
+    }
+      
+    BiomeCenter* c = closest_biome_centers[index];
+    f32 ret;
+    
+    if (Vec2f::dot(rem, rem) < 0.1) {
+      ret = c->dataAtPoint
+	(new_point, new_point, biome_data);
+    } else {
+      for (u8 n=0; n<4; ++n) {
+	BiomeData b;
+	heights[n] = closest_biome_centers[n]
+	  ->dataAtPoint(new_point, new_point, biome_data ? &b : NULL);
+	biome_array[n] = b.levels;
+      }
+      ret = biLerp(rem, heights);
+      if (biome_data) {
+	biome_data->levels = biLerp(rem, biome_array);
+      }
+    }
+    
+    if (biome_data) {
+      
       Vec2f rel_pos_grid = point - tree_grid.center + tree_grid.size/2;
       Vec2i grid_pos(rel_pos_grid.x()/tree_grid.step.x(),
 		     rel_pos_grid.y()/tree_grid.step.y());
@@ -299,22 +385,6 @@ NAMESPACE {
 
 	prev_grid_pos = grid_pos;
 	
-	u8 index;
-	if (rem.x() > 0.5) {
-	  if (rem.y() > 0.5) {
-	    index = 0;
-	  } else {
-	    index = 1;
-	  }
-	} else {
-	  if (rem.y() > 0.5) {
-	    index = 2;
-	  } else {
-	    index = 3; 
-	  }
-	}
-      
-	BiomeCenter* c = closest_biome_centers[index];
 	TreeType type;
 
 	Vec2f offset = Vec2f(0,0) -tree_grid.step*0.5 + Vec2f
@@ -335,7 +405,6 @@ NAMESPACE {
 	}
       }
       
-      biome_data->levels = biLerp(rem, biome_array);
       /*if (ret > SNOW_BOTTOM_LEVEL) {
 	f32 snow_level = Noise::fractal
 	  ([this](Vec2f in, i32 index) -> f32 {

@@ -3,6 +3,7 @@
 #include "Texture.hpp"
 #include "BonedMesh.hpp"
 #include "Light.hpp"
+#include <climits>
 
 NAMESPACE {
   
@@ -387,7 +388,7 @@ NAMESPACE {
     cur_shader = this;
     if (!(settings & SHADER_PLAIN)) {
       for (GlobalShaderUniform* uniform : GlobalShaderUniform::uniforms[flags]) {
-	if (uniform->buffer_id != -1) {
+	if (uniform->buffer_id != UINT_MAX) {
 	  uniform->initOrKeep(id);
 	} else {
 	  uniform->id = glGetUniformLocation(id, uniform->name.c_str());

@@ -37,8 +37,8 @@ NAMESPACE {
     
     Array<Texture> textures;
     textures.push_back(diffuse);
-    textures.push_back(normal);
     textures.push_back(depth);
+    textures.push_back(normal);
     g_buffer.bindTargets(textures);
     
     debugAssert(g_buffer.isComplete(),
@@ -46,9 +46,8 @@ NAMESPACE {
   }
   
   void Renderer::prepare(Vec4f back_color) {
-    glDisable(GL_FRAMEBUFFER_SRGB);
     first_shade.use();
-    g_buffer.clearTargets({back_color, Vec4f(0,0,0,1), Vec4f(1,0,0,1)});
+    g_buffer.clearTargets({back_color,  Vec4f(1,0,0,1), Vec4f(0,0,0,1)});
     g_buffer.use();
     glViewport(0,0,window_size.x(),window_size.y());
   }

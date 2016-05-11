@@ -20,6 +20,7 @@ NAMESPACE {
 
     TerrainGenerator* gen;
     Vec2f center;
+    Vec2f dir;
     f32 height;
     u32 rand_seed;
     BiomeType biome;
@@ -28,11 +29,13 @@ NAMESPACE {
 
     BiomeCenter(TerrainGenerator* _gen,
 		Vec2f _center,
+		Vec2f _dir,
 		f32 _height,
 		u32 _rand_seed,
 		BiomeType _biome)
       : gen(_gen),
 	center(_center),
+	dir(_dir),
 	height(_height),
 	rand_seed(_rand_seed),
 	biome(_biome) {}
@@ -46,10 +49,6 @@ NAMESPACE {
 
   struct TreeGrid {
     
-    //completely inefficient to have an Array of bools,
-    //but it's darn simple to impliment and it shouldn't
-    //be a memory bottleneck at all
-    //Array<bool> trees;
     Vec2f center;
     Vec2u res;
     Vec2f size;

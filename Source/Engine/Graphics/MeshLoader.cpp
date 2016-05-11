@@ -245,7 +245,7 @@ NAMESPACE {
 
   void loadModelFromMeshName(String mesh_name) {
     size_t index = mesh_name.find(":");
-    debugAssert(index != -1,
+    debugAssert(index != String::npos,
 		"Your mesh name is incorrectly formatted; "
 		"all mesh names must have the format "
 		"\"Filename:Meshname\"");
