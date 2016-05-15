@@ -13,7 +13,6 @@ NAMESPACE {
   };
 
   void Tree::init(TreeType type, u8 num) {
-    
     StaticMesh* mesh = meshes[type*NUM_MODELS + num].get();
     Pointer<StaticObject> obj(this);
 

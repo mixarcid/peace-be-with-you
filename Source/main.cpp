@@ -51,11 +51,11 @@ i32 main() {
       });
     
     Engine::emplaceDynamic<Player>(Vec3f(0,0,30));
-    Engine::emplaceDynamic<Sun>(far_dist-750)->init();
+    Engine::emplaceDynamic<Sun>(far_dist-200)->init();
 
     Terrain terrain;
-    terrain.generate("Test",Vec3f(0,0,0),Vec2u(2,2));
-    terrain.loadFile("Test");
+    //terrain.generate("Test1",Vec3f(0,0,0),Vec2u(20,20));
+    terrain.loadFile("Test1");
 				
     Engine::engine->graphics.back_color = Vec4f(0.4, 0.5, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));

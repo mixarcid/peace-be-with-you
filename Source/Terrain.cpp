@@ -11,7 +11,7 @@ NAMESPACE {
   const f32 Terrain::CHUNK_SIZE = 500.0f;//100.0f;
   //width of the chunk in vertices
   //must be power of 2 minus 1
-  const u32 Terrain::CHUNK_RES = 127;
+  const u32 Terrain::CHUNK_RES = 129;
   const f32 Terrain::CHUNK_STEP
     = (Terrain::CHUNK_SIZE / (f32) Terrain::CHUNK_RES);
 
@@ -24,6 +24,7 @@ NAMESPACE {
   Array<TerrainRenderable> Terrain::chunk_meshes;
   HashMap<Vec2u, Pointer<TerrainChunk>> Terrain::chunks;
   Mutex Terrain::chunk_mutex;
+  Mutex Terrain::chunk_mesh_mutex;
   EBO Terrain::elem_buffer_large;
   EBO Terrain::elem_buffer_mid;
   EBO Terrain::elem_buffer_small;
@@ -51,8 +52,10 @@ NAMESPACE {
   TerrainChunk::~TerrainChunk() {
     auto& rend = getComponent<RenderableComp>();
     if (rend) {
+      Terrain::chunk_mesh_mutex.lock();
       Terrain::chunk_meshes.removeAndReplace
 	((Pointer<TerrainRenderable>&)rend);
+      Terrain::chunk_mesh_mutex.unlock();
     }
     auto& comp = getComponent<TerrainChunkComp>();
     delete comp;
@@ -210,7 +213,7 @@ NAMESPACE {
       (this,
        pos,
        size*CHUNK_SIZE,
-       size,//size/4,
+       size/4,
        Vec2f(CHUNK_SIZE,
 	     CHUNK_SIZE),
        Vec2f(CHUNK_STEP,
@@ -236,7 +239,8 @@ NAMESPACE {
 	for (u32 chunk_y = begin.y(); chunk_y < end.y(); ++chunk_y) {
 
 	  //Log::message("<%u, %u>, %u", chunk_x, chunk_y, quadrant);
-	  
+
+	  b_data.clear();
 	  data.clear();
 	
 	  Vec2f position = chunk_pos_offset.xy() + Vec2f
@@ -254,7 +258,23 @@ NAMESPACE {
 			      CHUNK_STEP*y - CHUNK_SIZE/2);
 	      f32 height;
 	      BiomeData b;
+	      /*if (x == 0 || x == CHUNK_RES - 1) {
+		Vec2f step(CHUNK_STEP, 0);
+		height = ((f64)gen.dataAtPoint(position + local_pos + step, &b)
+			  + (f64)gen.dataAtPoint(position + local_pos - step, &b))/(f64)2.0;
+	      } else if (y == 0 || y == CHUNK_RES - 1) {
+		Vec2f step(0, CHUNK_STEP);
+		height = ((f64)gen.dataAtPoint(position + local_pos + step, &b)
+			  + (f64)gen.dataAtPoint(position + local_pos - step, &b))/(f64)2.0;
+			  } else {*/
 	      height = gen.dataAtPoint(position + local_pos, &b);
+		//}
+	      /*if (x > 0 && y > 0) {
+		debugAssert(abs(data[(x-1)*CHUNK_RES+(y-1)].z() - height) < 7,
+			    "Discontinuity in terrain generation");
+	      }
+	      debugAssert(abs(gen.dataAtPoint(position + local_pos + Vec2f(CHUNK_STEP, CHUNK_STEP)) - height) < 7,
+	      "Discontinuity in terrain generation");*/
 	      max_z = height > max_z ? height : max_z;
 	      min_z = height < min_z ? height : min_z;
 	      data.push_back(Vec3f(local_pos.x(),
@@ -490,12 +510,13 @@ NAMESPACE {
 	      position.y(),
 	      chunk_pos_offset.z())));
     
-    //Log::message(to_string(position));
-
+    Terrain::chunk_mesh_mutex.lock();
     Pointer<TerrainRenderable> mesh = chunk_meshes.emplace_back();
-      /*= (Pointer<TerrainRenderable>&)
-	c->getComponent<RenderableComp>();*/
+    Terrain::chunk_mesh_mutex.unlock();
+    
     mesh->height_data.reserve(sqr(CHUNK_RES));
+    mesh->biome_data.reserve(sqr(CHUNK_RES));
+    mesh->normal_data.reserve(sqr(CHUNK_RES));
 
     for (u16 x = 0; x < CHUNK_RES; ++x) {
       for (u16 y = 0; y < CHUNK_RES; ++y) {
@@ -571,7 +592,6 @@ NAMESPACE {
       chunk_mutex.unlock();
       return TerrainGenerator::SEA_FLOOR_HEIGHT;
     }
-    chunk_mutex.unlock();
     
     Pointer<TerrainRenderable>& rend =
 		      (Pointer<TerrainRenderable>&)
@@ -593,23 +613,41 @@ NAMESPACE {
     f32 heights[4];
     heights[0] = rend->height_data
       [x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
-    heights[1] = rend->height_data
-      [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
-    heights[2] = rend->height_data
-      [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
-    heights[3] = rend->height_data
-      [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+    if (x_mesh_index < Terrain::CHUNK_RES - 1) {
+      heights[1] = rend->height_data
+	[(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
+      if (x_mesh_index < Terrain::CHUNK_RES - 1) {
+	heights[2] = rend->height_data
+	  [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
+	heights[3] = rend->height_data
+	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+      } else {
+	heights[2] = heights[0];
+	heights[3] = heights[1];
+      }
+    } else {
+      heights[1] = heights[2] = heights[3] = heights[0];
+    }
 
     if (norm) {
       Vec3f norms[4];
       norms[0] = rend->normal_data
 	[x_mesh_index*Terrain::CHUNK_RES + y_mesh_index];
-      norms[1] = rend->normal_data
-	[(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
-      norms[2] = rend->normal_data
-	[(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
-      norms[3] = rend->normal_data
-	[(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+      if (x_mesh_index < Terrain::CHUNK_RES - 1) {
+	norms[1] = rend->normal_data
+	  [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index];
+	if (x_mesh_index < Terrain::CHUNK_RES - 1) {
+	  norms[2] = rend->normal_data
+	    [(x_mesh_index)*Terrain::CHUNK_RES + y_mesh_index + 1];
+	  norms[3] = rend->normal_data
+	    [(x_mesh_index + 1)*Terrain::CHUNK_RES + y_mesh_index + 1];
+	} else {
+	  norms[2] = norms[0];
+	  norms[3] = norms[1];
+	}
+      } else {
+	norms[1] = norms[2] = norms[3] = norms[0];
+      }
       *norm = biLerp(rem, norms);
     }
     return biLerp(rem, heights);
@@ -669,6 +707,13 @@ NAMESPACE {
 	  Engine::engine->synchronized_mutex.unlock();
 	}
 	
+      }
+
+      while (true) {
+	Engine::engine->synchronized_mutex.lock();
+	bool should_break = (Engine::engine->synchronized_callbacks.size() == 0);
+	Engine::engine->synchronized_mutex.unlock();
+	if (should_break) break;
       }
       
       i32 x = i32(chunk.x()) - i32(CHUNKS_IN_VIEW) - 1;

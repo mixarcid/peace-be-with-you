@@ -13,15 +13,16 @@ NAMESPACE {
       Log::message("Initialized graphics libraries");
     }
 
-    GLFWwindow* createWindow(Vec2s size, String name) {
+    GLFWwindow* createWindow(Vec2s size, String name, WindowFlags flags) {
       
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
       
-      GLFWwindow* window = glfwCreateWindow(size.x(), size.y(),
-					    name.c_str(), NULL, NULL);
+      GLFWwindow* window = glfwCreateWindow
+	(size.x(), size.y(),
+	 name.c_str(), flags & WINDOW_FULLSCREEN ? glfwGetPrimaryMonitor() : NULL, NULL);
       if (!window) {
 	Log::fatalError("Failed to create GLFWwindow");
       }

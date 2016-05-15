@@ -3,7 +3,7 @@
 
 NAMESPACE {
 
-  const static f32 COLLISION_POS_CORRECTION = 0.8;
+  const static f32 COLLISION_POS_CORRECTION = 0.9;
   const static f32 VN_DEAD_SPACE = 0.01;
 
   template <typename Obj, typename Comp, bool Static>

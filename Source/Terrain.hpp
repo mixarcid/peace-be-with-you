@@ -94,6 +94,7 @@ NAMESPACE {
     static Asset<Texture> texture;
     static Array<TerrainRenderable> chunk_meshes;
     static HashMap<Vec2u, Pointer<TerrainChunk>> chunks;
+    static Mutex chunk_mesh_mutex;
     static Mutex chunk_mutex;
     static EBO elem_buffer_large;
     static EBO elem_buffer_mid;

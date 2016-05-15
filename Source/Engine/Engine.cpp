@@ -22,7 +22,7 @@ NAMESPACE {
     graphics(this),
       physics(this),
       dt(0),
-      cam_move_radius(100),
+      cam_move_radius(500),
       flags(ENGINE_NO_FLAGS) {}
 
     Engine::~Engine() throw() {
@@ -114,7 +114,17 @@ NAMESPACE {
 	Pointer<StaticObject> p(&obj);
 	registerStatic(p, false);
       }
-    
+
+      engine->synchronized_mutex.lock();
+      engine->synchronized_callbacks.push_back([](){});
+      engine->synchronized_mutex.unlock();
+      while(true) {
+	engine->synchronized_mutex.lock();
+	bool should_break = (engine->synchronized_callbacks.size() == 0);
+	engine->synchronized_mutex.unlock();
+	if (should_break) break;
+      }
+      
       swapContainers();
     }
   

@@ -15,11 +15,15 @@ NAMESPACE {
     PEACE_GL_POINTS,
     PEACE_GL_LINES
   };
+
+  PEACE_DEFINE_BITFLAGS(WindowFlags, 8,
+			WINDOW_NO_FLAGS = 0x00,
+			WINDOW_FULLSCREEN = 0x01);
   
   namespace gl {
     
     void init();
-    GLFWwindow* createWindow(Vec2s size, String name);
+    GLFWwindow* createWindow(Vec2s size, String name, WindowFlags flags = WINDOW_NO_FLAGS);
     void checkError();
     void ignoreError(GLenum code);
 
