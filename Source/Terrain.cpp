@@ -213,7 +213,7 @@ NAMESPACE {
       (this,
        pos,
        size*CHUNK_SIZE,
-       size/4,
+       size,
        Vec2f(CHUNK_SIZE,
 	     CHUNK_SIZE),
        Vec2f(CHUNK_STEP,

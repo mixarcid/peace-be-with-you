@@ -11,6 +11,7 @@ NAMESPACE {
     TREE_ELM,
     TREE_PINE,
     TREE_WILLOW,
+    TREE_BAOBAB,
     TREE_LAST
 
   };

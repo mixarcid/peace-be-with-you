@@ -70,7 +70,7 @@ NAMESPACE {
   struct DynamicPhysicsComp : StaticPhysicsComp {
 
     typedef Array<Pointer<DynamicObject>> MovingObjectArray;
-    typedef MovingObjectArray::SizeType MovingObjectHandle;
+    typedef i32 MovingObjectHandle;
     
     Vec3f veloc;
     Vec3f prev_veloc;

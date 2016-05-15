@@ -146,18 +146,37 @@ NAMESPACE {
       break;
       
     case BIOME_DESERT:
-
-      f64 arr[4] = {dir.x(), dir.y(), -dir.y(), dir.x()};
-      Mat2d rot(arr);
-      Vec2d rot_pos(rot*old_pos);
-      Vec2d off_pos(rot_pos.x()*0.3, rot_pos.y()*0.7);
-      //Log::message(to_string(dir));
-      f64 mag = 1.0;//0.5 + 0.5*noise.getValue(old_pos/100.0, 1);
-      ret += height + 200.0*amplitude*((mag)*noise.getValue(off_pos*freq/200.0, 2)*0.5 + 0.5);
-      if (biome_data) {
-	biome_data->sand_level = 255;
+      {
+	f64 arr[4] = {dir.x(), dir.y(), -dir.y(), dir.x()};
+	Mat2d rot(arr);
+	Vec2d rot_pos(rot*old_pos);
+	Vec2d off_pos(rot_pos.x()*0.3, rot_pos.y()*0.7);
+	//Log::message(to_string(dir));
+	f64 mag = 1.0;//0.5 + 0.5*noise.getValue(old_pos/100.0, 1);
+	ret += height + 200.0*amplitude*((mag)*noise.getValue(off_pos*freq/200.0, 2)*0.5 + 0.5);
+	if (biome_data) {
+	  biome_data->sand_level = 255;
+	}
       }
       break;
+
+    case BIOME_SERENGETI:
+      {
+
+	f64 grass_large = (0.5 + 0.5*noise.getValue(old_pos/250.0, 0));
+	f64 grass_small = interpFunc(interpFunc(0.5 + 0.5*noise.getValue(old_pos*freq/100.0, 2)*grass_large));
+	f64 h = 20*amplitude*(0.5 + 0.5*noise.getValue(old_pos/200.0, 3));
+	f64 grass_val = (0.5 + 0.5*grass_small*noise.getValue(old_pos/100.0, 4))*30*amplitude;
+	ret += h + grass_val;
+
+	if (biome_data) {
+	  biome_data->grass_level = (grass_small*255.0);
+	  biome_data->sand_level = 255 - biome_data->grass_level;
+	}
+
+      }
+      break;
+      
     }
     return ret;
   }
@@ -189,31 +208,41 @@ NAMESPACE {
     case BIOME_JUNGLE:
       {
 	ret = true;
-	f64 rockiness = rockFunc(&detail, pos);
 	f64 val =  Noise::fractal
 	  ([this](Vec2d in, i32 index) -> f64 {
 	    return noise.getValue(in);
 	  }, pos/100 + Vec2d(900, 600), 5);
-	if (rockiness < 0.2) {
-	  if (val > 0.7) {
-	    *type = TREE_WILLOW;
-	  } else if (val > 0.5) {
-	    *type = TREE_PINE;
-	  } else if (val > 0.3) {
-	    *type = TREE_ELM;
-	  } else {
-	    ret = false;
-	  }
+	if (val > 0.7) {
+	  *type = TREE_WILLOW;
+	} else if (val > 0.5) {
+	  *type = TREE_PINE;
+	} else if (val > 0.3) {
+	  *type = TREE_ELM;
 	} else {
 	  ret = false;
 	}
 	break;
+      }
+
+    case BIOME_SERENGETI:
+      {
+	f64 val = (TerrainGenerator::global_random()/
+		   (f64)TerrainGenerator::global_random.max());
+	if (val > 0.9) {
+	  ret = true;
+	  *type = TREE_BAOBAB;
+	}
       }
       
 
     default:
       break;
       
+    }
+
+    if (ret &&
+	rockFunc(&detail, pos) > 0.1) {
+      return false;
     }
     
     return ret;
@@ -261,9 +290,9 @@ NAMESPACE {
 	f64 center_dist = (center - pos.xy()).norm()/max_radius;
 	
         f64 height = 0;
-	BiomeType biome = BIOME_MOUNTAIN;
+	BiomeType biome = BIOME_SERENGETI;
 	
-	if (center_dist > 1.0) {
+	/*if (center_dist > 1.0) {
 	  biome = BIOME_OCEAN;
 	  height = SEA_FLOOR_HEIGHT;
 	} else {
@@ -273,15 +302,17 @@ NAMESPACE {
 	    biome = BIOME_MOUNTAIN;
 	  } else {
 	    f64 biome_val = (noise[2].getValue(center/5000.0)*0.5 + 0.5)*0.5 + 0.5*(global_random()/(f64)global_random.max());
-	    if (biome_val > 0.66) {
+	    if (biome_val > 0.85) {
+	      biome = BIOME_SERENGETI;
+	    } else if (biome_val > 0.66) {
 	      biome = BIOME_GRASSLAND;
 	    } else if (biome_val > 0.33) {
 	      biome = BIOME_DESERT;
 	    } else {
 	      biome = BIOME_JUNGLE;
 	    }
-	  }
-	}
+	    }
+	    }*/
 	
 	BiomeDetailData& d = biome_centers.emplace_back
 	  (this, center, dir, height, amplitude, freq, ++seed, biome)->detail;
@@ -343,28 +374,6 @@ NAMESPACE {
     f64 heights[4];
     Vec4ub biome_array[4];
 
-    /*Vec2d trans_noise = Vec2d(1 + noise[3].getValue(new_point/200),
-			      1 + noise[4].getValue(new_point/200))*0.5;
-
-    if (rem.x() > 1.0) rem.x() -= 1.0;
-    if (rem.y() > 1.0) rem.y() -= 1.0;
-    
-    if (indexes.x() % 2 == 0) {
-      trans_noise.x() = 1 - trans_noise.x();
-    }
-    if (indexes.y() % 2 == 0) {
-      trans_noise.y() = 1 - trans_noise.y();
-    }
-
-    /Vec2d noise_factor(1-2*abs(rem.x()-0.5),
-		       1-2*abs(rem.y()-0.5));
-    noise_factor *= 0.5;
-    
-    rem = interpFunc(rem);
-    rem.x() = (1-noise_factor.x())*rem.x() +
-      noise_factor.x()*trans_noise.x();
-    rem.y() = (1-noise_factor.y())*rem.y() +
-    noise_factor.y()*trans_noise.y();*/
     rem = interpFunc(interpFunc(rem));
 
     rem.x() = rem.x() < 0.0 ? 0.0 : rem.x();
