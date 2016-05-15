@@ -180,13 +180,16 @@ class PMFFile:
                 for act in actions:
                     armature.animation_data.action = act
 
-                    keyframes = [0]
-                    bpy.ops.screen.frame_jump(0)
+                    keyframes = []
+                    """bpy.ops.screen.frame_jump(0)
                     while bpy.ops.screen.keyframe_jump() == {'FINISHED'}:
-                        keyframes.append(bpy.context.scene.frame_current-1)
-
+                        keyframes.append(bpy.context.scene.frame_current-1)"""
+                    for point in act.fcurves[0].keyframe_points:
+                        keyframes.append(point.co.x)
+                        
                     self.writeString(act.name)
                     self.writeStruct("I", len(keyframes))
+                        
                     #print(keyframes)
                     for frame in keyframes:
                         bpy.context.scene.frame_set(frame)
