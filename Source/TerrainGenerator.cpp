@@ -40,7 +40,13 @@ NAMESPACE {
     } else {
       return 0.0;
     }
-  };
+  }
+
+  inline f64 serengetiFunc(BiomeCenter* c, Vec2d pos) {
+    f64 grass_large = (0.5 + 0.5*c->noise.getValue(pos/200.0, 0));
+    f64 grass_small = interpFunc(interpFunc(0.5 + 0.5*c->noise.getValue(pos*c->freq/100.0, 2)*grass_large));
+    return grass_small;
+  }
 
   Vec2d PERLIN_OFFSET = Vec2d(1000, 2000);
 
@@ -163,8 +169,7 @@ NAMESPACE {
     case BIOME_SERENGETI:
       {
 
-	f64 grass_large = (0.5 + 0.5*noise.getValue(old_pos/250.0, 0));
-	f64 grass_small = interpFunc(interpFunc(0.5 + 0.5*noise.getValue(old_pos*freq/100.0, 2)*grass_large));
+	f64 grass_small = serengetiFunc(this, old_pos);
 	f64 h = 20*amplitude*(0.5 + 0.5*noise.getValue(old_pos/200.0, 3));
 	f64 grass_val = (0.5 + 0.5*grass_small*noise.getValue(old_pos/100.0, 4))*30*amplitude;
 	ret += h + grass_val;
@@ -228,7 +233,7 @@ NAMESPACE {
       {
 	f64 val = (TerrainGenerator::global_random()/
 		   (f64)TerrainGenerator::global_random.max());
-	if (val > 0.9) {
+	if (val > 0.9 && serengetiFunc(this, pos) > 0.8) {
 	  ret = true;
 	  *type = TREE_BAOBAB;
 	}
@@ -292,7 +297,7 @@ NAMESPACE {
         f64 height = 0;
 	BiomeType biome = BIOME_SERENGETI;
 	
-	/*if (center_dist > 1.0) {
+	if (center_dist > 1.0) {
 	  biome = BIOME_OCEAN;
 	  height = SEA_FLOOR_HEIGHT;
 	} else {
@@ -311,8 +316,8 @@ NAMESPACE {
 	    } else {
 	      biome = BIOME_JUNGLE;
 	    }
-	    }
-	    }*/
+	  }
+	}
 	
 	BiomeDetailData& d = biome_centers.emplace_back
 	  (this, center, dir, height, amplitude, freq, ++seed, biome)->detail;
