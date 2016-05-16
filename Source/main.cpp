@@ -4,6 +4,7 @@
 #include "Input.hpp"
 #include "Terrain.hpp"
 #include "Sun.hpp"
+#include "OnionMan.hpp"
 
 using namespace peace;
 
@@ -37,9 +38,6 @@ i32 main() {
 	  gl::setGraphicsMode(PEACE_GL_LINES);
 	  break;
 	case GLFW_KEY_3:
-	  gl::setGraphicsMode(PEACE_GL_POINTS);
-	  break;
-	case GLFW_KEY_4:
 	  if (act == GLFW_PRESS) {
 	    Engine::engine->graphics.flags ^=
 	      GRAPHICS_RENDER_BOUNDING_TIGHT;
@@ -51,7 +49,7 @@ i32 main() {
       });
     
     Terrain terrain;
-    terrain.generate("Test2",Vec3f(0,0,0),Vec2u(30,30));
+    //terrain.generate("Test2",Vec3f(0,0,0),Vec2u(40,40));
     terrain.loadFile("Test2");
 
     Engine::emplaceDynamic<Player>(Vec3f(0,0,terrain.heightAtPoint(Vec2f(0,0), NULL)));

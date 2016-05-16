@@ -21,7 +21,7 @@ NAMESPACE {
     static Transform camera_diff;
     static f32 cam_speed;
     static f32 cam_rot_speed;
-    static Asset<StaticMesh> mesh;
+    static Asset<BonedMeshBase> mesh;
 
   };
   $registerRttiStruct();

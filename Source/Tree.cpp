@@ -10,7 +10,10 @@ NAMESPACE {
     Asset<StaticMesh>("Elm:0"),
     Asset<StaticMesh>("Pine:0"),
     Asset<StaticMesh>("Willow:0"),
-    Asset<StaticMesh>("Baobab:0")
+    Asset<StaticMesh>("Baobab:0"),
+    Asset<StaticMesh>("Dogwood:0"),
+    Asset<StaticMesh>("Cactus:0"),
+    Asset<StaticMesh>("CamelThorn:0")
   };
 
   void Tree::init(TreeType type, u8 num) {

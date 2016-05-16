@@ -187,57 +187,140 @@ NAMESPACE {
   }
 
   bool BiomeCenter::treeAtPoint(Vec2d pos, TreeType* type) {
-
+    
+    rand.seed(rand_seed);
     bool ret = false;
+
+    f64 rand_val = (TerrainGenerator::global_random()/
+		    (f64)TerrainGenerator::global_random.max());
+    
     switch(biome) {
 
     case BIOME_GRASSLAND:
       {
-        /*ret = true;
-	f64 val =  Noise::fractal
-	  ([this](Vec2d in, i32 index) -> f64 {
-	    return noise.getValue(in);
-	  }, pos/100 + Vec2d(900, 600), 5);
-	if (val > 0.7) {
-	  *type = TREE_WILLOW;
-	} else if (val > 0.5) {
-	  *type = TREE_PINE;
-	} else if (val > 0.3) {
-	  *type = TREE_ELM;
+
+	f64 willow_density = rand()/(f64)rand.max();
+	if (willow_density < 0.5) {
+	  willow_density = 0.0;
 	} else {
-	  ret = false;
-	  }*/
-	break;
+	  willow_density *= 0.01*(0.5 + 0.5*noise.getValue(pos/100.0, 0));
+	}
+	
+	f64 elm_density = rand()/(f64)rand.max();
+	if (elm_density < 0.5) {
+	  elm_density = 0.0;
+	} else {
+	  elm_density *= 0.02*(0.5 + 0.5*noise.getValue(pos/100.0, 1));
+	}
+	
+	f64 pine_density = rand()/(f64)rand.max();
+	if (pine_density < 0.5) {
+	  pine_density = 0.0;
+	} else {
+	  pine_density *= 0.02*(0.5 + 0.5*noise.getValue(pos/100.0, 2));
+	}
+		
+	f64 dogwood_density = rand()/(f64)rand.max();
+	if (dogwood_density < 0.5) {
+	  dogwood_density = 0.0;
+	} else {
+	  dogwood_density *= 0.03*(0.5 + 0.5*noise.getValue(pos/100.0, 3));
+	}
+
+	if (rand_val > (1.0 - willow_density)) {
+	  ret = true;
+	  *type = TREE_WILLOW;
+	} else if (rand_val > (1.0 - willow_density - elm_density)) {
+	  ret = true;
+	  *type = TREE_ELM;
+	} else if (rand_val > (1.0 - willow_density - elm_density - pine_density)) {
+	  ret = true;
+	  *type = TREE_PINE;
+	} else if (rand_val > (1.0 - willow_density - elm_density - pine_density - dogwood_density)) {
+	  ret = true;
+	  *type = TREE_DOGWOOD;
+	}
+	
       }
+      break;
 
     case BIOME_JUNGLE:
       {
-	ret = true;
-	f64 val =  Noise::fractal
-	  ([this](Vec2d in, i32 index) -> f64 {
-	    return noise.getValue(in);
-	  }, pos/100 + Vec2d(900, 600), 5);
-	if (val > 0.7) {
-	  *type = TREE_WILLOW;
-	} else if (val > 0.5) {
-	  *type = TREE_PINE;
-	} else if (val > 0.3) {
-	  *type = TREE_ELM;
+
+	f64 willow_density = rand()/(f64)rand.max();
+	if (willow_density < 0.5) {
+	  willow_density = 0.0;
 	} else {
-	  ret = false;
+	  willow_density *= 0.02*(0.5 + 0.5*noise.getValue(pos/100.0, 0));
 	}
-	break;
+	
+	f64 elm_density = rand()/(f64)rand.max();
+	if (elm_density < 0.5) {
+	  elm_density = 0.0;
+	} else {
+	  elm_density *= 0.4*(0.5 + 0.5*noise.getValue(pos/100.0, 1));
+	}
+	
+	f64 pine_density = rand()/(f64)rand.max();
+	if (pine_density < 0.5) {
+	  pine_density = 0.0;
+	} else {
+	  pine_density *= 0.4*(0.5 + 0.5*noise.getValue(pos/100.0, 2));
+	}
+		
+	f64 dogwood_density = rand()/(f64)rand.max();
+	if (dogwood_density < 0.5) {
+	  dogwood_density = 0.0;
+	} else {
+	  dogwood_density *= 0.005*(0.5 + 0.5*noise.getValue(pos/100.0, 3));
+	}
+
+
+	if (rand_val > (1.0 - willow_density)) {
+	  ret = true;
+	  *type = TREE_WILLOW;
+	} else if (rand_val > (1.0 - willow_density - elm_density)) {
+	  ret = true;
+	  *type = TREE_ELM;
+	} else if (rand_val > (1.0 - willow_density - elm_density - pine_density)) {
+	  ret = true;
+	  *type = TREE_PINE;
+	} else if (rand_val > (1.0 - willow_density - elm_density - pine_density - dogwood_density)) {
+	  ret = true;
+	  *type = TREE_DOGWOOD;
+	}
+
       }
+      break;
 
     case BIOME_SERENGETI:
       {
-	f64 val = (TerrainGenerator::global_random()/
-		   (f64)TerrainGenerator::global_random.max());
-	if (val > 0.9 && serengetiFunc(this, pos) > 0.8) {
+	f64 baobab_density = rand()/(f64)rand.max();
+	baobab_density *= 0.5*(0.5 + 0.5*noise.getValue(pos/100.0, 0));
+	if (rand_val > (1.0 - baobab_density) && serengetiFunc(this, pos) > 0.8) {
 	  ret = true;
 	  *type = TREE_BAOBAB;
 	}
       }
+      break;
+
+    case BIOME_DESERT:
+      {
+	
+	f64 cactus_density = 0.005*rand()/(f64)rand.max();
+	cactus_density *= (0.5 + 0.5*noise.getValue(pos/100.0, 0));
+	f64 camel_density = 0.003*rand()/(f64)rand.max();
+	camel_density *= (0.5 + 0.5*noise.getValue(pos/100.0, 1));
+	
+	if (rand_val > (1.0 - cactus_density)) {
+	  ret = true;
+	  *type = TREE_CACTUS;
+	} else if (rand_val > (1.0 - cactus_density - camel_density)) {
+	  ret = true;
+	  *type = TREE_CAMEL_THORN;
+	}
+      }
+      break;
       
 
     default:
@@ -269,9 +352,12 @@ NAMESPACE {
     pos_offset(pos.xy() -
 	       (Vec2d((num_biomes.x()-1)*step.x(),
 		      (num_biomes.y()-1)*step.y())/2)),
-    tree_grid(Vec2u(_chunk_size/30), _chunk_size) {
+    tree_grid(Vec2u(_chunk_size/50), _chunk_size) {
+
+    debugAssert(num_biomes.x() > 0 && num_biomes.y() > 0,
+		"num_biomes must be positive for Terrain generation");
       
-    //maximum radius for the island
+    //Maximum radius for the island
     f64 max_radius = (size.x()/2)*0.9;
     Time t;
     t.makeCurrent();
@@ -295,7 +381,7 @@ NAMESPACE {
 	f64 center_dist = (center - pos.xy()).norm()/max_radius;
 	
         f64 height = 0;
-	BiomeType biome = BIOME_SERENGETI;
+	BiomeType biome = BIOME_GRASSLAND;
 	
 	if (center_dist > 1.0) {
 	  biome = BIOME_OCEAN;
@@ -307,11 +393,11 @@ NAMESPACE {
 	    biome = BIOME_MOUNTAIN;
 	  } else {
 	    f64 biome_val = (noise[2].getValue(center/5000.0)*0.5 + 0.5)*0.5 + 0.5*(global_random()/(f64)global_random.max());
-	    if (biome_val > 0.85) {
+	    if (biome_val > 0.80) {
 	      biome = BIOME_SERENGETI;
-	    } else if (biome_val > 0.66) {
+	    } else if (biome_val > 0.60) {
 	      biome = BIOME_GRASSLAND;
-	    } else if (biome_val > 0.33) {
+	    } else if (biome_val > 0.30) {
 	      biome = BIOME_DESERT;
 	    } else {
 	      biome = BIOME_JUNGLE;

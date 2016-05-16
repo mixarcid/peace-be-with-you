@@ -45,6 +45,7 @@ NAMESPACE {
     GLFWwindow* window;
     Time cur_time;
     Time prev_time;
+    u64 num_seconds;
     f32 dt;
 
     Vec2f prev_cam_pos;

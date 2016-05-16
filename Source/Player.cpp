@@ -9,12 +9,13 @@ NAMESPACE {
 
   ChildObject* Player::camera = NULL;
   Pointer<Player> Player::ptr;
-  Transform Player::camera_diff(Vec3f(0,0,5),
+  //Vec3f(0,0,5) for first person
+  Transform Player::camera_diff(Vec3f(0,10,7),
 				Quaternionf
 				(0,0,degreesToRadians(180)));
   f32 Player::cam_speed(100);
   f32 Player::cam_rot_speed(0.001);
-  Asset<StaticMesh> Player::mesh("Granny:Granny");
+  Asset<BonedMeshBase> Player::mesh("Granny:Granny");
   
   void Player::init() {
 
@@ -23,7 +24,7 @@ NAMESPACE {
     getTightBoundingObject()->transform(getTransform());
     getLooseBoundingObject()->transform(getTransform());
 
-    addComponent(Player::mesh.get());
+    addComponent(new BonedMesh(Player::mesh.get()));
     Pointer<DynamicObject> obj(this);
     addComponent(new DynamicPhysicsComp(obj,Material(985, 0.1, 0.5, 0.4)));
     camera = addChild((Pointer<DynamicObject>&)Engine::engine->graphics.cam,
@@ -71,8 +72,11 @@ NAMESPACE {
 	  Vec3f dir = -(Player::ptr->getRot()*Vec3f(0,1,0));
 	  dir.normalize();
 	  auto p = Engine::emplaceDynamic
-	    <MonkeyHead>(Player::ptr->getTrans()+dir*5, dir*20);
+	    <MonkeyHead>(Player::ptr->getTrans()+dir*4 + Vec3f(0,0,3), dir*20);
 	  p->rotAbs(Player::ptr->getRot());
+	  BonedMesh* mesh = (Pointer<BonedMesh>)
+	    Player::ptr->getComponent<RenderableComp>();
+	  mesh->startAnimation("Throw");
 	}
       });
 
@@ -93,6 +97,20 @@ NAMESPACE {
 	f32 z = phys->veloc.z();
 	
 	if (act != GLFW_RELEASE) {
+	  
+	  BonedMesh* mesh = (Pointer<BonedMesh>)
+	    Player::ptr->getComponent<RenderableComp>();
+	  if (!(mesh->cur_animation.flags & ANIMATION_PLAYING)) {
+	    switch(key) {
+	    case GLFW_KEY_W:
+	    case GLFW_KEY_A:
+	    case GLFW_KEY_S:
+	    case GLFW_KEY_D:
+	      mesh->loopAnimation("Run");
+	      break;
+	    }
+	  }
+	  
 	  switch(key) {
 	  case GLFW_KEY_W:
 	    phys->veloc = (dir*cam_speed);
@@ -115,9 +133,6 @@ NAMESPACE {
 	    phys->veloc.z() = z;
 	    break;
 	  case GLFW_KEY_SPACE:
-	    /*BonedMesh* mesh = (Pointer<BonedMesh>)
-	      Player::ptr->getComponent<RenderableComp>();
-	      mesh->startAnimation("Walk");*/
 	    Player::ptr->transRel(Vec3f(0,0,0.01));
 	    phys->veloc+=Vec3f(0,0,20);
 	    break;
@@ -130,8 +145,11 @@ NAMESPACE {
 	  case GLFW_KEY_S:
 	  case GLFW_KEY_A:
 	  case GLFW_KEY_D:
+	    BonedMesh* mesh = (Pointer<BonedMesh>)
+	      Player::ptr->getComponent<RenderableComp>();
 	    phys->veloc.x() = 0;
 	    phys->veloc.y() = 0;
+	    mesh->stopAnimation();
 	    break;
 	  }
 	  
@@ -141,6 +159,7 @@ NAMESPACE {
 
   Player::~Player() {
     delete getComponent<DynamicPhysicsComp>();
+    delete getComponent<RenderableComp>();
   }
 
 }

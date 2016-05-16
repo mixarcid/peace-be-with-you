@@ -2,6 +2,7 @@
 #include "Input.hpp"
 #include "Assets.hpp"
 #include "BoundingObject.hpp"
+#include "OnionMan.hpp"
 
 NAMESPACE {
 
@@ -191,6 +192,7 @@ NAMESPACE {
 
       if (engine->cur_time.getMilliseconds() -
 	  last_second.getMilliseconds() > 1000) {
+	++engine->num_seconds;
 	fps = num_frames;
 	num_frames = 0;
 	last_second = engine->cur_time;
@@ -198,6 +200,11 @@ NAMESPACE {
 	/*Log::message("#collision checks: %u", num_checks);
 	  Log::message("#collisions: %u", num_collisions);
 	  Log::message("#dynamic objects: %u", engine->dynamic_objects.size());*/
+
+	if (engine->num_seconds == 120) {
+	  OnionMan::release();
+	}
+	
       }
       engine->prev_time = engine->cur_time;
     }

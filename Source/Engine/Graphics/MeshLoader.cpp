@@ -150,14 +150,16 @@ NAMESPACE {
       BonedAnimationBase& base = inserted.first->second;
       
       u32 num_keyframes= fio::readLittleEndian<u32>(file);
+      fatalAssert(num_keyframes > 1,
+		  "The animation %s has less than two keyframes", name.c_str());
       base.keyframes.reserve(num_keyframes);
       
-      for (u32 i = 0; i < num_keyframes; ++i) {
+      for (u32 j = 0; j < num_keyframes; ++j) {
 
         f32 time = fio::readLittleEndian<f32>(file);
 	KeyFrame frame(time, num_bones);
 
-	for (u32 i = 0; i < num_bones; ++i) {
+	for (u32 k = 0; k < num_bones; ++k) {
 	  Vec3f trans;
 	  load(file, &trans);
 	  Quaternionf rot;
@@ -165,6 +167,7 @@ NAMESPACE {
 	  frame.bones.push_back(Bone(trans,
 				     rot));
 	}
+	
 	base.keyframes.push_back(frame);
       }
     }

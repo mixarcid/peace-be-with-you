@@ -92,4 +92,5 @@ void main() {
 #endif
 
   outDepth = vec4(gl_FragCoord.z);
+  if (outColor.a < 0.01) discard;
 }

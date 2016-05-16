@@ -32,9 +32,14 @@ NAMESPACE {
     BonedAnimationBase() {}
   };
 
+  PEACE_DEFINE_BITFLAGS(BonedAnimationFlags, 8,
+			ANIMATION_NO_FLAGS = 0x00,
+			ANIMATION_PLAYING = 0x01,
+			ANIMATION_LOOP = 0x02);
+
   struct BonedAnimation {
 
-    bool playing;
+    BonedAnimationFlags flags;
     float cur_time;
     u32 cur_keyframe;
     Array<KeyFrame> keyframes;
@@ -63,10 +68,13 @@ NAMESPACE {
     BonedMeshBase* base;
     Array<Bone> bones;
     BonedAnimation cur_animation;
+    String cur_animation_name;
 
     BonedMesh();
     BonedMesh(BonedMeshBase* base_mesh);
     void startAnimation(String name);
+    void loopAnimation(String name);
+    void stopAnimation();
     virtual void render(RenderContext c);
     BoundingObject* getTightBoundingObject();
     BoundingObject* getLooseBoundingObject();

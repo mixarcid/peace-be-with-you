@@ -20,28 +20,34 @@ NAMESPACE {
   }
   
   BonedAnimation::BonedAnimation(Array<KeyFrame> anim_keyframes)
-    : playing(true),
+    : flags(ANIMATION_PLAYING),
     cur_time(0.0f),
     cur_keyframe(1),
     keyframes(anim_keyframes) {}
 
   BonedAnimation::BonedAnimation()
-    : playing(false),
+    : flags(ANIMATION_NO_FLAGS),
     cur_time(0.0f),
     cur_keyframe(1),
     keyframes({}) {}
 
   void BonedAnimation::step(Array<Bone>* bones, f32 dt) {
     
-    if (!playing) return;
+    if (!(flags & ANIMATION_PLAYING)) return;
     
     cur_time += dt;
 
     for (u32 i = cur_keyframe; i < keyframes.size(); ++i) {
       if (cur_time >= keyframes[i].time) {
 	if (i == keyframes.size()-1) {
-	  playing = false;
-	  return;
+	  if (flags & ANIMATION_LOOP) {
+	    cur_time = 0.0;
+	    cur_keyframe = 1;
+	    break;
+	  } else {
+	    flags &= ~ANIMATION_PLAYING;
+	    return;
+	  }
 	}
 	cur_keyframe = i+1;
 	break;
@@ -89,7 +95,10 @@ NAMESPACE {
   }
 
   BonedAnimation BonedMeshBase::getAnimation(String name) {
-    return BonedAnimation(animations[name].keyframes);
+    auto f = animations.find(name);
+    debugAssert(f != animations.end(),
+		"The animation %s doesn't exist in the model", name.c_str());
+    return BonedAnimation(f->second.keyframes);
   }
 
   BonedMesh::BonedMesh()
@@ -103,6 +112,17 @@ NAMESPACE {
 
   void BonedMesh::startAnimation(String name) {
     cur_animation = base->getAnimation(name);
+    cur_animation_name = name;
+  }
+
+  void BonedMesh::loopAnimation(String name) {
+    cur_animation = base->getAnimation(name);
+    cur_animation.flags |= ANIMATION_LOOP;
+    cur_animation_name = name;
+  }
+
+  void BonedMesh::stopAnimation() {
+    cur_animation.flags &= ANIMATION_PLAYING;
   }
 
   void BonedMesh::render(RenderContext c) {
