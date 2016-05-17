@@ -8,22 +8,26 @@ NAMESPACE {
   struct WaterRenderable : RenderableReg {
 
     WaterRenderable(Vec2f halves);
+    /*virtual void render(RenderContext c) {
+      Log::message("!");
+      }*/
     
   };
 
-  struct Water : StaticObject {
+  struct Water : DynamicObject {
     
-    Water(Vec3f pos, Vec2f halves) : StaticObject(pos) {
+    Water(Vec3f pos, Vec2f halves) : DynamicObject(pos) {
       $rttiConstruct("Water");
-      addComponent(new WaterRenderable(halves));
-      BoundingAABB aabb(pos, Vec3f(halves, 10));
-      GameObject::loose_object.set(&aabb);
-      GameObject::tight_object.set(&aabb);
+      init(pos, halves);
     }
 
+    void init(Vec3f pos, Vec2f halves);
+    
     ~Water() {
       delete getComponent<RenderableComp>();
     }
+
+    virtual void message(Message* msg);
     
   };
   $registerRttiStruct();

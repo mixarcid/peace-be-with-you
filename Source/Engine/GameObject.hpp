@@ -62,7 +62,8 @@ NAMESPACE {
 
   PEACE_ENUM(ChildObjectType, 8,
 	     CHILD_OBJECT_REGULAR,
-	     CHILD_OBJECT_TRANSLATE);
+	     CHILD_OBJECT_TRANSLATE,
+	     CHILD_OBJECT_TRANSLATE_NO_Z);
 
   struct ChildObject  {
 

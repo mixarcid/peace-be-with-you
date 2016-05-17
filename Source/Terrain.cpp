@@ -450,9 +450,11 @@ NAMESPACE {
     chunk_table_pos = ftell(file);
 
     ground_object = Engine::emplaceStatic<TerrainGround>(pos, this);
-    Engine::emplaceStatic<Water>
-      (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL),
-       Vec2f(10000, 10000));
+
+    Vec2f halves(5000.0, 5000.0);
+    Engine::emplaceDynamicNoRegister<Water>
+      (Vec3f(pos.xy(), TerrainGenerator::SEA_LEVEL), halves);
+    
     Terrain::chunks.reserve(sqr(2*CHUNKS_IN_VIEW+1));
 
     _scene_update(true);
@@ -606,6 +608,11 @@ NAMESPACE {
     u32 y_mesh_index = rel_y;
     Vec2f rem(/*1 -*/ (rel_x - x_mesh_index),
 	      /*1 -*/ (rel_y - y_mesh_index));
+    
+    if (rem.x() > 1.0) rem.x() = 1.0;
+    if (rem.y() > 1.0) rem.y() = 1.0;
+    if (rem.x() < 0.0) rem.x() = 0.0;
+    if (rem.y() < 0.0) rem.y() = 0.0;
 
     x_mesh_index /= Terrain::CHUNK_STEP;
     y_mesh_index /= Terrain::CHUNK_STEP;
@@ -723,6 +730,7 @@ NAMESPACE {
 	  Vec2u vec(x, y);
 	  if (x >= 0 && y >= 0 &&
 	      x < (i32) size.x() && y < (i32) size.y()) {
+	    //Log::message(to_string(vec));
 	    chunk_mutex.lock();
 	    bool should_cont = (Terrain::chunks.find(vec) != Terrain::chunks.end());
 	    chunk_mutex.unlock();

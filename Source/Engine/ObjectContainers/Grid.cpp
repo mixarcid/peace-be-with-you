@@ -96,6 +96,15 @@ NAMESPACE {
   }
 
   void Grid::_remove(Pointer<DynamicObject>& obj, Vec2i corner) {
+
+    //test if the object has been inserted;
+    bool should_return = true;
+    for (u8 n=0; n<4; ++n) {
+      if (obj->handle.indexes[n] != -1) {
+	should_return = false;
+      }
+    }
+    if (should_return) return;
     
     for (u8 n=0; n<4; ++n) {
       

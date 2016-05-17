@@ -90,6 +90,9 @@ NAMESPACE {
       case CHILD_OBJECT_TRANSLATE:
 	t.obj->transAbs(getTrans() + t.diff.trans);
 	break;
+      case CHILD_OBJECT_TRANSLATE_NO_Z:
+	t.obj->transAbs(Vec3f(getTrans().xy() + t.diff.trans.xy(), t.obj->getTrans().z()));
+	break;
       }
       t.obj->onMove();
     }
@@ -111,6 +114,9 @@ NAMESPACE {
       break;
     case CHILD_OBJECT_TRANSLATE:
       child->transAbs(getTrans() + diff.trans);
+      break;
+    case CHILD_OBJECT_TRANSLATE_NO_Z:
+      child->transAbs(Vec3f(getTrans().xy() + diff.trans.xy(), child->getTrans().z()));
       break;
     }
     child->onMove();

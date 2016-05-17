@@ -38,7 +38,7 @@ NAMESPACE {
     BoundingAABB2D child_bound(center+child_offset,
 			       child_halves);
     
-    if (obj_bound->isContainedIn(&child_bound) && depth < tree->MAX_DEPTH) {
+    if (obj_bound->isContainedIn(&child_bound) && depth < tree->max_depth) {
       if (tree->nodes[node].children[child_index] == 0) {
 	tree->nodes[node].children[child_index] = tree->nodes.size();
         tree->nodes.emplace_back(child_bound);
@@ -96,8 +96,8 @@ NAMESPACE {
     return true;
   }
 
-  QuadTree::QuadTree(BoundingAABB2D bound, const u8 _MAX_DEPTH)
-    : MAX_DEPTH(_MAX_DEPTH) {
+  QuadTree::QuadTree(BoundingAABB2D bound, u8 _max_depth)
+    : max_depth(_max_depth) {
     nodes.emplace_back(bound);
   }
   

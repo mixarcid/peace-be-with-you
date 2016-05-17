@@ -29,9 +29,9 @@ NAMESPACE {
     };
 
     Array<Node> nodes;
-    const u8 MAX_DEPTH;
+    u8 max_depth;
 
-    QuadTree(BoundingAABB2D bound, const u8 _MAX_DEPTH);
+    QuadTree(BoundingAABB2D bound, u8 _max_depth);
 
     void insert(Pointer<StaticObject>& obj);
     void traverse(BoundingObject* bound,

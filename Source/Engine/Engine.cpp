@@ -7,6 +7,8 @@
 NAMESPACE {
 
   Engine* Engine::engine;
+  const static f32 ENGINE_QUADTREE_SIZE = 5000;
+  const static u8 ENGINE_MAX_DEPTH = 8;
 
   Engine::Engine()
     : synchronized_callbacks(50),
@@ -14,16 +16,16 @@ NAMESPACE {
     static_containers{
     QuadTree(BoundingAABB2D
 	     (Vec2f(0,0),
-	      Vec2f(10000,10000)),
-	     8),
+	      Vec2f(ENGINE_QUADTREE_SIZE,ENGINE_QUADTREE_SIZE)),
+	     ENGINE_MAX_DEPTH),
       QuadTree(BoundingAABB2D
 	       (Vec2f(0,0),
-		Vec2f(10000,10000)),
-	       8)},
+		Vec2f(ENGINE_QUADTREE_SIZE,ENGINE_QUADTREE_SIZE)),
+	       ENGINE_MAX_DEPTH)},
     graphics(this),
       physics(this),
       dt(0),
-      cam_move_radius(500),
+      cam_move_radius(300),
       flags(ENGINE_NO_FLAGS) {}
 
     Engine::~Engine() throw() {
@@ -89,6 +91,15 @@ NAMESPACE {
       engine->dynamic_container.update(obj);
     }
 
+    void Engine::initCamPos(bool cur_container) {
+      engine->getStaticContainer(cur_container)->clear();
+      *(engine->getStaticContainer(cur_container)) =
+	QuadTree(BoundingAABB2D
+		 (engine->graphics.cam->getTrans().xy(),
+		  Vec2f(ENGINE_QUADTREE_SIZE,ENGINE_QUADTREE_SIZE)),
+		 ENGINE_MAX_DEPTH);
+    }
+    
     void Engine::_container_update() {
     
       while(true) {
@@ -98,8 +109,8 @@ NAMESPACE {
 	flag_mutex.unlock();
 	if (should_break) break;
       }
-    
-      getStaticContainer(false)->clear();
+
+      initCamPos(false);
       for (auto& callback : scene_callbacks) {
 	callback();
       }
@@ -201,7 +212,9 @@ NAMESPACE {
 	  Log::message("#collisions: %u", num_collisions);
 	  Log::message("#dynamic objects: %u", engine->dynamic_objects.size());*/
 
-	if (engine->num_seconds == 120) {
+	if (engine->num_seconds == 120 ||
+	    engine->num_seconds == 240 ||
+	    engine->num_seconds == 360) {
 	  OnionMan::release();
 	}
 	

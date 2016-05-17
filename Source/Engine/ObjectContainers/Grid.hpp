@@ -10,8 +10,11 @@ NAMESPACE {
   struct Grid {
 
     struct Handle {
+      
       Vec2i corner;
       i8 indexes[4];
+
+      Handle() : corner(0,0), indexes{-1,-1,-1,-1} {}
     };
 
     HashMap<Vec2i, Array<Pointer<DynamicObject>, u8>> objects;

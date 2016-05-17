@@ -38,6 +38,7 @@ NAMESPACE {
     
     Grid dynamic_container;
     QuadTree static_containers[2];
+    Array<Pointer<DynamicObject>> unregistered_dynamic_objects;
     
     SystemManager system_manager;
     Graphics graphics;
@@ -68,6 +69,8 @@ NAMESPACE {
     void swapContainers();
 
     static void registerMove(Pointer<DynamicObject>& obj);
+
+    static void initCamPos(bool cur_container = true);
 
     static void loop();
     static void begin();
@@ -101,6 +104,13 @@ NAMESPACE {
     static Pointer<T> emplaceDynamic(Args... args) {
       Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
       engine->dynamic_container.insert(ret);
+      return Pointer<T>((Pointer<T>&)ret);
+    }
+
+    template <typename T, typename... Args>
+    static Pointer<T> emplaceDynamicNoRegister(Args... args) {
+      Pointer<DynamicObject> ret(engine->dynamic_objects.emplace_back<T>(args...));
+      engine->unregistered_dynamic_objects.push_back(ret);
       return Pointer<T>((Pointer<T>&)ret);
     }
     
