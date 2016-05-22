@@ -80,10 +80,7 @@ NAMESPACE {
     if (!Static) {
       b_comp->applyImpulse(-f_impulse);
     }
-    CollisionMessage a_msg((Pointer<GameObject>&)a_obj);
-    CollisionMessage b_msg((Pointer<GameObject>&)b_obj);
-    a_obj->message(&b_msg);
-    b_obj->message(&a_msg);
+    
     return true;
   }
 

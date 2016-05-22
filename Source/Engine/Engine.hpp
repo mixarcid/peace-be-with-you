@@ -6,6 +6,7 @@
 #include "Physics.hpp"
 #include "Function.hpp"
 #include "QuadTree.hpp"
+#include "Audio.hpp"
 
 NAMESPACE {
 
@@ -43,6 +44,7 @@ NAMESPACE {
     SystemManager system_manager;
     Graphics graphics;
     Physics physics;
+    Audio audio;
     GLFWwindow* window;
     Time cur_time;
     Time prev_time;

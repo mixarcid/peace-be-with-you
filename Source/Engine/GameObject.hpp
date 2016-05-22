@@ -11,10 +11,13 @@
 NAMESPACE {
   
   struct GameObject : Pointable {
+
+    typedef u64 IdSize;
     
     Array<Pointer<Component>> components;
     BoundingObjectUnion tight_object;
     BoundingObjectUnion loose_object;
+    IdSize id;
     Transform transform;
 
     GameObject(Vec3f trans,
@@ -46,7 +49,8 @@ NAMESPACE {
     BoundingObject* getLooseBoundingObject();
 
     virtual void message(Message* m) {}
-    
+
+    static IdSize cur_id;
   };
 
   struct StaticObject : GameObject {

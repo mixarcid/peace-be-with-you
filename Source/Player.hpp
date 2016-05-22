@@ -2,6 +2,7 @@
 
 #include "GameObject.hpp"
 #include "MeshLoader.hpp"
+#include "Audio.hpp"
 
 NAMESPACE {
 

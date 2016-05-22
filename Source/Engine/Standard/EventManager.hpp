@@ -13,9 +13,7 @@ NAMESPACE {
 
     virtual void processEvent(T event) = 0;
     void addEvent(T event) {
-      event_mutex.lock();
       events.push_back(event);
-      event_mutex.unlock();
     }
     
     template <typename... Args>

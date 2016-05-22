@@ -10,6 +10,7 @@
 #define DIR_TEXTURES DIR_ASSETS "Textures" DIR_SEP
 #define DIR_SHADER_HEADER DIR_SHADERS "Header"
 #define DIR_MODELS DIR_ASSETS "Models" DIR_SEP
+#define DIR_AUDIO DIR_ASSETS "Audio" DIR_SEP
 
 #define DIR_DATA "Data" DIR_SEP
 #define DIR_TERRAIN DIR_DATA "Terrain" DIR_SEP
@@ -21,6 +22,7 @@
 #define DIR_TEXTURE_EXTENSION ".png"
 #define DIR_TERRAIN_EXTENSION ".ter"
 #define DIR_WORLD_EXTENSION ".wld"
+#define DIR_AUDIO_EXTENSION ".wav"
 
 #ifndef N_DEBUG
 #define PEACE_LOG_LOADED_ASSETS

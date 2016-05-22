@@ -2,7 +2,6 @@
 #include "Input.hpp"
 #include "Assets.hpp"
 #include "BoundingObject.hpp"
-#include "OnionMan.hpp"
 
 NAMESPACE {
 
@@ -194,6 +193,8 @@ NAMESPACE {
 
       glfwPollEvents();
 
+      engine->audio.update();
+
       //FPS calculation
       static Time last_second = engine->prev_time;
       static u32 num_frames = 0;
@@ -207,16 +208,10 @@ NAMESPACE {
 	fps = num_frames;
 	num_frames = 0;
 	last_second = engine->cur_time;
-	Log::message("FPS: %f", fps);
-	/*Log::message("#collision checks: %u", num_checks);
-	  Log::message("#collisions: %u", num_collisions);
-	  Log::message("#dynamic objects: %u", engine->dynamic_objects.size());*/
-
-	if (engine->num_seconds == 120 ||
-	    engine->num_seconds == 240 ||
-	    engine->num_seconds == 360) {
-	  OnionMan::release();
-	}
+	/*Log::message("FPS: %f", fps);
+	Log::message("#collision checks: %u", num_checks);
+	Log::message("#collisions: %u", num_collisions);
+	Log::message("#dynamic objects: %u", engine->dynamic_objects.size());*/
 	
       }
       engine->prev_time = engine->cur_time;

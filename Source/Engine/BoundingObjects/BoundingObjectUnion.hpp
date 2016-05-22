@@ -13,9 +13,11 @@ NAMESPACE {
   struct BoundingObjectUnion {
     
     union {
+# 16 "Source/Engine/BoundingObjects/BoundingObjectUnion.hpp"
       FOR(entry in getEnumEntries("BoundingObjectType")[:-3]);
       Bounding$(className(entry)) obj_$(entry);
       END_FOR;
+# 20 "Source/Engine/BoundingObjects/BoundingObjectUnion.hpp"
       BoundingObject object;
     };
 

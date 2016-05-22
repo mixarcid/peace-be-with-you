@@ -5,6 +5,7 @@
 #include "Terrain.hpp"
 #include "Sun.hpp"
 #include "OnionMan.hpp"
+#include "Audio.hpp"
 
 using namespace peace;
 
@@ -61,6 +62,9 @@ i32 main() {
 				
     Engine::engine->graphics.back_color = Vec4f(0.4, 0.5, 1.0, 1.0);
     //Log::message(to_string(Engine::engine->static_container));
+
+    //AmbientSound rick;
+    //rick.play("rickastley.mp3", false);
     Engine::begin();
     Log::message("Peace Be With You shut down sucessfully");
 
@@ -71,6 +75,7 @@ i32 main() {
 #endif
   
   Engine::terminate();
+
   return EXIT_SUCCESS;
   
 }

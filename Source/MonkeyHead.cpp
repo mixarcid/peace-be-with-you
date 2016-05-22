@@ -1,4 +1,6 @@
 #include "MonkeyHead.hpp"
+#include "Player.hpp"
+#include "Physics.hpp"
 
 NAMESPACE {
 
@@ -13,10 +15,28 @@ NAMESPACE {
     addComponent(mesh.get());
     Pointer<DynamicObject> obj(this);
     addComponent(new DynamicPhysicsComp(obj, material, veloc));
+    addComponent(new AudioComp());
   }
 
   MonkeyHead::~MonkeyHead() {
     delete getComponent<DynamicPhysicsComp>();
+    delete getComponent<AudioComp>();
+  }
+
+  void MonkeyHead::message(Message* msg) {
+    switch(typeId(msg)) {
+      
+      case typeId<CollisionMessage>(): {
+
+	Pointer<GameObject>& obj = ((CollisionMessage*) msg)->object;
+	if (typeId(obj) == typeId<Player>()) {
+	  getComponent<AudioComp>()->play("die", this);
+	}
+	
+	break;
+      }
+	
+    }
   }
 
 }

@@ -4,9 +4,11 @@
 
 NAMESPACE {
 
+  GameObject::IdSize GameObject::cur_id = 0;
+
   GameObject::GameObject(Vec3f trans,
 			 Quaternionf rot)
-    : transform(trans, rot) {}
+    : id(cur_id++), transform(trans, rot) {}
 
   Transform GameObject::getTransform() {
     return transform;
@@ -101,6 +103,12 @@ NAMESPACE {
       = getComponent<DynamicPhysicsComp>();
     if (phys) {
       phys->onMove(obj);
+    }
+
+    Pointer<AudioComp>& audio
+      = getComponent<AudioComp>();
+    if (audio) {
+      audio->onMove((Pointer<GameObject>&)obj);
     }
   }
 

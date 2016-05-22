@@ -27,6 +27,10 @@ NAMESPACE {
     addComponent(new BonedMesh(Player::mesh.get()));
     Pointer<DynamicObject> obj(this);
     addComponent(new DynamicPhysicsComp(obj,Material(985, 0.1, 0.5, 0.4)));
+    
+    addComponent(new AudioComp());
+    Engine::engine->audio.setListener((Pointer<GameObject>&)obj);
+    
     camera = addChild((Pointer<DynamicObject>&)Engine::engine->graphics.cam,
 		      camera_diff);
     
@@ -77,6 +81,7 @@ NAMESPACE {
 	  BonedMesh* mesh = (Pointer<BonedMesh>)
 	    Player::ptr->getComponent<RenderableComp>();
 	  mesh->startAnimation("Throw");
+	  Player::ptr->getComponent<AudioComp>()->play("explosion", Player::ptr);
 	}
       });
 
@@ -160,6 +165,7 @@ NAMESPACE {
   Player::~Player() {
     delete getComponent<DynamicPhysicsComp>();
     delete getComponent<RenderableComp>();
+    delete getComponent<AudioComp>();
   }
 
 }

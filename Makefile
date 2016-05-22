@@ -10,14 +10,19 @@ endif
 PREPROCESS= cpp
 EXPANDER= pyexpander/expander.py --eval "makefile_dir=\"$(shell pwd)\""
 CXXFLAGS= -Wall -std=c++1y -fno-rtti
-DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused
-RELEASE_FLAGS= -Ofast
+DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused -D DEBUG
+RELEASE_FLAGS= -Ofast -D NDEBUG
 INCLUDE= $(shell find Source -type d | sed 's/[^\ ]*[^\ ]/-I&/g')
 INCLUDE+= -IThirdParty/include
 SOURCES= $(call rwildcard, Source/, *.cpp)
 OUTDIR= bin/
 
-ifeq ($(MAKECMDGOALS), tests)
+GOALS = $(MAKECMDGOALS)
+ifeq ($(MAKECMDGOALD), all)
+GOALS = debug
+endif
+
+ifeq ($(GOALS), tests)
 SOURCES:= $(filter-out Source/main.cpp, $(SOURCES))
 SOURCES+= $(wildcard Tests/*.cpp)
 INCLUDE+= -ITests
@@ -37,25 +42,34 @@ LIBS= -lX11 -lXxf86vm -lXcursor -lXinerama -lXrandr -lXext -lXi -lGL
 LIBDIR= -LThirdParty/lib/Linux
 endif
 ifeq ($(UNAME), Darwin)
-LIBS= -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation
-LIBDIR= -LThirdParty/lib/OSX
+LIBS= -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation -framework CoreMIDI -framework CoreAudio -framework AudioToolbox -framework Accelerate
+LIBDIR= -LThirdParty/lib/OSX -Wl,-rpath,ThirdParty/lib/OSX
 endif
 
-LIBS+= -lGLEW -lglfw3 -lSOIL -lpthread
+LIBS+= -lGLEW -lglfw3 -lSOIL -lpthread -lyse
 
 ifeq ($(CXX), clang++)
 CXXFLAGS+= -Wno-unused-command-line-argument
 endif
 
-debug: CXXFLAGS+= $(DEBUG_FLAGS)
-debug: $(SOURCES) $(EXECUTABLE)
-
-release: CXXFLAGS+= $(RELEASE_FLAGS)
-release: $(SOURCES) $(EXECUTABLE)
-
-tests: debug
 all: debug
 
+debug: pre-debug
+release: pre-release
+
+pre-debug: CXXFLAGS += $(DEBUG_FLAGS)
+pre-debug:
+	@echo about to compile debug
+	$(MAKE) main-build CXXFLAGS="$(CXXFLAGS)"
+
+pre-release: CXXFLAGS += $(RELEASE_FLAGS)
+pre-release:
+	@echo about to compile release
+	$(MAKE) main-build CXXFLAGS="$(CXXFLAGS)"
+
+main-build: $(EXECUTABLE)
+
+ifeq ($(GOALS), main-build)
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LIBDIR) $(LIBS) $(LIBS) $(OBJECTS) -o $@ $(LIBS) $(LIBS)
 
@@ -70,6 +84,7 @@ $(EXECUTABLE): $(OBJECTS)
 
 %.d: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -MM -MT $*.d $*.cpp > $*.d
+endif
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPENDS)
@@ -77,6 +92,9 @@ endif
 
 clean:
 	@rm -f $(OBJECTS) $(EXPANSIONS) $(EXECUTABLE) $(DEPENDS) $(PYEXPANSIONS)
+
+log:
+	@echo $(SOURCES)
 
 .SUFFIXES:
 .SECONDARY:

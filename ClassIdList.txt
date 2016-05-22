@@ -19,3 +19,4 @@ Water 18
 Sun 19
 TerrainChunkComp 20
 OnionMan 21
+AudioComp 22

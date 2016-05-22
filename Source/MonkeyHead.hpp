@@ -16,6 +16,7 @@ NAMESPACE {
     }
     void init(Vec3f veloc);
     ~MonkeyHead();
+    virtual void message(Message* msg);
 
     static Asset<StaticMesh> mesh;
     static Material material;
