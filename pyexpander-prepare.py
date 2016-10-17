@@ -1,11 +1,14 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
-from enum import Enum
 
-class Quote(Enum):
+class Quote:
     SINGLE = 0
     DOUBLE = 1
+    def __init__(self, val):
+	self.val = val
+    def __eq__(self, other):
+	return self.val == other.val
 
 quote_stack = []
 

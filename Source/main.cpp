@@ -50,9 +50,9 @@ i32 main() {
       });
     
     Terrain terrain;
-    //terrain.generate("Final2", Vec3f(0,0,0), Vec2u(150, 150));
+    terrain.generate("Final", Vec3f(0,0,0), Vec2u(10, 10));
 
-    Vec2f init_pos(47000.0, 47000.0);
+    Vec2f init_pos(0.0, 0.0);
     Engine::emplaceDynamic<Player>(Vec3f(init_pos,terrain.heightAtPoint(init_pos, NULL)));
     Engine::initCamPos();
 
