@@ -9,7 +9,7 @@
 *.blend3
 bin/*
 #*#
-.*
 tests/bin/*
 *.ter
+*.pyc
 ClassIdList.txt

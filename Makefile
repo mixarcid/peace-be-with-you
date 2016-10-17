@@ -9,7 +9,7 @@ endif
 
 PREPROCESS= cpp
 EXPANDER= pyexpander/expander.py --eval "makefile_dir=\"$(shell pwd)\""
-CXXFLAGS= -Wall -std=c++1y -fno-rtti
+CXXFLAGS= -Wall -std=c++1y -fno-rtti -Wunknown-pragmas
 DEBUG_FLAGS= -rdynamic -ggdb -Wno-error=unused -D DEBUG
 RELEASE_FLAGS= -Ofast -D NDEBUG
 INCLUDE= $(shell find Source -type d | sed 's/[^\ ]*[^\ ]/-I&/g')
