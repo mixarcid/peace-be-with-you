@@ -13,3 +13,4 @@ tests/bin/*
 *.ter
 *.pyc
 ClassIdList.txt
+YSELog.txt
